@@ -1,0 +1,40 @@
+package form
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// SearchProps holds configuration for a search input component.
+type SearchProps struct {
+	Name        string           // Field name
+	Value       string           // Current value
+	Placeholder string           // Placeholder text (default: "Search...")
+	Class       string           // Additional CSS classes from consumer
+	Attrs       templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// searchPlaceholder returns the placeholder, defaulting to "Search...".
+func searchPlaceholder(p string) string {
+	if p == "" {
+		return "Search..."
+	}
+	return p
+}
+
+// Search renders a search input field.
+templ Search(data SearchProps) {
+	<div class={ lw.ClassNames("stack stack-compact", data.Class) }>
+		<label for={ data.Name }>Search</label>
+		<input
+			type="search"
+			id={ data.Name }
+			name={ data.Name }
+			value={ data.Value }
+			placeholder={ searchPlaceholder(data.Placeholder) }
+			{ data.Attrs... }
+		/>
+	</div>
+}
+
+// SearchSimple is a convenience wrapper for search inputs.
+templ SearchSimple(name, value, placeholder string) {
+	@Search(SearchProps{Name: name, Value: value, Placeholder: placeholder})
+}

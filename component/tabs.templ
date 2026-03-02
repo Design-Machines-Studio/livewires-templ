@@ -1,0 +1,34 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// TabProps holds configuration for a single tab item.
+type TabProps struct {
+	Label  string // Tab display text
+	Href   string // Link URL (for link-based tabs)
+	Active bool   // Whether this tab is currently active
+}
+
+// TabsProps holds configuration for a tabs component.
+type TabsProps struct {
+	Items   []TabProps       // Tab items
+	Variant string           // CSS modifier: "pills" for pill style
+	Class   string           // Additional CSS classes from consumer
+	Attrs   templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// Tabs renders a link-based tab navigation.
+templ Tabs(props TabsProps) {
+	<div class={ lw.ClassNames("tabs", lw.VariantClass("tabs", props.Variant), props.Class) } { props.Attrs... }>
+		<nav class="list">
+			for _, tab := range props.Items {
+				if tab.Active {
+					<a class="tab" href={ templ.SafeURL(tab.Href) } aria-current="page">{ tab.Label }</a>
+				} else {
+					<a class="tab" href={ templ.SafeURL(tab.Href) }>{ tab.Label }</a>
+				}
+			}
+		</nav>
+		{ children... }
+	</div>
+}

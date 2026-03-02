@@ -1,0 +1,56 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// ButtonProps holds configuration for a button component.
+type ButtonProps struct {
+	Variant  string           // CSS modifier (e.g., "accent", "small", "large")
+	Type     string           // HTML type attribute (default: "button")
+	Disabled bool             // Whether button is disabled
+	Class    string           // Additional CSS classes from consumer
+	Attrs    templ.Attributes // Catch-all: data-on-click, data-signals, aria-*, etc.
+}
+
+// buttonType returns the button type, defaulting to "button".
+func buttonType(t string) string {
+	if t == "" {
+		return "button"
+	}
+	return t
+}
+
+// ButtonComponent renders a button with full Props control and children slot.
+templ ButtonComponent(props ButtonProps) {
+	<button
+		type={ buttonType(props.Type) }
+		class={ lw.ClassNames("button", lw.VariantClass("button", props.Variant), props.Class) }
+		disabled?={ props.Disabled }
+		{ props.Attrs... }
+	>
+		{ children... }
+	</button>
+}
+
+// Button renders a button element (convenience wrapper).
+templ Button(label string, variant string) {
+	@ButtonComponent(ButtonProps{Variant: variant}) {
+		{ label }
+	}
+}
+
+// ButtonLink renders an anchor styled as a button.
+templ ButtonLink(href string, label string, variant string) {
+	<a
+		href={ templ.SafeURL(href) }
+		class={ lw.ClassNames("button", lw.VariantClass("button", variant)) }
+	>
+		{ label }
+	</a>
+}
+
+// SubmitButton renders a submit button.
+templ SubmitButton(label string, variant string) {
+	@ButtonComponent(ButtonProps{Variant: variant, Type: "submit"}) {
+		{ label }
+	}
+}

@@ -1,0 +1,32 @@
+package form
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// FilterOption represents a single filter option.
+type FilterOption struct {
+	Value    string // Option value
+	Label    string // Display label
+	Selected bool   // Whether this option is selected
+}
+
+// FilterProps holds configuration for a filter component.
+type FilterProps struct {
+	Title   string           // Filter group title
+	Name    string           // Field name for the select/checkboxes
+	Options []FilterOption   // Available filter options
+	Class   string           // Additional CSS classes from consumer
+	Attrs   templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// Filter renders a filter dropdown for list filtering.
+templ Filter(data FilterProps) {
+	<div class={ lw.ClassNames("stack stack-compact", data.Class) } { data.Attrs... }>
+		<label for={ data.Name } class="font-semibold text-sm">{ data.Title }</label>
+		<select id={ data.Name } name={ data.Name }>
+			<option value="">All</option>
+			for _, opt := range data.Options {
+				<option value={ opt.Value } selected?={ opt.Selected }>{ opt.Label }</option>
+			}
+		</select>
+	</div>
+}

@@ -1,0 +1,39 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// CommentProps holds configuration for a comment component.
+type CommentProps struct {
+	Author string           // Comment author name
+	Body   string           // Comment body text
+	Date   string           // Date string (formatted via DateShort)
+	Badge  string           // Optional badge label (empty to omit)
+	Class  string           // Additional CSS classes from consumer
+	Attrs  templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// CommentComponent renders a comment with full Props control.
+templ CommentComponent(props CommentProps) {
+	<div class={ lw.ClassNames("cluster", props.Class) } style="align-items: flex-start;" { props.Attrs... }>
+		@AvatarSmall(props.Author)
+		<div class="stack stack-compact" style="flex: 1;">
+			<div class="cluster cluster-between">
+				<span class="font-semibold text-sm cluster cluster-compact">
+					{ props.Author }
+					if props.Badge != "" {
+						@BadgeSmall(props.Badge, "subtle")
+					}
+				</span>
+				<time class="text-sm text-muted">{ lw.DateShort(props.Date) }</time>
+			</div>
+			<div class="prose">
+				<p class="text-sm">{ props.Body }</p>
+			</div>
+		</div>
+	</div>
+}
+
+// Comment renders a single comment (convenience wrapper).
+templ Comment(author string, body string, date string, badge string) {
+	@CommentComponent(CommentProps{Author: author, Body: body, Date: date, Badge: badge})
+}

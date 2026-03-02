@@ -1,0 +1,48 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// TimelineItemProps holds configuration for a timeline item.
+type TimelineItemProps struct {
+	Date         string           // Date text (e.g., "March 2024")
+	Title        string           // Item title
+	Content      string           // Optional description text
+	Badge        string           // Optional badge label
+	BadgeVariant string           // Badge variant
+	Status       string           // Optional data-status: "success", "warning", "error"
+	Class        string           // Additional CSS classes from consumer
+	Attrs        templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// TimelineItem renders a single timeline entry.
+templ TimelineItem(props TimelineItemProps) {
+	<li
+		class={ props.Class }
+		if props.Status != "" {
+			data-status={ props.Status }
+		}
+		{ props.Attrs... }
+	>
+		<time class="date">{ props.Date }</time>
+		<div class="content">
+			<h3>
+				{ props.Title }
+				if props.Badge != "" {
+					{ " " }
+					@BadgeSmall(props.Badge, props.BadgeVariant)
+				}
+			</h3>
+			if props.Content != "" {
+				<p>{ props.Content }</p>
+			}
+			{ children... }
+		</div>
+	</li>
+}
+
+// Timeline renders an ordered timeline list.
+templ Timeline(class string) {
+	<ol class={ lw.ClassNames("timeline", class) }>
+		{ children... }
+	</ol>
+}

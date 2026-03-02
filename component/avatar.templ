@@ -1,0 +1,45 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// AvatarProps holds configuration for an avatar component.
+type AvatarProps struct {
+	Name     string           // Person's name (used for initials and display)
+	Size     string           // CSS modifier: "small", "large", "xlarge", "square"
+	ShowName bool             // Whether to display the name text
+	Class    string           // Additional CSS classes from consumer
+	Attrs    templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// AvatarComponent renders an avatar with full Props control.
+templ AvatarComponent(props AvatarProps) {
+	<span
+		class={ lw.ClassNames("avatar", lw.VariantClass("avatar", props.Size), props.Class) }
+		{ props.Attrs... }
+	>
+		<span class="initials">{ lw.Initials(props.Name) }</span>
+		if props.ShowName {
+			<span class="name">{ props.Name }</span>
+		}
+	</span>
+}
+
+// Avatar renders an avatar with initials and name (convenience wrapper).
+templ Avatar(name string, size string) {
+	@AvatarComponent(AvatarProps{Name: name, Size: size, ShowName: true})
+}
+
+// AvatarSmall renders a small avatar.
+templ AvatarSmall(name string) {
+	@Avatar(name, "small")
+}
+
+// AvatarLarge renders a large avatar.
+templ AvatarLarge(name string) {
+	@Avatar(name, "large")
+}
+
+// AvatarOnly renders just the initials circle (no name).
+templ AvatarOnly(name string, size string) {
+	@AvatarComponent(AvatarProps{Name: name, Size: size, ShowName: false})
+}

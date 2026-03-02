@@ -1,0 +1,81 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// StatCardProps holds configuration for a stat card component.
+type StatCardProps struct {
+	Label     string           // The metric label (e.g., "Meetings this year")
+	Value     string           // The primary value (e.g., "3")
+	Detail    string           // Additional context (e.g., "1 General, 2 Board")
+	SubDetail string           // Optional secondary detail
+	Href      string           // Optional link URL — if set, card becomes clickable
+	Status    string           // Optional status: "success", "warning", "error"
+	Scheme    string           // Color scheme: "subtle", "accent", etc.
+	Class     string           // Extra utility classes on the outer element
+	Attrs     templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// StatCardGroup renders a semantically correct group of stat cards.
+// Uses a single <dl> wrapper for proper definition list semantics.
+templ StatCardGroup(class string) {
+	<dl class={ class }>
+		{ children... }
+	</dl>
+}
+
+// StatCard renders an individual stat card.
+// When Href is provided, the entire card is clickable.
+// When Status is provided, a status indicator is shown.
+templ StatCard(data StatCardProps) {
+	<div
+		class={ lw.ClassNames("stat-card box box-tight rounded text-sm", lw.SchemeClass(data.Scheme), data.Class) }
+		{ data.Attrs... }
+	>
+		if data.Href != "" {
+			<a href={ templ.SafeURL(data.Href) }>
+				@statCardInner(data)
+			</a>
+		} else {
+			@statCardInner(data)
+		}
+	</div>
+}
+
+// statCardInner renders the shared inner content of a stat card.
+templ statCardInner(data StatCardProps) {
+	<dt class="label">
+		if data.Status != "" {
+			<span class={ lw.ClassNames("status-indicator", lw.VariantClass("status-indicator", data.Status)) }>{ data.Label }</span>
+		} else {
+			{ data.Label }
+		}
+	</dt>
+	<dd class="value text-6xl font-black">{ data.Value }</dd>
+	if data.Detail != "" {
+		<dd class="detail">{ data.Detail }</dd>
+	}
+	if data.SubDetail != "" {
+		<dd class="sub-detail">{ data.SubDetail }</dd>
+	}
+}
+
+// StatCardSimple is a convenience wrapper for non-linked stat cards.
+templ StatCardSimple(label, value, detail, scheme string) {
+	@StatCard(StatCardProps{
+		Label:  label,
+		Value:  value,
+		Detail: detail,
+		Scheme: scheme,
+	})
+}
+
+// StatCardLink is a convenience wrapper for linked stat cards.
+templ StatCardLink(label, value, detail, href, scheme string) {
+	@StatCard(StatCardProps{
+		Label:  label,
+		Value:  value,
+		Detail: detail,
+		Href:   href,
+		Scheme: scheme,
+	})
+}

@@ -1,0 +1,33 @@
+package form
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// DateRangeProps holds configuration for a date range picker.
+type DateRangeProps struct {
+	StartName  string           // Field name for start date
+	EndName    string           // Field name for end date
+	StartValue string           // Current start date value
+	EndValue   string           // Current end date value
+	Label      string           // Label for the date range
+	Class      string           // Additional CSS classes from consumer
+	Attrs      templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// DateRange renders a pair of date inputs for range selection.
+templ DateRange(data DateRangeProps) {
+	<fieldset class={ lw.ClassNames("stack stack-compact", data.Class) } { data.Attrs... }>
+		if data.Label != "" {
+			<legend class="font-semibold">{ data.Label }</legend>
+		}
+		<div class="cluster">
+			<div class="stack stack-compact">
+				<label for={ data.StartName } class="text-sm">From</label>
+				<input type="date" id={ data.StartName } name={ data.StartName } value={ data.StartValue }/>
+			</div>
+			<div class="stack stack-compact">
+				<label for={ data.EndName } class="text-sm">To</label>
+				<input type="date" id={ data.EndName } name={ data.EndName } value={ data.EndValue }/>
+			</div>
+		</div>
+	</fieldset>
+}

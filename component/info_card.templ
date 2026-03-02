@@ -1,0 +1,44 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// InfoCardProps holds configuration for an info card component.
+type InfoCardProps struct {
+	Header     string           // Category header (e.g., "Upcoming")
+	Title      string           // Main title
+	Href       string           // Link URL
+	Subtitle   string           // Secondary info (e.g., date/time)
+	AvatarName string           // Optional: name for avatar (will show initials)
+	AvatarText string           // Optional: text next to avatar
+	Scheme     string           // Color scheme (e.g., "subtle")
+	Class      string           // Additional CSS classes from consumer
+	Attrs      templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// InfoCard renders an info card for upcoming events or announcements.
+templ InfoCard(data InfoCardProps) {
+	<div
+		class={ lw.ClassNames("info-card box box-tight stack-compact text-sm", lw.SchemeClass(data.Scheme), data.Class) }
+		{ data.Attrs... }
+	>
+		if data.Header != "" {
+			<p class="header">{ data.Header }</p>
+		}
+		<p class="text-lg font-bold">
+			if data.Href != "" {
+				<a href={ templ.SafeURL(data.Href) }>{ data.Title }</a>
+			} else {
+				{ data.Title }
+			}
+		</p>
+		if data.Subtitle != "" {
+			<p class="text-sm text-muted">{ data.Subtitle }</p>
+		}
+		if data.AvatarName != "" {
+			<div class="cluster cluster-compact mt-05">
+				@AvatarOnly(data.AvatarName, "small")
+				<span class="text-sm text-muted">{ data.AvatarText }</span>
+			</div>
+		}
+	</div>
+}

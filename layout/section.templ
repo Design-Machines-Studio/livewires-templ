@@ -1,0 +1,25 @@
+package layout
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// SectionProps holds configuration for a page section.
+type SectionProps struct {
+	Heading string           // Optional section heading
+	Scheme  string           // Color scheme (e.g., "dark", "subtle")
+	Padding string           // Padding modifier (e.g., "tight", "loose")
+	Class   string           // Additional CSS classes from consumer
+	Attrs   templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// Section renders a page section with optional heading and color scheme.
+templ Section(props SectionProps) {
+	<div
+		class={ lw.ClassNames("section", lw.SchemeClass(props.Scheme), lw.ModifierClass("box", props.Padding), props.Class) }
+		{ props.Attrs... }
+	>
+		if props.Heading != "" {
+			<h2>{ props.Heading }</h2>
+		}
+		{ children... }
+	</div>
+}

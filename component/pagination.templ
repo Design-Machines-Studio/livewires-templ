@@ -1,0 +1,39 @@
+package component
+
+import (
+	"fmt"
+	lw "github.com/Design-Machines-Studio/livewires-templ"
+)
+
+// PaginationProps holds configuration for a pagination component.
+type PaginationProps struct {
+	CurrentPage int              // Current active page (1-based)
+	TotalPages  int              // Total number of pages
+	BaseURL     string           // URL pattern — page number is appended as ?page=N
+	Class       string           // Additional CSS classes from consumer
+	Attrs       templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// pageURL builds a page URL from the base URL and page number.
+func pageURL(base string, page int) string {
+	return fmt.Sprintf("%s?page=%d", base, page)
+}
+
+// Pagination renders a pagination nav with previous/next and page numbers.
+templ Pagination(props PaginationProps) {
+	<nav class={ lw.ClassNames("pagination", props.Class) } aria-label="Pagination" { props.Attrs... }>
+		if props.CurrentPage > 1 {
+			<a href={ templ.SafeURL(pageURL(props.BaseURL, props.CurrentPage-1)) } rel="prev">Previous</a>
+		}
+		for i := 1; i <= props.TotalPages; i++ {
+			if i == props.CurrentPage {
+				<a href={ templ.SafeURL(pageURL(props.BaseURL, i)) } aria-current="page">{ fmt.Sprintf("%d", i) }</a>
+			} else {
+				<a href={ templ.SafeURL(pageURL(props.BaseURL, i)) }>{ fmt.Sprintf("%d", i) }</a>
+			}
+		}
+		if props.CurrentPage < props.TotalPages {
+			<a href={ templ.SafeURL(pageURL(props.BaseURL, props.CurrentPage+1)) } rel="next">Next</a>
+		}
+	</nav>
+}

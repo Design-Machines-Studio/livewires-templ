@@ -1,0 +1,42 @@
+package component
+
+import (
+	"fmt"
+	lw "github.com/Design-Machines-Studio/livewires-templ"
+)
+
+// ProgressBarProps holds configuration for a progress bar component.
+type ProgressBarProps struct {
+	Progress int              // 0-100 percentage value
+	Variant  string           // CSS modifier: "thick" for thicker bar, empty for default
+	Label    string           // Accessible label for screen readers
+	Class    string           // Additional CSS classes from consumer
+	Attrs    templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// ProgressBarComponent renders a progress bar with full Props control.
+templ ProgressBarComponent(props ProgressBarProps) {
+	<div
+		class={ lw.ClassNames("progress-bar", lw.VariantClass("progress-bar", props.Variant), props.Class) }
+		role="progressbar"
+		aria-valuenow={ fmt.Sprintf("%d", props.Progress) }
+		aria-valuemin="0"
+		aria-valuemax="100"
+		if props.Label != "" {
+			aria-label={ props.Label }
+		}
+		{ props.Attrs... }
+	>
+		<div class="fill" style={ fmt.Sprintf("width: %d%%", props.Progress) }></div>
+	</div>
+}
+
+// ProgressBar renders a progress bar (convenience wrapper).
+templ ProgressBar(progress int, variant string, label string) {
+	@ProgressBarComponent(ProgressBarProps{Progress: progress, Variant: variant, Label: label})
+}
+
+// ProgressBarThick is a convenience wrapper for thick progress bars.
+templ ProgressBarThick(progress int, label string) {
+	@ProgressBar(progress, "thick", label)
+}

@@ -1,0 +1,76 @@
+package form
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// FieldProps holds configuration for a form field component.
+type FieldProps struct {
+	Label       string           // Field label
+	Name        string           // Field name (also used as ID)
+	Value       string           // Current value
+	Type        string           // Input type: text, email, tel, etc. (default: text)
+	Placeholder string           // Placeholder text
+	Hint        string           // Helper text below the field
+	Required    bool             // Whether field is required
+	Class       string           // Additional CSS classes on the wrapper
+	Attrs       templ.Attributes // Catch-all for the input: data-*, aria-*, etc.
+}
+
+// fieldType returns the input type, defaulting to "text".
+func fieldType(t string) string {
+	if t == "" {
+		return "text"
+	}
+	return t
+}
+
+// Field renders a complete form field with label, input, and optional hint.
+templ Field(data FieldProps) {
+	<div class={ lw.ClassNames("stack stack-compact", data.Class) }>
+		<label for={ data.Name } class="font-semibold">{ data.Label }</label>
+		<input
+			type={ fieldType(data.Type) }
+			id={ data.Name }
+			name={ data.Name }
+			value={ data.Value }
+			placeholder={ data.Placeholder }
+			required?={ data.Required }
+			{ data.Attrs... }
+		/>
+		if data.Hint != "" {
+			<p class="text-xs text-muted">{ data.Hint }</p>
+		}
+	</div>
+}
+
+// FieldText is a convenience wrapper for text inputs.
+templ FieldText(label, name, value string, required bool) {
+	@Field(FieldProps{
+		Label:    label,
+		Name:     name,
+		Value:    value,
+		Type:     "text",
+		Required: required,
+	})
+}
+
+// FieldEmail is a convenience wrapper for email inputs.
+templ FieldEmail(label, name, value string, required bool) {
+	@Field(FieldProps{
+		Label:    label,
+		Name:     name,
+		Value:    value,
+		Type:     "email",
+		Required: required,
+	})
+}
+
+// FieldTel is a convenience wrapper for phone inputs.
+templ FieldTel(label, name, value, placeholder string) {
+	@Field(FieldProps{
+		Label:       label,
+		Name:        name,
+		Value:       value,
+		Type:        "tel",
+		Placeholder: placeholder,
+	})
+}

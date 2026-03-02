@@ -1,0 +1,75 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// ChecklistItemProps holds data for a checklist item.
+type ChecklistItemProps struct {
+	Label     string // The task label
+	Href      string // Optional: link for pending items
+	Completed bool   // Whether the item is completed
+}
+
+// Checklist renders a list of checklist items.
+templ Checklist(items []ChecklistItemProps) {
+	<ul class="stack stack-compact text-sm">
+		for _, item := range items {
+			@ChecklistItem(item)
+		}
+	</ul>
+}
+
+// ChecklistItem renders an individual checklist item.
+templ ChecklistItem(data ChecklistItemProps) {
+	<li class="cluster cluster-compact">
+		if data.Completed {
+			<span class="text-positive">&#10003;</span>
+			<span class="text-muted"><s>{ data.Label }</s></span>
+		} else {
+			<span>&#9675;</span>
+			if data.Href != "" {
+				<a href={ templ.SafeURL(data.Href) }>{ data.Label }</a>
+			} else {
+				<span>{ data.Label }</span>
+			}
+		}
+	</li>
+}
+
+// ProgressChecklistProps holds configuration for a checklist with progress bar.
+type ProgressChecklistProps struct {
+	Title      string               // Section title
+	Completed  int                  // Number of completed items
+	Total      int                  // Total number of items
+	Items      []ChecklistItemProps // The checklist items
+	FooterText string               // Optional footer text
+	Class      string               // Additional CSS classes from consumer
+	Attrs      templ.Attributes     // Catch-all: data-*, aria-*, etc.
+}
+
+// ProgressChecklistComponent renders a checklist with progress bar.
+templ ProgressChecklistComponent(props ProgressChecklistProps) {
+	<div class={ lw.ClassNames("box scheme-subtle", props.Class) } { props.Attrs... }>
+		<div class="cluster cluster-between mb-1">
+			<h2 class="text-base">{ props.Title }</h2>
+			<span class="text-sm text-muted">{ lw.Itoa(props.Completed) } of { lw.Itoa(props.Total) } done</span>
+		</div>
+		@ProgressBarThick(props.Completed * 100 / props.Total, props.Title + " progress")
+		<div class="mt-1">
+			@Checklist(props.Items)
+		</div>
+		if props.FooterText != "" {
+			<p class="text-xs text-muted mt-1">{ props.FooterText }</p>
+		}
+	</div>
+}
+
+// ProgressChecklist renders a checklist with progress bar (convenience wrapper).
+templ ProgressChecklist(title string, completed, total int, items []ChecklistItemProps, footerText string) {
+	@ProgressChecklistComponent(ProgressChecklistProps{
+		Title:      title,
+		Completed:  completed,
+		Total:      total,
+		Items:      items,
+		FooterText: footerText,
+	})
+}

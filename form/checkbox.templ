@@ -1,0 +1,76 @@
+package form
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// CheckboxProps holds configuration for a checkbox component.
+type CheckboxProps struct {
+	Name     string           // Field name
+	Value    string           // Field value (submitted when checked)
+	Label    string           // Checkbox label text
+	Checked  bool             // Whether checkbox is checked
+	Disabled bool             // Whether checkbox is disabled
+	Variant  string           // Style variant: "", "small", "icon", "ok", "warning", "danger"
+	Class    string           // Additional CSS classes from consumer
+	Attrs    templ.Attributes // Catch-all: data-signals, data-on-change, aria-*, etc.
+}
+
+// checkboxInputAttrs builds conditional attributes for the checkbox input.
+func checkboxInputAttrs(props CheckboxProps) templ.Attributes {
+	attrs := templ.Attributes{
+		"checked":  props.Checked,
+		"disabled": props.Disabled,
+	}
+	if props.Value != "" {
+		attrs["value"] = props.Value
+	}
+	return attrs
+}
+
+// Checkbox renders a styled checkbox with label.
+templ Checkbox(data CheckboxProps) {
+	<label class={ lw.ClassNames("checkbox", lw.VariantClass("checkbox", data.Variant), data.Class) } { data.Attrs... }>
+		<input type="checkbox" name={ data.Name } { checkboxInputAttrs(data)... }/>
+		{ data.Label }
+	</label>
+}
+
+// CheckboxSimple is a convenience wrapper (no value).
+templ CheckboxSimple(name, label string, checked bool) {
+	@Checkbox(CheckboxProps{
+		Name:    name,
+		Label:   label,
+		Checked: checked,
+	})
+}
+
+// CheckboxWithValue is a convenience wrapper with value.
+templ CheckboxWithValue(name, value, label string, checked bool) {
+	@Checkbox(CheckboxProps{
+		Name:    name,
+		Value:   value,
+		Label:   label,
+		Checked: checked,
+	})
+}
+
+// CheckboxIcon renders an icon-only checkbox (for tables/matrices).
+templ CheckboxIcon(name, value, label string, checked bool) {
+	@Checkbox(CheckboxProps{
+		Name:    name,
+		Value:   value,
+		Label:   label,
+		Checked: checked,
+		Variant: "icon",
+	})
+}
+
+// CheckboxSmall renders a compact checkbox.
+templ CheckboxSmall(name, value, label string, checked bool) {
+	@Checkbox(CheckboxProps{
+		Name:    name,
+		Value:   value,
+		Label:   label,
+		Checked: checked,
+		Variant: "small",
+	})
+}

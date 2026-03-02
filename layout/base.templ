@@ -1,0 +1,42 @@
+package layout
+
+// BaseProps holds configuration for the HTML base layout.
+type BaseProps struct {
+	Title        string          // Page title
+	Description  string          // Meta description
+	BodyClass    string          // CSS classes for the <body> element
+	CSSPath      string          // Path to the main CSS file
+	JSPath       string          // Path to the main JS file
+	DatastarPath string          // Path to the Datastar JS file
+	ExtraHead    templ.Component // Custom meta tags, links, or scripts for <head>
+}
+
+// Base renders a full HTML document skeleton.
+templ Base(props BaseProps) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>{ props.Title }</title>
+			if props.Description != "" {
+				<meta name="description" content={ props.Description }/>
+			}
+			if props.CSSPath != "" {
+				<link rel="stylesheet" href={ props.CSSPath }/>
+			}
+			if props.ExtraHead != nil {
+				@props.ExtraHead
+			}
+		</head>
+		<body class={ props.BodyClass }>
+			{ children... }
+			if props.DatastarPath != "" {
+				<script type="module" src={ props.DatastarPath }></script>
+			}
+			if props.JSPath != "" {
+				<script type="module" src={ props.JSPath }></script>
+			}
+		</body>
+	</html>
+}

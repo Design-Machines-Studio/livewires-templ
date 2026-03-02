@@ -1,0 +1,69 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// KanbanBoardProps holds configuration for a kanban board component.
+type KanbanBoardProps struct {
+	ID    string           // Element ID for targeting
+	Class string           // Additional CSS classes from consumer
+	Attrs templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// KanbanBoardComponent renders a kanban board with full Props control.
+templ KanbanBoardComponent(props KanbanBoardProps) {
+	<div class={ lw.ClassNames("reel reel-compact", props.Class) } id={ props.ID } { props.Attrs... }>
+		{ children... }
+	</div>
+}
+
+// KanbanBoard wraps columns in a horizontally scrolling reel (convenience wrapper).
+templ KanbanBoard(id string) {
+	@KanbanBoardComponent(KanbanBoardProps{ID: id}) {
+		{ children... }
+	}
+}
+
+// KanbanColumnProps holds configuration for a kanban column component.
+type KanbanColumnProps struct {
+	Title string           // Column title
+	Class string           // Additional CSS classes from consumer
+	Attrs templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// KanbanColumnComponent renders a titled column with full Props control.
+templ KanbanColumnComponent(props KanbanColumnProps) {
+	<div class={ lw.ClassNames("stack box box-tight scheme-subtle", props.Class) } { props.Attrs... }>
+		<h2 class="text-sm font-bold text-muted">{ props.Title }</h2>
+		<div class="stack stack-compact">
+			{ children... }
+		</div>
+	</div>
+}
+
+// KanbanColumn renders a titled column for grouping cards (convenience wrapper).
+templ KanbanColumn(title string) {
+	@KanbanColumnComponent(KanbanColumnProps{Title: title}) {
+		{ children... }
+	}
+}
+
+// KanbanCardProps holds configuration for a kanban card component.
+type KanbanCardProps struct {
+	Href  string           // Link URL for the detail page
+	Class string           // Additional CSS classes from consumer
+	Attrs templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// KanbanCardComponent renders a clickable card with full Props control.
+templ KanbanCardComponent(props KanbanCardProps) {
+	<a href={ templ.SafeURL(props.Href) } class={ lw.ClassNames("info-card stack stack-compact box box-tight scheme-default", props.Class) } { props.Attrs... }>
+		{ children... }
+	</a>
+}
+
+// KanbanCard renders a clickable card that links to a detail page (convenience wrapper).
+templ KanbanCard(href string) {
+	@KanbanCardComponent(KanbanCardProps{Href: href}) {
+		{ children... }
+	}
+}

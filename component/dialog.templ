@@ -1,0 +1,30 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// DialogProps holds configuration for a dialog component.
+type DialogProps struct {
+	Title string           // Dialog title
+	Class string           // Additional CSS classes from consumer
+	Attrs templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// DialogComponent renders a native dialog element with full Props control.
+templ DialogComponent(props DialogProps) {
+	<dialog class={ lw.ClassNames("dialog imposter-contain", props.Class) } { props.Attrs... }>
+		<div class="box stack">
+			<header class="cluster cluster-between cluster-nowrap">
+				<h2>{ props.Title }</h2>
+				<button class="dialog-close" type="button" aria-label="Close">&times;</button>
+			</header>
+			{ children... }
+		</div>
+	</dialog>
+}
+
+// Dialog renders a dialog (convenience wrapper).
+templ Dialog(title string) {
+	@DialogComponent(DialogProps{Title: title}) {
+		{ children... }
+	}
+}

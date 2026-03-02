@@ -1,0 +1,27 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// ToastProps holds configuration for a toast component.
+type ToastProps struct {
+	Message     string           // Toast message text
+	Variant     string           // CSS modifier: "success", "error", "warning", "info"
+	Dismissible bool             // Whether to show a close button
+	Class       string           // Additional CSS classes from consumer
+	Attrs       templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// ToastComponent renders a toast notification with full Props control.
+templ ToastComponent(props ToastProps) {
+	<div class={ lw.ClassNames("toast", lw.VariantClass("toast", props.Variant), props.Class) } { props.Attrs... }>
+		<p class="content">{ props.Message }</p>
+		if props.Dismissible {
+			<button class="close" aria-label="Dismiss">&times;</button>
+		}
+	</div>
+}
+
+// Toast renders a toast notification (convenience wrapper).
+templ Toast(message string, variant string) {
+	@ToastComponent(ToastProps{Message: message, Variant: variant, Dismissible: true})
+}

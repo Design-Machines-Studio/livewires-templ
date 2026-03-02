@@ -1,0 +1,30 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// BadgeProps holds configuration for a badge component.
+type BadgeProps struct {
+	Label   string           // Display text
+	Variant string           // CSS modifier (e.g., "blue", "green", "active", "success")
+	Size    string           // "small" or "large" for size variants, empty for default
+	Class   string           // Additional CSS classes from consumer
+	Attrs   templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// BadgeComponent renders a badge with full Props control.
+templ BadgeComponent(props BadgeProps) {
+	<span
+		class={ lw.ClassNames("badge", lw.VariantClass("badge", props.Variant), lw.VariantClass("badge", props.Size), props.Class) }
+		{ props.Attrs... }
+	>{ lw.Title(props.Label) }</span>
+}
+
+// Badge renders a badge with a label and variant (convenience wrapper).
+templ Badge(label string, variant string) {
+	@BadgeComponent(BadgeProps{Label: label, Variant: variant})
+}
+
+// BadgeSmall renders a compact badge for inline use in headings and tables.
+templ BadgeSmall(label string, variant string) {
+	@BadgeComponent(BadgeProps{Label: label, Variant: variant, Size: "small"})
+}

@@ -1,0 +1,24 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// LoaderProps holds configuration for a loader component.
+type LoaderProps struct {
+	Label   string           // What's being loaded (e.g., "members", "proposals")
+	Variant string           // CSS modifier for loading animation style
+	Class   string           // Additional CSS classes from consumer
+	Attrs   templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// LoaderComponent renders a loading indicator with full Props control.
+templ LoaderComponent(props LoaderProps) {
+	<div class={ lw.ClassNames("loading", lw.VariantClass("loading", props.Variant), props.Class) } { props.Attrs... }>
+		<div class="skeleton skeleton--text"></div>
+		<div class="skeleton skeleton--text"></div>
+	</div>
+}
+
+// Loader renders a loading indicator (convenience wrapper).
+templ Loader(label string, variant string) {
+	@LoaderComponent(LoaderProps{Label: label, Variant: variant})
+}

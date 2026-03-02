@@ -1,0 +1,26 @@
+# Live Wires Templ — Development Environment
+#
+# USAGE:
+#   docker compose run --rm dev templ generate
+#   docker compose run --rm dev go test ./...
+#   docker compose run --rm dev go vet ./...
+#
+# Or use Makefile targets:
+#   make generate
+#   make test
+#   make lint
+
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+      - go-mod-cache:/go/pkg/mod
+      - go-build-cache:/root/.cache/go-build
+    working_dir: /app
+
+volumes:
+  go-mod-cache:
+  go-build-cache:

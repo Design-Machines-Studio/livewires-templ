@@ -1,0 +1,56 @@
+package form
+
+import (
+	"strconv"
+	lw "github.com/Design-Machines-Studio/livewires-templ"
+)
+
+// TextareaProps holds configuration for a textarea component.
+type TextareaProps struct {
+	Label       string           // Field label
+	Name        string           // Field name (also used as ID)
+	Value       string           // Current value
+	Rows        int              // Number of rows (default: 4)
+	Placeholder string           // Placeholder text
+	Hint        string           // Helper text below the field
+	Required    bool             // Whether field is required
+	Class       string           // Additional CSS classes on the wrapper
+	Attrs       templ.Attributes // Catch-all for the textarea: data-*, aria-*, etc.
+}
+
+// getRows returns the number of rows, defaulting to 4.
+func getRows(r int) string {
+	if r <= 0 {
+		return "4"
+	}
+	return strconv.Itoa(r)
+}
+
+// Textarea renders a complete textarea field with label and optional hint.
+templ Textarea(data TextareaProps) {
+	<div class={ lw.ClassNames("stack stack-compact", data.Class) }>
+		<label for={ data.Name } class="font-semibold">{ data.Label }</label>
+		<textarea
+			id={ data.Name }
+			name={ data.Name }
+			rows={ getRows(data.Rows) }
+			placeholder={ data.Placeholder }
+			required?={ data.Required }
+			{ data.Attrs... }
+		>{ data.Value }</textarea>
+		if data.Hint != "" {
+			<p class="text-xs text-muted">{ data.Hint }</p>
+		}
+	</div>
+}
+
+// TextareaSimple is a convenience wrapper for basic textareas.
+templ TextareaSimple(label, name, value, placeholder, hint string) {
+	@Textarea(TextareaProps{
+		Label:       label,
+		Name:        name,
+		Value:       value,
+		Placeholder: placeholder,
+		Hint:        hint,
+	})
+}
