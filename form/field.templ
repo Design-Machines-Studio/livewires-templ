@@ -24,20 +24,20 @@ func fieldType(t string) string {
 }
 
 // Field renders a complete form field with label, input, and optional hint.
-templ Field(data FieldProps) {
-	<div class={ lw.ClassNames("stack stack-compact", data.Class) }>
-		<label for={ data.Name } class="font-semibold">{ data.Label }</label>
+templ Field(props FieldProps) {
+	<div class={ lw.ClassNames("stack stack-compact", props.Class) }>
+		<label for={ props.Name } class="font-semibold">{ props.Label }</label>
 		<input
-			type={ fieldType(data.Type) }
-			id={ data.Name }
-			name={ data.Name }
-			value={ data.Value }
-			placeholder={ data.Placeholder }
-			required?={ data.Required }
-			{ data.Attrs... }
+			type={ fieldType(props.Type) }
+			id={ props.Name }
+			name={ props.Name }
+			value={ props.Value }
+			placeholder={ props.Placeholder }
+			required?={ props.Required }
+			{ props.Attrs... }
 		/>
-		if data.Hint != "" {
-			<p class="text-xs text-muted">{ data.Hint }</p>
+		if props.Hint != "" {
+			<p class="text-xs text-muted">{ props.Hint }</p>
 		}
 	</div>
 }

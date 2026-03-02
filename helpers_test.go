@@ -12,6 +12,8 @@ func TestInitials(t *testing.T) {
 		{"single word", "Alice", "A"},
 		{"three words", "Mary Jane Watson", "MJW"},
 		{"empty", "", "?"},
+		{"unicode accented", "Étienne Dupont", "ÉD"},
+		{"cjk characters", "太郎 山田", "太山"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

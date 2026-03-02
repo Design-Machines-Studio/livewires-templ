@@ -1,7 +1,7 @@
 package component
 
 import (
-	"fmt"
+	"strconv"
 	lw "github.com/Design-Machines-Studio/livewires-templ"
 )
 
@@ -14,12 +14,17 @@ type ProgressBarProps struct {
 	Attrs    templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
 
+// progressStyle returns the inline style for the progress fill.
+func progressStyle(pct int) string {
+	return "width: " + strconv.Itoa(pct) + "%"
+}
+
 // ProgressBarComponent renders a progress bar with full Props control.
 templ ProgressBarComponent(props ProgressBarProps) {
 	<div
 		class={ lw.ClassNames("progress-bar", lw.VariantClass("progress-bar", props.Variant), props.Class) }
 		role="progressbar"
-		aria-valuenow={ fmt.Sprintf("%d", props.Progress) }
+		aria-valuenow={ strconv.Itoa(props.Progress) }
 		aria-valuemin="0"
 		aria-valuemax="100"
 		if props.Label != "" {
@@ -27,7 +32,7 @@ templ ProgressBarComponent(props ProgressBarProps) {
 		}
 		{ props.Attrs... }
 	>
-		<div class="fill" style={ fmt.Sprintf("width: %d%%", props.Progress) }></div>
+		<div class="fill" style={ progressStyle(props.Progress) }></div>
 	</div>
 }
 

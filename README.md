@@ -99,6 +99,10 @@ lw.DateShort("2024-03-15")                        // "Mar 15, 2024"
 | `layout` | HTML base skeleton, page section |
 | root | Class name utilities, text/date helpers |
 
+## Security
+
+The `Attrs templ.Attributes` field on every Props struct is spread directly into HTML output. templ escapes attribute values but does not restrict attribute names. **Never populate `Attrs` from untrusted user input** — it is designed for developer-controlled attributes like `data-*`, `aria-*`, and Datastar directives.
+
 ## Design Pattern
 
 Every component uses a Props struct with `Class` and `Attrs` fields for extensibility:

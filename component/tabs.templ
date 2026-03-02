@@ -23,9 +23,9 @@ templ Tabs(props TabsProps) {
 		<nav class="list">
 			for _, tab := range props.Items {
 				if tab.Active {
-					<a class="tab" href={ templ.SafeURL(tab.Href) } aria-current="page">{ tab.Label }</a>
+					<a class="tab" href={ tab.Href } aria-current="page">{ tab.Label }</a>
 				} else {
-					<a class="tab" href={ templ.SafeURL(tab.Href) }>{ tab.Label }</a>
+					<a class="tab" href={ tab.Href }>{ tab.Label }</a>
 				}
 			}
 		</nav>

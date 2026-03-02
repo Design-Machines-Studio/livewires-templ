@@ -27,10 +27,10 @@ func checkboxInputAttrs(props CheckboxProps) templ.Attributes {
 }
 
 // Checkbox renders a styled checkbox with label.
-templ Checkbox(data CheckboxProps) {
-	<label class={ lw.ClassNames("checkbox", lw.VariantClass("checkbox", data.Variant), data.Class) } { data.Attrs... }>
-		<input type="checkbox" name={ data.Name } { checkboxInputAttrs(data)... }/>
-		{ data.Label }
+templ Checkbox(props CheckboxProps) {
+	<label class={ lw.ClassNames("checkbox", lw.VariantClass("checkbox", props.Variant), props.Class) } { props.Attrs... }>
+		<input type="checkbox" name={ props.Name } { checkboxInputAttrs(props)... }/>
+		{ props.Label }
 	</label>
 }
 

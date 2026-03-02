@@ -19,12 +19,12 @@ type FilterProps struct {
 }
 
 // Filter renders a filter dropdown for list filtering.
-templ Filter(data FilterProps) {
-	<div class={ lw.ClassNames("stack stack-compact", data.Class) } { data.Attrs... }>
-		<label for={ data.Name } class="font-semibold text-sm">{ data.Title }</label>
-		<select id={ data.Name } name={ data.Name }>
+templ Filter(props FilterProps) {
+	<div class={ lw.ClassNames("stack stack-compact", props.Class) } { props.Attrs... }>
+		<label for={ props.Name } class="font-semibold text-sm">{ props.Title }</label>
+		<select id={ props.Name } name={ props.Name }>
 			<option value="">All</option>
-			for _, opt := range data.Options {
+			for _, opt := range props.Options {
 				<option value={ opt.Value } selected?={ opt.Selected }>{ opt.Label }</option>
 			}
 		</select>

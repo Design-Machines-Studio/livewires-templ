@@ -14,19 +14,19 @@ type ActivityCardProps struct {
 }
 
 // ActivityCard renders a card for proposals, resolutions, or action items.
-templ ActivityCard(data ActivityCardProps) {
-	<div class={ lw.ClassNames("activity-card", data.Class) } { data.Attrs... }>
+templ ActivityCard(props ActivityCardProps) {
+	<div class={ lw.ClassNames("activity-card", props.Class) } { props.Attrs... }>
 		<p class="meta text-sm text-muted">
-			@Badge(data.BadgeLabel, data.BadgeVariant)
-			if data.Timestamp != "" {
-				<time>{ data.Timestamp }</time>
+			@Badge(props.BadgeLabel, props.BadgeVariant)
+			if props.Timestamp != "" {
+				<time>{ props.Timestamp }</time>
 			}
 		</p>
 		<p class="title font-bold">
-			if data.Href != "" {
-				<a href={ templ.SafeURL(data.Href) }>{ data.Title }</a>
+			if props.Href != "" {
+				<a href={ props.Href }>{ props.Title }</a>
 			} else {
-				{ data.Title }
+				{ props.Title }
 			}
 		</p>
 	</div>

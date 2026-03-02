@@ -56,7 +56,7 @@ type KanbanCardProps struct {
 
 // KanbanCardComponent renders a clickable card with full Props control.
 templ KanbanCardComponent(props KanbanCardProps) {
-	<a href={ templ.SafeURL(props.Href) } class={ lw.ClassNames("info-card stack stack-compact box box-tight scheme-default", props.Class) } { props.Attrs... }>
+	<a href={ props.Href } class={ lw.ClassNames("info-card stack stack-compact box box-tight scheme-default", props.Class) } { props.Attrs... }>
 		{ children... }
 	</a>
 }

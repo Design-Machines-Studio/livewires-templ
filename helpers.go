@@ -5,21 +5,27 @@ import (
 	"strings"
 	"time"
 	"unicode"
+	"unicode/utf8"
 )
 
 // Initials extracts initials from a name (e.g., "John Doe" → "JD").
 func Initials(name string) string {
 	parts := strings.Fields(name)
-	initials := ""
-	for _, part := range parts {
-		if len(part) > 0 {
-			initials += strings.ToUpper(string(part[0]))
-		}
-	}
-	if initials == "" {
+	if len(parts) == 0 {
 		return "?"
 	}
-	return initials
+	var b strings.Builder
+	b.Grow(len(parts) * 4)
+	for _, part := range parts {
+		r, _ := utf8.DecodeRuneInString(part)
+		if r != utf8.RuneError {
+			b.WriteRune(unicode.ToUpper(r))
+		}
+	}
+	if b.Len() == 0 {
+		return "?"
+	}
+	return b.String()
 }
 
 // Title converts a string to title case.
@@ -41,20 +47,22 @@ func Title(s string) string {
 	return result.String()
 }
 
+// dateShortFormats lists formats tried by DateShort.
+var dateShortFormats = []string{
+	"2006-01-02",
+	"2006-01-02T15:04",
+	"2006-01-02T15:04:05",
+	time.RFC3339,
+}
+
 // DateShort formats a date string as "Jan 2, 2006".
 func DateShort(dateStr string) string {
 	if dateStr == "" {
 		return ""
 	}
-	formats := []string{
-		"2006-01-02",
-		"2006-01-02T15:04",
-		"2006-01-02T15:04:05",
-		time.RFC3339,
-	}
 	var t time.Time
 	var err error
-	for _, fmt := range formats {
+	for _, fmt := range dateShortFormats {
 		t, err = time.Parse(fmt, dateStr)
 		if err == nil {
 			break
@@ -81,21 +89,23 @@ func Year(dateStr string) string {
 	return t.Format("2006")
 }
 
+// dateTimeFriendlyFormats lists formats tried by DateTimeFriendly.
+var dateTimeFriendlyFormats = []string{
+	"2006-01-02T15:04:05Z07:00",
+	"2006-01-02T15:04:05",
+	"2006-01-02T15:04",
+	"2006-01-02 15:04:05",
+	time.RFC3339,
+}
+
 // DateTimeFriendly formats a datetime as "January 2, 2006 at 3:04 PM".
 func DateTimeFriendly(dateStr string) string {
 	if dateStr == "" {
 		return ""
 	}
-	formats := []string{
-		"2006-01-02T15:04:05Z07:00",
-		"2006-01-02T15:04:05",
-		"2006-01-02T15:04",
-		"2006-01-02 15:04:05",
-		time.RFC3339,
-	}
 	var t time.Time
 	var err error
-	for _, fmt := range formats {
+	for _, fmt := range dateTimeFriendlyFormats {
 		t, err = time.Parse(fmt, dateStr)
 		if err == nil {
 			break

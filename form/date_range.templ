@@ -14,19 +14,19 @@ type DateRangeProps struct {
 }
 
 // DateRange renders a pair of date inputs for range selection.
-templ DateRange(data DateRangeProps) {
-	<fieldset class={ lw.ClassNames("stack stack-compact", data.Class) } { data.Attrs... }>
-		if data.Label != "" {
-			<legend class="font-semibold">{ data.Label }</legend>
+templ DateRange(props DateRangeProps) {
+	<fieldset class={ lw.ClassNames("stack stack-compact", props.Class) } { props.Attrs... }>
+		if props.Label != "" {
+			<legend class="font-semibold">{ props.Label }</legend>
 		}
 		<div class="cluster">
 			<div class="stack stack-compact">
-				<label for={ data.StartName } class="text-sm">From</label>
-				<input type="date" id={ data.StartName } name={ data.StartName } value={ data.StartValue }/>
+				<label for={ props.StartName } class="text-sm">From</label>
+				<input type="date" id={ props.StartName } name={ props.StartName } value={ props.StartValue }/>
 			</div>
 			<div class="stack stack-compact">
-				<label for={ data.EndName } class="text-sm">To</label>
-				<input type="date" id={ data.EndName } name={ data.EndName } value={ data.EndValue }/>
+				<label for={ props.EndName } class="text-sm">To</label>
+				<input type="date" id={ props.EndName } name={ props.EndName } value={ props.EndValue }/>
 			</div>
 		</div>
 	</fieldset>

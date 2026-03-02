@@ -19,17 +19,17 @@ templ Checklist(items []ChecklistItemProps) {
 }
 
 // ChecklistItem renders an individual checklist item.
-templ ChecklistItem(data ChecklistItemProps) {
+templ ChecklistItem(props ChecklistItemProps) {
 	<li class="cluster cluster-compact">
-		if data.Completed {
+		if props.Completed {
 			<span class="text-positive">&#10003;</span>
-			<span class="text-muted"><s>{ data.Label }</s></span>
+			<span class="text-muted"><s>{ props.Label }</s></span>
 		} else {
 			<span>&#9675;</span>
-			if data.Href != "" {
-				<a href={ templ.SafeURL(data.Href) }>{ data.Label }</a>
+			if props.Href != "" {
+				<a href={ props.Href }>{ props.Label }</a>
 			} else {
-				<span>{ data.Label }</span>
+				<span>{ props.Label }</span>
 			}
 		}
 	</li>
@@ -53,7 +53,11 @@ templ ProgressChecklistComponent(props ProgressChecklistProps) {
 			<h2 class="text-base">{ props.Title }</h2>
 			<span class="text-sm text-muted">{ lw.Itoa(props.Completed) } of { lw.Itoa(props.Total) } done</span>
 		</div>
-		@ProgressBarThick(props.Completed * 100 / props.Total, props.Title + " progress")
+		if props.Total > 0 {
+			@ProgressBarThick(props.Completed * 100 / props.Total, props.Title + " progress")
+		} else {
+			@ProgressBarThick(0, props.Title + " progress")
+		}
 		<div class="mt-1">
 			@Checklist(props.Items)
 		</div>

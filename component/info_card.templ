@@ -16,28 +16,28 @@ type InfoCardProps struct {
 }
 
 // InfoCard renders an info card for upcoming events or announcements.
-templ InfoCard(data InfoCardProps) {
+templ InfoCard(props InfoCardProps) {
 	<div
-		class={ lw.ClassNames("info-card box box-tight stack-compact text-sm", lw.SchemeClass(data.Scheme), data.Class) }
-		{ data.Attrs... }
+		class={ lw.ClassNames("info-card box box-tight stack-compact text-sm", lw.SchemeClass(props.Scheme), props.Class) }
+		{ props.Attrs... }
 	>
-		if data.Header != "" {
-			<p class="header">{ data.Header }</p>
+		if props.Header != "" {
+			<p class="header">{ props.Header }</p>
 		}
 		<p class="text-lg font-bold">
-			if data.Href != "" {
-				<a href={ templ.SafeURL(data.Href) }>{ data.Title }</a>
+			if props.Href != "" {
+				<a href={ props.Href }>{ props.Title }</a>
 			} else {
-				{ data.Title }
+				{ props.Title }
 			}
 		</p>
-		if data.Subtitle != "" {
-			<p class="text-sm text-muted">{ data.Subtitle }</p>
+		if props.Subtitle != "" {
+			<p class="text-sm text-muted">{ props.Subtitle }</p>
 		}
-		if data.AvatarName != "" {
+		if props.AvatarName != "" {
 			<div class="cluster cluster-compact mt-05">
-				@AvatarOnly(data.AvatarName, "small")
-				<span class="text-sm text-muted">{ data.AvatarText }</span>
+				@AvatarOnly(props.AvatarName, "small")
+				<span class="text-sm text-muted">{ props.AvatarText }</span>
 			</div>
 		}
 	</div>

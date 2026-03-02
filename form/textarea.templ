@@ -27,19 +27,19 @@ func getRows(r int) string {
 }
 
 // Textarea renders a complete textarea field with label and optional hint.
-templ Textarea(data TextareaProps) {
-	<div class={ lw.ClassNames("stack stack-compact", data.Class) }>
-		<label for={ data.Name } class="font-semibold">{ data.Label }</label>
+templ Textarea(props TextareaProps) {
+	<div class={ lw.ClassNames("stack stack-compact", props.Class) }>
+		<label for={ props.Name } class="font-semibold">{ props.Label }</label>
 		<textarea
-			id={ data.Name }
-			name={ data.Name }
-			rows={ getRows(data.Rows) }
-			placeholder={ data.Placeholder }
-			required?={ data.Required }
-			{ data.Attrs... }
-		>{ data.Value }</textarea>
-		if data.Hint != "" {
-			<p class="text-xs text-muted">{ data.Hint }</p>
+			id={ props.Name }
+			name={ props.Name }
+			rows={ getRows(props.Rows) }
+			placeholder={ props.Placeholder }
+			required?={ props.Required }
+			{ props.Attrs... }
+		>{ props.Value }</textarea>
+		if props.Hint != "" {
+			<p class="text-xs text-muted">{ props.Hint }</p>
 		}
 	</div>
 }

@@ -20,16 +20,16 @@ func searchPlaceholder(p string) string {
 }
 
 // Search renders a search input field.
-templ Search(data SearchProps) {
-	<div class={ lw.ClassNames("stack stack-compact", data.Class) }>
-		<label for={ data.Name }>Search</label>
+templ Search(props SearchProps) {
+	<div class={ lw.ClassNames("stack stack-compact", props.Class) }>
+		<label for={ props.Name }>Search</label>
 		<input
 			type="search"
-			id={ data.Name }
-			name={ data.Name }
-			value={ data.Value }
-			placeholder={ searchPlaceholder(data.Placeholder) }
-			{ data.Attrs... }
+			id={ props.Name }
+			name={ props.Name }
+			value={ props.Value }
+			placeholder={ searchPlaceholder(props.Placeholder) }
+			{ props.Attrs... }
 		/>
 	</div>
 }

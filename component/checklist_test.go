@@ -16,3 +16,14 @@ func TestChecklistRenders(t *testing.T) {
 		t.Fatal("expected non-empty output")
 	}
 }
+
+func TestProgressChecklistZeroTotal(t *testing.T) {
+	html := testutil.RenderToString(t, ProgressChecklistComponent(ProgressChecklistProps{
+		Title:     "Empty checklist",
+		Completed: 0,
+		Total:     0,
+	}))
+	if html == "" {
+		t.Fatal("expected non-empty output")
+	}
+}

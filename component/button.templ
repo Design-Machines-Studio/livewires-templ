@@ -41,7 +41,7 @@ templ Button(label string, variant string) {
 // ButtonLink renders an anchor styled as a button.
 templ ButtonLink(href string, label string, variant string) {
 	<a
-		href={ templ.SafeURL(href) }
+		href={ href }
 		class={ lw.ClassNames("button", lw.VariantClass("button", variant)) }
 	>
 		{ label }

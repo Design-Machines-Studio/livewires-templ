@@ -23,10 +23,10 @@ func radioInputAttrs(props RadioProps) templ.Attributes {
 }
 
 // Radio renders a styled radio button with label.
-templ Radio(data RadioProps) {
-	<label class={ lw.ClassNames("radio", lw.VariantClass("radio", data.Variant), data.Class) } { data.Attrs... }>
-		<input type="radio" name={ data.Name } value={ data.Value } { radioInputAttrs(data)... }/>
-		{ data.Label }
+templ Radio(props RadioProps) {
+	<label class={ lw.ClassNames("radio", lw.VariantClass("radio", props.Variant), props.Class) } { props.Attrs... }>
+		<input type="radio" name={ props.Name } value={ props.Value } { radioInputAttrs(props)... }/>
+		{ props.Label }
 	</label>
 }
 
@@ -67,17 +67,17 @@ func radioGroupClass(inline bool) string {
 }
 
 // RadioGroup renders a group of radio buttons.
-templ RadioGroup(data RadioGroupProps) {
-	<ul class={ lw.ClassNames(radioGroupClass(data.Inline), data.Class) } { data.Attrs... }>
-		for _, opt := range data.Options {
+templ RadioGroup(props RadioGroupProps) {
+	<ul class={ lw.ClassNames(radioGroupClass(props.Inline), props.Class) } { props.Attrs... }>
+		for _, opt := range props.Options {
 			<li>
 				@Radio(RadioProps{
-					Name:     data.Name,
+					Name:     props.Name,
 					Value:    opt.Value,
 					Label:    opt.Label,
-					Checked:  opt.Value == data.Selected,
+					Checked:  opt.Value == props.Selected,
 					Disabled: opt.Disabled,
-					Variant:  data.Variant,
+					Variant:  props.Variant,
 				})
 			</li>
 		}

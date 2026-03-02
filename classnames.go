@@ -4,10 +4,11 @@ import "strings"
 
 // ClassNames joins non-empty class strings with spaces.
 func ClassNames(classes ...string) string {
-	var result []string
+	result := make([]string, 0, len(classes))
 	for _, c := range classes {
-		if strings.TrimSpace(c) != "" {
-			result = append(result, strings.TrimSpace(c))
+		trimmed := strings.TrimSpace(c)
+		if trimmed != "" {
+			result = append(result, trimmed)
 		}
 	}
 	return strings.Join(result, " ")
