@@ -12,8 +12,13 @@ type ToastProps struct {
 }
 
 // ToastComponent renders a toast notification with full Props control.
+// Error toasts use role="alert" (assertive); others use role="status" (polite).
 templ ToastComponent(props ToastProps) {
-	<div class={ lw.ClassNames("toast", lw.VariantClass("toast", props.Variant), props.Class) } { props.Attrs... }>
+	<div
+		class={ lw.ClassNames("toast", lw.VariantClass("toast", props.Variant), props.Class) }
+		role={ toastRole(props.Variant) }
+		{ props.Attrs... }
+	>
 		<p class="content">{ props.Message }</p>
 		if props.Dismissible {
 			<button class="close" aria-label="Dismiss">&times;</button>

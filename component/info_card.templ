@@ -18,7 +18,7 @@ type InfoCardProps struct {
 // InfoCard renders an info card for upcoming events or announcements.
 templ InfoCard(props InfoCardProps) {
 	<div
-		class={ lw.ClassNames("info-card box box-tight stack-compact text-sm", lw.SchemeClass(props.Scheme), props.Class) }
+		class={ lw.ClassNames("card box box-tight stack-compact text-sm", lw.SchemeClass(props.Scheme), props.Class) }
 		{ props.Attrs... }
 	>
 		if props.Header != "" {
@@ -36,7 +36,7 @@ templ InfoCard(props InfoCardProps) {
 		}
 		if props.AvatarName != "" {
 			<div class="cluster cluster-compact mt-05">
-				@AvatarOnly(props.AvatarName, "small")
+				@Avatar(props.AvatarName, "small")
 				<span class="text-sm text-muted">{ props.AvatarText }</span>
 			</div>
 		}

@@ -45,7 +45,7 @@ func InfoCard(props InfoCardProps) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var2 = []any{lw.ClassNames("info-card box box-tight stack-compact text-sm", lw.SchemeClass(props.Scheme), props.Class)}
+		var templ_7745c5c3_Var2 = []any{lw.ClassNames("card box box-tight stack-compact text-sm", lw.SchemeClass(props.Scheme), props.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -168,7 +168,7 @@ func InfoCard(props InfoCardProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = AvatarOnly(props.AvatarName, "small").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = Avatar(props.AvatarName, "small").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

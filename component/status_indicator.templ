@@ -1,0 +1,33 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// StatusIndicatorProps holds configuration for a status indicator component.
+type StatusIndicatorProps struct {
+	Label   string           // Text label; if empty, renders as dot-only (use Attrs for aria-label)
+	Variant string           // Semantic: "success", "warning", "error"; Color: "green", "yellow", "orange", "red", "blue"
+	Size    string           // "small", "large"
+	Class   string           // Additional CSS classes from consumer
+	Attrs   templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// StatusIndicatorComponent renders a status indicator with full Props control.
+// When Label is empty, the dot is decorative and gets aria-hidden="true".
+templ StatusIndicatorComponent(props StatusIndicatorProps) {
+	<span
+		class={ lw.ClassNames("status-indicator", lw.VariantClass("status-indicator", props.Variant), lw.VariantClass("status-indicator", props.Size), props.Class) }
+		if props.Label == "" {
+			aria-hidden="true"
+		}
+		{ props.Attrs... }
+	>
+		if props.Label != "" {
+			{ props.Label }
+		}
+	</span>
+}
+
+// StatusIndicator renders a status indicator (convenience wrapper).
+templ StatusIndicator(label string, variant string) {
+	@StatusIndicatorComponent(StatusIndicatorProps{Label: label, Variant: variant})
+}

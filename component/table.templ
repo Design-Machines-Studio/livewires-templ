@@ -1,0 +1,21 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// TableProps holds configuration for a table component.
+type TableProps struct {
+	Variant string           // "bordered", "striped", "lined"
+	Class   string           // Additional CSS classes from consumer
+	Attrs   templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// Table renders a table element with optional variant styling.
+// Content (thead, tbody, tr, th, td) is passed as children.
+templ Table(props TableProps) {
+	<table
+		class={ lw.ClassNames("table", lw.VariantClass("table", props.Variant), props.Class) }
+		{ props.Attrs... }
+	>
+		{ children... }
+	</table>
+}

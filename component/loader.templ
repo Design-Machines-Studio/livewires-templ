@@ -14,6 +14,7 @@ type LoaderProps struct {
 templ LoaderComponent(props LoaderProps) {
 	<div
 		class={ lw.ClassNames("loading", lw.VariantClass("loading", props.Variant), props.Class) }
+		role="status"
 		if props.Label != "" {
 			aria-label={ props.Label }
 		}

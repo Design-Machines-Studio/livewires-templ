@@ -15,12 +15,25 @@ type StatCardProps struct {
 	Attrs     templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
 
-// StatCardGroup renders a semantically correct group of stat cards.
+// StatCardGroupProps holds configuration for a stat card group.
+type StatCardGroupProps struct {
+	Class string           // Additional CSS classes from consumer
+	Attrs templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// StatCardGroupComponent renders a group of stat cards with full Props control.
 // Uses a single <dl> wrapper for proper definition list semantics.
-templ StatCardGroup(class string) {
-	<dl class={ class }>
+templ StatCardGroupComponent(props StatCardGroupProps) {
+	<dl class={ props.Class } { props.Attrs... }>
 		{ children... }
 	</dl>
+}
+
+// StatCardGroup renders a semantically correct group of stat cards (convenience wrapper).
+templ StatCardGroup(class string) {
+	@StatCardGroupComponent(StatCardGroupProps{Class: class}) {
+		{ children... }
+	}
 }
 
 // StatCard renders an individual stat card.
@@ -28,31 +41,35 @@ templ StatCardGroup(class string) {
 // When Status is provided, a status indicator is shown.
 templ StatCard(props StatCardProps) {
 	<div
-		class={ lw.ClassNames("stat-card box box-tight rounded text-sm", lw.SchemeClass(props.Scheme), props.Class) }
+		class={ lw.ClassNames("card box box-tight rounded text-sm", lw.SchemeClass(props.Scheme), props.Class) }
 		{ props.Attrs... }
 	>
-		if props.Href != "" {
-			<a href={ props.Href }>
-				@statCardInner(props)
-			</a>
-		} else {
-			@statCardInner(props)
-		}
+		@statCardInner(props)
 	</div>
 }
 
 // statCardInner renders the shared inner content of a stat card.
 templ statCardInner(props StatCardProps) {
-	<dt class="label">
-		if props.Status != "" {
-			<span class={ lw.ClassNames("status-indicator", lw.VariantClass("status-indicator", props.Status)) }>{ props.Label }</span>
+	<dt class="title">
+		if props.Href != "" {
+			<a href={ props.Href }>
+				if props.Status != "" {
+					@StatusIndicatorComponent(StatusIndicatorProps{Label: props.Label, Variant: props.Status})
+				} else {
+					{ props.Label }
+				}
+			</a>
 		} else {
-			{ props.Label }
+			if props.Status != "" {
+				@StatusIndicatorComponent(StatusIndicatorProps{Label: props.Label, Variant: props.Status})
+			} else {
+				{ props.Label }
+			}
 		}
 	</dt>
 	<dd class="value text-6xl font-black">{ props.Value }</dd>
 	if props.Detail != "" {
-		<dd class="detail">{ props.Detail }</dd>
+		<dd class="description">{ props.Detail }</dd>
 	}
 	if props.SubDetail != "" {
 		<dd class="sub-detail">{ props.SubDetail }</dd>

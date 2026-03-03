@@ -1,0 +1,23 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// AvatarGroupProps holds configuration for an avatar group component.
+type AvatarGroupProps struct {
+	Class string           // Additional CSS classes from consumer
+	Attrs templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// AvatarGroupComponent renders an overlapping avatar group with full Props control.
+templ AvatarGroupComponent(props AvatarGroupProps) {
+	<div class={ lw.ClassNames("avatar-group", props.Class) } { props.Attrs... }>
+		{ children... }
+	</div>
+}
+
+// AvatarGroup renders an overlapping avatar group container.
+templ AvatarGroup() {
+	@AvatarGroupComponent(AvatarGroupProps{}) {
+		{ children... }
+	}
+}

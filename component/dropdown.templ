@@ -1,0 +1,109 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// DropdownProps holds configuration for a dropdown component.
+type DropdownProps struct {
+	Variant string           // "end", "up"
+	Class   string           // Additional CSS classes from consumer
+	Attrs   templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// DropdownComponent renders a dropdown container with full Props control.
+templ DropdownComponent(props DropdownProps) {
+	<div
+		class={ lw.ClassNames("dropdown", lw.VariantClass("dropdown", props.Variant), props.Class) }
+		{ props.Attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+// Dropdown renders a dropdown container (convenience wrapper).
+templ Dropdown(variant string) {
+	@DropdownComponent(DropdownProps{Variant: variant}) {
+		{ children... }
+	}
+}
+
+// DropdownTriggerProps holds configuration for a dropdown trigger button.
+type DropdownTriggerProps struct {
+	Label         string           // Button text
+	ButtonVariant string           // CSS modifier for button styling
+	MenuID        string           // ID of the controlled menu (for aria-controls)
+	Expanded      bool             // Whether the menu is currently open
+	Class         string           // Additional CSS classes from consumer
+	Attrs         templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// DropdownTriggerComponent renders a trigger button with full Props control.
+templ DropdownTriggerComponent(props DropdownTriggerProps) {
+	<button
+		class={ lw.ClassNames("button trigger", lw.VariantClass("button", props.ButtonVariant), props.Class) }
+		aria-haspopup="menu"
+		aria-expanded={ boolStr(props.Expanded) }
+		if props.MenuID != "" {
+			aria-controls={ props.MenuID }
+		}
+		{ props.Attrs... }
+	>
+		{ props.Label }
+	</button>
+}
+
+// DropdownTrigger renders a button that opens the dropdown (convenience wrapper).
+templ DropdownTrigger(label string, buttonVariant string) {
+	@DropdownTriggerComponent(DropdownTriggerProps{Label: label, ButtonVariant: buttonVariant})
+}
+
+// DropdownMenuProps holds configuration for a dropdown menu list.
+type DropdownMenuProps struct {
+	ID    string           // Element ID (referenced by trigger's aria-controls)
+	Class string           // Additional CSS classes from consumer
+	Attrs templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// DropdownMenuComponent renders the dropdown menu with full Props control.
+templ DropdownMenuComponent(props DropdownMenuProps) {
+	<ul
+		class={ lw.ClassNames("menu", props.Class) }
+		role="menu"
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		{ props.Attrs... }
+	>
+		{ children... }
+	</ul>
+}
+
+// DropdownMenu renders the dropdown menu list (convenience wrapper).
+templ DropdownMenu() {
+	@DropdownMenuComponent(DropdownMenuProps{}) {
+		{ children... }
+	}
+}
+
+// DropdownItemProps holds configuration for a dropdown menu item.
+type DropdownItemProps struct {
+	Label    string           // Display text
+	Href     string           // Link URL; if empty, renders as button
+	Disabled bool             // Whether the item is disabled
+	Attrs    templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// DropdownItem renders a menu item as a link or button.
+templ DropdownItem(props DropdownItemProps) {
+	<li role="none">
+		if props.Href != "" && !props.Disabled {
+			<a href={ props.Href } role="menuitem" { props.Attrs... }>{ props.Label }</a>
+		} else {
+			<button role="menuitem" disabled?={ props.Disabled } { props.Attrs... }>{ props.Label }</button>
+		}
+	</li>
+}
+
+// DropdownDivider renders a separator between menu items.
+templ DropdownDivider() {
+	<li role="separator"><hr></li>
+}

@@ -1,0 +1,31 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// ButtonGroupProps holds configuration for a button group component.
+type ButtonGroupProps struct {
+	Label string           // Accessible label for the group (used as aria-label)
+	Class string           // Additional CSS classes from consumer
+	Attrs templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// ButtonGroupComponent renders a button group with full Props control.
+templ ButtonGroupComponent(props ButtonGroupProps) {
+	<div
+		class={ lw.ClassNames("button-group", props.Class) }
+		role="group"
+		if props.Label != "" {
+			aria-label={ props.Label }
+		}
+		{ props.Attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+// ButtonGroup renders a button group container.
+templ ButtonGroup() {
+	@ButtonGroupComponent(ButtonGroupProps{}) {
+		{ children... }
+	}
+}

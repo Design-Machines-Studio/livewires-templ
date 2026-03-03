@@ -1,0 +1,42 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// BreadcrumbItem represents a single breadcrumb link.
+type BreadcrumbItem struct {
+	Label string // Display text
+	Href  string // Link URL; empty for current page
+}
+
+// BreadcrumbsProps holds configuration for a breadcrumbs navigation.
+type BreadcrumbsProps struct {
+	Items []BreadcrumbItem   // Breadcrumb items (last item with empty Href is current page)
+	Class string             // Additional CSS classes from consumer
+	Attrs templ.Attributes   // Catch-all: data-*, aria-*, etc.
+}
+
+// BreadcrumbsComponent renders a breadcrumb navigation with full Props control.
+templ BreadcrumbsComponent(props BreadcrumbsProps) {
+	<nav
+		class={ lw.ClassNames("breadcrumbs", props.Class) }
+		aria-label="Breadcrumb"
+		{ props.Attrs... }
+	>
+		<ol>
+			for _, item := range props.Items {
+				<li>
+					if item.Href != "" {
+						<a href={ item.Href }>{ item.Label }</a>
+					} else {
+						<span aria-current="page">{ item.Label }</span>
+					}
+				</li>
+			}
+		</ol>
+	</nav>
+}
+
+// Breadcrumbs renders a breadcrumb navigation (convenience wrapper).
+templ Breadcrumbs(items []BreadcrumbItem) {
+	@BreadcrumbsComponent(BreadcrumbsProps{Items: items})
+}

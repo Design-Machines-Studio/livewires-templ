@@ -1,0 +1,23 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// DividerProps holds configuration for a divider component.
+type DividerProps struct {
+	Variant string           // "hairline", "semibold", "bold", "extrabold", "heavy", "accent", "dotted", "dashed"
+	Class   string           // Additional CSS classes from consumer
+	Attrs   templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// DividerComponent renders a horizontal rule with full Props control.
+templ DividerComponent(props DividerProps) {
+	<hr
+		class={ lw.ClassNames("divider", lw.VariantClass("divider", props.Variant), props.Class) }
+		{ props.Attrs... }
+	>
+}
+
+// Divider renders a horizontal rule (convenience wrapper).
+templ Divider(variant string) {
+	@DividerComponent(DividerProps{Variant: variant})
+}

@@ -1,0 +1,76 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// CardProps holds configuration for a generic card component.
+type CardProps struct {
+	Title        string           // Header title (used by CardWithHeader)
+	HeadingLevel int              // Heading level 1-6 for CardWithHeader (default: 3)
+	Variant      string           // "subtle", "borderless"
+	Scheme       string           // Color scheme: "subtle", "accent", etc.
+	Href         string           // If set, renders as clickable <a> tag
+	Class        string           // Additional CSS classes from consumer
+	Attrs        templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// CardComponent renders a card with full Props control and children slot.
+templ CardComponent(props CardProps) {
+	if props.Href != "" {
+		<a
+			href={ props.Href }
+			class={ lw.ClassNames("card box stack", lw.VariantClass("card", props.Variant), lw.SchemeClass(props.Scheme), props.Class) }
+			{ props.Attrs... }
+		>
+			{ children... }
+		</a>
+	} else {
+		<div
+			class={ lw.ClassNames("card box stack", lw.VariantClass("card", props.Variant), lw.SchemeClass(props.Scheme), props.Class) }
+			{ props.Attrs... }
+		>
+			{ children... }
+		</div>
+	}
+}
+
+// Card renders a basic card with children.
+templ Card(variant string) {
+	@CardComponent(CardProps{Variant: variant}) {
+		{ children... }
+	}
+}
+
+// CardLink renders a clickable card as an anchor tag.
+templ CardLink(href string, variant string) {
+	@CardComponent(CardProps{Href: href, Variant: variant}) {
+		{ children... }
+	}
+}
+
+// CardWithHeader renders a card with a distinct header section.
+// HeadingLevel controls the heading tag (1-6, default 3).
+templ CardWithHeader(props CardProps) {
+	<div
+		class={ lw.ClassNames("card", lw.VariantClass("card", props.Variant), lw.SchemeClass(props.Scheme), props.Class) }
+		{ props.Attrs... }
+	>
+		<div class="header box">
+			if props.HeadingLevel == 1 {
+				<h1>{ props.Title }</h1>
+			} else if props.HeadingLevel == 2 {
+				<h2>{ props.Title }</h2>
+			} else if props.HeadingLevel == 4 {
+				<h4>{ props.Title }</h4>
+			} else if props.HeadingLevel == 5 {
+				<h5>{ props.Title }</h5>
+			} else if props.HeadingLevel == 6 {
+				<h6>{ props.Title }</h6>
+			} else {
+				<h3>{ props.Title }</h3>
+			}
+		</div>
+		<div class="box stack">
+			{ children... }
+		</div>
+	</div>
+}

@@ -1,0 +1,50 @@
+package component
+
+import (
+	"strconv"
+	lw "github.com/Design-Machines-Studio/livewires-templ"
+)
+
+// StackedBarSegment represents a single segment in a stacked bar.
+type StackedBarSegment struct {
+	Percent int    // Width percentage (0-100)
+	Variant string // "primary", "secondary", "muted"
+	Label   string // Accessible label for the segment
+}
+
+// StackedBarProps holds configuration for a stacked bar component.
+type StackedBarProps struct {
+	Segments []StackedBarSegment // Bar segments
+	Label    string              // Accessible label for the whole bar
+	Class    string              // Additional CSS classes from consumer
+	Attrs    templ.Attributes    // Catch-all: data-*, aria-*, etc.
+}
+
+// segmentStyle returns the inline style for a stacked bar segment.
+func segmentStyle(pct int) string {
+	return "width: " + strconv.Itoa(pct) + "%"
+}
+
+// StackedBar renders a stacked bar chart showing distribution breakdown.
+templ StackedBar(props StackedBarProps) {
+	<div
+		class={ lw.ClassNames("stacked-bar", props.Class) }
+		role="img"
+		if props.Label != "" {
+			aria-label={ props.Label }
+		}
+		{ props.Attrs... }
+	>
+		for _, seg := range props.Segments {
+			<div
+				class={ lw.ClassNames("segment", lw.VariantClass("segment", seg.Variant)) }
+				style={ segmentStyle(seg.Percent) }
+				if seg.Label != "" {
+					aria-label={ seg.Label }
+				} else {
+					aria-hidden="true"
+				}
+			></div>
+		}
+	</div>
+}
