@@ -40,6 +40,11 @@ templ TimelineItem(props TimelineItemProps) {
 	</li>
 }
 
+// TimelineMilestone renders a milestone divider (year, phase, stage).
+templ TimelineMilestone(label string) {
+	<li class="milestone">{ label }</li>
+}
+
 // Timeline renders an ordered timeline list.
 templ Timeline(class string) {
 	<ol class={ lw.ClassNames("timeline", class) }>
