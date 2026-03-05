@@ -6,11 +6,15 @@ import lw "github.com/Design-Machines-Studio/livewires-templ"
 type CardProps struct {
 	Title        string           // Header title (used by CardWithHeader)
 	HeadingLevel int              // Heading level 1-6 for CardWithHeader (default: 3)
-	Variant      string           // "subtle", "borderless"
-	Scheme       string           // Color scheme: "subtle", "accent", etc.
+	Scheme       string           // Color scheme: "subtle", "dark", "accent", etc.
 	Href         string           // If set, renders as clickable <a> tag
 	Class        string           // Additional CSS classes from consumer
 	Attrs        templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// cardClass builds the shared class string for card components.
+func cardClass(props CardProps) string {
+	return lw.ClassNames("card box stack", lw.SchemeClass(props.Scheme), props.Class)
 }
 
 // CardComponent renders a card with full Props control and children slot.
@@ -18,14 +22,14 @@ templ CardComponent(props CardProps) {
 	if props.Href != "" {
 		<a
 			href={ props.Href }
-			class={ lw.ClassNames("card box stack", lw.VariantClass("card", props.Variant), lw.SchemeClass(props.Scheme), props.Class) }
+			class={ cardClass(props) }
 			{ props.Attrs... }
 		>
 			{ children... }
 		</a>
 	} else {
 		<div
-			class={ lw.ClassNames("card box stack", lw.VariantClass("card", props.Variant), lw.SchemeClass(props.Scheme), props.Class) }
+			class={ cardClass(props) }
 			{ props.Attrs... }
 		>
 			{ children... }
@@ -34,24 +38,26 @@ templ CardComponent(props CardProps) {
 }
 
 // Card renders a basic card with children.
-templ Card(variant string) {
-	@CardComponent(CardProps{Variant: variant}) {
+templ Card(scheme string) {
+	@CardComponent(CardProps{Scheme: scheme}) {
 		{ children... }
 	}
 }
 
 // CardLink renders a clickable card as an anchor tag.
-templ CardLink(href string, variant string) {
-	@CardComponent(CardProps{Href: href, Variant: variant}) {
+templ CardLink(href string, scheme string) {
+	@CardComponent(CardProps{Href: href, Scheme: scheme}) {
 		{ children... }
 	}
 }
 
 // CardWithHeader renders a card with a distinct header section.
+// Unlike CardComponent, the outer div uses "card" without "box stack" --
+// the header and body are separate boxes to allow independent padding.
 // HeadingLevel controls the heading tag (1-6, default 3).
 templ CardWithHeader(props CardProps) {
 	<div
-		class={ lw.ClassNames("card", lw.VariantClass("card", props.Variant), lw.SchemeClass(props.Scheme), props.Class) }
+		class={ lw.ClassNames("card", lw.SchemeClass(props.Scheme), props.Class) }
 		{ props.Attrs... }
 	>
 		<div class="header box">

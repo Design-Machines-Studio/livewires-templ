@@ -31,6 +31,14 @@ import (
 // Avatar
 @component.Avatar("Jane Doe", "")
 
+// Card (scheme controls color: "subtle", "dark", "accent", or "")
+@component.Card("subtle") {
+    <p>Card content</p>
+}
+
+// Clickable card link
+@component.CardLink("/details", "")
+
 // Stat card
 @component.StatCardSimple("Revenue", "$12,450", "+12%", "")
 

@@ -14,10 +14,10 @@ func TestCardDefault(t *testing.T) {
 	}
 }
 
-func TestCardSubtle(t *testing.T) {
+func TestCardSubtleScheme(t *testing.T) {
 	html := testutil.RenderToString(t, Card("subtle"))
-	if !strings.Contains(html, "card--subtle") {
-		t.Error("expected card--subtle class")
+	if !strings.Contains(html, "scheme-subtle") {
+		t.Error("expected scheme-subtle class")
 	}
 }
 
