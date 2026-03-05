@@ -4,6 +4,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/a-h/templ"
+
 	"github.com/Design-Machines-Studio/livewires-templ/internal/testutil"
 )
 
@@ -51,5 +53,22 @@ func TestCardWithHeaderHeadingLevel(t *testing.T) {
 	}
 	if strings.Contains(html, "<h3>") {
 		t.Error("should not render h3 when HeadingLevel is 2")
+	}
+}
+
+func TestCardWithMedia(t *testing.T) {
+	media := templ.Raw(`<img src="/photo.jpg" alt="Profile">`)
+	html := testutil.RenderToString(t, CardWithMedia(CardProps{Scheme: "subtle"}, media))
+	if !strings.Contains(html, "card card--media") {
+		t.Error("expected card--media class")
+	}
+	if !strings.Contains(html, "scheme-subtle") {
+		t.Error("expected scheme-subtle class")
+	}
+	if !strings.Contains(html, "<figure>") {
+		t.Error("expected figure wrapper for media")
+	}
+	if !strings.Contains(html, `<img src="/photo.jpg"`) {
+		t.Error("expected media content inside figure")
 	}
 }

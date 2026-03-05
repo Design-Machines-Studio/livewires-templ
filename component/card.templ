@@ -51,6 +51,22 @@ templ CardLink(href string, scheme string) {
 	}
 }
 
+// CardWithMedia renders a card with a media area (image, avatar, etc.) and content body.
+// The media component renders inside a <figure>; children render inside a .box.
+templ CardWithMedia(props CardProps, media templ.Component) {
+	<div
+		class={ lw.ClassNames("card card--media", lw.SchemeClass(props.Scheme), props.Class) }
+		{ props.Attrs... }
+	>
+		<figure>
+			@media
+		</figure>
+		<div class="box stack">
+			{ children... }
+		</div>
+	</div>
+}
+
 // CardWithHeader renders a card with a distinct header section.
 // Unlike CardComponent, the outer div uses "card" without "box stack" --
 // the header and body are separate boxes to allow independent padding.
