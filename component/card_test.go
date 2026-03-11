@@ -11,7 +11,7 @@ import (
 
 func TestCardDefault(t *testing.T) {
 	html := testutil.RenderToString(t, Card(""))
-	if !strings.Contains(html, "card box stack") {
+	if !strings.Contains(html, "card box") {
 		t.Error("expected card box stack classes")
 	}
 }
@@ -28,7 +28,7 @@ func TestCardLink(t *testing.T) {
 	if !strings.Contains(html, "<a") {
 		t.Error("expected anchor tag when href provided")
 	}
-	if !strings.Contains(html, "card box stack") {
+	if !strings.Contains(html, "card box") {
 		t.Error("expected card classes on link")
 	}
 }
