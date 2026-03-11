@@ -22,7 +22,7 @@ type CardProps struct {
 
 // cardClass builds the shared class string for card components.
 func cardClass(props CardProps) string {
-	return lw.ClassNames("card box stack", lw.SchemeClass(props.Scheme), props.Class)
+	return lw.ClassNames("card box", lw.SchemeClass(props.Scheme), props.Class)
 }
 
 // CardComponent renders a card with full Props control and children slot.
@@ -296,7 +296,7 @@ func CardWithMedia(props CardProps, media templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</figure><div class=\"box stack\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</figure><div class=\"box\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -476,7 +476,7 @@ func CardWithHeader(props CardProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</div><div class=\"box stack\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</div><div class=\"box\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
