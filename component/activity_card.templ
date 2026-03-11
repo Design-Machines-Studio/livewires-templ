@@ -6,7 +6,8 @@ import lw "github.com/Design-Machines-Studio/livewires-templ"
 type ActivityCardProps struct {
 	Title        string           // Main title/description
 	Href         string           // Link URL
-	BadgeLabel   string           // Badge text (e.g., "Active", "Pending")
+	Description  string           // Optional: supporting text below the title
+	BadgeLabel   string           // Optional: badge text (e.g., "Active", "Pending")
 	BadgeVariant string           // Badge variant (e.g., "active", "pending", "draft")
 	Timestamp    string           // Optional: formatted date string
 	Class        string           // Additional CSS classes from consumer
@@ -16,12 +17,6 @@ type ActivityCardProps struct {
 // ActivityCard renders a card for proposals, resolutions, or action items.
 templ ActivityCard(props ActivityCardProps) {
 	<div class={ lw.ClassNames("activity-card", props.Class) } { props.Attrs... }>
-		<p class="meta text-sm text-muted">
-			@Badge(props.BadgeLabel, props.BadgeVariant)
-			if props.Timestamp != "" {
-				<time>{ props.Timestamp }</time>
-			}
-		</p>
 		<p class="title font-bold">
 			if props.Href != "" {
 				<a href={ props.Href }>{ props.Title }</a>
@@ -29,5 +24,18 @@ templ ActivityCard(props ActivityCardProps) {
 				{ props.Title }
 			}
 		</p>
+		if props.Description != "" || props.Timestamp != "" || props.BadgeLabel != "" {
+			<p class="meta text-sm text-muted">
+				if props.BadgeLabel != "" {
+					@Badge(props.BadgeLabel, props.BadgeVariant)
+				}
+				if props.Timestamp != "" {
+					<time>{ props.Timestamp }</time>
+				}
+				if props.Description != "" {
+					{ props.Description }
+				}
+			</p>
+		}
 	</div>
 }
