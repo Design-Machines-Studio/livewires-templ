@@ -15,7 +15,7 @@ type SwitchProps struct {
 // Uses radio-pair CSS: first-of-type:checked → slider RIGHT (accent).
 // "On" must be the first radio for correct visual mapping.
 templ SwitchComponent(props SwitchProps) {
-	<div class={ lw.ClassNames("field switch", props.Class) } { props.Attrs... }>
+	<div class={ lw.ClassNames("field switch mb-0", props.Class) } { props.Attrs... }>
 		<input id={ props.ID + "-on" } name={ props.Name } type="radio" value="1" checked?={ props.Checked }/>
 		<label for={ props.ID + "-on" } onclick="">On</label>
 		<input id={ props.ID + "-off" } name={ props.Name } type="radio" value="0" checked?={ !props.Checked }/>
