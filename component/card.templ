@@ -14,7 +14,7 @@ type CardProps struct {
 
 // cardClass builds the shared class string for card components.
 func cardClass(props CardProps) string {
-	return lw.ClassNames("card box stack", lw.SchemeClass(props.Scheme), props.Class)
+	return lw.ClassNames("card box", lw.SchemeClass(props.Scheme), props.Class)
 }
 
 // CardComponent renders a card with full Props control and children slot.
@@ -61,7 +61,7 @@ templ CardWithMedia(props CardProps, media templ.Component) {
 		<figure>
 			@media
 		</figure>
-		<div class="box stack">
+		<div class="box">
 			{ children... }
 		</div>
 	</div>
@@ -91,7 +91,7 @@ templ CardWithHeader(props CardProps) {
 				<h3>{ props.Title }</h3>
 			}
 		</div>
-		<div class="box stack">
+		<div class="box">
 			{ children... }
 		</div>
 	</div>
