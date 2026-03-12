@@ -20,8 +20,8 @@ type FilterProps struct {
 
 // Filter renders a filter dropdown for list filtering.
 templ Filter(props FilterProps) {
-	<div class={ lw.ClassNames("stack stack-compact", props.Class) } { props.Attrs... }>
-		<label for={ props.Name } class="font-semibold text-sm">{ props.Title }</label>
+	<div class={ lw.ClassNames("filter stack stack-compact", props.Class) } { props.Attrs... }>
+		<label for={ props.Name }>{ props.Title }</label>
 		<select id={ props.Name } name={ props.Name }>
 			<option value="">All</option>
 			for _, opt := range props.Options {

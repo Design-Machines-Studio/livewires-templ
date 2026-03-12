@@ -14,13 +14,13 @@ type EmptyStateProps struct {
 
 // EmptyStateComponent renders a centered empty state message with full Props control.
 templ EmptyStateComponent(props EmptyStateProps) {
-	<div class={ lw.ClassNames("text-center text-muted", props.Class) } { props.Attrs... }>
+	<div class={ lw.ClassNames("empty-state", props.Class) } { props.Attrs... }>
 		<p>{ props.Message }</p>
 		if props.Detail != "" {
-			<p class="text-sm">{ props.Detail }</p>
+			<p class="detail">{ props.Detail }</p>
 		}
 		if props.ActionHref != "" && props.ActionLabel != "" {
-			<p class="mt-05">
+			<p class="action">
 				<a href={ templ.SafeURL(props.ActionHref) } class="button button--small">{ props.ActionLabel }</a>
 			</p>
 		}

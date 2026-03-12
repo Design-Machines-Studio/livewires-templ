@@ -28,8 +28,8 @@ func getRows(r int) string {
 
 // Textarea renders a complete textarea field with label and optional hint.
 templ Textarea(props TextareaProps) {
-	<div class={ lw.ClassNames("stack stack-compact", props.Class) }>
-		<label for={ props.Name } class="font-semibold">{ props.Label }</label>
+	<div class={ lw.ClassNames("field stack stack-compact", props.Class) }>
+		<label for={ props.Name }>{ props.Label }</label>
 		<textarea
 			id={ props.Name }
 			name={ props.Name }
@@ -39,7 +39,7 @@ templ Textarea(props TextareaProps) {
 			{ props.Attrs... }
 		>{ props.Value }</textarea>
 		if props.Hint != "" {
-			<p class="text-xs text-muted">{ props.Hint }</p>
+			<p class="hint">{ props.Hint }</p>
 		}
 	</div>
 }

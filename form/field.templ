@@ -25,8 +25,8 @@ func fieldType(t string) string {
 
 // Field renders a complete form field with label, input, and optional hint.
 templ Field(props FieldProps) {
-	<div class={ lw.ClassNames("stack stack-compact", props.Class) }>
-		<label for={ props.Name } class="font-semibold">{ props.Label }</label>
+	<div class={ lw.ClassNames("field stack stack-compact", props.Class) }>
+		<label for={ props.Name }>{ props.Label }</label>
 		<input
 			type={ fieldType(props.Type) }
 			id={ props.Name }
@@ -37,7 +37,7 @@ templ Field(props FieldProps) {
 			{ props.Attrs... }
 		/>
 		if props.Hint != "" {
-			<p class="text-xs text-muted">{ props.Hint }</p>
+			<p class="hint">{ props.Hint }</p>
 		}
 	</div>
 }

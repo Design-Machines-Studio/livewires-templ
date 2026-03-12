@@ -12,11 +12,8 @@ func TestEmptyStateSimple(t *testing.T) {
 	if !strings.Contains(html, "No items found") {
 		t.Error("expected message text")
 	}
-	if !strings.Contains(html, "text-center") {
-		t.Error("expected text-center class")
-	}
-	if !strings.Contains(html, "text-muted") {
-		t.Error("expected text-muted class")
+	if !strings.Contains(html, "empty-state") {
+		t.Error("expected empty-state class")
 	}
 }
 

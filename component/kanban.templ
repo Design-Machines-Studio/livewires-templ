@@ -32,8 +32,8 @@ type KanbanColumnProps struct {
 
 // KanbanColumnComponent renders a titled column with full Props control.
 templ KanbanColumnComponent(props KanbanColumnProps) {
-	<div class={ lw.ClassNames("stack box box-tight scheme-subtle", props.Class) } { props.Attrs... }>
-		<h2 class="text-sm font-bold text-muted">{ props.Title }</h2>
+	<div class={ lw.ClassNames("kanban-column stack box box-tight scheme-subtle", props.Class) } { props.Attrs... }>
+		<h2 class="column-title">{ props.Title }</h2>
 		<div class="stack stack-compact">
 			{ children... }
 		</div>
@@ -56,7 +56,7 @@ type KanbanCardProps struct {
 
 // KanbanCardComponent renders a clickable card with full Props control.
 templ KanbanCardComponent(props KanbanCardProps) {
-	<a href={ props.Href } class={ lw.ClassNames("info-card stack stack-compact box box-tight scheme-default", props.Class) } { props.Attrs... }>
+	<a href={ props.Href } class={ lw.ClassNames("kanban-card stack stack-compact box box-tight scheme-default", props.Class) } { props.Attrs... }>
 		{ children... }
 	</a>
 }

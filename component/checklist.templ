@@ -11,7 +11,7 @@ type ChecklistItemProps struct {
 
 // Checklist renders a list of checklist items.
 templ Checklist(items []ChecklistItemProps) {
-	<ul class="stack stack-compact text-sm">
+	<ul class="checklist stack stack-compact">
 		for _, item := range items {
 			@ChecklistItem(item)
 		}
@@ -22,8 +22,8 @@ templ Checklist(items []ChecklistItemProps) {
 templ ChecklistItem(props ChecklistItemProps) {
 	<li class="cluster cluster-compact">
 		if props.Completed {
-			<span class="text-positive">&#10003;</span>
-			<span class="text-muted"><s>{ props.Label }</s></span>
+			<span class="check">&#10003;</span>
+			<span class="completed"><s>{ props.Label }</s></span>
 		} else {
 			<span>&#9675;</span>
 			if props.Href != "" {
@@ -48,21 +48,21 @@ type ProgressChecklistProps struct {
 
 // ProgressChecklistComponent renders a checklist with progress bar.
 templ ProgressChecklistComponent(props ProgressChecklistProps) {
-	<div class={ lw.ClassNames("box scheme-subtle", props.Class) } { props.Attrs... }>
-		<div class="cluster cluster-between mb-1">
-			<h2 class="text-base">{ props.Title }</h2>
-			<span class="text-sm text-muted">{ lw.Itoa(props.Completed) } of { lw.Itoa(props.Total) } done</span>
+	<div class={ lw.ClassNames("progress-checklist box scheme-subtle", props.Class) } { props.Attrs... }>
+		<div class="progress-header cluster cluster-between">
+			<h2>{ props.Title }</h2>
+			<span class="progress-count">{ lw.Itoa(props.Completed) } of { lw.Itoa(props.Total) } done</span>
 		</div>
 		if props.Total > 0 {
 			@ProgressBarThick(props.Completed * 100 / props.Total, props.Title + " progress")
 		} else {
 			@ProgressBarThick(0, props.Title + " progress")
 		}
-		<div class="mt-1">
+		<div class="checklist-body">
 			@Checklist(props.Items)
 		</div>
 		if props.FooterText != "" {
-			<p class="text-xs text-muted mt-1">{ props.FooterText }</p>
+			<p class="footer">{ props.FooterText }</p>
 		}
 	</div>
 }

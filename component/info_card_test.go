@@ -46,7 +46,7 @@ func TestInfoCardWithSubtitle(t *testing.T) {
 	if !strings.Contains(html, "March 15, 2026") {
 		t.Error("expected subtitle text")
 	}
-	if !strings.Contains(html, "text-muted") {
-		t.Error("expected text-muted class on subtitle")
+	if !strings.Contains(html, `class="subtitle"`) {
+		t.Error("expected subtitle class")
 	}
 }

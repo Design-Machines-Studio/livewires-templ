@@ -17,7 +17,7 @@ type ActivityCardProps struct {
 // ActivityCard renders a card for proposals, resolutions, or action items.
 templ ActivityCard(props ActivityCardProps) {
 	<div class={ lw.ClassNames("activity-card", props.Class) } { props.Attrs... }>
-		<p class="title font-bold">
+		<p class="title">
 			if props.Href != "" {
 				<a href={ props.Href }>{ props.Title }</a>
 			} else {
@@ -25,7 +25,7 @@ templ ActivityCard(props ActivityCardProps) {
 			}
 		</p>
 		if props.Description != "" || props.Timestamp != "" || props.BadgeLabel != "" {
-			<p class="meta text-sm text-muted">
+			<p class="meta">
 				if props.BadgeLabel != "" {
 					@Badge(props.BadgeLabel, props.BadgeVariant)
 				}

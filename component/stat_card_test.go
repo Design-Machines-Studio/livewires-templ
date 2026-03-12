@@ -9,10 +9,10 @@ import (
 
 func TestStatCardUsesCardClass(t *testing.T) {
 	html := testutil.RenderToString(t, StatCardSimple("Revenue", "$12,450", "+12%", ""))
-	if strings.Contains(html, "stat-card") {
-		t.Error("should not use stat-card class, should use card")
+	if !strings.Contains(html, "stat-card") {
+		t.Error("expected stat-card class")
 	}
-	if !strings.Contains(html, `class="card `) {
+	if !strings.Contains(html, "card") {
 		t.Error("expected card base class")
 	}
 }
@@ -21,6 +21,9 @@ func TestStatCardChildClasses(t *testing.T) {
 	html := testutil.RenderToString(t, StatCardSimple("Revenue", "$12,450", "+12%", ""))
 	if !strings.Contains(html, `class="title"`) {
 		t.Error("expected title class on label")
+	}
+	if !strings.Contains(html, `class="value"`) {
+		t.Error("expected value class on value")
 	}
 	if !strings.Contains(html, `class="description"`) {
 		t.Error("expected description class on detail")

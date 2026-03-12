@@ -41,7 +41,7 @@ templ StatCardGroup(class string) {
 // When Status is provided, a status indicator is shown.
 templ StatCard(props StatCardProps) {
 	<div
-		class={ lw.ClassNames("card box box-tight rounded text-sm", lw.SchemeClass(props.Scheme), props.Class) }
+		class={ lw.ClassNames("card stat-card box box-tight rounded", lw.SchemeClass(props.Scheme), props.Class) }
 		{ props.Attrs... }
 	>
 		@statCardInner(props)
@@ -67,7 +67,7 @@ templ statCardInner(props StatCardProps) {
 			}
 		}
 	</dt>
-	<dd class="value text-6xl font-black">{ props.Value }</dd>
+	<dd class="value">{ props.Value }</dd>
 	if props.Detail != "" {
 		<dd class="description">{ props.Detail }</dd>
 	}
