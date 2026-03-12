@@ -15,8 +15,8 @@ type InfoCardProps struct {
 	Attrs      templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
 
-// InfoCard renders an info card for upcoming events or announcements.
-templ InfoCard(props InfoCardProps) {
+// InfoCardComponent renders an info card with full Props control.
+templ InfoCardComponent(props InfoCardProps) {
 	<div
 		class={ lw.ClassNames("card box box-tight stack-compact", lw.SchemeClass(props.Scheme), props.Class) }
 		{ props.Attrs... }
@@ -26,7 +26,7 @@ templ InfoCard(props InfoCardProps) {
 		}
 		<p class="card-heading">
 			if props.Href != "" {
-				<a href={ props.Href }>{ props.Title }</a>
+				<a href={ templ.SafeURL(props.Href) }>{ props.Title }</a>
 			} else {
 				{ props.Title }
 			}
@@ -41,4 +41,9 @@ templ InfoCard(props InfoCardProps) {
 			</div>
 		}
 	</div>
+}
+
+// InfoCard renders an info card (convenience wrapper).
+templ InfoCard(title, header string) {
+	@InfoCardComponent(InfoCardProps{Title: title, Header: header})
 }

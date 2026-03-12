@@ -1,6 +1,7 @@
 package form
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/Design-Machines-Studio/livewires-templ/internal/testutil"
@@ -12,7 +13,16 @@ func TestSelectRenders(t *testing.T) {
 		{Value: "b", Label: "Option B"},
 	}
 	html := testutil.RenderToString(t, SelectSimple("Country", "country", "Choose...", opts, false))
-	if html == "" {
-		t.Fatal("expected non-empty output")
+	if !strings.Contains(html, "field") {
+		t.Error("expected field class")
+	}
+	if !strings.Contains(html, "Country") {
+		t.Error("expected label text")
+	}
+	if !strings.Contains(html, "Choose...") {
+		t.Error("expected placeholder option")
+	}
+	if !strings.Contains(html, "Option A") {
+		t.Error("expected option label")
 	}
 }

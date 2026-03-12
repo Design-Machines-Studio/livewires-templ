@@ -36,10 +36,10 @@ templ StatCardGroup(class string) {
 	}
 }
 
-// StatCard renders an individual stat card.
+// StatCardComponent renders an individual stat card with full Props control.
 // When Href is provided, the entire card is clickable.
 // When Status is provided, a status indicator is shown.
-templ StatCard(props StatCardProps) {
+templ StatCardComponent(props StatCardProps) {
 	<div
 		class={ lw.ClassNames("card stat-card box box-tight rounded", lw.SchemeClass(props.Scheme), props.Class) }
 		{ props.Attrs... }
@@ -48,23 +48,24 @@ templ StatCard(props StatCardProps) {
 	</div>
 }
 
+// statCardLabel renders the label with optional status indicator.
+templ statCardLabel(props StatCardProps) {
+	if props.Status != "" {
+		@StatusIndicatorComponent(StatusIndicatorProps{Label: props.Label, Variant: props.Status})
+	} else {
+		{ props.Label }
+	}
+}
+
 // statCardInner renders the shared inner content of a stat card.
 templ statCardInner(props StatCardProps) {
 	<dt class="title">
 		if props.Href != "" {
-			<a href={ props.Href }>
-				if props.Status != "" {
-					@StatusIndicatorComponent(StatusIndicatorProps{Label: props.Label, Variant: props.Status})
-				} else {
-					{ props.Label }
-				}
+			<a href={ templ.SafeURL(props.Href) }>
+				@statCardLabel(props)
 			</a>
 		} else {
-			if props.Status != "" {
-				@StatusIndicatorComponent(StatusIndicatorProps{Label: props.Label, Variant: props.Status})
-			} else {
-				{ props.Label }
-			}
+			@statCardLabel(props)
 		}
 	</dt>
 	<dd class="value">{ props.Value }</dd>
@@ -76,9 +77,19 @@ templ statCardInner(props StatCardProps) {
 	}
 }
 
+// StatCard renders an individual stat card (convenience wrapper).
+templ StatCard(label, value, detail, scheme string) {
+	@StatCardComponent(StatCardProps{
+		Label:  label,
+		Value:  value,
+		Detail: detail,
+		Scheme: scheme,
+	})
+}
+
 // StatCardSimple is a convenience wrapper for non-linked stat cards.
 templ StatCardSimple(label, value, detail, scheme string) {
-	@StatCard(StatCardProps{
+	@StatCardComponent(StatCardProps{
 		Label:  label,
 		Value:  value,
 		Detail: detail,
@@ -88,7 +99,7 @@ templ StatCardSimple(label, value, detail, scheme string) {
 
 // StatCardLink is a convenience wrapper for linked stat cards.
 templ StatCardLink(label, value, detail, href, scheme string) {
-	@StatCard(StatCardProps{
+	@StatCardComponent(StatCardProps{
 		Label:  label,
 		Value:  value,
 		Detail: detail,

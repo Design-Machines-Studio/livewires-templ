@@ -25,19 +25,32 @@ templ KanbanBoard(id string) {
 
 // KanbanColumnProps holds configuration for a kanban column component.
 type KanbanColumnProps struct {
-	Title string           // Column title
-	Class string           // Additional CSS classes from consumer
-	Attrs templ.Attributes // Catch-all: data-*, aria-*, etc.
+	Title        string           // Column title
+	HeadingLevel string           // Heading tag: "h2", "h3", etc. (default: "h2")
+	Class        string           // Additional CSS classes from consumer
+	Attrs        templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
 
 // KanbanColumnComponent renders a titled column with full Props control.
 templ KanbanColumnComponent(props KanbanColumnProps) {
 	<div class={ lw.ClassNames("kanban-column stack box box-tight scheme-subtle", props.Class) } { props.Attrs... }>
-		<h2 class="column-title">{ props.Title }</h2>
+		@kanbanColumnHeading(props.HeadingLevel, props.Title)
 		<div class="stack stack-compact">
 			{ children... }
 		</div>
 	</div>
+}
+
+// kanbanColumnHeading renders the column title at the correct heading level.
+templ kanbanColumnHeading(level, title string) {
+	switch level {
+		case "h3":
+			<h3 class="column-title">{ title }</h3>
+		case "h4":
+			<h4 class="column-title">{ title }</h4>
+		default:
+			<h2 class="column-title">{ title }</h2>
+	}
 }
 
 // KanbanColumn renders a titled column for grouping cards (convenience wrapper).
@@ -56,7 +69,7 @@ type KanbanCardProps struct {
 
 // KanbanCardComponent renders a clickable card with full Props control.
 templ KanbanCardComponent(props KanbanCardProps) {
-	<a href={ props.Href } class={ lw.ClassNames("kanban-card stack stack-compact box box-tight scheme-default", props.Class) } { props.Attrs... }>
+	<a href={ templ.SafeURL(props.Href) } class={ lw.ClassNames("kanban-card stack stack-compact box box-tight scheme-default", props.Class) } { props.Attrs... }>
 		{ children... }
 	</a>
 }

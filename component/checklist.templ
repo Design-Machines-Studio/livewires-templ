@@ -4,9 +4,11 @@ import lw "github.com/Design-Machines-Studio/livewires-templ"
 
 // ChecklistItemProps holds data for a checklist item.
 type ChecklistItemProps struct {
-	Label     string // The task label
-	Href      string // Optional: link for pending items
-	Completed bool   // Whether the item is completed
+	Label     string           // The task label
+	Href      string           // Optional: link for pending items
+	Completed bool             // Whether the item is completed
+	Class     string           // Additional CSS classes from consumer
+	Attrs     templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
 
 // Checklist renders a list of checklist items.
@@ -20,14 +22,14 @@ templ Checklist(items []ChecklistItemProps) {
 
 // ChecklistItem renders an individual checklist item.
 templ ChecklistItem(props ChecklistItemProps) {
-	<li class="cluster cluster-compact">
+	<li class={ lw.ClassNames("cluster cluster-compact", props.Class) } { props.Attrs... }>
 		if props.Completed {
-			<span class="check">&#10003;</span>
+			<span class="check" aria-hidden="true">&#10003;</span>
 			<span class="completed"><s>{ props.Label }</s></span>
 		} else {
-			<span>&#9675;</span>
+			<span aria-hidden="true">&#9675;</span>
 			if props.Href != "" {
-				<a href={ props.Href }>{ props.Label }</a>
+				<a href={ templ.SafeURL(props.Href) }>{ props.Label }</a>
 			} else {
 				<span>{ props.Label }</span>
 			}
@@ -37,20 +39,21 @@ templ ChecklistItem(props ChecklistItemProps) {
 
 // ProgressChecklistProps holds configuration for a checklist with progress bar.
 type ProgressChecklistProps struct {
-	Title      string               // Section title
-	Completed  int                  // Number of completed items
-	Total      int                  // Total number of items
-	Items      []ChecklistItemProps // The checklist items
-	FooterText string               // Optional footer text
-	Class      string               // Additional CSS classes from consumer
-	Attrs      templ.Attributes     // Catch-all: data-*, aria-*, etc.
+	Title        string               // Section title
+	HeadingLevel string               // Heading tag: "h2", "h3", etc. (default: "h2")
+	Completed    int                  // Number of completed items
+	Total        int                  // Total number of items
+	Items        []ChecklistItemProps // The checklist items
+	FooterText   string               // Optional footer text
+	Class        string               // Additional CSS classes from consumer
+	Attrs        templ.Attributes     // Catch-all: data-*, aria-*, etc.
 }
 
 // ProgressChecklistComponent renders a checklist with progress bar.
 templ ProgressChecklistComponent(props ProgressChecklistProps) {
 	<div class={ lw.ClassNames("progress-checklist box scheme-subtle", props.Class) } { props.Attrs... }>
 		<div class="progress-header cluster cluster-between">
-			<h2>{ props.Title }</h2>
+			@progressChecklistHeading(props.HeadingLevel, props.Title)
 			<span class="progress-count">{ lw.Itoa(props.Completed) } of { lw.Itoa(props.Total) } done</span>
 		</div>
 		if props.Total > 0 {
@@ -65,6 +68,18 @@ templ ProgressChecklistComponent(props ProgressChecklistProps) {
 			<p class="footer">{ props.FooterText }</p>
 		}
 	</div>
+}
+
+// progressChecklistHeading renders the title at the correct heading level.
+templ progressChecklistHeading(level, title string) {
+	switch level {
+		case "h3":
+			<h3>{ title }</h3>
+		case "h4":
+			<h4>{ title }</h4>
+		default:
+			<h2>{ title }</h2>
+	}
 }
 
 // ProgressChecklist renders a checklist with progress bar (convenience wrapper).

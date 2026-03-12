@@ -42,6 +42,33 @@ import (
 // Stat card
 @component.StatCardSimple("Revenue", "$12,450", "+12%", "")
 
+// Info card
+@component.InfoCard("Board Meeting", "Upcoming")
+
+// Activity card
+@component.ActivityCard("Proposal A", "/proposals/1")
+
+// Empty state
+@component.EmptyState("No items found")
+
+// Comment
+@component.Comment("Jane Doe", "Looks great!", "2024-03-15", "Member")
+
+// Checklist
+@component.Checklist(items)
+
+// Progress checklist
+@component.ProgressChecklist("Setup", 3, 5, items, "3 of 5 complete")
+
+// Kanban board
+@component.KanbanBoard("board-1") {
+    @component.KanbanColumn("To Do") {
+        @component.KanbanCard("/task/1") {
+            <p>Task content</p>
+        }
+    }
+}
+
 // Toast
 @component.Toast("Saved!", "success")
 
@@ -72,6 +99,12 @@ import (
 
 // Textarea
 @form.TextareaSimple("Message", "message", "", "Write...", "")
+
+// Filter dropdown
+@form.Filter(form.FilterProps{Title: "Status", Name: "status", Options: options})
+
+// Date range
+@form.DateRange(form.DateRangeProps{Legend: "Date range", StartName: "from", EndName: "to"})
 ```
 
 ### Layout

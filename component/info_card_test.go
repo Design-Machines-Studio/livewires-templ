@@ -8,7 +8,7 @@ import (
 )
 
 func TestInfoCardUsesCardClass(t *testing.T) {
-	html := testutil.RenderToString(t, InfoCard(InfoCardProps{Title: "Board meeting", Header: "Upcoming"}))
+	html := testutil.RenderToString(t, InfoCardComponent(InfoCardProps{Title: "Board meeting", Header: "Upcoming"}))
 	if strings.Contains(html, "info-card") {
 		t.Error("should not use info-card class, should use card")
 	}
@@ -18,7 +18,7 @@ func TestInfoCardUsesCardClass(t *testing.T) {
 }
 
 func TestInfoCardWithAvatar(t *testing.T) {
-	html := testutil.RenderToString(t, InfoCard(InfoCardProps{
+	html := testutil.RenderToString(t, InfoCardComponent(InfoCardProps{
 		Title:      "Board meeting",
 		AvatarName: "John Doe",
 		AvatarText: "Facilitator",
@@ -29,7 +29,7 @@ func TestInfoCardWithAvatar(t *testing.T) {
 }
 
 func TestInfoCardWithHref(t *testing.T) {
-	html := testutil.RenderToString(t, InfoCard(InfoCardProps{
+	html := testutil.RenderToString(t, InfoCardComponent(InfoCardProps{
 		Title: "Board meeting",
 		Href:  "/meetings/1",
 	}))
@@ -39,7 +39,7 @@ func TestInfoCardWithHref(t *testing.T) {
 }
 
 func TestInfoCardWithSubtitle(t *testing.T) {
-	html := testutil.RenderToString(t, InfoCard(InfoCardProps{
+	html := testutil.RenderToString(t, InfoCardComponent(InfoCardProps{
 		Title:    "Board meeting",
 		Subtitle: "March 15, 2026",
 	}))

@@ -14,9 +14,9 @@ type CommentProps struct {
 
 // CommentComponent renders a comment with full Props control.
 templ CommentComponent(props CommentProps) {
-	<div class={ lw.ClassNames("comment cluster", props.Class) } style="align-items: flex-start;" { props.Attrs... }>
+	<div class={ lw.ClassNames("comment cluster", props.Class) } { props.Attrs... }>
 		@AvatarSmall(props.Author)
-		<div class="stack stack-compact" style="flex: 1;">
+		<div class="comment-body stack stack-compact">
 			<div class="cluster cluster-between">
 				<span class="author cluster cluster-compact">
 					{ props.Author }

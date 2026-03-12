@@ -14,12 +14,12 @@ type ActivityCardProps struct {
 	Attrs        templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
 
-// ActivityCard renders a card for proposals, resolutions, or action items.
-templ ActivityCard(props ActivityCardProps) {
+// ActivityCardComponent renders a card for proposals, resolutions, or action items.
+templ ActivityCardComponent(props ActivityCardProps) {
 	<div class={ lw.ClassNames("activity-card", props.Class) } { props.Attrs... }>
 		<p class="title">
 			if props.Href != "" {
-				<a href={ props.Href }>{ props.Title }</a>
+				<a href={ templ.SafeURL(props.Href) }>{ props.Title }</a>
 			} else {
 				{ props.Title }
 			}
@@ -38,4 +38,9 @@ templ ActivityCard(props ActivityCardProps) {
 			</p>
 		}
 	</div>
+}
+
+// ActivityCard renders an activity card (convenience wrapper).
+templ ActivityCard(title, href string) {
+	@ActivityCardComponent(ActivityCardProps{Title: title, Href: href})
 }

@@ -41,7 +41,7 @@ func TestStatCardLink(t *testing.T) {
 }
 
 func TestStatCardWithStatus(t *testing.T) {
-	html := testutil.RenderToString(t, StatCard(StatCardProps{
+	html := testutil.RenderToString(t, StatCardComponent(StatCardProps{
 		Label:  "Compliance",
 		Value:  "98%",
 		Status: "success",
@@ -55,7 +55,7 @@ func TestStatCardWithStatus(t *testing.T) {
 }
 
 func TestStatCardSubDetail(t *testing.T) {
-	html := testutil.RenderToString(t, StatCard(StatCardProps{
+	html := testutil.RenderToString(t, StatCardComponent(StatCardProps{
 		Label:     "Revenue",
 		Value:     "$12,450",
 		Detail:    "+12%",
