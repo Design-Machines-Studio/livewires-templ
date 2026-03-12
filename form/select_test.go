@@ -12,7 +12,12 @@ func TestSelectRenders(t *testing.T) {
 		{Value: "a", Label: "Option A"},
 		{Value: "b", Label: "Option B"},
 	}
-	html := testutil.RenderToString(t, SelectSimple("Country", "country", "Choose...", opts, false))
+	html := testutil.RenderToString(t, Select(SelectProps{
+		Label:       "Country",
+		Name:        "country",
+		Placeholder: "Choose...",
+		Options:     opts,
+	}))
 	if !strings.Contains(html, "field") {
 		t.Error("expected field class")
 	}

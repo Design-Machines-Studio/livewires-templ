@@ -8,9 +8,12 @@ type StatCardProps struct {
 	Value     string           // The primary value (e.g., "3")
 	Detail    string           // Additional context (e.g., "1 General, 2 Board")
 	SubDetail string           // Optional secondary detail
-	Href      string           // Optional link URL — if set, card becomes clickable
+	Href      string           // Optional link URL - if set, card becomes clickable
 	Status    string           // Optional status: "success", "warning", "error"
 	Scheme    string           // Color scheme: "subtle", "accent", etc.
+	Size      string           // Text size for the card: "sm", "base", "lg", etc. Default: "sm"
+	ValueSize string           // Text size for the value: "2xl", "4xl", "6xl", etc. Default: ""
+	Align     string           // Text alignment: "center", "left", "right". Default: ""
 	Class     string           // Extra utility classes on the outer element
 	Attrs     templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
@@ -41,7 +44,7 @@ templ StatCardGroup(class string) {
 // When Status is provided, a status indicator is shown.
 templ StatCardComponent(props StatCardProps) {
 	<div
-		class={ lw.ClassNames("card stat-card box box-tight rounded", lw.SchemeClass(props.Scheme), props.Class) }
+		class={ lw.ClassNames("card card--stat box box-tight rounded", lw.SizeClass(lw.DefaultStr(props.Size, "sm")), lw.AlignClass(props.Align), lw.SchemeClass(props.Scheme), props.Class) }
 		{ props.Attrs... }
 	>
 		@statCardInner(props)
@@ -68,7 +71,7 @@ templ statCardInner(props StatCardProps) {
 			@statCardLabel(props)
 		}
 	</dt>
-	<dd class="value">{ props.Value }</dd>
+	<dd class={ lw.ClassNames("value", lw.SizeClass(props.ValueSize)) }>{ props.Value }</dd>
 	if props.Detail != "" {
 		<dd class="description">{ props.Detail }</dd>
 	}

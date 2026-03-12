@@ -68,7 +68,7 @@ func TestAvatarSmall(t *testing.T) {
 }
 
 func TestAvatarLarge(t *testing.T) {
-	html := testutil.RenderToString(t, AvatarLarge("Test"))
+	html := testutil.RenderToString(t, Avatar("Test", "large"))
 	if !strings.Contains(html, "avatar--large") {
 		t.Error("expected avatar--large class")
 	}

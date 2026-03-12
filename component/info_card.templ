@@ -4,13 +4,15 @@ import lw "github.com/Design-Machines-Studio/livewires-templ"
 
 // InfoCardProps holds configuration for an info card component.
 type InfoCardProps struct {
-	Header     string           // Category header (e.g., "Upcoming")
+	Header     string           // Category label (e.g., "Upcoming")
 	Title      string           // Main title
 	Href       string           // Link URL
 	Subtitle   string           // Secondary info (e.g., date/time)
 	AvatarName string           // Optional: name for avatar (will show initials)
 	AvatarText string           // Optional: text next to avatar
 	Scheme     string           // Color scheme (e.g., "subtle")
+	Size       string           // Text size: "sm", "base", "lg", etc. Default: "sm"
+	Align      string           // Text alignment: "center", "left", "right". Default: ""
 	Class      string           // Additional CSS classes from consumer
 	Attrs      templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
@@ -18,11 +20,11 @@ type InfoCardProps struct {
 // InfoCardComponent renders an info card with full Props control.
 templ InfoCardComponent(props InfoCardProps) {
 	<div
-		class={ lw.ClassNames("card box box-tight stack-compact", lw.SchemeClass(props.Scheme), props.Class) }
+		class={ lw.ClassNames("card box box-tight stack stack-compact", lw.SizeClass(lw.DefaultStr(props.Size, "sm")), lw.AlignClass(props.Align), lw.SchemeClass(props.Scheme), props.Class) }
 		{ props.Attrs... }
 	>
 		if props.Header != "" {
-			<p class="header">{ props.Header }</p>
+			<p class="category">{ props.Header }</p>
 		}
 		<p class="card-heading">
 			if props.Href != "" {

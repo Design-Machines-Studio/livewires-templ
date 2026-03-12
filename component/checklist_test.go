@@ -27,6 +27,29 @@ func TestChecklistRenders(t *testing.T) {
 	}
 }
 
+func TestChecklistComponentSizeDefault(t *testing.T) {
+	items := []ChecklistItemProps{
+		{Label: "Task 1", Completed: true},
+	}
+	html := testutil.RenderToString(t, ChecklistComponent(ChecklistProps{Items: items}))
+	if !strings.Contains(html, "text-sm") {
+		t.Error("expected default text-sm size class")
+	}
+	if !strings.Contains(html, "checklist") {
+		t.Error("expected checklist class")
+	}
+}
+
+func TestChecklistComponentSizeOverride(t *testing.T) {
+	items := []ChecklistItemProps{
+		{Label: "Task 1", Completed: false},
+	}
+	html := testutil.RenderToString(t, ChecklistComponent(ChecklistProps{Items: items, Size: "base"}))
+	if !strings.Contains(html, "text-base") {
+		t.Error("expected text-base size class")
+	}
+}
+
 func TestProgressChecklistZeroTotal(t *testing.T) {
 	html := testutil.RenderToString(t, ProgressChecklistComponent(ProgressChecklistProps{
 		Title:     "Empty checklist",

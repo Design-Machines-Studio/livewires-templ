@@ -17,7 +17,7 @@ type CheckboxProps struct {
 	Label    string           // Checkbox label text
 	Checked  bool             // Whether checkbox is checked
 	Disabled bool             // Whether checkbox is disabled
-	Variant  string           // Style variant: "", "small", "icon", "success", "warning", "error"
+	Variant  string           // Style variant: "", "large", "icon", "success", "warning", "error"
 	Class    string           // Additional CSS classes from consumer
 	Attrs    templ.Attributes // Catch-all: data-signals, data-on-change, aria-*, etc.
 }
@@ -193,8 +193,8 @@ func CheckboxWithValue(name, value, label string, checked bool) templ.Component 
 	})
 }
 
-// CheckboxIcon renders an icon-only checkbox (for tables/matrices).
-func CheckboxIcon(name, value, label string, checked bool) templ.Component {
+// CheckboxLarge renders a larger checkbox.
+func CheckboxLarge(name, value, label string, checked bool) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -220,43 +220,7 @@ func CheckboxIcon(name, value, label string, checked bool) templ.Component {
 			Value:   value,
 			Label:   label,
 			Checked: checked,
-			Variant: "icon",
-		}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		return nil
-	})
-}
-
-// CheckboxSmall renders a compact checkbox.
-func CheckboxSmall(name, value, label string, checked bool) templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
-				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var9 == nil {
-			templ_7745c5c3_Var9 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = Checkbox(CheckboxProps{
-			Name:    name,
-			Value:   value,
-			Label:   label,
-			Checked: checked,
-			Variant: "small",
+			Variant: "large",
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

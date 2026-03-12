@@ -47,6 +47,26 @@ func TestEmptyStateWithAction(t *testing.T) {
 	}
 }
 
+func TestEmptyStateAlignDefault(t *testing.T) {
+	html := testutil.RenderToString(t, EmptyState("No items"))
+	if !strings.Contains(html, "text-center") {
+		t.Error("expected default text-center alignment class")
+	}
+}
+
+func TestEmptyStateAlignOverride(t *testing.T) {
+	html := testutil.RenderToString(t, EmptyStateComponent(EmptyStateProps{
+		Message: "No items",
+		Align:   "left",
+	}))
+	if !strings.Contains(html, "text-left") {
+		t.Error("expected text-left alignment class")
+	}
+	if strings.Contains(html, "text-center") {
+		t.Error("should not contain default text-center when overridden")
+	}
+}
+
 func TestEmptyStateNoActionWhenPartial(t *testing.T) {
 	html := testutil.RenderToString(t, EmptyStateComponent(EmptyStateProps{
 		Message:    "No items",

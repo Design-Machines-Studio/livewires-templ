@@ -9,7 +9,7 @@ type CheckboxProps struct {
 	Label    string           // Checkbox label text
 	Checked  bool             // Whether checkbox is checked
 	Disabled bool             // Whether checkbox is disabled
-	Variant  string           // Style variant: "", "small", "icon", "success", "warning", "error"
+	Variant  string           // Style variant: "", "large", "icon", "success", "warning", "error"
 	Class    string           // Additional CSS classes from consumer
 	Attrs    templ.Attributes // Catch-all: data-signals, data-on-change, aria-*, etc.
 }
@@ -53,24 +53,13 @@ templ CheckboxWithValue(name, value, label string, checked bool) {
 	})
 }
 
-// CheckboxIcon renders an icon-only checkbox (for tables/matrices).
-templ CheckboxIcon(name, value, label string, checked bool) {
+// CheckboxLarge renders a larger checkbox.
+templ CheckboxLarge(name, value, label string, checked bool) {
 	@Checkbox(CheckboxProps{
 		Name:    name,
 		Value:   value,
 		Label:   label,
 		Checked: checked,
-		Variant: "icon",
-	})
-}
-
-// CheckboxSmall renders a compact checkbox.
-templ CheckboxSmall(name, value, label string, checked bool) {
-	@Checkbox(CheckboxProps{
-		Name:    name,
-		Value:   value,
-		Label:   label,
-		Checked: checked,
-		Variant: "small",
+		Variant: "large",
 	})
 }

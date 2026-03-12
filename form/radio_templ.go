@@ -17,7 +17,7 @@ type RadioProps struct {
 	Label    string           // Radio label text
 	Checked  bool             // Whether radio is selected
 	Disabled bool             // Whether radio is disabled
-	Variant  string           // Style variant: "", "small", "success", "warning", "error"
+	Variant  string           // Style variant: "", "large", "success", "warning", "error"
 	Class    string           // Additional CSS classes from consumer
 	Attrs    templ.Attributes // Catch-all: data-*, aria-*, etc.
 }

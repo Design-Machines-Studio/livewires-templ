@@ -8,7 +8,11 @@ import (
 )
 
 func TestTextareaRenders(t *testing.T) {
-	html := testutil.RenderToString(t, TextareaSimple("Message", "message", "", "Write...", ""))
+	html := testutil.RenderToString(t, Textarea(TextareaProps{
+		Label:       "Message",
+		Name:        "message",
+		Placeholder: "Write...",
+	}))
 	if !strings.Contains(html, "field") {
 		t.Error("expected field class")
 	}

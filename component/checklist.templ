@@ -11,13 +11,27 @@ type ChecklistItemProps struct {
 	Attrs     templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
 
-// Checklist renders a list of checklist items.
-templ Checklist(items []ChecklistItemProps) {
-	<ul class="checklist stack stack-compact">
-		for _, item := range items {
+// ChecklistProps holds configuration for a checklist component.
+type ChecklistProps struct {
+	Items []ChecklistItemProps // The checklist items
+	Size  string              // Text size: "sm", "base", "lg", etc. Default: "sm"
+	Align string              // Text alignment: "center", "left", "right". Default: ""
+	Class string              // Additional CSS classes from consumer
+	Attrs templ.Attributes    // Catch-all: data-*, aria-*, etc.
+}
+
+// ChecklistComponent renders a list of checklist items with full Props control.
+templ ChecklistComponent(props ChecklistProps) {
+	<ul class={ lw.ClassNames("checklist stack stack-compact", lw.SizeClass(lw.DefaultStr(props.Size, "sm")), lw.AlignClass(props.Align), props.Class) } { props.Attrs... }>
+		for _, item := range props.Items {
 			@ChecklistItem(item)
 		}
 	</ul>
+}
+
+// Checklist renders a list of checklist items (convenience wrapper).
+templ Checklist(items []ChecklistItemProps) {
+	@ChecklistComponent(ChecklistProps{Items: items})
 }
 
 // ChecklistItem renders an individual checklist item.
@@ -65,7 +79,7 @@ templ ProgressChecklistComponent(props ProgressChecklistProps) {
 			@Checklist(props.Items)
 		</div>
 		if props.FooterText != "" {
-			<p class="footer">{ props.FooterText }</p>
+			<p class="checklist-footer">{ props.FooterText }</p>
 		}
 	</div>
 }

@@ -16,6 +16,8 @@ type CommentProps struct {
 	Body   string           // Comment body text
 	Date   string           // Date string (formatted via DateShort)
 	Badge  string           // Optional badge label (empty to omit)
+	Size   string           // Text size: "sm", "base", "lg", etc. Default: "sm"
+	Align  string           // Text alignment: "center", "left", "right". Default: ""
 	Class  string           // Additional CSS classes from consumer
 	Attrs  templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
@@ -42,7 +44,7 @@ func CommentComponent(props CommentProps) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var2 = []any{lw.ClassNames("comment cluster", props.Class)}
+		var templ_7745c5c3_Var2 = []any{lw.ClassNames("comment cluster items-start", lw.SizeClass(lw.DefaultStr(props.Size, "sm")), lw.AlignClass(props.Align), props.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -76,14 +78,14 @@ func CommentComponent(props CommentProps) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div class=\"comment-body stack stack-compact\"><div class=\"cluster cluster-between\"><span class=\"author cluster cluster-compact\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div class=\"comment-body flex-1 stack stack-compact\"><div class=\"cluster cluster-between\"><span class=\"author cluster cluster-compact\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(props.Author)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/comment.templ`, Line: 22, Col: 19}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/comment.templ`, Line: 24, Col: 19}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -106,7 +108,7 @@ func CommentComponent(props CommentProps) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(lw.DateShort(props.Date))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/comment.templ`, Line: 27, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/comment.templ`, Line: 29, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -119,7 +121,7 @@ func CommentComponent(props CommentProps) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(props.Body)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/comment.templ`, Line: 30, Col: 19}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/comment.templ`, Line: 32, Col: 19}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {

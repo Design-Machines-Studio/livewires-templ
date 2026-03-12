@@ -37,13 +37,3 @@ templ Select(props SelectProps) {
 	</div>
 }
 
-// SelectSimple is a convenience wrapper for basic selects.
-templ SelectSimple(label, name, placeholder string, options []SelectOption, required bool) {
-	@Select(SelectProps{
-		Label:       label,
-		Name:        name,
-		Placeholder: placeholder,
-		Options:     options,
-		Required:    required,
-	})
-}

@@ -16,9 +16,12 @@ type StatCardProps struct {
 	Value     string           // The primary value (e.g., "3")
 	Detail    string           // Additional context (e.g., "1 General, 2 Board")
 	SubDetail string           // Optional secondary detail
-	Href      string           // Optional link URL — if set, card becomes clickable
+	Href      string           // Optional link URL - if set, card becomes clickable
 	Status    string           // Optional status: "success", "warning", "error"
 	Scheme    string           // Color scheme: "subtle", "accent", etc.
+	Size      string           // Text size for the card: "sm", "base", "lg", etc. Default: "sm"
+	ValueSize string           // Text size for the value: "2xl", "4xl", "6xl", etc. Default: ""
+	Align     string           // Text alignment: "center", "left", "right". Default: ""
 	Class     string           // Extra utility classes on the outer element
 	Attrs     templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
@@ -166,7 +169,7 @@ func StatCardComponent(props StatCardProps) templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var7 = []any{lw.ClassNames("card stat-card box box-tight rounded", lw.SchemeClass(props.Scheme), props.Class)}
+		var templ_7745c5c3_Var7 = []any{lw.ClassNames("card card--stat box box-tight rounded", lw.SizeClass(lw.DefaultStr(props.Size, "sm")), lw.AlignClass(props.Align), lw.SchemeClass(props.Scheme), props.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var7...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -239,7 +242,7 @@ func statCardLabel(props StatCardProps) templ.Component {
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(props.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/stat_card.templ`, Line: 56, Col: 15}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/stat_card.templ`, Line: 59, Col: 15}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -284,7 +287,7 @@ func statCardInner(props StatCardProps) templ.Component {
 			var templ_7745c5c3_Var12 templ.SafeURL
 			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(props.Href))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/stat_card.templ`, Line: 64, Col: 38}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/stat_card.templ`, Line: 67, Col: 38}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
@@ -308,57 +311,79 @@ func statCardInner(props StatCardProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</dt><dd class=\"value\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</dt>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var13 string
-		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(props.Value)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/stat_card.templ`, Line: 71, Col: 32}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+		var templ_7745c5c3_Var13 = []any{lw.ClassNames("value", lw.SizeClass(props.ValueSize))}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var13...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</dd>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<dd class=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var14 string
+		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var13).String())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/stat_card.templ`, Line: 1, Col: 0}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var15 string
+		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(props.Value)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/stat_card.templ`, Line: 74, Col: 82}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</dd>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if props.Detail != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<dd class=\"description\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<dd class=\"description\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var14 string
-			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(props.Detail)
+			var templ_7745c5c3_Var16 string
+			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(props.Detail)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/stat_card.templ`, Line: 73, Col: 40}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/stat_card.templ`, Line: 76, Col: 40}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</dd>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</dd>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if props.SubDetail != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<dd class=\"sub-detail\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<dd class=\"sub-detail\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var15 string
-			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(props.SubDetail)
+			var templ_7745c5c3_Var17 string
+			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(props.SubDetail)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/stat_card.templ`, Line: 76, Col: 42}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/stat_card.templ`, Line: 79, Col: 42}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</dd>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</dd>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -384,9 +409,9 @@ func StatCard(label, value, detail, scheme string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var16 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var16 == nil {
-			templ_7745c5c3_Var16 = templ.NopComponent
+		templ_7745c5c3_Var18 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var18 == nil {
+			templ_7745c5c3_Var18 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = StatCardComponent(StatCardProps{
@@ -419,9 +444,9 @@ func StatCardSimple(label, value, detail, scheme string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var17 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var17 == nil {
-			templ_7745c5c3_Var17 = templ.NopComponent
+		templ_7745c5c3_Var19 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var19 == nil {
+			templ_7745c5c3_Var19 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = StatCardComponent(StatCardProps{
@@ -454,9 +479,9 @@ func StatCardLink(label, value, detail, href, scheme string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var18 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var18 == nil {
-			templ_7745c5c3_Var18 = templ.NopComponent
+		templ_7745c5c3_Var20 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var20 == nil {
+			templ_7745c5c3_Var20 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = StatCardComponent(StatCardProps{

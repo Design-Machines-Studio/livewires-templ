@@ -8,19 +8,21 @@ type EmptyStateProps struct {
 	Detail      string           // Optional secondary text
 	ActionHref  string           // Optional CTA link URL
 	ActionLabel string           // Optional CTA link text
+	Size        string           // Text size: "sm", "base", "lg", etc. Default: ""
+	Align       string           // Text alignment: "center", "left", "right". Default: "center"
 	Class       string           // Additional CSS classes from consumer
 	Attrs       templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
 
 // EmptyStateComponent renders a centered empty state message with full Props control.
 templ EmptyStateComponent(props EmptyStateProps) {
-	<div class={ lw.ClassNames("empty-state", props.Class) } { props.Attrs... }>
+	<div class={ lw.ClassNames("empty-state", lw.SizeClass(props.Size), lw.AlignClass(lw.DefaultStr(props.Align, "center")), props.Class) } { props.Attrs... }>
 		<p>{ props.Message }</p>
 		if props.Detail != "" {
 			<p class="detail">{ props.Detail }</p>
 		}
 		if props.ActionHref != "" && props.ActionLabel != "" {
-			<p class="action">
+			<p class="empty-state-action">
 				<a href={ templ.SafeURL(props.ActionHref) } class="button button--small">{ props.ActionLabel }</a>
 			</p>
 		}

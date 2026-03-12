@@ -10,13 +10,15 @@ type ActivityCardProps struct {
 	BadgeLabel   string           // Optional: badge text (e.g., "Active", "Pending")
 	BadgeVariant string           // Badge variant (e.g., "active", "pending", "draft")
 	Timestamp    string           // Optional: formatted date string
+	Size         string           // Text size: "sm", "base", "lg", etc. Default: "sm"
+	Align        string           // Text alignment: "center", "left", "right". Default: ""
 	Class        string           // Additional CSS classes from consumer
 	Attrs        templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
 
 // ActivityCardComponent renders a card for proposals, resolutions, or action items.
 templ ActivityCardComponent(props ActivityCardProps) {
-	<div class={ lw.ClassNames("activity-card", props.Class) } { props.Attrs... }>
+	<div class={ lw.ClassNames("activity-card", lw.SizeClass(lw.DefaultStr(props.Size, "sm")), lw.AlignClass(props.Align), props.Class) } { props.Attrs... }>
 		<p class="title">
 			if props.Href != "" {
 				<a href={ templ.SafeURL(props.Href) }>{ props.Title }</a>

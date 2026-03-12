@@ -12,13 +12,15 @@ import lw "github.com/Design-Machines-Studio/livewires-templ"
 
 // InfoCardProps holds configuration for an info card component.
 type InfoCardProps struct {
-	Header     string           // Category header (e.g., "Upcoming")
+	Header     string           // Category label (e.g., "Upcoming")
 	Title      string           // Main title
 	Href       string           // Link URL
 	Subtitle   string           // Secondary info (e.g., date/time)
 	AvatarName string           // Optional: name for avatar (will show initials)
 	AvatarText string           // Optional: text next to avatar
 	Scheme     string           // Color scheme (e.g., "subtle")
+	Size       string           // Text size: "sm", "base", "lg", etc. Default: "sm"
+	Align      string           // Text alignment: "center", "left", "right". Default: ""
 	Class      string           // Additional CSS classes from consumer
 	Attrs      templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
@@ -45,7 +47,7 @@ func InfoCardComponent(props InfoCardProps) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var2 = []any{lw.ClassNames("card box box-tight stack-compact", lw.SchemeClass(props.Scheme), props.Class)}
+		var templ_7745c5c3_Var2 = []any{lw.ClassNames("card box box-tight stack stack-compact", lw.SizeClass(lw.DefaultStr(props.Size, "sm")), lw.AlignClass(props.Align), lw.SchemeClass(props.Scheme), props.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -76,14 +78,14 @@ func InfoCardComponent(props InfoCardProps) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if props.Header != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<p class=\"header\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<p class=\"category\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(props.Header)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/info_card.templ`, Line: 25, Col: 35}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/info_card.templ`, Line: 27, Col: 37}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -106,7 +108,7 @@ func InfoCardComponent(props InfoCardProps) templ.Component {
 			var templ_7745c5c3_Var5 templ.SafeURL
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(props.Href))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/info_card.templ`, Line: 29, Col: 39}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/info_card.templ`, Line: 31, Col: 39}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -119,7 +121,7 @@ func InfoCardComponent(props InfoCardProps) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(props.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/info_card.templ`, Line: 29, Col: 55}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/info_card.templ`, Line: 31, Col: 55}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -133,7 +135,7 @@ func InfoCardComponent(props InfoCardProps) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(props.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/info_card.templ`, Line: 31, Col: 17}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/info_card.templ`, Line: 33, Col: 17}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -152,7 +154,7 @@ func InfoCardComponent(props InfoCardProps) templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(props.Subtitle)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/info_card.templ`, Line: 35, Col: 39}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/info_card.templ`, Line: 37, Col: 39}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -179,7 +181,7 @@ func InfoCardComponent(props InfoCardProps) templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(props.AvatarText)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/info_card.templ`, Line: 40, Col: 28}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/info_card.templ`, Line: 42, Col: 28}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {

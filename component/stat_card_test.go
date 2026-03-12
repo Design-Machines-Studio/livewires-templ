@@ -9,8 +9,8 @@ import (
 
 func TestStatCardUsesCardClass(t *testing.T) {
 	html := testutil.RenderToString(t, StatCardSimple("Revenue", "$12,450", "+12%", ""))
-	if !strings.Contains(html, "stat-card") {
-		t.Error("expected stat-card class")
+	if !strings.Contains(html, "card--stat") {
+		t.Error("expected card--stat class")
 	}
 	if !strings.Contains(html, "card") {
 		t.Error("expected card base class")
@@ -66,6 +66,45 @@ func TestStatCardSubDetail(t *testing.T) {
 	}
 	if !strings.Contains(html, "vs last quarter") {
 		t.Error("expected sub-detail text")
+	}
+}
+
+func TestStatCardSizeDefault(t *testing.T) {
+	html := testutil.RenderToString(t, StatCardSimple("Revenue", "$12,450", "+12%", ""))
+	if !strings.Contains(html, "text-sm") {
+		t.Error("expected default text-sm size class")
+	}
+}
+
+func TestStatCardSizeOverride(t *testing.T) {
+	html := testutil.RenderToString(t, StatCardComponent(StatCardProps{
+		Label: "Revenue",
+		Value: "$12,450",
+		Size:  "base",
+	}))
+	if !strings.Contains(html, "text-base") {
+		t.Error("expected text-base size class")
+	}
+	if strings.Contains(html, "text-sm") {
+		t.Error("should not contain default text-sm when overridden")
+	}
+}
+
+func TestStatCardValueSize(t *testing.T) {
+	html := testutil.RenderToString(t, StatCardComponent(StatCardProps{
+		Label:     "Revenue",
+		Value:     "$12,450",
+		ValueSize: "6xl",
+	}))
+	if !strings.Contains(html, "text-6xl") {
+		t.Error("expected text-6xl class on value element")
+	}
+}
+
+func TestStatCardValueSizeDefault(t *testing.T) {
+	html := testutil.RenderToString(t, StatCardSimple("Revenue", "$12,450", "+12%", ""))
+	if strings.Contains(html, "text-6xl") {
+		t.Error("should not contain text-6xl when ValueSize not set")
 	}
 }
 

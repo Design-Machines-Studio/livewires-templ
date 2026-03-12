@@ -44,13 +44,3 @@ templ Textarea(props TextareaProps) {
 	</div>
 }
 
-// TextareaSimple is a convenience wrapper for basic textareas.
-templ TextareaSimple(label, name, value, placeholder, hint string) {
-	@Textarea(TextareaProps{
-		Label:       label,
-		Name:        name,
-		Value:       value,
-		Placeholder: placeholder,
-		Hint:        hint,
-	})
-}

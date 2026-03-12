@@ -37,6 +37,27 @@ func TestKanbanColumnHeadingLevel(t *testing.T) {
 	}
 }
 
+func TestKanbanColumnTitleSizeDefault(t *testing.T) {
+	html := testutil.RenderToString(t, KanbanColumn("To Do"))
+	if !strings.Contains(html, "text-sm") {
+		t.Error("expected default text-sm on column title")
+	}
+}
+
+func TestKanbanColumnTitleSizeOverride(t *testing.T) {
+	html := testutil.RenderToString(t, KanbanColumnComponent(KanbanColumnProps{Title: "Done", TitleSize: "base"}))
+	if !strings.Contains(html, "text-base") {
+		t.Error("expected text-base on column title")
+	}
+}
+
+func TestKanbanColumnNoThemeUtilities(t *testing.T) {
+	html := testutil.RenderToString(t, KanbanColumn("To Do"))
+	if strings.Contains(html, `text-muted`) {
+		t.Error("column title should not have text-muted utility class (handled by CSS)")
+	}
+}
+
 func TestKanbanCardRenders(t *testing.T) {
 	html := testutil.RenderToString(t, KanbanCard("/items/1"))
 	if !strings.Contains(html, "/items/1") {

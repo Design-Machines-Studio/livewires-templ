@@ -74,21 +74,6 @@ func DateShort(dateStr string) string {
 	return t.Format("Jan 2, 2006")
 }
 
-// Year extracts the year from a date string.
-func Year(dateStr string) string {
-	if dateStr == "" {
-		return ""
-	}
-	t, err := time.Parse("2006-01-02", dateStr)
-	if err != nil {
-		t, err = time.Parse(time.RFC3339, dateStr)
-		if err != nil {
-			return ""
-		}
-	}
-	return t.Format("2006")
-}
-
 // dateTimeFriendlyFormats lists formats tried by DateTimeFriendly.
 var dateTimeFriendlyFormats = []string{
 	"2006-01-02T15:04:05Z07:00",
@@ -128,14 +113,6 @@ func PtrVal(s *string) string {
 		return *s
 	}
 	return ""
-}
-
-// PtrValOr returns the string value of a pointer, or a default if nil/empty.
-func PtrValOr(s *string, def string) string {
-	if s != nil && *s != "" {
-		return *s
-	}
-	return def
 }
 
 // SplitCSV splits a comma-separated string into trimmed, non-empty items.

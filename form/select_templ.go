@@ -224,40 +224,4 @@ func Select(props SelectProps) templ.Component {
 	})
 }
 
-// SelectSimple is a convenience wrapper for basic selects.
-func SelectSimple(label, name, placeholder string, options []SelectOption, required bool) templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
-				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var12 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var12 == nil {
-			templ_7745c5c3_Var12 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = Select(SelectProps{
-			Label:       label,
-			Name:        name,
-			Placeholder: placeholder,
-			Options:     options,
-			Required:    required,
-		}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		return nil
-	})
-}
-
 var _ = templruntime.GeneratedTemplate

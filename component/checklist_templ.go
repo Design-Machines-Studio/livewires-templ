@@ -19,8 +19,17 @@ type ChecklistItemProps struct {
 	Attrs     templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
 
-// Checklist renders a list of checklist items.
-func Checklist(items []ChecklistItemProps) templ.Component {
+// ChecklistProps holds configuration for a checklist component.
+type ChecklistProps struct {
+	Items []ChecklistItemProps // The checklist items
+	Size  string               // Text size: "sm", "base", "lg", etc. Default: "sm"
+	Align string               // Text alignment: "center", "left", "right". Default: ""
+	Class string               // Additional CSS classes from consumer
+	Attrs templ.Attributes     // Catch-all: data-*, aria-*, etc.
+}
+
+// ChecklistComponent renders a list of checklist items with full Props control.
+func ChecklistComponent(props ChecklistProps) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -41,17 +50,73 @@ func Checklist(items []ChecklistItemProps) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<ul class=\"checklist stack stack-compact\">")
+		var templ_7745c5c3_Var2 = []any{lw.ClassNames("checklist stack stack-compact", lw.SizeClass(lw.DefaultStr(props.Size, "sm")), lw.AlignClass(props.Align), props.Class)}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		for _, item := range items {
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<ul class=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var3 string
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var2).String())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/checklist.templ`, Line: 1, Col: 0}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, props.Attrs)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, ">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		for _, item := range props.Items {
 			templ_7745c5c3_Err = ChecklistItem(item).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</ul>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</ul>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// Checklist renders a list of checklist items (convenience wrapper).
+func Checklist(items []ChecklistItemProps) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var4 == nil {
+			templ_7745c5c3_Var4 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = ChecklistComponent(ChecklistProps{Items: items}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -76,30 +141,30 @@ func ChecklistItem(props ChecklistItemProps) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var2 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var2 == nil {
-			templ_7745c5c3_Var2 = templ.NopComponent
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var3 = []any{lw.ClassNames("cluster cluster-compact", props.Class)}
-		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var3...)
+		var templ_7745c5c3_Var6 = []any{lw.ClassNames("cluster cluster-compact", props.Class)}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var6...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<li class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<li class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var3).String())
+		var templ_7745c5c3_Var7 string
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var6).String())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/checklist.templ`, Line: 1, Col: 0}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -107,85 +172,85 @@ func ChecklistItem(props ChecklistItemProps) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, ">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, ">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if props.Completed {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<span class=\"check\" aria-hidden=\"true\">&#10003;</span> <span class=\"completed\"><s>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<span class=\"check\" aria-hidden=\"true\">&#10003;</span> <span class=\"completed\"><s>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var5 string
-			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(props.Label)
+			var templ_7745c5c3_Var8 string
+			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(props.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/checklist.templ`, Line: 28, Col: 43}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/checklist.templ`, Line: 42, Col: 43}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</s></span>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</s></span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<span aria-hidden=\"true\">&#9675;</span> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<span aria-hidden=\"true\">&#9675;</span> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if props.Href != "" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<a href=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<a href=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var6 templ.SafeURL
-				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(props.Href))
+				var templ_7745c5c3_Var9 templ.SafeURL
+				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(props.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/checklist.templ`, Line: 32, Col: 39}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/checklist.templ`, Line: 46, Col: 39}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\">")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var7 string
-				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(props.Label)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/checklist.templ`, Line: 32, Col: 55}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</a>")
+				var templ_7745c5c3_Var10 string
+				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(props.Label)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/checklist.templ`, Line: 46, Col: 55}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</a>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<span>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<span>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var8 string
-				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(props.Label)
+				var templ_7745c5c3_Var11 string
+				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(props.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/checklist.templ`, Line: 34, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/checklist.templ`, Line: 48, Col: 23}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</span>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</span>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -222,30 +287,30 @@ func ProgressChecklistComponent(props ProgressChecklistProps) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var9 == nil {
-			templ_7745c5c3_Var9 = templ.NopComponent
+		templ_7745c5c3_Var12 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var12 == nil {
+			templ_7745c5c3_Var12 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var10 = []any{lw.ClassNames("progress-checklist box scheme-subtle", props.Class)}
-		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var10...)
+		var templ_7745c5c3_Var13 = []any{lw.ClassNames("progress-checklist box scheme-subtle", props.Class)}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var13...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<div class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var11 string
-		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var10).String())
+		var templ_7745c5c3_Var14 string
+		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var13).String())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/checklist.templ`, Line: 1, Col: 0}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -253,7 +318,7 @@ func ProgressChecklistComponent(props ProgressChecklistProps) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "><div class=\"progress-header cluster cluster-between\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "><div class=\"progress-header cluster cluster-between\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -261,33 +326,33 @@ func ProgressChecklistComponent(props ProgressChecklistProps) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<span class=\"progress-count\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<span class=\"progress-count\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var12 string
-		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(lw.Itoa(props.Completed))
+		var templ_7745c5c3_Var15 string
+		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(lw.Itoa(props.Completed))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/checklist.templ`, Line: 57, Col: 58}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/checklist.templ`, Line: 71, Col: 58}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, " of ")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var13 string
-		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(lw.Itoa(props.Total))
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/checklist.templ`, Line: 57, Col: 86}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, " of ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, " done</span></div>")
+		var templ_7745c5c3_Var16 string
+		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(lw.Itoa(props.Total))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/checklist.templ`, Line: 71, Col: 86}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, " done</span></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -302,7 +367,7 @@ func ProgressChecklistComponent(props ProgressChecklistProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<div class=\"checklist-body\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<div class=\"checklist-body\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -310,30 +375,30 @@ func ProgressChecklistComponent(props ProgressChecklistProps) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if props.FooterText != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<p class=\"footer\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<p class=\"checklist-footer\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var14 string
-			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(props.FooterText)
+			var templ_7745c5c3_Var17 string
+			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(props.FooterText)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/checklist.templ`, Line: 68, Col: 39}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/checklist.templ`, Line: 82, Col: 49}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -358,63 +423,63 @@ func progressChecklistHeading(level, title string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var15 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var15 == nil {
-			templ_7745c5c3_Var15 = templ.NopComponent
+		templ_7745c5c3_Var18 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var18 == nil {
+			templ_7745c5c3_Var18 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		switch level {
 		case "h3":
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<h3>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<h3>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var16 string
-			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(title)
+			var templ_7745c5c3_Var19 string
+			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/checklist.templ`, Line: 77, Col: 14}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/checklist.templ`, Line: 91, Col: 14}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</h3>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</h3>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		case "h4":
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<h4>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<h4>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var17 string
-			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(title)
+			var templ_7745c5c3_Var20 string
+			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/checklist.templ`, Line: 79, Col: 14}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/checklist.templ`, Line: 93, Col: 14}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</h4>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</h4>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		default:
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<h2>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<h2>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var18 string
-			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(title)
+			var templ_7745c5c3_Var21 string
+			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/checklist.templ`, Line: 81, Col: 14}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/checklist.templ`, Line: 95, Col: 14}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</h2>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</h2>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -440,9 +505,9 @@ func ProgressChecklist(title string, completed, total int, items []ChecklistItem
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var19 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var19 == nil {
-			templ_7745c5c3_Var19 = templ.NopComponent
+		templ_7745c5c3_Var22 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var22 == nil {
+			templ_7745c5c3_Var22 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = ProgressChecklistComponent(ProgressChecklistProps{

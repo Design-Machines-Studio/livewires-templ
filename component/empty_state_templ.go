@@ -16,6 +16,8 @@ type EmptyStateProps struct {
 	Detail      string           // Optional secondary text
 	ActionHref  string           // Optional CTA link URL
 	ActionLabel string           // Optional CTA link text
+	Size        string           // Text size: "sm", "base", "lg", etc. Default: ""
+	Align       string           // Text alignment: "center", "left", "right". Default: "center"
 	Class       string           // Additional CSS classes from consumer
 	Attrs       templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
@@ -42,7 +44,7 @@ func EmptyStateComponent(props EmptyStateProps) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var2 = []any{lw.ClassNames("empty-state", props.Class)}
+		var templ_7745c5c3_Var2 = []any{lw.ClassNames("empty-state", lw.SizeClass(props.Size), lw.AlignClass(lw.DefaultStr(props.Align, "center")), props.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -75,7 +77,7 @@ func EmptyStateComponent(props EmptyStateProps) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(props.Message)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/empty_state.templ`, Line: 18, Col: 20}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/empty_state.templ`, Line: 20, Col: 20}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -93,7 +95,7 @@ func EmptyStateComponent(props EmptyStateProps) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(props.Detail)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/empty_state.templ`, Line: 20, Col: 35}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/empty_state.templ`, Line: 22, Col: 35}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -105,14 +107,14 @@ func EmptyStateComponent(props EmptyStateProps) templ.Component {
 			}
 		}
 		if props.ActionHref != "" && props.ActionLabel != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<p class=\"action\"><a href=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<p class=\"empty-state-action\"><a href=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var6 templ.SafeURL
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(props.ActionHref))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/empty_state.templ`, Line: 24, Col: 45}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/empty_state.templ`, Line: 26, Col: 45}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -125,7 +127,7 @@ func EmptyStateComponent(props EmptyStateProps) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(props.ActionLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/empty_state.templ`, Line: 24, Col: 96}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/empty_state.templ`, Line: 26, Col: 96}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {

@@ -21,7 +21,7 @@ func cardClass(props CardProps) string {
 templ CardComponent(props CardProps) {
 	if props.Href != "" {
 		<a
-			href={ props.Href }
+			href={ templ.SafeURL(props.Href) }
 			class={ cardClass(props) }
 			{ props.Attrs... }
 		>

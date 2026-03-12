@@ -27,14 +27,16 @@ templ KanbanBoard(id string) {
 type KanbanColumnProps struct {
 	Title        string           // Column title
 	HeadingLevel string           // Heading tag: "h2", "h3", etc. (default: "h2")
+	TitleSize    string           // Title text size: "sm", "base", etc. Default: "sm"
+	Align        string           // Text alignment: "center", "left", "right". Default: ""
 	Class        string           // Additional CSS classes from consumer
 	Attrs        templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
 
 // KanbanColumnComponent renders a titled column with full Props control.
 templ KanbanColumnComponent(props KanbanColumnProps) {
-	<div class={ lw.ClassNames("kanban-column stack box box-tight scheme-subtle", props.Class) } { props.Attrs... }>
-		@kanbanColumnHeading(props.HeadingLevel, props.Title)
+	<div class={ lw.ClassNames("kanban-column stack box box-tight scheme-subtle", lw.AlignClass(props.Align), props.Class) } { props.Attrs... }>
+		@kanbanColumnHeading(props.HeadingLevel, props.Title, lw.DefaultStr(props.TitleSize, "sm"))
 		<div class="stack stack-compact">
 			{ children... }
 		</div>
@@ -42,14 +44,14 @@ templ KanbanColumnComponent(props KanbanColumnProps) {
 }
 
 // kanbanColumnHeading renders the column title at the correct heading level.
-templ kanbanColumnHeading(level, title string) {
+templ kanbanColumnHeading(level, title, size string) {
 	switch level {
 		case "h3":
-			<h3 class="column-title">{ title }</h3>
+			<h3 class={ lw.ClassNames("column-title", lw.SizeClass(size)) }>{ title }</h3>
 		case "h4":
-			<h4 class="column-title">{ title }</h4>
+			<h4 class={ lw.ClassNames("column-title", lw.SizeClass(size)) }>{ title }</h4>
 		default:
-			<h2 class="column-title">{ title }</h2>
+			<h2 class={ lw.ClassNames("column-title", lw.SizeClass(size)) }>{ title }</h2>
 	}
 }
 

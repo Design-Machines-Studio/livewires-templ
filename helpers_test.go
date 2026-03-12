@@ -39,12 +39,6 @@ func TestDateShort(t *testing.T) {
 	}
 }
 
-func TestYear(t *testing.T) {
-	if got := Year("2024-03-15"); got != "2024" {
-		t.Errorf("Year(\"2024-03-15\") = %q", got)
-	}
-}
-
 func TestItoa(t *testing.T) {
 	if got := Itoa(42); got != "42" {
 		t.Errorf("Itoa(42) = %q", got)

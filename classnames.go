@@ -40,6 +40,22 @@ func SizeClass(size string) string {
 	return "text-" + size
 }
 
+// DefaultStr returns val if non-empty, otherwise def.
+func DefaultStr(val, def string) string {
+	if val != "" {
+		return val
+	}
+	return def
+}
+
+// AlignClass returns "text-align" if align is non-empty.
+func AlignClass(align string) string {
+	if align == "" {
+		return ""
+	}
+	return "text-" + align
+}
+
 // SchemeClass returns "scheme-name" if name is non-empty.
 func SchemeClass(name string) string {
 	if name == "" {
