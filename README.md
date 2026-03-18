@@ -95,7 +95,10 @@ import (
 @form.CheckboxSimple("agree", "I agree to the terms", false)
 
 // Toggle switch
-@form.Switch("notifications", "notif", true)
+@form.Switch("notifications", "Enable notifications", true)
+
+// Compact toggle switch
+@form.SwitchSmall("compact-mode", "Compact mode", false)
 
 // Textarea
 @form.TextareaSimple("Message", "message", "", "Write...", "")

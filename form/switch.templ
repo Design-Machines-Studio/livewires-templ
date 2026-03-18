@@ -2,29 +2,48 @@ package form
 
 import lw "github.com/Design-Machines-Studio/livewires-templ"
 
-// SwitchProps holds configuration for a toggle switch component.
+// SwitchProps holds configuration for a pill-shaped toggle switch.
 type SwitchProps struct {
-	Name    string           // Field name for the radio inputs
-	ID      string           // Base ID for the radio inputs
-	Checked bool             // Whether the switch is on
-	Class   string           // Additional CSS classes from consumer
-	Attrs   templ.Attributes // Catch-all: data-*, aria-*, etc.
+	Name     string           // Field name for the checkbox input
+	ID       string           // ID for the checkbox input
+	Label    string           // Visible label text. If empty, pass aria-label via Attrs.
+	Checked  bool             // Whether the switch is on
+	Disabled bool             // Whether the switch is disabled
+	Variant  string           // Style variant: "", "small"
+	Value    string           // Value when checked (default "1")
+	Class    string           // Additional CSS classes from consumer
+	Attrs    templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
 
-// SwitchComponent renders a toggle switch with full Props control.
-// Uses radio-pair CSS: first-of-type:checked → slider RIGHT (accent).
-// "On" must be the first radio for correct visual mapping.
+// SwitchComponent renders a pill-shaped toggle switch with full Props control.
 templ SwitchComponent(props SwitchProps) {
-	<div class={ lw.ClassNames("field switch", props.Class) } { props.Attrs... }>
-		<input id={ props.ID + "-on" } name={ props.Name } type="radio" value="1" checked?={ props.Checked }/>
-		<label for={ props.ID + "-on" } onclick="">On</label>
-		<input id={ props.ID + "-off" } name={ props.Name } type="radio" value="0" checked?={ !props.Checked }/>
-		<label for={ props.ID + "-off" } onclick="">Off</label>
-		<span></span>
-	</div>
+	<label class={ lw.ClassNames("switch", lw.VariantClass("switch", props.Variant), props.Class) } { props.Attrs... }>
+		<input
+			type="checkbox"
+			role="switch"
+			if props.Name != "" {
+				name={ props.Name }
+			}
+			if props.ID != "" {
+				id={ props.ID }
+			}
+			value={ lw.DefaultStr(props.Value, "1") }
+			checked?={ props.Checked }
+			disabled?={ props.Disabled }
+		/>
+		<span aria-hidden="true"></span>
+		if props.Label != "" {
+			{ props.Label }
+		}
+	</label>
 }
 
 // Switch renders a toggle switch (convenience wrapper).
-templ Switch(name string, id string, checked bool) {
-	@SwitchComponent(SwitchProps{Name: name, ID: id, Checked: checked})
+templ Switch(name string, label string, checked bool) {
+	@SwitchComponent(SwitchProps{Name: name, Label: label, Checked: checked})
+}
+
+// SwitchSmall renders a compact (small variant) toggle switch.
+templ SwitchSmall(name string, label string, checked bool) {
+	@SwitchComponent(SwitchProps{Name: name, Label: label, Checked: checked, Variant: "small"})
 }
