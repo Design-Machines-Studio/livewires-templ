@@ -33,6 +33,10 @@ import (
 @component.AvatarSmall("Jane Doe")
 @component.AvatarImage("/img/avatar.jpg", "Jane Doe", "lg")
 
+// Avatar with name displayed alongside (wraps in cluster layout)
+@component.AvatarComponent(component.AvatarProps{Name: "Jane Doe", ShowName: true, Size: "sm"})
+@component.AvatarComponent(component.AvatarProps{Name: "Jane Doe", Src: "/img/avatar.jpg", ShowName: true})
+
 // Square avatar (composable with any size)
 @component.AvatarComponent(component.AvatarProps{Name: "Acme Co", Square: true, Size: "sm"})
 
