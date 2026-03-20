@@ -42,14 +42,17 @@ func TestAvatarSizeVariant(t *testing.T) {
 
 func TestAvatarShowName(t *testing.T) {
 	html := testutil.RenderToString(t, AvatarComponent(AvatarProps{Name: "John Doe", ShowName: true}))
-	if !strings.Contains(html, `class="cluster"`) {
-		t.Error("expected cluster wrapper when ShowName is true")
+	if !strings.Contains(html, `class="cluster items-center"`) {
+		t.Error("expected cluster items-center wrapper when ShowName is true")
 	}
 	if !strings.Contains(html, "John Doe") {
 		t.Error("expected name text")
 	}
-	if strings.Contains(html, `aria-label=`) {
-		t.Error("should not have aria-label when ShowName is true")
+	if !strings.Contains(html, `role="img"`) {
+		t.Error("initials avatar should have role=img when ShowName is true")
+	}
+	if !strings.Contains(html, `aria-label="John Doe"`) {
+		t.Error("initials avatar should keep aria-label when ShowName is true (role=img requires accessible name)")
 	}
 }
 
@@ -60,8 +63,8 @@ func TestAvatarShowNameImageAltEmpty(t *testing.T) {
 	if !strings.Contains(html, `alt=""`) {
 		t.Error("expected empty alt when ShowName is true (visible text provides name)")
 	}
-	if !strings.Contains(html, `class="cluster"`) {
-		t.Error("expected cluster wrapper")
+	if !strings.Contains(html, `class="cluster items-center"`) {
+		t.Error("expected cluster items-center wrapper")
 	}
 }
 

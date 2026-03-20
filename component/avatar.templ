@@ -44,8 +44,6 @@ templ avatarSpan(props AvatarProps) {
 		class={ lw.ClassNames("avatar", lw.VariantClass("avatar", props.Size), avatarSquareClass(props.Square), props.Class) }
 		if props.Src == "" {
 			role="img"
-		}
-		if props.Src == "" && !props.ShowName {
 			aria-label={ props.Name }
 		}
 		{ props.Attrs... }
@@ -65,7 +63,7 @@ templ avatarSpan(props AvatarProps) {
 // Image avatars rely on <img alt> for their accessible name.
 templ AvatarComponent(props AvatarProps) {
 	if props.ShowName {
-		<div class="cluster" style="align-items: center;">
+		<div class="cluster items-center">
 			@avatarSpan(props)
 			<span>{ props.Name }</span>
 		</div>
