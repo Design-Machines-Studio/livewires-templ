@@ -29,11 +29,17 @@ func avatarInitials(name, size string) string {
 	return lw.Initials(name)
 }
 
-// AvatarComponent renders an avatar with full Props control.
-// Initials avatars (no Src) get role="img" and aria-label for screen readers;
-// the .initials span is aria-hidden since the accessible name comes from aria-label.
-// Image avatars rely on <img alt> for their accessible name.
-templ AvatarComponent(props AvatarProps) {
+// avatarAlt returns the img alt text. Empty when ShowName is true (visible text
+// provides the accessible name) to avoid screen reader duplication.
+func avatarAlt(name string, showName bool) string {
+	if showName {
+		return ""
+	}
+	return name
+}
+
+// avatarSpan renders the avatar element itself (shared by both ShowName paths).
+templ avatarSpan(props AvatarProps) {
 	<span
 		class={ lw.ClassNames("avatar", lw.VariantClass("avatar", props.Size), avatarSquareClass(props.Square), props.Class) }
 		if props.Src == "" {
@@ -45,14 +51,27 @@ templ AvatarComponent(props AvatarProps) {
 		{ props.Attrs... }
 	>
 		if props.Src != "" {
-			<img src={ templ.SafeURL(props.Src) } alt={ props.Name }>
+			<img src={ templ.SafeURL(props.Src) } alt={ avatarAlt(props.Name, props.ShowName) }>
 		} else {
 			<span class="initials" aria-hidden="true">{ avatarInitials(props.Name, props.Size) }</span>
 		}
-		if props.ShowName {
-			<span class="name">{ props.Name }</span>
-		}
 	</span>
+}
+
+// AvatarComponent renders an avatar with full Props control.
+// When ShowName is true, wraps the avatar in a cluster layout with the name alongside.
+// Initials avatars (no Src) get role="img" and aria-label for screen readers;
+// the .initials span is aria-hidden since the accessible name comes from aria-label.
+// Image avatars rely on <img alt> for their accessible name.
+templ AvatarComponent(props AvatarProps) {
+	if props.ShowName {
+		<div class="cluster" style="align-items: center;">
+			@avatarSpan(props)
+			<span>{ props.Name }</span>
+		</div>
+	} else {
+		@avatarSpan(props)
+	}
 }
 
 // Avatar renders an initials-based avatar.
