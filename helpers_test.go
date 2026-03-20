@@ -2,6 +2,28 @@ package livewires
 
 import "testing"
 
+func TestSingleInitial(t *testing.T) {
+	tests := []struct {
+		name   string
+		input  string
+		expect string
+	}{
+		{"two words", "John Doe", "J"},
+		{"single word", "Alice", "A"},
+		{"three words", "Mary Jane Watson", "M"},
+		{"empty", "", "?"},
+		{"unicode accented", "Étienne Dupont", "É"},
+		{"cjk characters", "太郎 山田", "太"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := SingleInitial(tt.input); got != tt.expect {
+				t.Errorf("SingleInitial(%q) = %q, want %q", tt.input, got, tt.expect)
+			}
+		})
+	}
+}
+
 func TestInitials(t *testing.T) {
 	tests := []struct {
 		name   string

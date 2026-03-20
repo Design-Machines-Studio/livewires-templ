@@ -34,9 +34,9 @@ func TestAvatarImage(t *testing.T) {
 }
 
 func TestAvatarSizeVariant(t *testing.T) {
-	html := testutil.RenderToString(t, Avatar("Test", "large"))
-	if !strings.Contains(html, "avatar--large") {
-		t.Error("expected avatar--large class")
+	html := testutil.RenderToString(t, Avatar("Test", "lg"))
+	if !strings.Contains(html, "avatar--lg") {
+		t.Error("expected avatar--lg class")
 	}
 }
 
@@ -56,20 +56,63 @@ func TestAvatarShowName(t *testing.T) {
 func TestAvatarAriaLabel(t *testing.T) {
 	html := testutil.RenderToString(t, Avatar("Jane Doe", ""))
 	if !strings.Contains(html, `aria-label="Jane Doe"`) {
-		t.Error("expected aria-label when ShowName is false")
+		t.Error("expected aria-label on initials avatar when ShowName is false")
+	}
+	imgHtml := testutil.RenderToString(t, AvatarImage("/img/test.jpg", "Jane Doe", ""))
+	if strings.Contains(imgHtml, `aria-label`) {
+		t.Error("should not have aria-label on image avatar (img alt is sufficient)")
 	}
 }
 
 func TestAvatarSmall(t *testing.T) {
 	html := testutil.RenderToString(t, AvatarSmall("Test"))
-	if !strings.Contains(html, "avatar--small") {
-		t.Error("expected avatar--small class")
+	if !strings.Contains(html, "avatar--sm") {
+		t.Error("expected avatar--sm class")
 	}
 }
 
-func TestAvatarLarge(t *testing.T) {
-	html := testutil.RenderToString(t, Avatar("Test", "large"))
-	if !strings.Contains(html, "avatar--large") {
-		t.Error("expected avatar--large class")
+func TestAvatarSquare(t *testing.T) {
+	html := testutil.RenderToString(t, AvatarComponent(AvatarProps{Name: "Test", Size: "sm", Square: true}))
+	if !strings.Contains(html, "avatar--sm") {
+		t.Error("expected avatar--sm class")
+	}
+	if !strings.Contains(html, "avatar--square") {
+		t.Error("expected avatar--square class")
+	}
+}
+
+func TestAvatarRoleImg(t *testing.T) {
+	html := testutil.RenderToString(t, Avatar("Jane Doe", ""))
+	if !strings.Contains(html, `role="img"`) {
+		t.Error("expected role=img on initials avatar")
+	}
+	imgHtml := testutil.RenderToString(t, AvatarImage("/img/test.jpg", "Jane Doe", ""))
+	if strings.Contains(imgHtml, `role="img"`) {
+		t.Error("should not have role=img on image avatar")
+	}
+}
+
+func TestAvatarInitialsAriaHidden(t *testing.T) {
+	html := testutil.RenderToString(t, Avatar("Jane Doe", ""))
+	if !strings.Contains(html, `aria-hidden="true"`) {
+		t.Error("expected aria-hidden on initials span")
+	}
+}
+
+func TestAvatarSingleInitialSmallSizes(t *testing.T) {
+	xsHtml := testutil.RenderToString(t, Avatar("John Doe", "xs"))
+	if strings.Contains(xsHtml, "JD") {
+		t.Error("xs size should use single initial, not JD")
+	}
+	if !strings.Contains(xsHtml, ">J<") {
+		t.Error("xs size should show single initial J")
+	}
+
+	smHtml := testutil.RenderToString(t, AvatarSmall("John Doe"))
+	if strings.Contains(smHtml, "JD") {
+		t.Error("sm size should use single initial, not JD")
+	}
+	if !strings.Contains(smHtml, ">J<") {
+		t.Error("sm size should show single initial J")
 	}
 }

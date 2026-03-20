@@ -8,6 +8,16 @@ import (
 	"unicode/utf8"
 )
 
+// SingleInitial returns the first initial from a name (e.g., "John Doe" → "J").
+// Used for small avatar sizes (xs, sm) where space is limited.
+func SingleInitial(name string) string {
+	parts := strings.Fields(name)
+	if len(parts) == 0 {
+		return "?"
+	}
+	return Initials(parts[0])
+}
+
 // Initials extracts initials from a name (e.g., "John Doe" → "JD").
 func Initials(name string) string {
 	parts := strings.Fields(name)

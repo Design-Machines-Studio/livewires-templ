@@ -28,8 +28,13 @@ import (
 // Badge
 @component.Badge("Active", "green")
 
-// Avatar
+// Avatar (sizes: "xs", "sm", "lg", "xl", "2xl", "3xl", "4xl", or "" for default)
 @component.Avatar("Jane Doe", "")
+@component.AvatarSmall("Jane Doe")
+@component.AvatarImage("/img/avatar.jpg", "Jane Doe", "lg")
+
+// Square avatar (composable with any size)
+@component.AvatarComponent(component.AvatarProps{Name: "Acme Co", Square: true, Size: "sm"})
 
 // Card (scheme controls color: "subtle", "dark", "accent", or "")
 @component.Card("subtle") {
@@ -131,6 +136,7 @@ lw.ClassNames("button", "button--accent", "")  // "button button--accent"
 lw.VariantClass("badge", "green")               // "badge--green"
 lw.SchemeClass("dark")                           // "scheme-dark"
 lw.Initials("Jane Doe")                          // "JD"
+lw.SingleInitial("Jane Doe")                     // "J"
 lw.DateShort("2024-03-15")                        // "Mar 15, 2024"
 ```
 

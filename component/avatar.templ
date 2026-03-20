@@ -6,17 +6,40 @@ import lw "github.com/Design-Machines-Studio/livewires-templ"
 type AvatarProps struct {
 	Name     string           // Person's name (used for alt text and initials fallback)
 	Src      string           // Image URL; if empty, initials are shown
-	Size     string           // CSS modifier: "small", "large", "xlarge", "square"
+	Size     string           // CSS modifier: "xs", "sm", "lg", "xl", "2xl", "3xl", "4xl"
+	Square   bool             // Use square shape instead of circle
 	ShowName bool             // Whether to display the name text alongside the avatar
 	Class    string           // Additional CSS classes from consumer
 	Attrs    templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
 
+// avatarSquareClass returns the square modifier class when enabled.
+func avatarSquareClass(square bool) string {
+	if square {
+		return "avatar--square"
+	}
+	return ""
+}
+
+// avatarInitials returns single initial for xs/sm sizes, full initials otherwise.
+func avatarInitials(name, size string) string {
+	if size == "xs" || size == "sm" {
+		return lw.SingleInitial(name)
+	}
+	return lw.Initials(name)
+}
+
 // AvatarComponent renders an avatar with full Props control.
+// Initials avatars (no Src) get role="img" and aria-label for screen readers;
+// the .initials span is aria-hidden since the accessible name comes from aria-label.
+// Image avatars rely on <img alt> for their accessible name.
 templ AvatarComponent(props AvatarProps) {
 	<span
-		class={ lw.ClassNames("avatar", lw.VariantClass("avatar", props.Size), props.Class) }
-		if !props.ShowName {
+		class={ lw.ClassNames("avatar", lw.VariantClass("avatar", props.Size), avatarSquareClass(props.Square), props.Class) }
+		if props.Src == "" {
+			role="img"
+		}
+		if props.Src == "" && !props.ShowName {
 			aria-label={ props.Name }
 		}
 		{ props.Attrs... }
@@ -24,7 +47,7 @@ templ AvatarComponent(props AvatarProps) {
 		if props.Src != "" {
 			<img src={ templ.SafeURL(props.Src) } alt={ props.Name }>
 		} else {
-			<span class="initials">{ lw.Initials(props.Name) }</span>
+			<span class="initials" aria-hidden="true">{ avatarInitials(props.Name, props.Size) }</span>
 		}
 		if props.ShowName {
 			<span class="name">{ props.Name }</span>
@@ -44,7 +67,5 @@ templ AvatarImage(src string, alt string, size string) {
 
 // AvatarSmall renders a small initials avatar.
 templ AvatarSmall(name string) {
-	@Avatar(name, "small")
+	@Avatar(name, "sm")
 }
-
-
