@@ -50,3 +50,12 @@ func TestSchemeClass(t *testing.T) {
 		t.Errorf("got %q, want empty", got)
 	}
 }
+
+func TestAspectRatioClass(t *testing.T) {
+	if got := AspectRatioClass("4-3"); got != "aspect-4-3" {
+		t.Errorf("got %q, want aspect-4-3", got)
+	}
+	if got := AspectRatioClass(""); got != "" {
+		t.Errorf("got %q, want empty", got)
+	}
+}

@@ -63,3 +63,11 @@ func SchemeClass(name string) string {
 	}
 	return "scheme-" + name
 }
+
+// AspectRatioClass returns "aspect-{ratio}" if ratio is non-empty (e.g. "aspect-4-3").
+func AspectRatioClass(ratio string) string {
+	if ratio == "" {
+		return ""
+	}
+	return "aspect-" + ratio
+}

@@ -12,13 +12,14 @@ import lw "github.com/Design-Machines-Studio/livewires-templ"
 
 // AvatarProps holds configuration for an avatar component.
 type AvatarProps struct {
-	Name     string           // Person's name (used for alt text and initials fallback)
-	Src      string           // Image URL; if empty, initials are shown
-	Size     string           // CSS modifier: "xs", "sm", "lg", "xl", "2xl", "3xl", "4xl"
-	Square   bool             // Use square shape instead of circle
-	ShowName bool             // Whether to display the name text alongside the avatar
-	Class    string           // Additional CSS classes from consumer
-	Attrs    templ.Attributes // Catch-all: data-*, aria-*, etc.
+	Name        string           // Person's name (used for alt text and initials fallback)
+	Src         string           // Image URL; if empty, initials are shown
+	Size        string           // CSS modifier: "xs", "sm", "lg", "xl", "2xl", "3xl", "4xl"
+	Square      bool             // Use square shape instead of circle
+	AspectRatio string           // Aspect ratio: "square", "4-3", "video", "3-2", "2-1", "21-9"
+	ShowName    bool             // Whether to display the name text alongside the avatar
+	Class       string           // Additional CSS classes from consumer
+	Attrs       templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
 
 // avatarSquareClass returns the square modifier class when enabled.
@@ -35,6 +36,16 @@ func avatarInitials(name, size string) string {
 		return lw.SingleInitial(name)
 	}
 	return lw.Initials(name)
+}
+
+// avatarAspectClasses returns utility classes for aspect-ratio avatars.
+// Uses flex + centering to keep initials centered, and h-auto to override
+// the fixed --avatar-size height so it doesn't fight the aspect ratio.
+func avatarAspectClasses(ratio string) string {
+	if ratio == "" {
+		return ""
+	}
+	return "flex items-center justify-center h-auto"
 }
 
 // avatarAlt returns the img alt text. Empty when ShowName is true (visible text
@@ -68,7 +79,7 @@ func avatarSpan(props AvatarProps) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var2 = []any{lw.ClassNames("avatar", lw.VariantClass("avatar", props.Size), avatarSquareClass(props.Square), props.Class)}
+		var templ_7745c5c3_Var2 = []any{lw.ClassNames("avatar", lw.VariantClass("avatar", props.Size), avatarSquareClass(props.Square), lw.AspectRatioClass(props.AspectRatio), avatarAspectClasses(props.AspectRatio), props.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -98,7 +109,7 @@ func avatarSpan(props AvatarProps) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(props.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/avatar.templ`, Line: 47, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/avatar.templ`, Line: 58, Col: 26}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -125,7 +136,7 @@ func avatarSpan(props AvatarProps) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(templ.SafeURL(props.Src))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/avatar.templ`, Line: 52, Col: 38}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/avatar.templ`, Line: 63, Col: 38}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -138,7 +149,7 @@ func avatarSpan(props AvatarProps) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(avatarAlt(props.Name, props.ShowName))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/avatar.templ`, Line: 52, Col: 84}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/avatar.templ`, Line: 63, Col: 84}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -156,7 +167,7 @@ func avatarSpan(props AvatarProps) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(avatarInitials(props.Name, props.Size))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/avatar.templ`, Line: 54, Col: 85}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/avatar.templ`, Line: 65, Col: 85}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -217,7 +228,7 @@ func AvatarComponent(props AvatarProps) templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(props.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/avatar.templ`, Line: 68, Col: 21}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/avatar.templ`, Line: 79, Col: 21}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {

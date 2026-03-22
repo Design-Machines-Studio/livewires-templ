@@ -40,6 +40,9 @@ import (
 // Square avatar (composable with any size)
 @component.AvatarComponent(component.AvatarProps{Name: "Acme Co", Square: true, Size: "sm"})
 
+// Aspect ratio avatar (adds aspect-*, flex centering, and h-auto classes)
+@component.AvatarComponent(component.AvatarProps{Name: "Logo", Src: "/img/logo.png", Size: "xl", AspectRatio: "4-3"})
+
 // Card (scheme controls color: "subtle", "dark", "accent", or "")
 @component.Card("subtle") {
     <p>Card content</p>
@@ -139,6 +142,7 @@ import (
 lw.ClassNames("button", "button--accent", "")  // "button button--accent"
 lw.VariantClass("badge", "green")               // "badge--green"
 lw.SchemeClass("dark")                           // "scheme-dark"
+lw.AspectRatioClass("4-3")                       // "aspect-4-3"
 lw.Initials("Jane Doe")                          // "JD"
 lw.SingleInitial("Jane Doe")                     // "J"
 lw.DateShort("2024-03-15")                        // "Mar 15, 2024"

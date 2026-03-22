@@ -4,13 +4,14 @@ import lw "github.com/Design-Machines-Studio/livewires-templ"
 
 // AvatarProps holds configuration for an avatar component.
 type AvatarProps struct {
-	Name     string           // Person's name (used for alt text and initials fallback)
-	Src      string           // Image URL; if empty, initials are shown
-	Size     string           // CSS modifier: "xs", "sm", "lg", "xl", "2xl", "3xl", "4xl"
-	Square   bool             // Use square shape instead of circle
-	ShowName bool             // Whether to display the name text alongside the avatar
-	Class    string           // Additional CSS classes from consumer
-	Attrs    templ.Attributes // Catch-all: data-*, aria-*, etc.
+	Name        string           // Person's name (used for alt text and initials fallback)
+	Src         string           // Image URL; if empty, initials are shown
+	Size        string           // CSS modifier: "xs", "sm", "lg", "xl", "2xl", "3xl", "4xl"
+	Square      bool             // Use square shape instead of circle
+	AspectRatio string           // Aspect ratio: "square", "4-3", "video", "3-2", "2-1", "21-9"
+	ShowName    bool             // Whether to display the name text alongside the avatar
+	Class       string           // Additional CSS classes from consumer
+	Attrs       templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
 
 // avatarSquareClass returns the square modifier class when enabled.
@@ -29,6 +30,16 @@ func avatarInitials(name, size string) string {
 	return lw.Initials(name)
 }
 
+// avatarAspectClasses returns utility classes for aspect-ratio avatars.
+// Uses flex + centering to keep initials centered, and h-auto to override
+// the fixed --avatar-size height so it doesn't fight the aspect ratio.
+func avatarAspectClasses(ratio string) string {
+	if ratio == "" {
+		return ""
+	}
+	return "flex items-center justify-center h-auto"
+}
+
 // avatarAlt returns the img alt text. Empty when ShowName is true (visible text
 // provides the accessible name) to avoid screen reader duplication.
 func avatarAlt(name string, showName bool) string {
@@ -41,7 +52,7 @@ func avatarAlt(name string, showName bool) string {
 // avatarSpan renders the avatar element itself (shared by both ShowName paths).
 templ avatarSpan(props AvatarProps) {
 	<span
-		class={ lw.ClassNames("avatar", lw.VariantClass("avatar", props.Size), avatarSquareClass(props.Square), props.Class) }
+		class={ lw.ClassNames("avatar", lw.VariantClass("avatar", props.Size), avatarSquareClass(props.Square), lw.AspectRatioClass(props.AspectRatio), avatarAspectClasses(props.AspectRatio), props.Class) }
 		if props.Src == "" {
 			role="img"
 			aria-label={ props.Name }

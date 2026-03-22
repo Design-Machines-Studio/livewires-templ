@@ -121,6 +121,61 @@ func TestAvatarInitialsAriaHidden(t *testing.T) {
 	}
 }
 
+func TestAvatarAspectRatio(t *testing.T) {
+	html := testutil.RenderToString(t, AvatarComponent(AvatarProps{
+		Name: "Test", Src: "/img/test.jpg", Size: "xl", AspectRatio: "4-3",
+	}))
+	if !strings.Contains(html, "aspect-4-3") {
+		t.Error("expected aspect-4-3 class")
+	}
+	if !strings.Contains(html, "h-auto") {
+		t.Error("expected h-auto utility class for aspect ratio")
+	}
+	if !strings.Contains(html, "flex") {
+		t.Error("expected flex utility class for aspect ratio")
+	}
+}
+
+func TestAvatarAspectRatioInitialsCentered(t *testing.T) {
+	html := testutil.RenderToString(t, AvatarComponent(AvatarProps{
+		Name: "John Doe", AspectRatio: "square",
+	}))
+	if !strings.Contains(html, "aspect-square") {
+		t.Error("expected aspect-square class")
+	}
+	if !strings.Contains(html, "items-center") {
+		t.Error("expected items-center utility class for centering initials")
+	}
+	if !strings.Contains(html, "justify-center") {
+		t.Error("expected justify-center utility class for centering initials")
+	}
+}
+
+func TestAvatarAspectRatioWithShowName(t *testing.T) {
+	html := testutil.RenderToString(t, AvatarComponent(AvatarProps{
+		Name: "John Doe", AspectRatio: "video", ShowName: true,
+	}))
+	if !strings.Contains(html, `class="cluster items-center"`) {
+		t.Error("expected cluster wrapper when ShowName is true")
+	}
+	if !strings.Contains(html, "aspect-video") {
+		t.Error("expected aspect-video class inside cluster")
+	}
+	if !strings.Contains(html, "h-auto") {
+		t.Error("expected h-auto utility class inside cluster")
+	}
+}
+
+func TestAvatarNoAspectRatioByDefault(t *testing.T) {
+	html := testutil.RenderToString(t, Avatar("Test", "lg"))
+	if strings.Contains(html, "aspect-") {
+		t.Error("should not have aspect class when AspectRatio is empty")
+	}
+	if strings.Contains(html, "h-auto") {
+		t.Error("should not have h-auto class when AspectRatio is empty")
+	}
+}
+
 func TestAvatarSingleInitialSmallSizes(t *testing.T) {
 	xsHtml := testutil.RenderToString(t, Avatar("John Doe", "xs"))
 	if strings.Contains(xsHtml, "JD") {
