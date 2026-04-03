@@ -18,6 +18,7 @@ type StatCardProps struct {
 	SubDetail string           // Optional secondary detail
 	Href      string           // Optional link URL - if set, card becomes clickable
 	Status    string           // Optional status: "success", "warning", "error"
+	Progress  int              // Optional progress bar (0-100). 0 = no bar. Use with percentage values.
 	Scheme    string           // Color scheme: "subtle", "accent", etc.
 	Size      string           // Text size for the card: "sm", "base", "lg", etc. Default: "sm"
 	ValueSize string           // Text size for the value: "2xl", "4xl", "6xl", etc. Default: ""
@@ -148,6 +149,7 @@ func StatCardGroup(class string) templ.Component {
 // StatCardComponent renders an individual stat card with full Props control.
 // When Href is provided, the entire card is clickable.
 // When Status is provided, a status indicator is shown.
+// When Progress > 0, a progress bar is rendered below the detail lines.
 func StatCardComponent(props StatCardProps) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -242,7 +244,7 @@ func statCardLabel(props StatCardProps) templ.Component {
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(props.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/stat_card.templ`, Line: 59, Col: 15}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/stat_card.templ`, Line: 61, Col: 15}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -287,7 +289,7 @@ func statCardInner(props StatCardProps) templ.Component {
 			var templ_7745c5c3_Var12 templ.SafeURL
 			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(props.Href))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/stat_card.templ`, Line: 67, Col: 38}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/stat_card.templ`, Line: 69, Col: 38}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
@@ -340,7 +342,7 @@ func statCardInner(props StatCardProps) templ.Component {
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(props.Value)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/stat_card.templ`, Line: 74, Col: 82}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/stat_card.templ`, Line: 76, Col: 82}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
@@ -358,7 +360,7 @@ func statCardInner(props StatCardProps) templ.Component {
 			var templ_7745c5c3_Var16 string
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(props.Detail)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/stat_card.templ`, Line: 76, Col: 40}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/stat_card.templ`, Line: 78, Col: 40}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
@@ -377,7 +379,7 @@ func statCardInner(props StatCardProps) templ.Component {
 			var templ_7745c5c3_Var17 string
 			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(props.SubDetail)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/stat_card.templ`, Line: 79, Col: 42}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/stat_card.templ`, Line: 81, Col: 42}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 			if templ_7745c5c3_Err != nil {
@@ -388,12 +390,35 @@ func statCardInner(props StatCardProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
+		if props.Progress > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<dd class=\"progress\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = ProgressBar(min(props.Progress, 100), "thick", progressLabel(props.Label)).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</dd>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
 		return nil
 	})
 }
 
-// StatCard renders an individual stat card (convenience wrapper).
-func StatCard(label, value, detail, scheme string) templ.Component {
+// progressLabel builds an accessible label for the progress bar.
+// Returns empty string when label is blank, letting ProgressBar omit aria-label.
+func progressLabel(label string) string {
+	if label == "" {
+		return ""
+	}
+	return label + " progress"
+}
+
+// StatCardSimple is a convenience wrapper for non-linked stat cards.
+func StatCardSimple(label, value, detail, scheme string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -427,8 +452,8 @@ func StatCard(label, value, detail, scheme string) templ.Component {
 	})
 }
 
-// StatCardSimple is a convenience wrapper for non-linked stat cards.
-func StatCardSimple(label, value, detail, scheme string) templ.Component {
+// StatCardLink is a convenience wrapper for linked stat cards.
+func StatCardLink(label, value, detail, href, scheme string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -447,41 +472,6 @@ func StatCardSimple(label, value, detail, scheme string) templ.Component {
 		templ_7745c5c3_Var19 := templ.GetChildren(ctx)
 		if templ_7745c5c3_Var19 == nil {
 			templ_7745c5c3_Var19 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = StatCardComponent(StatCardProps{
-			Label:  label,
-			Value:  value,
-			Detail: detail,
-			Scheme: scheme,
-		}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		return nil
-	})
-}
-
-// StatCardLink is a convenience wrapper for linked stat cards.
-func StatCardLink(label, value, detail, href, scheme string) templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
-				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var20 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var20 == nil {
-			templ_7745c5c3_Var20 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = StatCardComponent(StatCardProps{

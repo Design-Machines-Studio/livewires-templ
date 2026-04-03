@@ -10,6 +10,7 @@ type StatCardProps struct {
 	SubDetail string           // Optional secondary detail
 	Href      string           // Optional link URL - if set, card becomes clickable
 	Status    string           // Optional status: "success", "warning", "error"
+	Progress  int              // Optional progress bar (0-100). 0 = no bar. Use with percentage values.
 	Scheme    string           // Color scheme: "subtle", "accent", etc.
 	Size      string           // Text size for the card: "sm", "base", "lg", etc. Default: "sm"
 	ValueSize string           // Text size for the value: "2xl", "4xl", "6xl", etc. Default: ""
@@ -42,6 +43,7 @@ templ StatCardGroup(class string) {
 // StatCardComponent renders an individual stat card with full Props control.
 // When Href is provided, the entire card is clickable.
 // When Status is provided, a status indicator is shown.
+// When Progress > 0, a progress bar is rendered below the detail lines.
 templ StatCardComponent(props StatCardProps) {
 	<div
 		class={ lw.ClassNames("card card--stat box box-tight rounded", lw.SizeClass(lw.DefaultStr(props.Size, "sm")), lw.AlignClass(props.Align), lw.SchemeClass(props.Scheme), props.Class) }
@@ -78,16 +80,20 @@ templ statCardInner(props StatCardProps) {
 	if props.SubDetail != "" {
 		<dd class="sub-detail">{ props.SubDetail }</dd>
 	}
+	if props.Progress > 0 {
+		<dd class="progress">
+			@ProgressBar(min(props.Progress, 100), "thick", progressLabel(props.Label))
+		</dd>
+	}
 }
 
-// StatCard renders an individual stat card (convenience wrapper).
-templ StatCard(label, value, detail, scheme string) {
-	@StatCardComponent(StatCardProps{
-		Label:  label,
-		Value:  value,
-		Detail: detail,
-		Scheme: scheme,
-	})
+// progressLabel builds an accessible label for the progress bar.
+// Returns empty string when label is blank, letting ProgressBar omit aria-label.
+func progressLabel(label string) string {
+	if label == "" {
+		return ""
+	}
+	return label + " progress"
 }
 
 // StatCardSimple is a convenience wrapper for non-linked stat cards.

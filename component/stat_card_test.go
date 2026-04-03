@@ -108,6 +108,68 @@ func TestStatCardValueSizeDefault(t *testing.T) {
 	}
 }
 
+func TestStatCardWithProgress(t *testing.T) {
+	html := testutil.RenderToString(t, StatCardComponent(StatCardProps{
+		Label:    "Completion",
+		Value:    "75%",
+		Progress: 75,
+	}))
+	if !strings.Contains(html, "progress-bar") {
+		t.Error("expected progress-bar class when Progress > 0")
+	}
+	if !strings.Contains(html, `aria-valuenow="75"`) {
+		t.Error("expected aria-valuenow to reflect Progress value")
+	}
+	if !strings.Contains(html, `role="progressbar"`) {
+		t.Error("expected role=progressbar from ProgressBar component")
+	}
+	if !strings.Contains(html, `class="progress"`) {
+		t.Error("expected progress class on wrapping dd")
+	}
+	if !strings.Contains(html, "progress-bar--thick") {
+		t.Error("expected thick variant for stat card progress bar")
+	}
+}
+
+func TestStatCardNoProgressBarByDefault(t *testing.T) {
+	html := testutil.RenderToString(t, StatCardSimple("Revenue", "$12,450", "+12%", ""))
+	if strings.Contains(html, "progress-bar") {
+		t.Error("should not render progress-bar when Progress is 0")
+	}
+}
+
+func TestStatCardProgressAriaLabel(t *testing.T) {
+	html := testutil.RenderToString(t, StatCardComponent(StatCardProps{
+		Label:    "Completion",
+		Value:    "75%",
+		Progress: 75,
+	}))
+	if !strings.Contains(html, `aria-label="Completion progress"`) {
+		t.Error(`expected aria-label="Completion progress" on progress bar`)
+	}
+}
+
+func TestStatCardProgressEmptyLabel(t *testing.T) {
+	html := testutil.RenderToString(t, StatCardComponent(StatCardProps{
+		Value:    "75%",
+		Progress: 75,
+	}))
+	if strings.Contains(html, `aria-label=" progress"`) {
+		t.Error("should not produce aria-label with leading space when Label is empty")
+	}
+}
+
+func TestStatCardProgressClamped(t *testing.T) {
+	html := testutil.RenderToString(t, StatCardComponent(StatCardProps{
+		Label:    "Over",
+		Value:    "150%",
+		Progress: 150,
+	}))
+	if !strings.Contains(html, `aria-valuenow="100"`) {
+		t.Error("expected Progress clamped to 100")
+	}
+}
+
 func TestStatCardGroupComponent(t *testing.T) {
 	html := testutil.RenderToString(t, StatCardGroupComponent(StatCardGroupProps{
 		Class: "grid",

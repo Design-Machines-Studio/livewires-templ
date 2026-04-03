@@ -1,4 +1,13 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(mv /Users/trav/Websites/design-machines/livewires-templ/todos/010-pending-p3-remove-unused-helpers.md /Users/trav/Websites/design-machines/livewires-templ/todos/010-done-p3-remove-unused-helpers.md)",
+      "Bash(mv /Users/trav/Websites/design-machines/livewires-templ/todos/012-pending-p3-remove-excessive-convenience-wrappers.md /Users/trav/Websites/design-machines/livewires-templ/todos/012-done-p3-remove-excessive-convenience-wrappers.md)"
+    ],
+    "additionalDirectories": [
+      "/Users/trav/Websites/design-machines/livewires-templ/component"
+    ]
+  },
   "hooks": {
     "PreToolUse": [
       {

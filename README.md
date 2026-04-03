@@ -54,6 +54,13 @@ import (
 // Stat card
 @component.StatCardSimple("Revenue", "$12,450", "+12%", "")
 
+// Stat card with progress bar
+@component.StatCardComponent(component.StatCardProps{
+    Label:    "Storage used",
+    Value:    "72%",
+    Progress: 72,
+})
+
 // Info card
 @component.InfoCard("Board Meeting", "Upcoming")
 
