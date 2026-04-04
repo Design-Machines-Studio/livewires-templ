@@ -126,8 +126,8 @@ func TestStatCardWithProgress(t *testing.T) {
 	if !strings.Contains(html, `class="progress"`) {
 		t.Error("expected progress class on wrapping dd")
 	}
-	if !strings.Contains(html, "progress-bar--thick") {
-		t.Error("expected thick variant for stat card progress bar")
+	if !strings.Contains(html, "progress-bar--thin") {
+		t.Error("expected progress-bar--thin variant for stat card progress bar")
 	}
 }
 

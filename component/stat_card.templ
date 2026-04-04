@@ -82,7 +82,7 @@ templ statCardInner(props StatCardProps) {
 	}
 	if props.Progress > 0 {
 		<dd class="progress">
-			@ProgressBar(min(props.Progress, 100), "thick", progressLabel(props.Label))
+			@ProgressBar(min(props.Progress, 100), "thin", progressLabel(props.Label))
 		</dd>
 	}
 }
