@@ -391,7 +391,7 @@ func statCardInner(props StatCardProps) templ.Component {
 			}
 		}
 		if props.Progress > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<dd class=\"progress\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<dd class=\"progress mt-auto\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

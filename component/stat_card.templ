@@ -81,7 +81,7 @@ templ statCardInner(props StatCardProps) {
 		<dd class="sub-detail">{ props.SubDetail }</dd>
 	}
 	if props.Progress > 0 {
-		<dd class="progress">
+		<dd class="progress mt-auto">
 			@ProgressBar(min(props.Progress, 100), "thin", progressLabel(props.Label))
 		</dd>
 	}

@@ -123,8 +123,8 @@ func TestStatCardWithProgress(t *testing.T) {
 	if !strings.Contains(html, `role="progressbar"`) {
 		t.Error("expected role=progressbar from ProgressBar component")
 	}
-	if !strings.Contains(html, `class="progress"`) {
-		t.Error("expected progress class on wrapping dd")
+	if !strings.Contains(html, `class="progress mt-auto"`) {
+		t.Error("expected progress mt-auto classes on wrapping dd")
 	}
 	if !strings.Contains(html, "progress-bar--thin") {
 		t.Error("expected progress-bar--thin variant for stat card progress bar")
