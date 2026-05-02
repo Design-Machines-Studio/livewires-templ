@@ -32,7 +32,8 @@ func TestInitials(t *testing.T) {
 	}{
 		{"two words", "John Doe", "JD"},
 		{"single word", "Alice", "A"},
-		{"three words", "Mary Jane Watson", "MJW"},
+		{"caps at two initials", "Mary Jane Watson", "MJ"},
+		{"four words", "A B C D", "AB"},
 		{"empty", "", "?"},
 		{"unicode accented", "Étienne Dupont", "ÉD"},
 		{"cjk characters", "太郎 山田", "太山"},

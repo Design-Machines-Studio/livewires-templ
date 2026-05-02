@@ -18,15 +18,20 @@ func SingleInitial(name string) string {
 	return Initials(parts[0])
 }
 
-// Initials extracts initials from a name (e.g., "John Doe" → "JD").
+const maxInitials = 2
+
+// Initials extracts up to two initials from a name (e.g., "John Doe" → "JD").
 func Initials(name string) string {
 	parts := strings.Fields(name)
 	if len(parts) == 0 {
 		return "?"
 	}
 	var b strings.Builder
-	b.Grow(len(parts) * 4)
-	for _, part := range parts {
+	b.Grow(maxInitials * utf8.UTFMax)
+	for i, part := range parts {
+		if i >= maxInitials {
+			break
+		}
 		r, _ := utf8.DecodeRuneInString(part)
 		if r != utf8.RuneError {
 			b.WriteRune(unicode.ToUpper(r))
