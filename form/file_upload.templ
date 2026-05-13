@@ -1,0 +1,84 @@
+package form
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// FileUploadProps holds configuration for a file upload component.
+type FileUploadProps struct {
+	Name       string           // Input name attribute
+	ButtonText string           // Button label (default: "Choose file")
+	Text       string           // Hint/status text (default: "No file selected")
+	Variant    string           // Style variant: "accent", "compact"
+	Zone       bool             // Drop zone mode (dashed border, column layout; combines with Variant)
+	Accept     string           // File type filter, e.g. ".pdf,.doc"
+	Multiple   bool             // Allow multiple file selection
+	Disabled   bool             // Disabled state
+	Class      string           // Additional CSS classes from consumer
+	Attrs      templ.Attributes // Catch-all: data-signals, data-on-change, aria-*, etc.
+}
+
+// fileUploadInputAttrs builds conditional attributes for the file input.
+func fileUploadInputAttrs(props FileUploadProps) templ.Attributes {
+	attrs := templ.Attributes{
+		"disabled": props.Disabled,
+		"multiple": props.Multiple,
+	}
+	if props.Accept != "" {
+		attrs["accept"] = props.Accept
+	}
+	return attrs
+}
+
+// fileUploadClass builds the class string for the file upload wrapper.
+func fileUploadClass(props FileUploadProps) string {
+	zone := ""
+	if props.Zone {
+		zone = lw.VariantClass("file-upload", "zone")
+	}
+	return lw.ClassNames("file-upload", lw.VariantClass("file-upload", props.Variant), zone, props.Class)
+}
+
+// fileUploadButtonText returns the button text, defaulting to "Choose file".
+func fileUploadButtonText(props FileUploadProps) string {
+	return lw.DefaultStr(props.ButtonText, "Choose file")
+}
+
+// fileUploadText returns the status text, defaulting to "No file selected".
+func fileUploadText(props FileUploadProps) string {
+	return lw.DefaultStr(props.Text, "No file selected")
+}
+
+// FileUpload renders a styled file upload input with button and status text.
+templ FileUpload(props FileUploadProps) {
+	<label class={ fileUploadClass(props) } { props.Attrs... }>
+		<input type="file" name={ props.Name } { fileUploadInputAttrs(props)... }/>
+		<span class="file-upload-button">{ fileUploadButtonText(props) }</span>
+		<span class="file-upload-text">{ fileUploadText(props) }</span>
+	</label>
+}
+
+// FileUploadSimple is a convenience wrapper for a basic file upload.
+templ FileUploadSimple(name, buttonText string) {
+	@FileUpload(FileUploadProps{
+		Name:       name,
+		ButtonText: buttonText,
+	})
+}
+
+// FileUploadZone renders a drop zone file upload.
+templ FileUploadZone(name, buttonText, text string) {
+	@FileUpload(FileUploadProps{
+		Name:       name,
+		ButtonText: buttonText,
+		Text:       text,
+		Zone:       true,
+	})
+}
+
+// FileUploadAccent renders an accent-styled file upload.
+templ FileUploadAccent(name, buttonText string) {
+	@FileUpload(FileUploadProps{
+		Name:       name,
+		ButtonText: buttonText,
+		Variant:    "accent",
+	})
+}

@@ -127,6 +127,23 @@ import (
 
 // Date range
 @form.DateRange(form.DateRangeProps{Legend: "Date range", StartName: "from", EndName: "to"})
+
+// File upload
+@form.FileUploadSimple("resume", "Upload resume")
+
+// File upload drop zone
+@form.FileUploadZone("docs", "Browse files", "or drag and drop files here")
+
+// File upload with full props
+@form.FileUpload(form.FileUploadProps{
+    Name:     "images",
+    ButtonText: "Upload images",
+    Text:     "PNG, JPG, or SVG",
+    Variant:  "accent",
+    Zone:     true,
+    Accept:   "image/*",
+    Multiple: true,
+})
 ```
 
 ### Layout
@@ -160,7 +177,7 @@ lw.DateShort("2024-03-15")                        // "Mar 15, 2024"
 | Package | Purpose |
 | ----------- | ----------- |
 | `component` | UI components: button, badge, avatar, card, dialog, tabs, toast, etc. |
-| `form` | Form elements: field, select, checkbox, radio, switch, textarea, search, filter, date range |
+| `form` | Form elements: field, select, checkbox, radio, switch, textarea, search, filter, date range, file upload |
 | `layout` | HTML base skeleton, page section |
 | root | Class name utilities, text/date helpers |
 
