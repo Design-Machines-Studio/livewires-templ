@@ -59,3 +59,24 @@ func TestTextareaWithError(t *testing.T) {
 		t.Error("expected error message text")
 	}
 }
+
+func TestTextareaAriaRequired(t *testing.T) {
+	html := testutil.RenderToString(t, Textarea(TextareaProps{
+		Label:    "Bio",
+		Name:     "bio",
+		Required: true,
+	}))
+	if !strings.Contains(html, `aria-required="true"`) {
+		t.Error("expected aria-required when required")
+	}
+}
+
+func TestTextareaAriaRequiredAbsentWhenNotRequired(t *testing.T) {
+	html := testutil.RenderToString(t, Textarea(TextareaProps{
+		Label: "Bio",
+		Name:  "bio",
+	}))
+	if strings.Contains(html, `aria-required`) {
+		t.Error("expected no aria-required when not required")
+	}
+}

@@ -67,7 +67,7 @@ type ProgressChecklistProps struct {
 templ ProgressChecklistComponent(props ProgressChecklistProps) {
 	<div class={ lw.ClassNames("progress-checklist box scheme-subtle", props.Class) } { props.Attrs... }>
 		<div class="progress-header cluster cluster-between">
-			@progressChecklistHeading(props.HeadingLevel, props.Title)
+			@heading(props.HeadingLevel, props.Title, "")
 			<span class="progress-count">{ lw.Itoa(props.Completed) } of { lw.Itoa(props.Total) } done</span>
 		</div>
 		if props.Total > 0 {
@@ -82,18 +82,6 @@ templ ProgressChecklistComponent(props ProgressChecklistProps) {
 			<p class="checklist-footer">{ props.FooterText }</p>
 		}
 	</div>
-}
-
-// progressChecklistHeading renders the title at the correct heading level.
-templ progressChecklistHeading(level, title string) {
-	switch level {
-		case "h3":
-			<h3>{ title }</h3>
-		case "h4":
-			<h4>{ title }</h4>
-		default:
-			<h2>{ title }</h2>
-	}
 }
 
 // ProgressChecklist renders a checklist with progress bar (convenience wrapper).

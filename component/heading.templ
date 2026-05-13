@@ -1,0 +1,37 @@
+package component
+
+// heading renders a title at the specified heading level with optional class.
+// Level is "h2" (default), "h3", "h4", "h5", or "h6". Invalid values default to h2.
+templ heading(level, title, class string) {
+	if class != "" {
+		switch level {
+			case "h1":
+				<h1 class={ class }>{ title }</h1>
+			case "h3":
+				<h3 class={ class }>{ title }</h3>
+			case "h4":
+				<h4 class={ class }>{ title }</h4>
+			case "h5":
+				<h5 class={ class }>{ title }</h5>
+			case "h6":
+				<h6 class={ class }>{ title }</h6>
+			default:
+				<h2 class={ class }>{ title }</h2>
+		}
+	} else {
+		switch level {
+			case "h1":
+				<h1>{ title }</h1>
+			case "h3":
+				<h3>{ title }</h3>
+			case "h4":
+				<h4>{ title }</h4>
+			case "h5":
+				<h5>{ title }</h5>
+			case "h6":
+				<h6>{ title }</h6>
+			default:
+				<h2>{ title }</h2>
+		}
+	}
+}

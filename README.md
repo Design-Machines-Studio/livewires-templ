@@ -88,6 +88,17 @@ import (
     }
 }
 
+// Dialog
+@component.Dialog("Confirm") {
+    <p>Are you sure?</p>
+}
+
+// Dialog with custom heading level
+@component.DialogComponent(component.DialogProps{
+    Title:        "Edit Item",
+    HeadingLevel: "h3",
+})
+
 // Toast
 @component.Toast("Saved!", "success")
 

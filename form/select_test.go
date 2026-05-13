@@ -57,3 +57,24 @@ func TestSelectWithError(t *testing.T) {
 		t.Error("expected error message text")
 	}
 }
+
+func TestSelectAriaRequired(t *testing.T) {
+	html := testutil.RenderToString(t, Select(SelectProps{
+		Label:    "Country",
+		Name:     "country",
+		Required: true,
+	}))
+	if !strings.Contains(html, `aria-required="true"`) {
+		t.Error("expected aria-required when required")
+	}
+}
+
+func TestSelectAriaRequiredAbsentWhenNotRequired(t *testing.T) {
+	html := testutil.RenderToString(t, Select(SelectProps{
+		Label: "Country",
+		Name:  "country",
+	}))
+	if strings.Contains(html, `aria-required`) {
+		t.Error("expected no aria-required when not required")
+	}
+}

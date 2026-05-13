@@ -37,6 +37,9 @@ templ Field(props FieldProps) {
 				placeholder={ props.Placeholder }
 				class="error"
 				required?={ props.Required }
+				if props.Required {
+					aria-required="true"
+				}
 				aria-invalid="true"
 				aria-describedby={ props.Name + "-error" }
 				{ props.Attrs... }
@@ -51,6 +54,9 @@ templ Field(props FieldProps) {
 				value={ props.Value }
 				placeholder={ props.Placeholder }
 				required?={ props.Required }
+				if props.Required {
+					aria-required="true"
+				}
 				{ props.Attrs... }
 			/>
 		}

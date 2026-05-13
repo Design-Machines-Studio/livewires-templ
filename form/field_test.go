@@ -69,3 +69,29 @@ func TestFieldWithoutErrorNoErrorMarkup(t *testing.T) {
 		t.Error("expected no role=alert when no error")
 	}
 }
+
+func TestFieldAriaRequired(t *testing.T) {
+	html := testutil.RenderToString(t, FieldText("Name", "name", "", true))
+	if !strings.Contains(html, `aria-required="true"`) {
+		t.Error("expected aria-required when required")
+	}
+}
+
+func TestFieldAriaRequiredAbsentWhenNotRequired(t *testing.T) {
+	html := testutil.RenderToString(t, FieldText("Name", "name", "", false))
+	if strings.Contains(html, `aria-required`) {
+		t.Error("expected no aria-required when not required")
+	}
+}
+
+func TestFieldAriaRequiredWithError(t *testing.T) {
+	html := testutil.RenderToString(t, Field(FieldProps{
+		Label:    "Email",
+		Name:     "email",
+		Required: true,
+		Error:    "Required",
+	}))
+	if !strings.Contains(html, `aria-required="true"`) {
+		t.Error("expected aria-required in error branch")
+	}
+}

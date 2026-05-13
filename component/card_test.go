@@ -47,12 +47,12 @@ func TestCardWithHeader(t *testing.T) {
 }
 
 func TestCardWithHeaderHeadingLevel(t *testing.T) {
-	html := testutil.RenderToString(t, CardWithHeader(CardProps{Title: "Section", HeadingLevel: 2}))
+	html := testutil.RenderToString(t, CardWithHeader(CardProps{Title: "Section", HeadingLevel: "h2"}))
 	if !strings.Contains(html, "<h2>") {
-		t.Error("expected h2 heading for HeadingLevel 2")
+		t.Error("expected h2 heading for HeadingLevel h2")
 	}
 	if strings.Contains(html, "<h3>") {
-		t.Error("should not render h3 when HeadingLevel is 2")
+		t.Error("should not render h3 when HeadingLevel is h2")
 	}
 }
 

@@ -39,6 +39,9 @@ templ Textarea(props TextareaProps) {
 				placeholder={ props.Placeholder }
 				class="error"
 				required?={ props.Required }
+				if props.Required {
+					aria-required="true"
+				}
 				aria-invalid="true"
 				aria-describedby={ props.Name + "-error" }
 				{ props.Attrs... }
@@ -52,6 +55,9 @@ templ Textarea(props TextareaProps) {
 				rows={ getRows(props.Rows) }
 				placeholder={ props.Placeholder }
 				required?={ props.Required }
+				if props.Required {
+					aria-required="true"
+				}
 				{ props.Attrs... }
 			>{ props.Value }</textarea>
 		}

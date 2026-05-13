@@ -36,23 +36,11 @@ type KanbanColumnProps struct {
 // KanbanColumnComponent renders a titled column with full Props control.
 templ KanbanColumnComponent(props KanbanColumnProps) {
 	<div class={ lw.ClassNames("kanban-column stack box box-tight scheme-subtle", lw.AlignClass(props.Align), props.Class) } { props.Attrs... }>
-		@kanbanColumnHeading(props.HeadingLevel, props.Title, lw.DefaultStr(props.TitleSize, "sm"))
+		@heading(props.HeadingLevel, props.Title, lw.ClassNames("column-title", lw.SizeClass(lw.DefaultStr(props.TitleSize, "sm"))))
 		<div class="stack stack-compact">
 			{ children... }
 		</div>
 	</div>
-}
-
-// kanbanColumnHeading renders the column title at the correct heading level.
-templ kanbanColumnHeading(level, title, size string) {
-	switch level {
-		case "h3":
-			<h3 class={ lw.ClassNames("column-title", lw.SizeClass(size)) }>{ title }</h3>
-		case "h4":
-			<h4 class={ lw.ClassNames("column-title", lw.SizeClass(size)) }>{ title }</h4>
-		default:
-			<h2 class={ lw.ClassNames("column-title", lw.SizeClass(size)) }>{ title }</h2>
-	}
 }
 
 // KanbanColumn renders a titled column for grouping cards (convenience wrapper).
