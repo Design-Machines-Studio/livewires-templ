@@ -8,32 +8,53 @@ type SelectProps struct {
 	Name        string           // Field name (also used as ID)
 	Placeholder string           // Placeholder text for empty option
 	Options     []SelectOption   // Available options
-	Required    bool             // Whether field is required
 	Hint        string           // Helper text below the field
+	Error       string           // Error message; when non-empty, applies error styling and aria attributes
+	Required    bool             // Whether field is required
 	Class       string           // Additional CSS classes on the wrapper
 	Attrs       templ.Attributes // Catch-all for the select: data-*, aria-*, etc.
+}
+
+// selectOptions renders the option elements for a select.
+templ selectOptions(props SelectProps) {
+	if props.Placeholder != "" {
+		<option value="">{ props.Placeholder }</option>
+	}
+	for _, opt := range props.Options {
+		<option value={ opt.Value } selected?={ opt.Selected }>{ opt.Label }</option>
+	}
 }
 
 // Select renders a complete select dropdown with label and optional hint.
 templ Select(props SelectProps) {
 	<div class={ lw.ClassNames("field stack stack-compact", props.Class) }>
-		<label for={ props.Name }>{ props.Label }</label>
-		<select
-			id={ props.Name }
-			name={ props.Name }
-			required?={ props.Required }
-			{ props.Attrs... }
-		>
-			if props.Placeholder != "" {
-				<option value="">{ props.Placeholder }</option>
-			}
-			for _, opt := range props.Options {
-				<option value={ opt.Value } selected?={ opt.Selected }>{ opt.Label }</option>
-			}
-		</select>
+		if props.Error != "" {
+			<label for={ props.Name } class="error">{ props.Label }</label>
+			<select
+				id={ props.Name }
+				name={ props.Name }
+				class="error"
+				required?={ props.Required }
+				aria-invalid="true"
+				aria-describedby={ props.Name + "-error" }
+				{ props.Attrs... }
+			>
+				@selectOptions(props)
+			</select>
+			<p id={ props.Name + "-error" } class="error" role="alert">{ props.Error }</p>
+		} else {
+			<label for={ props.Name }>{ props.Label }</label>
+			<select
+				id={ props.Name }
+				name={ props.Name }
+				required?={ props.Required }
+				{ props.Attrs... }
+			>
+				@selectOptions(props)
+			</select>
+		}
 		if props.Hint != "" {
 			<p class="hint">{ props.Hint }</p>
 		}
 	</div>
 }
-

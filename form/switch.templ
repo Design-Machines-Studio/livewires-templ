@@ -11,31 +11,67 @@ type SwitchProps struct {
 	Disabled bool             // Whether the switch is disabled
 	Variant  string           // Style variant: "", "small"
 	Value    string           // Value when checked (default "1")
+	Error    string           // Error message; when non-empty, applies error styling and aria attributes
 	Class    string           // Additional CSS classes from consumer
 	Attrs    templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
 
+// switchID returns the effective ID for aria-describedby linkage.
+func switchID(props SwitchProps) string {
+	if props.ID != "" {
+		return props.ID
+	}
+	return props.Name
+}
+
 // SwitchComponent renders a pill-shaped toggle switch with full Props control.
 templ SwitchComponent(props SwitchProps) {
-	<label class={ lw.ClassNames("switch", lw.VariantClass("switch", props.Variant), props.Class) } { props.Attrs... }>
-		<input
-			type="checkbox"
-			role="switch"
-			if props.Name != "" {
-				name={ props.Name }
-			}
-			if props.ID != "" {
-				id={ props.ID }
-			}
-			value={ lw.DefaultStr(props.Value, "1") }
-			checked?={ props.Checked }
-			disabled?={ props.Disabled }
-		/>
-		<span aria-hidden="true"></span>
-		if props.Label != "" {
-			{ props.Label }
+	<div>
+		if props.Error != "" {
+			<label class={ lw.ClassNames("switch", lw.VariantClass("switch", props.Variant), "error", props.Class) } { props.Attrs... }>
+				<input
+					type="checkbox"
+					role="switch"
+					if props.Name != "" {
+						name={ props.Name }
+					}
+					if props.ID != "" {
+						id={ props.ID }
+					}
+					value={ lw.DefaultStr(props.Value, "1") }
+					checked?={ props.Checked }
+					disabled?={ props.Disabled }
+					aria-invalid="true"
+					aria-describedby={ switchID(props) + "-error" }
+				/>
+				<span aria-hidden="true"></span>
+				if props.Label != "" {
+					{ props.Label }
+				}
+			</label>
+			<p id={ switchID(props) + "-error" } class="error" role="alert">{ props.Error }</p>
+		} else {
+			<label class={ lw.ClassNames("switch", lw.VariantClass("switch", props.Variant), props.Class) } { props.Attrs... }>
+				<input
+					type="checkbox"
+					role="switch"
+					if props.Name != "" {
+						name={ props.Name }
+					}
+					if props.ID != "" {
+						id={ props.ID }
+					}
+					value={ lw.DefaultStr(props.Value, "1") }
+					checked?={ props.Checked }
+					disabled?={ props.Disabled }
+				/>
+				<span aria-hidden="true"></span>
+				if props.Label != "" {
+					{ props.Label }
+				}
+			</label>
 		}
-	</label>
+	</div>
 }
 
 // Switch renders a toggle switch (convenience wrapper).

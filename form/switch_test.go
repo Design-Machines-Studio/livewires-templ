@@ -101,3 +101,51 @@ func TestSwitchAriaHidden(t *testing.T) {
 		t.Error("expected aria-hidden on span")
 	}
 }
+
+func TestSwitchWithError(t *testing.T) {
+	html := testutil.RenderToString(t, SwitchComponent(SwitchProps{
+		Name:  "notify",
+		Label: "Notifications",
+		Error: "Cannot enable",
+	}))
+	if !strings.Contains(html, `class="error"`) {
+		t.Error("expected error class on error message")
+	}
+	if !strings.Contains(html, `aria-invalid="true"`) {
+		t.Error("expected aria-invalid")
+	}
+	if !strings.Contains(html, `aria-describedby="notify-error"`) {
+		t.Error("expected aria-describedby")
+	}
+	if !strings.Contains(html, `id="notify-error"`) {
+		t.Error("expected error message id")
+	}
+	if !strings.Contains(html, `role="alert"`) {
+		t.Error("expected role=alert on error message")
+	}
+	if !strings.Contains(html, "Cannot enable") {
+		t.Error("expected error message text")
+	}
+}
+
+func TestSwitchWithErrorUsesIDForDescribedby(t *testing.T) {
+	html := testutil.RenderToString(t, SwitchComponent(SwitchProps{
+		Name:  "notify",
+		ID:    "my-switch",
+		Label: "Notifications",
+		Error: "Nope",
+	}))
+	if !strings.Contains(html, `aria-describedby="my-switch-error"`) {
+		t.Error("expected aria-describedby to use ID when set")
+	}
+	if !strings.Contains(html, `id="my-switch-error"`) {
+		t.Error("expected error message id to use ID when set")
+	}
+}
+
+func TestSwitchWrapper(t *testing.T) {
+	html := testutil.RenderToString(t, Switch("x", "X", false))
+	if !strings.Contains(html, "<div>") {
+		t.Error("expected div wrapper")
+	}
+}

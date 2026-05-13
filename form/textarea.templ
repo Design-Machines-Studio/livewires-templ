@@ -13,6 +13,7 @@ type TextareaProps struct {
 	Rows        int              // Number of rows (default: 4)
 	Placeholder string           // Placeholder text
 	Hint        string           // Helper text below the field
+	Error       string           // Error message; when non-empty, applies error styling and aria attributes
 	Required    bool             // Whether field is required
 	Class       string           // Additional CSS classes on the wrapper
 	Attrs       templ.Attributes // Catch-all for the textarea: data-*, aria-*, etc.
@@ -29,18 +30,33 @@ func getRows(r int) string {
 // Textarea renders a complete textarea field with label and optional hint.
 templ Textarea(props TextareaProps) {
 	<div class={ lw.ClassNames("field stack stack-compact", props.Class) }>
-		<label for={ props.Name }>{ props.Label }</label>
-		<textarea
-			id={ props.Name }
-			name={ props.Name }
-			rows={ getRows(props.Rows) }
-			placeholder={ props.Placeholder }
-			required?={ props.Required }
-			{ props.Attrs... }
-		>{ props.Value }</textarea>
+		if props.Error != "" {
+			<label for={ props.Name } class="error">{ props.Label }</label>
+			<textarea
+				id={ props.Name }
+				name={ props.Name }
+				rows={ getRows(props.Rows) }
+				placeholder={ props.Placeholder }
+				class="error"
+				required?={ props.Required }
+				aria-invalid="true"
+				aria-describedby={ props.Name + "-error" }
+				{ props.Attrs... }
+			>{ props.Value }</textarea>
+			<p id={ props.Name + "-error" } class="error" role="alert">{ props.Error }</p>
+		} else {
+			<label for={ props.Name }>{ props.Label }</label>
+			<textarea
+				id={ props.Name }
+				name={ props.Name }
+				rows={ getRows(props.Rows) }
+				placeholder={ props.Placeholder }
+				required?={ props.Required }
+				{ props.Attrs... }
+			>{ props.Value }</textarea>
+		}
 		if props.Hint != "" {
 			<p class="hint">{ props.Hint }</p>
 		}
 	</div>
 }
-

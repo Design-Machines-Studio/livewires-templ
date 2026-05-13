@@ -27,3 +27,27 @@ func TestDateRangeRenders(t *testing.T) {
 		t.Error("expected end date field name")
 	}
 }
+
+func TestDateRangeWithError(t *testing.T) {
+	html := testutil.RenderToString(t, DateRange(DateRangeProps{
+		StartName: "from",
+		EndName:   "to",
+		Label:     "Date Range",
+		Error:     "End date must be after start",
+	}))
+	if !strings.Contains(html, `class="error"`) {
+		t.Error("expected error class")
+	}
+	if !strings.Contains(html, `aria-invalid="true"`) {
+		t.Error("expected aria-invalid on inputs")
+	}
+	if !strings.Contains(html, `id="from-error"`) {
+		t.Error("expected error message id")
+	}
+	if !strings.Contains(html, `role="alert"`) {
+		t.Error("expected role=alert")
+	}
+	if !strings.Contains(html, "End date must be after start") {
+		t.Error("expected error message text")
+	}
+}

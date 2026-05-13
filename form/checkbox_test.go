@@ -58,3 +58,48 @@ func TestCheckboxWithValue(t *testing.T) {
 		t.Error("expected value attribute")
 	}
 }
+
+func TestCheckboxWithError(t *testing.T) {
+	html := testutil.RenderToString(t, Checkbox(CheckboxProps{
+		Name:  "agree",
+		Label: "I agree",
+		Error: "You must agree",
+	}))
+	if !strings.Contains(html, "checkbox--error") {
+		t.Error("expected checkbox--error variant when Error is set")
+	}
+	if !strings.Contains(html, `aria-invalid="true"`) {
+		t.Error("expected aria-invalid")
+	}
+	if !strings.Contains(html, `aria-describedby="agree-error"`) {
+		t.Error("expected aria-describedby")
+	}
+	if !strings.Contains(html, `id="agree-error"`) {
+		t.Error("expected error message id")
+	}
+	if !strings.Contains(html, `role="alert"`) {
+		t.Error("expected role=alert")
+	}
+	if !strings.Contains(html, "You must agree") {
+		t.Error("expected error message text")
+	}
+}
+
+func TestCheckboxErrorPreservesExplicitVariant(t *testing.T) {
+	html := testutil.RenderToString(t, Checkbox(CheckboxProps{
+		Name:    "ok",
+		Label:   "OK",
+		Variant: "warning",
+		Error:   "Problem",
+	}))
+	if !strings.Contains(html, "checkbox--warning") {
+		t.Error("expected explicit variant preserved when Error is set")
+	}
+}
+
+func TestCheckboxWrapper(t *testing.T) {
+	html := testutil.RenderToString(t, CheckboxSimple("x", "X", false))
+	if !strings.Contains(html, "<div>") {
+		t.Error("expected div wrapper")
+	}
+}

@@ -9,6 +9,7 @@ type DateRangeProps struct {
 	StartValue string           // Current start date value
 	EndValue   string           // Current end date value
 	Label      string           // Label for the date range
+	Error      string           // Error message; when non-empty, applies error styling and aria attributes
 	Class      string           // Additional CSS classes from consumer
 	Attrs      templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
@@ -17,17 +18,50 @@ type DateRangeProps struct {
 templ DateRange(props DateRangeProps) {
 	<fieldset class={ lw.ClassNames("date-range stack stack-compact", props.Class) } { props.Attrs... }>
 		if props.Label != "" {
-			<legend>{ props.Label }</legend>
+			if props.Error != "" {
+				<legend class="error">{ props.Label }</legend>
+			} else {
+				<legend>{ props.Label }</legend>
+			}
 		}
 		<div class="cluster">
 			<div class="stack stack-compact">
-				<label for={ props.StartName }>From</label>
-				<input type="date" id={ props.StartName } name={ props.StartName } value={ props.StartValue }/>
+				if props.Error != "" {
+					<label for={ props.StartName } class="error">From</label>
+					<input
+						type="date"
+						id={ props.StartName }
+						name={ props.StartName }
+						value={ props.StartValue }
+						class="error"
+						aria-invalid="true"
+						aria-describedby={ props.StartName + "-error" }
+					/>
+				} else {
+					<label for={ props.StartName }>From</label>
+					<input type="date" id={ props.StartName } name={ props.StartName } value={ props.StartValue }/>
+				}
 			</div>
 			<div class="stack stack-compact">
-				<label for={ props.EndName }>To</label>
-				<input type="date" id={ props.EndName } name={ props.EndName } value={ props.EndValue }/>
+				if props.Error != "" {
+					<label for={ props.EndName } class="error">To</label>
+					<input
+						type="date"
+						id={ props.EndName }
+						name={ props.EndName }
+						value={ props.EndValue }
+						class="error"
+						aria-invalid="true"
+						aria-describedby={ props.StartName + "-error" }
+					/>
+				} else {
+					<label for={ props.EndName }>To</label>
+					<input type="date" id={ props.EndName } name={ props.EndName } value={ props.EndValue }/>
+				}
 			</div>
 		</div>
+		if props.Error != "" {
+			<p id={ props.StartName + "-error" } class="error" role="alert">{ props.Error }</p>
+		}
 	</fieldset>
 }

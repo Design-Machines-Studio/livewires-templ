@@ -30,3 +30,23 @@ func TestFilterRenders(t *testing.T) {
 		t.Error("expected option value")
 	}
 }
+
+func TestFilterWithError(t *testing.T) {
+	html := testutil.RenderToString(t, Filter(FilterProps{
+		Title: "Status",
+		Name:  "status",
+		Error: "Selection required",
+	}))
+	if !strings.Contains(html, `class="error"`) {
+		t.Error("expected error class")
+	}
+	if !strings.Contains(html, `aria-invalid="true"`) {
+		t.Error("expected aria-invalid")
+	}
+	if !strings.Contains(html, `id="status-error"`) {
+		t.Error("expected error message id")
+	}
+	if !strings.Contains(html, "Selection required") {
+		t.Error("expected error message text")
+	}
+}

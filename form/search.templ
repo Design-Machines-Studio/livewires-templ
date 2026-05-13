@@ -7,6 +7,7 @@ type SearchProps struct {
 	Name        string           // Field name
 	Value       string           // Current value
 	Placeholder string           // Placeholder text (default: "Search...")
+	Error       string           // Error message; when non-empty, applies error styling and aria attributes
 	Class       string           // Additional CSS classes from consumer
 	Attrs       templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
@@ -22,15 +23,31 @@ func searchPlaceholder(p string) string {
 // Search renders a search input field.
 templ Search(props SearchProps) {
 	<div class={ lw.ClassNames("stack stack-compact", props.Class) }>
-		<label for={ props.Name }>Search</label>
-		<input
-			type="search"
-			id={ props.Name }
-			name={ props.Name }
-			value={ props.Value }
-			placeholder={ searchPlaceholder(props.Placeholder) }
-			{ props.Attrs... }
-		/>
+		if props.Error != "" {
+			<label for={ props.Name } class="error">Search</label>
+			<input
+				type="search"
+				id={ props.Name }
+				name={ props.Name }
+				value={ props.Value }
+				placeholder={ searchPlaceholder(props.Placeholder) }
+				class="error"
+				aria-invalid="true"
+				aria-describedby={ props.Name + "-error" }
+				{ props.Attrs... }
+			/>
+			<p id={ props.Name + "-error" } class="error" role="alert">{ props.Error }</p>
+		} else {
+			<label for={ props.Name }>Search</label>
+			<input
+				type="search"
+				id={ props.Name }
+				name={ props.Name }
+				value={ props.Value }
+				placeholder={ searchPlaceholder(props.Placeholder) }
+				{ props.Attrs... }
+			/>
+		}
 	</div>
 }
 

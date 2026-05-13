@@ -10,6 +10,7 @@ type RadioProps struct {
 	Checked  bool             // Whether radio is selected
 	Disabled bool             // Whether radio is disabled
 	Variant  string           // Style variant: "", "large", "success", "warning", "error"
+	Error    string           // Error message; when non-empty, applies error variant and aria attributes
 	Class    string           // Additional CSS classes from consumer
 	Attrs    templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
@@ -22,12 +23,37 @@ func radioInputAttrs(props RadioProps) templ.Attributes {
 	}
 }
 
+// radioVariant returns the effective variant, defaulting to "error" when Error is set.
+func radioVariant(props RadioProps) string {
+	if props.Error != "" && props.Variant == "" {
+		return "error"
+	}
+	return props.Variant
+}
+
 // Radio renders a styled radio button with label.
 templ Radio(props RadioProps) {
-	<label class={ lw.ClassNames("radio", lw.VariantClass("radio", props.Variant), props.Class) } { props.Attrs... }>
-		<input type="radio" name={ props.Name } value={ props.Value } { radioInputAttrs(props)... }/>
-		{ props.Label }
-	</label>
+	<div>
+		if props.Error != "" {
+			<label class={ lw.ClassNames("radio", lw.VariantClass("radio", radioVariant(props)), props.Class) } { props.Attrs... }>
+				<input
+					type="radio"
+					name={ props.Name }
+					value={ props.Value }
+					aria-invalid="true"
+					aria-describedby={ props.Name + "-error" }
+					{ radioInputAttrs(props)... }
+				/>
+				{ props.Label }
+			</label>
+			<p id={ props.Name + "-error" } class="error" role="alert">{ props.Error }</p>
+		} else {
+			<label class={ lw.ClassNames("radio", lw.VariantClass("radio", radioVariant(props)), props.Class) } { props.Attrs... }>
+				<input type="radio" name={ props.Name } value={ props.Value } { radioInputAttrs(props)... }/>
+				{ props.Label }
+			</label>
+		}
+	</div>
 }
 
 // RadioSimple is a convenience wrapper.
@@ -54,6 +80,7 @@ type RadioGroupProps struct {
 	Selected string           // Currently selected value
 	Variant  string           // Style variant for all radios
 	Inline   bool             // Whether to display inline
+	Error    string           // Error message; when non-empty, applies error variant and aria attributes
 	Class    string           // Additional CSS classes from consumer
 	Attrs    templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
@@ -66,20 +93,33 @@ func radioGroupClass(inline bool) string {
 	return "check-list"
 }
 
+// radioGroupVariant returns the effective variant for group radios.
+func radioGroupVariant(props RadioGroupProps) string {
+	if props.Error != "" && props.Variant == "" {
+		return "error"
+	}
+	return props.Variant
+}
+
 // RadioGroup renders a group of radio buttons.
 templ RadioGroup(props RadioGroupProps) {
-	<ul class={ lw.ClassNames(radioGroupClass(props.Inline), props.Class) } { props.Attrs... }>
-		for _, opt := range props.Options {
-			<li>
-				@Radio(RadioProps{
-					Name:     props.Name,
-					Value:    opt.Value,
-					Label:    opt.Label,
-					Checked:  opt.Value == props.Selected,
-					Disabled: opt.Disabled,
-					Variant:  props.Variant,
-				})
-			</li>
+	<div>
+		<ul class={ lw.ClassNames(radioGroupClass(props.Inline), props.Class) } { props.Attrs... }>
+			for _, opt := range props.Options {
+				<li>
+					@Radio(RadioProps{
+						Name:     props.Name,
+						Value:    opt.Value,
+						Label:    opt.Label,
+						Checked:  opt.Value == props.Selected,
+						Disabled: opt.Disabled,
+						Variant:  radioGroupVariant(props),
+					})
+				</li>
+			}
+		</ul>
+		if props.Error != "" {
+			<p id={ props.Name + "-error" } class="error" role="alert">{ props.Error }</p>
 		}
-	</ul>
+	</div>
 }

@@ -128,6 +128,14 @@ import (
 // Date range
 @form.DateRange(form.DateRangeProps{Legend: "Date range", StartName: "from", EndName: "to"})
 
+// Field with error
+@form.Field(form.FieldProps{
+    Label: "Email",
+    Name:  "email",
+    Type:  "email",
+    Error: "Please enter a valid email",
+})
+
 // File upload
 @form.FileUploadSimple("resume", "Upload resume")
 
@@ -167,6 +175,7 @@ lw.ClassNames("button", "button--accent", "")  // "button button--accent"
 lw.VariantClass("badge", "green")               // "badge--green"
 lw.SchemeClass("dark")                           // "scheme-dark"
 lw.AspectRatioClass("4-3")                       // "aspect-4-3"
+lw.If(true, "active")                            // "active" (or "" when false)
 lw.Initials("Jane Doe")                          // "JD"
 lw.SingleInitial("Jane Doe")                     // "J"
 lw.DateShort("2024-03-15")                        // "Mar 15, 2024"

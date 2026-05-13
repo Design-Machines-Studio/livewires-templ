@@ -71,3 +71,11 @@ func AspectRatioClass(ratio string) string {
 	}
 	return "aspect-" + ratio
 }
+
+// If returns val when cond is true, otherwise empty string.
+func If(cond bool, val string) string {
+	if cond {
+		return val
+	}
+	return ""
+}

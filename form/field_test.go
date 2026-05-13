@@ -32,3 +32,40 @@ func TestFieldWithHint(t *testing.T) {
 		t.Error("expected hint text")
 	}
 }
+
+func TestFieldWithError(t *testing.T) {
+	html := testutil.RenderToString(t, Field(FieldProps{
+		Label: "Email",
+		Name:  "email",
+		Type:  "email",
+		Error: "Invalid email",
+	}))
+	if !strings.Contains(html, `class="error"`) {
+		t.Error("expected error class on label or input")
+	}
+	if !strings.Contains(html, `aria-invalid="true"`) {
+		t.Error("expected aria-invalid on input")
+	}
+	if !strings.Contains(html, `aria-describedby="email-error"`) {
+		t.Error("expected aria-describedby linking to error message")
+	}
+	if !strings.Contains(html, `id="email-error"`) {
+		t.Error("expected error message id")
+	}
+	if !strings.Contains(html, `role="alert"`) {
+		t.Error("expected role=alert on error message")
+	}
+	if !strings.Contains(html, "Invalid email") {
+		t.Error("expected error message text")
+	}
+}
+
+func TestFieldWithoutErrorNoErrorMarkup(t *testing.T) {
+	html := testutil.RenderToString(t, FieldText("Name", "name", "", false))
+	if strings.Contains(html, `aria-invalid`) {
+		t.Error("expected no aria-invalid when no error")
+	}
+	if strings.Contains(html, `role="alert"`) {
+		t.Error("expected no role=alert when no error")
+	}
+}

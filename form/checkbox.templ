@@ -10,6 +10,7 @@ type CheckboxProps struct {
 	Checked  bool             // Whether checkbox is checked
 	Disabled bool             // Whether checkbox is disabled
 	Variant  string           // Style variant: "", "large", "icon", "success", "warning", "error"
+	Error    string           // Error message; when non-empty, applies error variant and aria attributes
 	Class    string           // Additional CSS classes from consumer
 	Attrs    templ.Attributes // Catch-all: data-signals, data-on-change, aria-*, etc.
 }
@@ -26,12 +27,36 @@ func checkboxInputAttrs(props CheckboxProps) templ.Attributes {
 	return attrs
 }
 
+// checkboxVariant returns the effective variant, defaulting to "error" when Error is set.
+func checkboxVariant(props CheckboxProps) string {
+	if props.Error != "" && props.Variant == "" {
+		return "error"
+	}
+	return props.Variant
+}
+
 // Checkbox renders a styled checkbox with label.
 templ Checkbox(props CheckboxProps) {
-	<label class={ lw.ClassNames("checkbox", lw.VariantClass("checkbox", props.Variant), props.Class) } { props.Attrs... }>
-		<input type="checkbox" name={ props.Name } { checkboxInputAttrs(props)... }/>
-		{ props.Label }
-	</label>
+	<div>
+		if props.Error != "" {
+			<label class={ lw.ClassNames("checkbox", lw.VariantClass("checkbox", checkboxVariant(props)), props.Class) } { props.Attrs... }>
+				<input
+					type="checkbox"
+					name={ props.Name }
+					aria-invalid="true"
+					aria-describedby={ props.Name + "-error" }
+					{ checkboxInputAttrs(props)... }
+				/>
+				{ props.Label }
+			</label>
+			<p id={ props.Name + "-error" } class="error" role="alert">{ props.Error }</p>
+		} else {
+			<label class={ lw.ClassNames("checkbox", lw.VariantClass("checkbox", checkboxVariant(props)), props.Class) } { props.Attrs... }>
+				<input type="checkbox" name={ props.Name } { checkboxInputAttrs(props)... }/>
+				{ props.Label }
+			</label>
+		}
+	</div>
 }
 
 // CheckboxSimple is a convenience wrapper (no value).

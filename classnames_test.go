@@ -59,3 +59,12 @@ func TestAspectRatioClass(t *testing.T) {
 		t.Errorf("got %q, want empty", got)
 	}
 }
+
+func TestIf(t *testing.T) {
+	if got := If(true, "error"); got != "error" {
+		t.Errorf("If(true, \"error\") = %q, want \"error\"", got)
+	}
+	if got := If(false, "error"); got != "" {
+		t.Errorf("If(false, \"error\") = %q, want empty", got)
+	}
+}

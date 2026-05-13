@@ -36,3 +36,26 @@ func TestTextareaWithHint(t *testing.T) {
 		t.Error("expected hint text")
 	}
 }
+
+func TestTextareaWithError(t *testing.T) {
+	html := testutil.RenderToString(t, Textarea(TextareaProps{
+		Label: "Bio",
+		Name:  "bio",
+		Error: "Too long",
+	}))
+	if !strings.Contains(html, `class="error"`) {
+		t.Error("expected error class")
+	}
+	if !strings.Contains(html, `aria-invalid="true"`) {
+		t.Error("expected aria-invalid")
+	}
+	if !strings.Contains(html, `aria-describedby="bio-error"`) {
+		t.Error("expected aria-describedby")
+	}
+	if !strings.Contains(html, `id="bio-error"`) {
+		t.Error("expected error message id")
+	}
+	if !strings.Contains(html, "Too long") {
+		t.Error("expected error message text")
+	}
+}

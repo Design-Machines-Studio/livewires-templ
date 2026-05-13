@@ -10,6 +10,7 @@ type FieldProps struct {
 	Type        string           // Input type: text, email, tel, etc. (default: text)
 	Placeholder string           // Placeholder text
 	Hint        string           // Helper text below the field
+	Error       string           // Error message; when non-empty, applies error styling and aria attributes
 	Required    bool             // Whether field is required
 	Class       string           // Additional CSS classes on the wrapper
 	Attrs       templ.Attributes // Catch-all for the input: data-*, aria-*, etc.
@@ -26,16 +27,33 @@ func fieldType(t string) string {
 // Field renders a complete form field with label, input, and optional hint.
 templ Field(props FieldProps) {
 	<div class={ lw.ClassNames("field stack stack-compact", props.Class) }>
-		<label for={ props.Name }>{ props.Label }</label>
-		<input
-			type={ fieldType(props.Type) }
-			id={ props.Name }
-			name={ props.Name }
-			value={ props.Value }
-			placeholder={ props.Placeholder }
-			required?={ props.Required }
-			{ props.Attrs... }
-		/>
+		if props.Error != "" {
+			<label for={ props.Name } class="error">{ props.Label }</label>
+			<input
+				type={ fieldType(props.Type) }
+				id={ props.Name }
+				name={ props.Name }
+				value={ props.Value }
+				placeholder={ props.Placeholder }
+				class="error"
+				required?={ props.Required }
+				aria-invalid="true"
+				aria-describedby={ props.Name + "-error" }
+				{ props.Attrs... }
+			/>
+			<p id={ props.Name + "-error" } class="error" role="alert">{ props.Error }</p>
+		} else {
+			<label for={ props.Name }>{ props.Label }</label>
+			<input
+				type={ fieldType(props.Type) }
+				id={ props.Name }
+				name={ props.Name }
+				value={ props.Value }
+				placeholder={ props.Placeholder }
+				required?={ props.Required }
+				{ props.Attrs... }
+			/>
+		}
 		if props.Hint != "" {
 			<p class="hint">{ props.Hint }</p>
 		}

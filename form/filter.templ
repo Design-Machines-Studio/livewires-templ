@@ -7,19 +7,39 @@ type FilterProps struct {
 	Title   string           // Filter group title
 	Name    string           // Field name for the select/checkboxes
 	Options []FilterOption   // Available filter options
+	Error   string           // Error message; when non-empty, applies error styling and aria attributes
 	Class   string           // Additional CSS classes from consumer
 	Attrs   templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// filterOptions renders the option elements for a filter select.
+templ filterOptions(props FilterProps) {
+	<option value="">All</option>
+	for _, opt := range props.Options {
+		<option value={ opt.Value } selected?={ opt.Selected }>{ opt.Label }</option>
+	}
 }
 
 // Filter renders a filter dropdown for list filtering.
 templ Filter(props FilterProps) {
 	<div class={ lw.ClassNames("filter stack stack-compact", props.Class) } { props.Attrs... }>
-		<label for={ props.Name }>{ props.Title }</label>
-		<select id={ props.Name } name={ props.Name }>
-			<option value="">All</option>
-			for _, opt := range props.Options {
-				<option value={ opt.Value } selected?={ opt.Selected }>{ opt.Label }</option>
-			}
-		</select>
+		if props.Error != "" {
+			<label for={ props.Name } class="error">{ props.Title }</label>
+			<select
+				id={ props.Name }
+				name={ props.Name }
+				class="error"
+				aria-invalid="true"
+				aria-describedby={ props.Name + "-error" }
+			>
+				@filterOptions(props)
+			</select>
+			<p id={ props.Name + "-error" } class="error" role="alert">{ props.Error }</p>
+		} else {
+			<label for={ props.Name }>{ props.Title }</label>
+			<select id={ props.Name } name={ props.Name }>
+				@filterOptions(props)
+			</select>
+		}
 	</div>
 }
