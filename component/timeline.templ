@@ -10,6 +10,8 @@ type TimelineItemProps struct {
 	Badge        string           // Optional badge label
 	BadgeVariant string           // Badge variant
 	Status       string           // Optional data-status: "success", "warning", "error"
+	TitleHref    string           // Optional: wraps Title in <a href=...> when non-empty
+	Indicator    string           // Optional leading dot variant (slugged into class); empty = none
 	Class        string           // Additional CSS classes from consumer
 	Attrs        templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
@@ -26,7 +28,15 @@ templ TimelineItem(props TimelineItemProps) {
 		<time class="date">{ props.Date }</time>
 		<div class="content">
 			<h3>
-				{ props.Title }
+				if props.Indicator != "" {
+					<span class={ lw.ClassNames("timeline-indicator", lw.VariantClass("timeline-indicator", props.Indicator)) } aria-hidden="true"></span>
+					<span class="sr-only">{ lw.CapitalizeFirst(props.Indicator) + "." }</span>
+				}
+				if props.TitleHref != "" {
+					<a href={ props.TitleHref }>{ props.Title }</a>
+				} else {
+					{ props.Title }
+				}
 				if props.Badge != "" {
 					{ " " }
 					@BadgeSmall(props.Badge, props.BadgeVariant)

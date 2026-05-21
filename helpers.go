@@ -43,6 +43,15 @@ func Initials(name string) string {
 	return b.String()
 }
 
+// CapitalizeFirst uppercases the first rune, leaving the rest unchanged.
+func CapitalizeFirst(s string) string {
+	if s == "" {
+		return ""
+	}
+	r, size := utf8.DecodeRuneInString(s)
+	return string(unicode.ToUpper(r)) + s[size:]
+}
+
 // Title converts a string to title case.
 func Title(s string) string {
 	var result strings.Builder

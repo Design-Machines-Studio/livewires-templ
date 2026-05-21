@@ -47,6 +47,27 @@ func TestInitials(t *testing.T) {
 	}
 }
 
+func TestCapitalizeFirst(t *testing.T) {
+	tests := []struct {
+		name   string
+		input  string
+		expect string
+	}{
+		{"empty", "", ""},
+		{"lowercase word", "alert", "Alert"},
+		{"already capitalized", "Already", "Already"},
+		{"unicode accented", "étienne", "Étienne"},
+		{"cjk first rune", "太郎", "太郎"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := CapitalizeFirst(tt.input); got != tt.expect {
+				t.Errorf("CapitalizeFirst(%q) = %q, want %q", tt.input, got, tt.expect)
+			}
+		})
+	}
+}
+
 func TestTitle(t *testing.T) {
 	if got := Title("hello world"); got != "Hello World" {
 		t.Errorf("Title(\"hello world\") = %q, want \"Hello World\"", got)

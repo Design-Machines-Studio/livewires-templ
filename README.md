@@ -189,6 +189,7 @@ lw.AspectRatioClass("4-3")                       // "aspect-4-3"
 lw.If(true, "active")                            // "active" (or "" when false)
 lw.Initials("Jane Doe")                          // "JD"
 lw.SingleInitial("Jane Doe")                     // "J"
+lw.CapitalizeFirst("alert")                      // "Alert"
 lw.DateShort("2024-03-15")                        // "Mar 15, 2024"
 ```
 
