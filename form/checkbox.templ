@@ -7,6 +7,7 @@ type CheckboxProps struct {
 	Name     string           // Field name
 	Value    string           // Field value (submitted when checked)
 	Label    string           // Checkbox label text
+	Hint     string           // Supporting text shown beneath the label
 	Checked  bool             // Whether checkbox is checked
 	Disabled bool             // Whether checkbox is disabled
 	Variant  string           // Style variant: "", "large", "icon", "success", "warning", "error"
@@ -35,26 +36,39 @@ func checkboxVariant(props CheckboxProps) string {
 	return props.Variant
 }
 
-// Checkbox renders a styled checkbox with label.
+// checkboxBaseID derives the id prefix for a single checkbox. Unlike a radio, a
+// checkbox's value is optional: a lone checkbox needs only its name, while a
+// set of them shares one name and is distinguished by value.
+func checkboxBaseID(props CheckboxProps) string {
+	if props.Value == "" {
+		return controlID(props.Name)
+	}
+	return optionBaseID(props.Name, props.Value)
+}
+
+// checkboxAriaAttrs wires the input to the label and hint spans nested inside
+// the label that wraps it.
+func checkboxAriaAttrs(props CheckboxProps) templ.Attributes {
+	return wrappedAriaAttrs(checkboxBaseID(props), props.Label, props.Hint, lw.If(props.Error != "", errorID(props.Name)))
+}
+
+// Checkbox renders a styled checkbox with label and optional hint.
 templ Checkbox(props CheckboxProps) {
 	<div>
-		if props.Error != "" {
-			<label class={ lw.ClassNames("checkbox", lw.VariantClass("checkbox", checkboxVariant(props)), props.Class) } { props.Attrs... }>
-				<input
-					type="checkbox"
-					name={ props.Name }
+		<label class={ lw.ClassNames("checkbox", lw.VariantClass("checkbox", checkboxVariant(props)), props.Class) } { props.Attrs... }>
+			<input
+				type="checkbox"
+				name={ props.Name }
+				if props.Error != "" {
 					aria-invalid="true"
-					aria-describedby={ errorID(props.Name) }
-					{ checkboxInputAttrs(props)... }
-				/>
-				{ props.Label }
-			</label>
+				}
+				{ checkboxAriaAttrs(props)... }
+				{ checkboxInputAttrs(props)... }
+			/>
+			@wrappedLabelBody(checkboxBaseID(props), props.Label, props.Hint)
+		</label>
+		if props.Error != "" {
 			<p id={ errorID(props.Name) } class="error" role="alert">{ props.Error }</p>
-		} else {
-			<label class={ lw.ClassNames("checkbox", lw.VariantClass("checkbox", checkboxVariant(props)), props.Class) } { props.Attrs... }>
-				<input type="checkbox" name={ props.Name } { checkboxInputAttrs(props)... }/>
-				{ props.Label }
-			</label>
 		}
 	</div>
 }

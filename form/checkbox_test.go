@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/Design-Machines-Studio/livewires-templ/internal/testutil"
+	"github.com/a-h/templ"
 )
 
 func TestCheckboxRenders(t *testing.T) {
@@ -106,5 +107,125 @@ func TestCheckboxWrapper(t *testing.T) {
 
 func TestCheckboxSanitizesErrorID(t *testing.T) {
 	html := testutil.RenderToString(t, Checkbox(CheckboxProps{Name: "terms accepted", Label: "Agree", Error: "Required"}))
+	assertDescribedByResolves(t, html, 1)
+}
+
+func TestCheckboxWithHint(t *testing.T) {
+	html := testutil.RenderToString(t, Checkbox(CheckboxProps{
+		Name: "agree", Label: "I agree", Hint: "You can opt out later",
+	}))
+	if !strings.Contains(html, `<span id="agree-hint" class="hint">You can opt out later</span>`) {
+		t.Errorf("expected hint span, got %s", html)
+	}
+	// The hint sits inside the label, so the whole label stays a click target.
+	if !strings.Contains(html, `class="hint">You can opt out later</span></span></label>`) {
+		t.Errorf("expected hint nested inside the label, got %s", html)
+	}
+}
+
+// A wrapping label folds the hint into the accessible name unless the input
+// names itself from the label span alone.
+func TestCheckboxHintAccessibleAssociation(t *testing.T) {
+	html := testutil.RenderToString(t, Checkbox(CheckboxProps{
+		Name: "agree", Label: "I agree", Hint: "You can opt out later",
+	}))
+	if !strings.Contains(html, `aria-labelledby="agree-label"`) {
+		t.Errorf("expected aria-labelledby, got %s", html)
+	}
+	if !strings.Contains(html, `aria-describedby="agree-hint"`) {
+		t.Errorf("expected aria-describedby, got %s", html)
+	}
+	assertDescribedByResolves(t, html, 1)
+	if !strings.Contains(html, `id="agree-label"`) {
+		t.Error("aria-labelledby resolves to no element")
+	}
+}
+
+func TestCheckboxWithoutHintRendersUnchanged(t *testing.T) {
+	html := testutil.RenderToString(t, CheckboxSimple("agree", "I agree", false))
+	for _, unwanted := range []string{`class="hint"`, "aria-describedby", "aria-labelledby", "<span"} {
+		if strings.Contains(html, unwanted) {
+			t.Errorf("expected no %s without a hint, got %s", unwanted, html)
+		}
+	}
+	if !strings.Contains(html, `<input type="checkbox" name="agree">I agree`) {
+		t.Errorf("expected unchanged markup, got %s", html)
+	}
+}
+
+func TestCheckboxHintAndErrorBothAssociated(t *testing.T) {
+	html := testutil.RenderToString(t, Checkbox(CheckboxProps{
+		Name: "agree", Label: "I agree", Hint: "Opt out later", Error: "Required",
+	}))
+	if !strings.Contains(html, `aria-describedby="agree-hint agree-error"`) {
+		t.Errorf("expected hint then error, got %s", html)
+	}
+	assertDescribedByResolves(t, html, 2)
+	if !strings.Contains(html, "checkbox--error") {
+		t.Error("expected error variant")
+	}
+	if !strings.Contains(html, `role="alert"`) {
+		t.Error("expected role=alert")
+	}
+}
+
+// Checkboxes in a set share a name, so their hint ids must be disambiguated
+// by value or the wrong hint gets announced.
+func TestCheckboxHintIDsUniqueAcrossASharedName(t *testing.T) {
+	a := testutil.RenderToString(t, Checkbox(CheckboxProps{Name: "opts", Value: "a", Label: "A", Hint: "First"}))
+	b := testutil.RenderToString(t, Checkbox(CheckboxProps{Name: "opts", Value: "b", Label: "B", Hint: "Second"}))
+	if !strings.Contains(a, `id="opts-a-hint"`) || !strings.Contains(b, `id="opts-b-hint"`) {
+		t.Errorf("expected value-disambiguated hint ids, got %s and %s", a, b)
+	}
+}
+
+func TestCheckboxHintPreservesState(t *testing.T) {
+	html := testutil.RenderToString(t, Checkbox(CheckboxProps{
+		Name: "opts", Value: "a", Label: "A", Hint: "H",
+		Checked: true, Disabled: true, Variant: "large", Class: "extra",
+		Attrs: templ.Attributes{"data-testid": "cb"},
+	}))
+	for _, want := range []string{"checked", "disabled", "checkbox--large", "extra", `data-testid="cb"`, `value="a"`, `class="hint"`} {
+		if !strings.Contains(html, want) {
+			t.Errorf("expected %s alongside a hint, got %s", want, html)
+		}
+	}
+}
+
+func TestCheckboxHintEscaping(t *testing.T) {
+	html := testutil.RenderToString(t, Checkbox(CheckboxProps{
+		Name: "agree", Label: `<b>L</b>`, Hint: `a & "b" <script>alert(1)</script>`,
+	}))
+	if strings.Contains(html, "<script>") || strings.Contains(html, "<b>") {
+		t.Errorf("expected escaping, got %s", html)
+	}
+	if !strings.Contains(html, "&lt;script&gt;") || !strings.Contains(html, "&amp;") {
+		t.Errorf("expected escaped entities, got %s", html)
+	}
+}
+
+func TestCheckboxHintIDSanitized(t *testing.T) {
+	html := testutil.RenderToString(t, Checkbox(CheckboxProps{
+		Name: "opt group", Value: "a b", Label: "A", Hint: "H",
+	}))
+	assertDescribedByResolves(t, html, 1)
+	if strings.Contains(html, `id="opt group-a b-hint"`) {
+		t.Error("hint id must not contain whitespace")
+	}
+}
+
+// With no visible label there is no span to name the input from, so
+// aria-labelledby must be omitted rather than point at nothing.
+func TestCheckboxHintWithoutLabelOmitsLabelledby(t *testing.T) {
+	html := testutil.RenderToString(t, Checkbox(CheckboxProps{
+		Name: "agree", Hint: "You can opt out later",
+		Attrs: templ.Attributes{"aria-label": "I agree"},
+	}))
+	if strings.Contains(html, "aria-labelledby") {
+		t.Errorf("expected no aria-labelledby without a label, got %s", html)
+	}
+	if !strings.Contains(html, `aria-label="I agree"`) {
+		t.Error("expected caller aria-label preserved")
+	}
 	assertDescribedByResolves(t, html, 1)
 }

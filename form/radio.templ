@@ -1,10 +1,6 @@
 package form
 
-import (
-	"strings"
-
-	lw "github.com/Design-Machines-Studio/livewires-templ"
-)
+import lw "github.com/Design-Machines-Studio/livewires-templ"
 
 // RadioProps holds configuration for a radio button component.
 type RadioProps struct {
@@ -37,57 +33,15 @@ func radioVariant(props RadioProps) string {
 }
 
 // radioBaseID derives the id prefix for a single radio. Option values are
-// unique within a radio group and sanitizing preserves that uniqueness, so
-// name+value is unique across the group.
+// unique within a radio group, so name+value is unique across the group.
 func radioBaseID(props RadioProps) string {
-	return controlID(props.Name) + "-" + sanitizeIDPartOr(props.Value, "option")
+	return optionBaseID(props.Name, props.Value)
 }
 
-// radioLabelID is the id of the span holding only the label text.
-func radioLabelID(props RadioProps) string {
-	return radioBaseID(props) + "-label"
-}
-
-// radioHintID is the id of the span holding the hint text.
-func radioHintID(props RadioProps) string {
-	return radioBaseID(props) + "-hint"
-}
-
-// radioAriaAttrs wires the input to its label and hint text. A wrapping label
-// folds every descendant string into the accessible name, so once a hint is
-// nested inside it the input must name itself from the label span alone.
-// Unlike the other form controls, a radio's hint id is per-option rather than
-// per-name, so it cannot use describedByAttrs. Returns no attributes when there
-// is neither a hint nor an error.
+// radioAriaAttrs wires the input to the label and hint spans nested inside the
+// label that wraps it.
 func radioAriaAttrs(props RadioProps) templ.Attributes {
-	if props.Hint == "" && props.Error == "" {
-		return nil
-	}
-
-	attrs := templ.Attributes{}
-	var described []string
-	if props.Hint != "" {
-		attrs["aria-labelledby"] = radioLabelID(props)
-		described = append(described, radioHintID(props))
-	}
-	if props.Error != "" {
-		described = append(described, errorID(props.Name))
-	}
-	attrs["aria-describedby"] = strings.Join(described, " ")
-	return attrs
-}
-
-// radioLabelBody renders the label text, nesting it alongside the hint when one
-// is supplied. Both stay inside the label so the whole label remains clickable.
-templ radioLabelBody(props RadioProps) {
-	if props.Hint != "" {
-		<span class="stack stack-compact">
-			<span id={ radioLabelID(props) }>{ props.Label }</span>
-			<span id={ radioHintID(props) } class="hint">{ props.Hint }</span>
-		</span>
-	} else {
-		{ props.Label }
-	}
+	return wrappedAriaAttrs(radioBaseID(props), props.Label, props.Hint, lw.If(props.Error != "", errorID(props.Name)))
 }
 
 // Radio renders a styled radio button with label and optional hint.
@@ -104,7 +58,7 @@ templ Radio(props RadioProps) {
 				{ radioAriaAttrs(props)... }
 				{ radioInputAttrs(props)... }
 			/>
-			@radioLabelBody(props)
+			@wrappedLabelBody(radioBaseID(props), props.Label, props.Hint)
 		</label>
 		if props.Error != "" {
 			<p id={ errorID(props.Name) } class="error" role="alert">{ props.Error }</p>

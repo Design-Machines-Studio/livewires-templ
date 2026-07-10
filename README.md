@@ -124,6 +124,20 @@ import (
 // Checkbox
 @form.CheckboxSimple("agree", "I agree to the terms", false)
 
+// Checkbox with a hint
+@form.Checkbox(form.CheckboxProps{
+    Name:  "agree",
+    Label: "I agree to the terms",
+    Hint:  "You can opt out later",
+})
+
+// Toggle switch with a hint
+@form.SwitchComponent(form.SwitchProps{
+    Name:  "notifications",
+    Label: "Enable notifications",
+    Hint:  "We send a weekly digest",
+})
+
 // Radio
 @form.RadioSimple("plan", "pro", "Pro", false)
 

@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/Design-Machines-Studio/livewires-templ/internal/testutil"
+	"github.com/a-h/templ"
 )
 
 func TestSwitchRenders(t *testing.T) {
@@ -153,4 +154,99 @@ func TestSwitchWrapper(t *testing.T) {
 func TestSwitchSanitizesErrorID(t *testing.T) {
 	html := testutil.RenderToString(t, SwitchComponent(SwitchProps{Name: "email alerts", Label: "Alerts", Error: "Required"}))
 	assertDescribedByResolves(t, html, 1)
+}
+
+func TestSwitchWithHint(t *testing.T) {
+	html := testutil.RenderToString(t, SwitchComponent(SwitchProps{
+		Name: "notify", Label: "Notifications", Hint: "Weekly digest",
+	}))
+	if !strings.Contains(html, `<span id="notify-hint" class="hint">Weekly digest</span>`) {
+		t.Errorf("expected hint span, got %s", html)
+	}
+	if !strings.Contains(html, `aria-labelledby="notify-label"`) {
+		t.Errorf("expected aria-labelledby, got %s", html)
+	}
+	assertDescribedByResolves(t, html, 1)
+	// The pill span must stay hidden and ahead of the text.
+	if !strings.Contains(html, `<span aria-hidden="true"></span><span class="stack stack-compact">`) {
+		t.Errorf("expected hint stack after the pill, got %s", html)
+	}
+}
+
+func TestSwitchWithoutHintRendersUnchanged(t *testing.T) {
+	html := testutil.RenderToString(t, Switch("notify", "Notifications", true))
+	for _, unwanted := range []string{`class="hint"`, "aria-describedby", "aria-labelledby"} {
+		if strings.Contains(html, unwanted) {
+			t.Errorf("expected no %s without a hint, got %s", unwanted, html)
+		}
+	}
+	if !strings.Contains(html, `<span aria-hidden="true"></span>Notifications`) {
+		t.Errorf("expected unchanged markup, got %s", html)
+	}
+}
+
+// With no visible label there is no span to name the input from, so
+// aria-labelledby must be omitted rather than point at nothing -- the caller
+// supplies aria-label via Attrs.
+func TestSwitchHintWithoutLabelOmitsLabelledby(t *testing.T) {
+	html := testutil.RenderToString(t, SwitchComponent(SwitchProps{
+		Name: "notify", Hint: "Weekly digest",
+		Attrs: templ.Attributes{"aria-label": "Notifications"},
+	}))
+	if strings.Contains(html, "aria-labelledby") {
+		t.Errorf("expected no aria-labelledby without a label, got %s", html)
+	}
+	if !strings.Contains(html, `aria-label="Notifications"`) {
+		t.Error("expected caller aria-label preserved")
+	}
+	assertDescribedByResolves(t, html, 1)
+}
+
+func TestSwitchHintAndErrorBothAssociated(t *testing.T) {
+	html := testutil.RenderToString(t, SwitchComponent(SwitchProps{
+		Name: "notify", Label: "Notifications", Hint: "Weekly digest", Error: "Required",
+	}))
+	if !strings.Contains(html, `aria-describedby="notify-hint notify-error"`) {
+		t.Errorf("expected hint then error, got %s", html)
+	}
+	assertDescribedByResolves(t, html, 2)
+	if !strings.Contains(html, `class="switch error"`) {
+		t.Errorf("expected error class on the label, got %s", html)
+	}
+}
+
+// The explicit ID prop wins over Name for id derivation.
+func TestSwitchHintUsesExplicitIDAndSanitizesIt(t *testing.T) {
+	html := testutil.RenderToString(t, SwitchComponent(SwitchProps{
+		Name: "notify", ID: "sw 1", Label: "N", Hint: "H", Error: "E",
+	}))
+	if !strings.Contains(html, `id="sw_20_1"`) {
+		t.Errorf("expected sanitized input id, got %s", html)
+	}
+	assertDescribedByResolves(t, html, 2)
+}
+
+func TestSwitchHintPreservesState(t *testing.T) {
+	html := testutil.RenderToString(t, SwitchComponent(SwitchProps{
+		Name: "notify", Label: "N", Hint: "H", Checked: true, Disabled: true,
+		Variant: "small", Class: "extra", Value: "yes",
+		Attrs: templ.Attributes{"data-testid": "sw"},
+	}))
+	for _, want := range []string{"checked", "disabled", "switch--small", "extra", `value="yes"`, `data-testid="sw"`, `role="switch"`} {
+		if !strings.Contains(html, want) {
+			t.Errorf("expected %s alongside a hint, got %s", want, html)
+		}
+	}
+}
+
+func TestSwitchHintEscaping(t *testing.T) {
+	html := testutil.RenderToString(t, SwitchComponent(SwitchProps{
+		Name: "notify", Label: "N", Hint: `a & <script>alert(1)</script>`,
+	}))
+	if strings.Contains(html, "<script>") {
+		t.Errorf("expected escaping, got %s", html)
+	}
+	if !strings.Contains(html, "&lt;script&gt;") || !strings.Contains(html, "&amp;") {
+		t.Errorf("expected escaped entities, got %s", html)
+	}
 }

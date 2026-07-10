@@ -1,0 +1,19 @@
+package form
+
+// wrappedLabelBody renders the text content of a <label> that wraps its own
+// input (radio, checkbox, switch). When a hint is supplied, the label text and
+// the hint are stacked as sibling spans, each carrying the id that
+// wrappedAriaAttrs points the input at. Both stay inside the label, so the
+// whole label -- hint included -- remains a click target.
+templ wrappedLabelBody(base, label, hint string) {
+	if hint != "" {
+		<span class="stack stack-compact">
+			if label != "" {
+				<span id={ labelSpanID(base) }>{ label }</span>
+			}
+			<span id={ hintSpanID(base) } class="hint">{ hint }</span>
+		</span>
+	} else if label != "" {
+		{ label }
+	}
+}

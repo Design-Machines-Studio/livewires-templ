@@ -7,6 +7,7 @@ type SwitchProps struct {
 	Name     string           // Field name for the checkbox input
 	ID       string           // ID for the checkbox input
 	Label    string           // Visible label text. If empty, pass aria-label via Attrs.
+	Hint     string           // Supporting text shown beneath the label
 	Checked  bool             // Whether the switch is on
 	Disabled bool             // Whether the switch is disabled
 	Variant  string           // Style variant: "", "small"
@@ -24,52 +25,47 @@ func switchID(props SwitchProps) string {
 	return props.Name
 }
 
+// switchBaseID derives the id prefix for the label and hint spans. A switch is
+// a single control, so its effective id alone is unique.
+func switchBaseID(props SwitchProps) string {
+	return controlID(switchID(props))
+}
+
+// switchAriaAttrs wires the input to the label and hint spans nested inside the
+// label that wraps it.
+func switchAriaAttrs(props SwitchProps) templ.Attributes {
+	return wrappedAriaAttrs(switchBaseID(props), props.Label, props.Hint, lw.If(props.Error != "", errorID(switchID(props))))
+}
+
 // SwitchComponent renders a pill-shaped toggle switch with full Props control.
 templ SwitchComponent(props SwitchProps) {
 	<div>
-		if props.Error != "" {
-			<label class={ lw.ClassNames("switch", lw.VariantClass("switch", props.Variant), "error", props.Class) } { props.Attrs... }>
-				<input
-					type="checkbox"
-					role="switch"
-					if props.Name != "" {
-						name={ props.Name }
-					}
-					if props.ID != "" {
-						id={ controlID(props.ID) }
-					}
-					value={ lw.DefaultStr(props.Value, "1") }
-					checked?={ props.Checked }
-					disabled?={ props.Disabled }
+		<label
+			class={ lw.ClassNames("switch", lw.VariantClass("switch", props.Variant), lw.If(props.Error != "", "error"), props.Class) }
+			{ props.Attrs... }
+		>
+			<input
+				type="checkbox"
+				role="switch"
+				if props.Name != "" {
+					name={ props.Name }
+				}
+				if props.ID != "" {
+					id={ controlID(props.ID) }
+				}
+				value={ lw.DefaultStr(props.Value, "1") }
+				checked?={ props.Checked }
+				disabled?={ props.Disabled }
+				if props.Error != "" {
 					aria-invalid="true"
-					aria-describedby={ errorID(switchID(props)) }
-				/>
-				<span aria-hidden="true"></span>
-				if props.Label != "" {
-					{ props.Label }
 				}
-			</label>
+				{ switchAriaAttrs(props)... }
+			/>
+			<span aria-hidden="true"></span>
+			@wrappedLabelBody(switchBaseID(props), props.Label, props.Hint)
+		</label>
+		if props.Error != "" {
 			<p id={ errorID(switchID(props)) } class="error" role="alert">{ props.Error }</p>
-		} else {
-			<label class={ lw.ClassNames("switch", lw.VariantClass("switch", props.Variant), props.Class) } { props.Attrs... }>
-				<input
-					type="checkbox"
-					role="switch"
-					if props.Name != "" {
-						name={ props.Name }
-					}
-					if props.ID != "" {
-						id={ controlID(props.ID) }
-					}
-					value={ lw.DefaultStr(props.Value, "1") }
-					checked?={ props.Checked }
-					disabled?={ props.Disabled }
-				/>
-				<span aria-hidden="true"></span>
-				if props.Label != "" {
-					{ props.Label }
-				}
-			</label>
 		}
 	</div>
 }

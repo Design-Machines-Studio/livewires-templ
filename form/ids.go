@@ -19,6 +19,11 @@ import (
 //     points at is never announced.
 //
 // Every id emitted by this package therefore passes through sanitizeIDPart.
+//
+// Ids are derived from the field name alone, so two controls of different kinds
+// that share a name (a Field and a Checkbox both named "email") emit the same
+// hint and error ids. A component cannot detect that across call sites; give
+// controls on one page distinct names.
 
 // nameFallback is used when a name sanitizes to the empty string. An id must
 // never be empty or begin with a stray separator.
@@ -74,6 +79,47 @@ func errorID(name string) string {
 // hintID is the id of a control's hint element.
 func hintID(name string) string {
 	return controlID(name) + "-hint"
+}
+
+// optionBaseID derives the id prefix for a control whose name is shared across
+// several inputs (a radio group, a set of checkboxes). The value disambiguates
+// them; sanitizing preserves that, since it never maps two distinct values onto
+// one id.
+func optionBaseID(name, value string) string {
+	return controlID(name) + "-" + sanitizeIDPartOr(value, "option")
+}
+
+// labelSpanID and hintSpanID identify the spans nested inside a wrapping label.
+func labelSpanID(base string) string { return base + "-label" }
+func hintSpanID(base string) string  { return base + "-hint" }
+
+// wrappedAriaAttrs wires an input to the label and hint spans nested inside the
+// <label> that wraps it. Such a label folds every descendant string into the
+// input's accessible name, so once a hint is nested inside, the input must name
+// itself from the label span alone or it announces as "Pro Billed annually".
+//
+// errID is the id of the error element, or "" when there is no error. Returns
+// no attributes when there is nothing to describe.
+func wrappedAriaAttrs(base, label, hint, errID string) templ.Attributes {
+	if hint == "" && errID == "" {
+		return nil
+	}
+
+	attrs := templ.Attributes{}
+	var refs []string
+	if hint != "" {
+		// With no label text there is no span to name the input from, and an
+		// aria-labelledby pointing at nothing would erase the accessible name.
+		if label != "" {
+			attrs["aria-labelledby"] = labelSpanID(base)
+		}
+		refs = append(refs, hintSpanID(base))
+	}
+	if errID != "" {
+		refs = append(refs, errID)
+	}
+	attrs["aria-describedby"] = strings.Join(refs, " ")
+	return attrs
 }
 
 // describedByAttrs wires a control to its hint and error text. The hint comes
