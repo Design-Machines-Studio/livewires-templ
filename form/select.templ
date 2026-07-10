@@ -29,9 +29,9 @@ templ selectOptions(props SelectProps) {
 templ Select(props SelectProps) {
 	<div class={ lw.ClassNames("field stack stack-compact", props.Class) }>
 		if props.Error != "" {
-			<label for={ props.Name } class="error">{ props.Label }</label>
+			<label for={ controlID(props.Name) } class="error">{ props.Label }</label>
 			<select
-				id={ props.Name }
+				id={ controlID(props.Name) }
 				name={ props.Name }
 				class="error"
 				required?={ props.Required }
@@ -39,28 +39,29 @@ templ Select(props SelectProps) {
 					aria-required="true"
 				}
 				aria-invalid="true"
-				aria-describedby={ props.Name + "-error" }
+				{ describedByAttrs(props.Name, props.Hint, props.Error)... }
 				{ props.Attrs... }
 			>
 				@selectOptions(props)
 			</select>
-			<p id={ props.Name + "-error" } class="error" role="alert">{ props.Error }</p>
+			<p id={ errorID(props.Name) } class="error" role="alert">{ props.Error }</p>
 		} else {
-			<label for={ props.Name }>{ props.Label }</label>
+			<label for={ controlID(props.Name) }>{ props.Label }</label>
 			<select
-				id={ props.Name }
+				id={ controlID(props.Name) }
 				name={ props.Name }
 				required?={ props.Required }
 				if props.Required {
 					aria-required="true"
 				}
+				{ describedByAttrs(props.Name, props.Hint, props.Error)... }
 				{ props.Attrs... }
 			>
 				@selectOptions(props)
 			</select>
 		}
 		if props.Hint != "" {
-			<p class="hint">{ props.Hint }</p>
+			<p id={ hintID(props.Name) } class="hint">{ props.Hint }</p>
 		}
 	</div>
 }

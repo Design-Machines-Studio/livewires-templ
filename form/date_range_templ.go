@@ -123,9 +123,9 @@ func DateRange(props DateRangeProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var6 string
-			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(props.StartName)
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(controlID(props.StartName))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 30, Col: 33}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 30, Col: 44}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -136,9 +136,9 @@ func DateRange(props DateRangeProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var7 string
-			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(props.StartName)
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(controlID(props.StartName))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 33, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 33, Col: 37}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -175,9 +175,9 @@ func DateRange(props DateRangeProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var10 string
-			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(props.StartName + "-error")
+			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(errorID(props.StartName))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 38, Col: 51}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 38, Col: 49}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -193,9 +193,9 @@ func DateRange(props DateRangeProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var11 string
-			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(props.StartName)
+			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(controlID(props.StartName))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 41, Col: 33}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 41, Col: 44}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {
@@ -206,9 +206,9 @@ func DateRange(props DateRangeProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var12 string
-			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(props.StartName)
+			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(controlID(props.StartName))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 42, Col: 44}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 42, Col: 55}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
@@ -221,7 +221,7 @@ func DateRange(props DateRangeProps) templ.Component {
 			var templ_7745c5c3_Var13 string
 			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(props.StartName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 42, Col: 69}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 42, Col: 80}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {
@@ -234,7 +234,7 @@ func DateRange(props DateRangeProps) templ.Component {
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(props.StartValue)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 42, Col: 96}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 42, Col: 107}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
@@ -255,9 +255,9 @@ func DateRange(props DateRangeProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var15 string
-			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(props.EndName)
+			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(controlID(props.EndName))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 47, Col: 31}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 47, Col: 42}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
@@ -268,9 +268,9 @@ func DateRange(props DateRangeProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var16 string
-			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(props.EndName)
+			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(controlID(props.EndName))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 50, Col: 24}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 50, Col: 35}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
@@ -307,9 +307,9 @@ func DateRange(props DateRangeProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var19 string
-			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(props.StartName + "-error")
+			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(errorID(props.StartName))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 55, Col: 51}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 55, Col: 49}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 			if templ_7745c5c3_Err != nil {
@@ -325,9 +325,9 @@ func DateRange(props DateRangeProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var20 string
-			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(props.EndName)
+			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(controlID(props.EndName))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 58, Col: 31}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 58, Col: 42}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 			if templ_7745c5c3_Err != nil {
@@ -338,9 +338,9 @@ func DateRange(props DateRangeProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var21 string
-			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(props.EndName)
+			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(controlID(props.EndName))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 59, Col: 42}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 59, Col: 53}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 			if templ_7745c5c3_Err != nil {
@@ -353,7 +353,7 @@ func DateRange(props DateRangeProps) templ.Component {
 			var templ_7745c5c3_Var22 string
 			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(props.EndName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 59, Col: 65}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 59, Col: 76}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 			if templ_7745c5c3_Err != nil {
@@ -366,7 +366,7 @@ func DateRange(props DateRangeProps) templ.Component {
 			var templ_7745c5c3_Var23 string
 			templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(props.EndValue)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 59, Col: 90}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 59, Col: 101}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 			if templ_7745c5c3_Err != nil {
@@ -387,9 +387,9 @@ func DateRange(props DateRangeProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var24 string
-			templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(props.StartName + "-error")
+			templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(errorID(props.StartName))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 64, Col: 37}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 64, Col: 35}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 			if templ_7745c5c3_Err != nil {
@@ -402,7 +402,7 @@ func DateRange(props DateRangeProps) templ.Component {
 			var templ_7745c5c3_Var25 string
 			templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(props.Error)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 64, Col: 80}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/date_range.templ`, Line: 64, Col: 78}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 			if templ_7745c5c3_Err != nil {

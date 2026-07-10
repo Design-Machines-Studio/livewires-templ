@@ -36,20 +36,20 @@ templ SwitchComponent(props SwitchProps) {
 						name={ props.Name }
 					}
 					if props.ID != "" {
-						id={ props.ID }
+						id={ controlID(props.ID) }
 					}
 					value={ lw.DefaultStr(props.Value, "1") }
 					checked?={ props.Checked }
 					disabled?={ props.Disabled }
 					aria-invalid="true"
-					aria-describedby={ switchID(props) + "-error" }
+					aria-describedby={ errorID(switchID(props)) }
 				/>
 				<span aria-hidden="true"></span>
 				if props.Label != "" {
 					{ props.Label }
 				}
 			</label>
-			<p id={ switchID(props) + "-error" } class="error" role="alert">{ props.Error }</p>
+			<p id={ errorID(switchID(props)) } class="error" role="alert">{ props.Error }</p>
 		} else {
 			<label class={ lw.ClassNames("switch", lw.VariantClass("switch", props.Variant), props.Class) } { props.Attrs... }>
 				<input
@@ -59,7 +59,7 @@ templ SwitchComponent(props SwitchProps) {
 						name={ props.Name }
 					}
 					if props.ID != "" {
-						id={ props.ID }
+						id={ controlID(props.ID) }
 					}
 					value={ lw.DefaultStr(props.Value, "1") }
 					checked?={ props.Checked }

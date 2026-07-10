@@ -103,3 +103,8 @@ func TestCheckboxWrapper(t *testing.T) {
 		t.Error("expected div wrapper")
 	}
 }
+
+func TestCheckboxSanitizesErrorID(t *testing.T) {
+	html := testutil.RenderToString(t, Checkbox(CheckboxProps{Name: "terms accepted", Label: "Agree", Error: "Required"}))
+	assertDescribedByResolves(t, html, 1)
+}

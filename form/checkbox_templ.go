@@ -114,9 +114,9 @@ func Checkbox(props CheckboxProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var5 string
-			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(props.Name + "-error")
+			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(errorID(props.Name))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/checkbox.templ`, Line: 47, Col: 45}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/checkbox.templ`, Line: 47, Col: 43}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -148,9 +148,9 @@ func Checkbox(props CheckboxProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var7 string
-			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(props.Name + "-error")
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(errorID(props.Name))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/checkbox.templ`, Line: 52, Col: 32}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/checkbox.templ`, Line: 52, Col: 30}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -163,7 +163,7 @@ func Checkbox(props CheckboxProps) templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(props.Error)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/checkbox.templ`, Line: 52, Col: 75}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/checkbox.templ`, Line: 52, Col: 73}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {

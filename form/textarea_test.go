@@ -80,3 +80,34 @@ func TestTextareaAriaRequiredAbsentWhenNotRequired(t *testing.T) {
 		t.Error("expected no aria-required when not required")
 	}
 }
+
+func TestTextareaHintIsAssociatedWithControl(t *testing.T) {
+	html := testutil.RenderToString(t, Textarea(TextareaProps{Label: "Bio", Name: "bio", Hint: "Max 200 characters"}))
+	if !strings.Contains(html, `aria-describedby="bio-hint"`) {
+		t.Errorf("expected textarea described by its hint, got %s", html)
+	}
+	if !strings.Contains(html, `<p id="bio-hint" class="hint">`) {
+		t.Errorf("expected hint paragraph to carry the referenced id, got %s", html)
+	}
+	assertDescribedByResolves(t, html, 1)
+}
+
+func TestTextareaHintAndErrorBothAssociated(t *testing.T) {
+	html := testutil.RenderToString(t, Textarea(TextareaProps{
+		Label: "Bio", Name: "bio", Hint: "Max 200 characters", Error: "Too long",
+	}))
+	assertDescribedByResolves(t, html, 2)
+}
+
+func TestTextareaWithoutHintHasNoDescription(t *testing.T) {
+	html := testutil.RenderToString(t, Textarea(TextareaProps{Label: "Bio", Name: "bio"}))
+	if strings.Contains(html, "aria-describedby") {
+		t.Errorf("expected no aria-describedby without hint or error, got %s", html)
+	}
+}
+
+func TestTextareaSanitizesControlID(t *testing.T) {
+	html := testutil.RenderToString(t, Textarea(TextareaProps{Label: "Bio", Name: "about me", Hint: "H"}))
+	assertLabelPointsAtControl(t, html, "about me")
+	assertDescribedByResolves(t, html, 1)
+}

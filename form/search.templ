@@ -24,24 +24,24 @@ func searchPlaceholder(p string) string {
 templ Search(props SearchProps) {
 	<div class={ lw.ClassNames("stack stack-compact", props.Class) }>
 		if props.Error != "" {
-			<label for={ props.Name } class="error">Search</label>
+			<label for={ controlID(props.Name) } class="error">Search</label>
 			<input
 				type="search"
-				id={ props.Name }
+				id={ controlID(props.Name) }
 				name={ props.Name }
 				value={ props.Value }
 				placeholder={ searchPlaceholder(props.Placeholder) }
 				class="error"
 				aria-invalid="true"
-				aria-describedby={ props.Name + "-error" }
+				aria-describedby={ errorID(props.Name) }
 				{ props.Attrs... }
 			/>
-			<p id={ props.Name + "-error" } class="error" role="alert">{ props.Error }</p>
+			<p id={ errorID(props.Name) } class="error" role="alert">{ props.Error }</p>
 		} else {
-			<label for={ props.Name }>Search</label>
+			<label for={ controlID(props.Name) }>Search</label>
 			<input
 				type="search"
-				id={ props.Name }
+				id={ controlID(props.Name) }
 				name={ props.Name }
 				value={ props.Value }
 				placeholder={ searchPlaceholder(props.Placeholder) }

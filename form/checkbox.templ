@@ -44,12 +44,12 @@ templ Checkbox(props CheckboxProps) {
 					type="checkbox"
 					name={ props.Name }
 					aria-invalid="true"
-					aria-describedby={ props.Name + "-error" }
+					aria-describedby={ errorID(props.Name) }
 					{ checkboxInputAttrs(props)... }
 				/>
 				{ props.Label }
 			</label>
-			<p id={ props.Name + "-error" } class="error" role="alert">{ props.Error }</p>
+			<p id={ errorID(props.Name) } class="error" role="alert">{ props.Error }</p>
 		} else {
 			<label class={ lw.ClassNames("checkbox", lw.VariantClass("checkbox", checkboxVariant(props)), props.Class) } { props.Attrs... }>
 				<input type="checkbox" name={ props.Name } { checkboxInputAttrs(props)... }/>

@@ -33,6 +33,54 @@ func TestFieldWithHint(t *testing.T) {
 	}
 }
 
+// The hint must be announced, not merely displayed.
+func TestFieldHintIsAssociatedWithInput(t *testing.T) {
+	html := testutil.RenderToString(t, Field(FieldProps{Label: "Email", Name: "email", Hint: "We never share it"}))
+	if !strings.Contains(html, `aria-describedby="email-hint"`) {
+		t.Errorf("expected input described by its hint, got %s", html)
+	}
+	if !strings.Contains(html, `<p id="email-hint" class="hint">`) {
+		t.Errorf("expected hint paragraph to carry the referenced id, got %s", html)
+	}
+	assertDescribedByResolves(t, html, 1)
+}
+
+func TestFieldHintAndErrorBothAssociated(t *testing.T) {
+	html := testutil.RenderToString(t, Field(FieldProps{
+		Label: "Email", Name: "email", Hint: "We never share it", Error: "Invalid email",
+	}))
+	// Hint first, then error: guidance before failure.
+	if !strings.Contains(html, `aria-describedby="email-hint email-error"`) {
+		t.Errorf("expected hint then error in aria-describedby, got %s", html)
+	}
+	assertDescribedByResolves(t, html, 2)
+}
+
+func TestFieldWithoutHintHasNoDescription(t *testing.T) {
+	html := testutil.RenderToString(t, FieldText("Name", "name", "", false))
+	if strings.Contains(html, "aria-describedby") {
+		t.Errorf("expected no aria-describedby without hint or error, got %s", html)
+	}
+	if strings.Contains(html, `class="hint"`) {
+		t.Error("expected no empty hint element")
+	}
+}
+
+// A field name need not be id-safe. The id is sanitized; the submitted name is not.
+func TestFieldSanitizesIDButPreservesName(t *testing.T) {
+	html := testutil.RenderToString(t, Field(FieldProps{
+		Label: "Email", Name: "user[email]", Hint: "Hint", Error: "Bad",
+	}))
+	assertLabelPointsAtControl(t, html, "user[email]")
+	assertDescribedByResolves(t, html, 2)
+	if !strings.Contains(html, `name="user[email]"`) {
+		t.Errorf("submitted name must not be sanitized, got %s", html)
+	}
+	if strings.Contains(html, `id="user[email]"`) {
+		t.Error("id must not contain brackets")
+	}
+}
+
 func TestFieldWithError(t *testing.T) {
 	html := testutil.RenderToString(t, Field(FieldProps{
 		Label: "Email",

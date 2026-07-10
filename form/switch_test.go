@@ -149,3 +149,8 @@ func TestSwitchWrapper(t *testing.T) {
 		t.Error("expected div wrapper")
 	}
 }
+
+func TestSwitchSanitizesErrorID(t *testing.T) {
+	html := testutil.RenderToString(t, SwitchComponent(SwitchProps{Name: "email alerts", Label: "Alerts", Error: "Required"}))
+	assertDescribedByResolves(t, html, 1)
+}

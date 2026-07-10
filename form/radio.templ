@@ -1,7 +1,6 @@
 package form
 
 import (
-	"strconv"
 	"strings"
 
 	lw "github.com/Design-Machines-Studio/livewires-templ"
@@ -37,41 +36,11 @@ func radioVariant(props RadioProps) string {
 	return props.Variant
 }
 
-// sanitizeIDPart reduces an arbitrary string to characters safe in an HTML id
-// and a CSS selector. Characters outside [A-Za-z0-9-] are escaped as _<hex>_
-// rather than folded to a single placeholder, which keeps the mapping
-// injective: two distinct values ("a/b" and "a b") can never collide into one
-// id. '_' is itself escaped so it cannot forge an escape sequence.
-func sanitizeIDPart(s string) string {
-	var b strings.Builder
-	b.Grow(len(s))
-	for _, r := range s {
-		switch {
-		case r >= 'a' && r <= 'z', r >= 'A' && r <= 'Z', r >= '0' && r <= '9', r == '-':
-			b.WriteRune(r)
-		default:
-			b.WriteByte('_')
-			b.WriteString(strconv.FormatInt(int64(r), 16))
-			b.WriteByte('_')
-		}
-	}
-	return b.String()
-}
-
-// sanitizeIDPartOr sanitizes s, falling back to a placeholder when the result
-// would be empty. An id must never be empty or start with a stray separator.
-func sanitizeIDPartOr(s, fallback string) string {
-	if id := sanitizeIDPart(s); id != "" {
-		return id
-	}
-	return fallback
-}
-
 // radioBaseID derives the id prefix for a single radio. Option values are
 // unique within a radio group and sanitizing preserves that uniqueness, so
 // name+value is unique across the group.
 func radioBaseID(props RadioProps) string {
-	return sanitizeIDPartOr(props.Name, "radio") + "-" + sanitizeIDPartOr(props.Value, "option")
+	return controlID(props.Name) + "-" + sanitizeIDPartOr(props.Value, "option")
 }
 
 // radioLabelID is the id of the span holding only the label text.
@@ -84,18 +53,12 @@ func radioHintID(props RadioProps) string {
 	return radioBaseID(props) + "-hint"
 }
 
-// radioErrorID is the id of the error message paragraph. The name is sanitized
-// because aria-describedby is a space-separated list of IDREFs: an unsanitized
-// name containing a space would split into two bogus tokens and the error would
-// never be announced.
-func radioErrorID(name string) string {
-	return sanitizeIDPartOr(name, "radio") + "-error"
-}
-
 // radioAriaAttrs wires the input to its label and hint text. A wrapping label
 // folds every descendant string into the accessible name, so once a hint is
 // nested inside it the input must name itself from the label span alone.
-// Returns no attributes when there is neither a hint nor an error.
+// Unlike the other form controls, a radio's hint id is per-option rather than
+// per-name, so it cannot use describedByAttrs. Returns no attributes when there
+// is neither a hint nor an error.
 func radioAriaAttrs(props RadioProps) templ.Attributes {
 	if props.Hint == "" && props.Error == "" {
 		return nil
@@ -108,7 +71,7 @@ func radioAriaAttrs(props RadioProps) templ.Attributes {
 		described = append(described, radioHintID(props))
 	}
 	if props.Error != "" {
-		described = append(described, radioErrorID(props.Name))
+		described = append(described, errorID(props.Name))
 	}
 	attrs["aria-describedby"] = strings.Join(described, " ")
 	return attrs
@@ -144,7 +107,7 @@ templ Radio(props RadioProps) {
 			@radioLabelBody(props)
 		</label>
 		if props.Error != "" {
-			<p id={ radioErrorID(props.Name) } class="error" role="alert">{ props.Error }</p>
+			<p id={ errorID(props.Name) } class="error" role="alert">{ props.Error }</p>
 		}
 	</div>
 }
@@ -214,7 +177,7 @@ templ RadioGroup(props RadioGroupProps) {
 			}
 		</ul>
 		if props.Error != "" {
-			<p id={ radioErrorID(props.Name) } class="error" role="alert">{ props.Error }</p>
+			<p id={ errorID(props.Name) } class="error" role="alert">{ props.Error }</p>
 		}
 	</div>
 }

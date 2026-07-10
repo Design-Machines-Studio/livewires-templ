@@ -78,3 +78,34 @@ func TestSelectAriaRequiredAbsentWhenNotRequired(t *testing.T) {
 		t.Error("expected no aria-required when not required")
 	}
 }
+
+func TestSelectHintIsAssociatedWithControl(t *testing.T) {
+	html := testutil.RenderToString(t, Select(SelectProps{Label: "Country", Name: "country", Hint: "Pick one"}))
+	if !strings.Contains(html, `aria-describedby="country-hint"`) {
+		t.Errorf("expected select described by its hint, got %s", html)
+	}
+	if !strings.Contains(html, `<p id="country-hint" class="hint">`) {
+		t.Errorf("expected hint paragraph to carry the referenced id, got %s", html)
+	}
+	assertDescribedByResolves(t, html, 1)
+}
+
+func TestSelectHintAndErrorBothAssociated(t *testing.T) {
+	html := testutil.RenderToString(t, Select(SelectProps{
+		Label: "Country", Name: "country", Hint: "Pick one", Error: "Required",
+	}))
+	assertDescribedByResolves(t, html, 2)
+}
+
+func TestSelectWithoutHintHasNoDescription(t *testing.T) {
+	html := testutil.RenderToString(t, Select(SelectProps{Label: "Country", Name: "country"}))
+	if strings.Contains(html, "aria-describedby") {
+		t.Errorf("expected no aria-describedby without hint or error, got %s", html)
+	}
+}
+
+func TestSelectSanitizesControlID(t *testing.T) {
+	html := testutil.RenderToString(t, Select(SelectProps{Label: "Country", Name: "ship to", Hint: "H"}))
+	assertLabelPointsAtControl(t, html, "ship to")
+	assertDescribedByResolves(t, html, 1)
+}

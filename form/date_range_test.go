@@ -51,3 +51,19 @@ func TestDateRangeWithError(t *testing.T) {
 		t.Error("expected error message text")
 	}
 }
+
+// Both inputs point at the single shared error paragraph, so both IDREFs must
+// resolve after sanitization.
+func TestDateRangeSanitizesIDs(t *testing.T) {
+	html := testutil.RenderToString(t, DateRange(DateRangeProps{
+		StartName: "from date", EndName: "to date", Label: "Range", Error: "Invalid range",
+	}))
+	assertLabelPointsAtControl(t, html, "from date")
+	assertLabelPointsAtControl(t, html, "to date")
+	if !strings.Contains(html, `<p id="`+errorID("from date")+`"`) {
+		t.Errorf("expected sanitized error paragraph id, got %s", html)
+	}
+	if strings.Contains(html, `id="from date"`) || strings.Contains(html, `id="to date"`) {
+		t.Error("ids must not contain whitespace")
+	}
+}

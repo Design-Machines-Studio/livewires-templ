@@ -27,41 +27,41 @@ templ DateRange(props DateRangeProps) {
 		<div class="cluster">
 			<div class="stack stack-compact">
 				if props.Error != "" {
-					<label for={ props.StartName } class="error">From</label>
+					<label for={ controlID(props.StartName) } class="error">From</label>
 					<input
 						type="date"
-						id={ props.StartName }
+						id={ controlID(props.StartName) }
 						name={ props.StartName }
 						value={ props.StartValue }
 						class="error"
 						aria-invalid="true"
-						aria-describedby={ props.StartName + "-error" }
+						aria-describedby={ errorID(props.StartName) }
 					/>
 				} else {
-					<label for={ props.StartName }>From</label>
-					<input type="date" id={ props.StartName } name={ props.StartName } value={ props.StartValue }/>
+					<label for={ controlID(props.StartName) }>From</label>
+					<input type="date" id={ controlID(props.StartName) } name={ props.StartName } value={ props.StartValue }/>
 				}
 			</div>
 			<div class="stack stack-compact">
 				if props.Error != "" {
-					<label for={ props.EndName } class="error">To</label>
+					<label for={ controlID(props.EndName) } class="error">To</label>
 					<input
 						type="date"
-						id={ props.EndName }
+						id={ controlID(props.EndName) }
 						name={ props.EndName }
 						value={ props.EndValue }
 						class="error"
 						aria-invalid="true"
-						aria-describedby={ props.StartName + "-error" }
+						aria-describedby={ errorID(props.StartName) }
 					/>
 				} else {
-					<label for={ props.EndName }>To</label>
-					<input type="date" id={ props.EndName } name={ props.EndName } value={ props.EndValue }/>
+					<label for={ controlID(props.EndName) }>To</label>
+					<input type="date" id={ controlID(props.EndName) } name={ props.EndName } value={ props.EndValue }/>
 				}
 			</div>
 		</div>
 		if props.Error != "" {
-			<p id={ props.StartName + "-error" } class="error" role="alert">{ props.Error }</p>
+			<p id={ errorID(props.StartName) } class="error" role="alert">{ props.Error }</p>
 		}
 	</fieldset>
 }

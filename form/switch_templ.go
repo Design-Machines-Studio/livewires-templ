@@ -114,9 +114,9 @@ func SwitchComponent(props SwitchProps) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var5 string
-				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(props.ID)
+				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(controlID(props.ID))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/switch.templ`, Line: 39, Col: 19}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/switch.templ`, Line: 39, Col: 30}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -161,9 +161,9 @@ func SwitchComponent(props SwitchProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var7 string
-			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(switchID(props) + "-error")
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(errorID(switchID(props)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/switch.templ`, Line: 45, Col: 50}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/switch.templ`, Line: 45, Col: 48}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -189,9 +189,9 @@ func SwitchComponent(props SwitchProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var9 string
-			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(switchID(props) + "-error")
+			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(errorID(switchID(props)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/switch.templ`, Line: 52, Col: 37}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/switch.templ`, Line: 52, Col: 35}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -204,7 +204,7 @@ func SwitchComponent(props SwitchProps) templ.Component {
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(props.Error)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/switch.templ`, Line: 52, Col: 80}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/switch.templ`, Line: 52, Col: 78}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -270,9 +270,9 @@ func SwitchComponent(props SwitchProps) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var14 string
-				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(props.ID)
+				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(controlID(props.ID))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/switch.templ`, Line: 62, Col: 19}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/switch.templ`, Line: 62, Col: 30}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {

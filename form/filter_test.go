@@ -50,3 +50,9 @@ func TestFilterWithError(t *testing.T) {
 		t.Error("expected error message text")
 	}
 }
+
+func TestFilterSanitizesControlID(t *testing.T) {
+	html := testutil.RenderToString(t, Filter(FilterProps{Title: "Status", Name: "order status", Error: "Bad"}))
+	assertLabelPointsAtControl(t, html, "order status")
+	assertDescribedByResolves(t, html, 1)
+}

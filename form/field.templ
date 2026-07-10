@@ -28,10 +28,10 @@ func fieldType(t string) string {
 templ Field(props FieldProps) {
 	<div class={ lw.ClassNames("field stack stack-compact", props.Class) }>
 		if props.Error != "" {
-			<label for={ props.Name } class="error">{ props.Label }</label>
+			<label for={ controlID(props.Name) } class="error">{ props.Label }</label>
 			<input
 				type={ fieldType(props.Type) }
-				id={ props.Name }
+				id={ controlID(props.Name) }
 				name={ props.Name }
 				value={ props.Value }
 				placeholder={ props.Placeholder }
@@ -41,15 +41,15 @@ templ Field(props FieldProps) {
 					aria-required="true"
 				}
 				aria-invalid="true"
-				aria-describedby={ props.Name + "-error" }
+				{ describedByAttrs(props.Name, props.Hint, props.Error)... }
 				{ props.Attrs... }
 			/>
-			<p id={ props.Name + "-error" } class="error" role="alert">{ props.Error }</p>
+			<p id={ errorID(props.Name) } class="error" role="alert">{ props.Error }</p>
 		} else {
-			<label for={ props.Name }>{ props.Label }</label>
+			<label for={ controlID(props.Name) }>{ props.Label }</label>
 			<input
 				type={ fieldType(props.Type) }
-				id={ props.Name }
+				id={ controlID(props.Name) }
 				name={ props.Name }
 				value={ props.Value }
 				placeholder={ props.Placeholder }
@@ -57,11 +57,12 @@ templ Field(props FieldProps) {
 				if props.Required {
 					aria-required="true"
 				}
+				{ describedByAttrs(props.Name, props.Hint, props.Error)... }
 				{ props.Attrs... }
 			/>
 		}
 		if props.Hint != "" {
-			<p class="hint">{ props.Hint }</p>
+			<p id={ hintID(props.Name) } class="hint">{ props.Hint }</p>
 		}
 	</div>
 }

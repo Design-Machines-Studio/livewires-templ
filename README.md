@@ -179,6 +179,18 @@ import (
     Error: "Please enter a valid email",
 })
 
+// Hints are announced, not just displayed. Every form control wires its Hint
+// to the input via aria-describedby, alongside the error message when both
+// are present. Ids are derived from the field name; a name that is not
+// id-safe ("user[email]") is sanitized for the id and left intact for the
+// submitted name.
+@form.Field(form.FieldProps{
+    Label: "Email",
+    Name:  "email",
+    Type:  "email",
+    Hint:  "We never share it",
+})
+
 // File upload
 @form.FileUploadSimple("resume", "Upload resume")
 

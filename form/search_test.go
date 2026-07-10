@@ -32,3 +32,9 @@ func TestSearchWithError(t *testing.T) {
 		t.Error("expected error message text")
 	}
 }
+
+func TestSearchSanitizesControlID(t *testing.T) {
+	html := testutil.RenderToString(t, Search(SearchProps{Name: "q term", Error: "Bad"}))
+	assertLabelPointsAtControl(t, html, "q term")
+	assertDescribedByResolves(t, html, 1)
+}

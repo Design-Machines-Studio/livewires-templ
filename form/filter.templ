@@ -24,20 +24,20 @@ templ filterOptions(props FilterProps) {
 templ Filter(props FilterProps) {
 	<div class={ lw.ClassNames("filter stack stack-compact", props.Class) } { props.Attrs... }>
 		if props.Error != "" {
-			<label for={ props.Name } class="error">{ props.Title }</label>
+			<label for={ controlID(props.Name) } class="error">{ props.Title }</label>
 			<select
-				id={ props.Name }
+				id={ controlID(props.Name) }
 				name={ props.Name }
 				class="error"
 				aria-invalid="true"
-				aria-describedby={ props.Name + "-error" }
+				aria-describedby={ errorID(props.Name) }
 			>
 				@filterOptions(props)
 			</select>
-			<p id={ props.Name + "-error" } class="error" role="alert">{ props.Error }</p>
+			<p id={ errorID(props.Name) } class="error" role="alert">{ props.Error }</p>
 		} else {
-			<label for={ props.Name }>{ props.Title }</label>
-			<select id={ props.Name } name={ props.Name }>
+			<label for={ controlID(props.Name) }>{ props.Title }</label>
+			<select id={ controlID(props.Name) } name={ props.Name }>
 				@filterOptions(props)
 			</select>
 		}
