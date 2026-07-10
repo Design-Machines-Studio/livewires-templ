@@ -124,6 +124,38 @@ import (
 // Checkbox
 @form.CheckboxSimple("agree", "I agree to the terms", false)
 
+// Radio
+@form.RadioSimple("plan", "pro", "Pro", false)
+
+// Radio group
+@form.RadioGroup(form.RadioGroupProps{
+    Name:     "plan",
+    Selected: "pro",
+    Options: []form.RadioOption{
+        {Value: "free", Label: "Free"},
+        {Value: "pro", Label: "Pro"},
+    },
+})
+
+// Radio group with per-option hints. Each hint renders as supporting text
+// beneath its label and is wired to that input via aria-describedby.
+@form.RadioGroup(form.RadioGroupProps{
+    Name:     "plan",
+    Selected: "pro",
+    Options: []form.RadioOption{
+        {Value: "free", Label: "Free", Hint: "No credit card required"},
+        {Value: "pro", Label: "Pro", Hint: "Billed annually"},
+    },
+})
+
+// Single radio with a hint
+@form.Radio(form.RadioProps{
+    Name:  "plan",
+    Value: "pro",
+    Label: "Pro",
+    Hint:  "Billed annually",
+})
+
 // Toggle switch
 @form.Switch("notifications", "Enable notifications", true)
 
