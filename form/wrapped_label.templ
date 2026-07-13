@@ -2,12 +2,16 @@ package form
 
 // wrappedLabelBody renders the text content of a <label> that wraps its own
 // input (radio, checkbox, switch). When a hint is supplied, the label text and
-// the hint are stacked as sibling spans, each carrying the id that
-// wrappedAriaAttrs points the input at. Both stay inside the label, so the
-// whole label -- hint included -- remains a click target.
+// the hint become sibling spans inside an unstyled grouping span, each carrying
+// the id that wrappedAriaAttrs points the input at. Both stay inside the label,
+// so the whole label -- hint included -- remains a click target.
+//
+// The group carries no layout classes. As a flex item of the label it is
+// blockified, and the two lines are left to sit on their natural line-height;
+// Live Wires CSS owns their stacking and any spacing beyond that.
 templ wrappedLabelBody(base, label, hint string) {
 	if hint != "" {
-		<span class="stack stack-compact">
+		<span>
 			if label != "" {
 				<span id={ labelSpanID(base) }>{ label }</span>
 			}

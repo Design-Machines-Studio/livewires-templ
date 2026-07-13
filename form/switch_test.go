@@ -168,8 +168,8 @@ func TestSwitchWithHint(t *testing.T) {
 	}
 	assertDescribedByResolves(t, html, 1)
 	// The pill span must stay hidden and ahead of the text.
-	if !strings.Contains(html, `<span aria-hidden="true"></span><span class="stack stack-compact">`) {
-		t.Errorf("expected hint stack after the pill, got %s", html)
+	if !strings.Contains(html, `<span aria-hidden="true"></span><span>`) {
+		t.Errorf("expected hint group after the pill, got %s", html)
 	}
 }
 

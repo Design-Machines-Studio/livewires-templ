@@ -10,9 +10,13 @@ import templruntime "github.com/a-h/templ/runtime"
 
 // wrappedLabelBody renders the text content of a <label> that wraps its own
 // input (radio, checkbox, switch). When a hint is supplied, the label text and
-// the hint are stacked as sibling spans, each carrying the id that
-// wrappedAriaAttrs points the input at. Both stay inside the label, so the
-// whole label -- hint included -- remains a click target.
+// the hint become sibling spans inside an unstyled grouping span, each carrying
+// the id that wrappedAriaAttrs points the input at. Both stay inside the label,
+// so the whole label -- hint included -- remains a click target.
+//
+// The group carries no layout classes. As a flex item of the label it is
+// blockified, and the two lines are left to sit on their natural line-height;
+// Live Wires CSS owns their stacking and any spacing beyond that.
 func wrappedLabelBody(base, label, hint string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -35,7 +39,7 @@ func wrappedLabelBody(base, label, hint string) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		if hint != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<span class=\"stack stack-compact\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -47,7 +51,7 @@ func wrappedLabelBody(base, label, hint string) templ.Component {
 				var templ_7745c5c3_Var2 string
 				templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(labelSpanID(base))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/wrapped_label.templ`, Line: 12, Col: 32}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/wrapped_label.templ`, Line: 16, Col: 32}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 				if templ_7745c5c3_Err != nil {
@@ -60,7 +64,7 @@ func wrappedLabelBody(base, label, hint string) templ.Component {
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/wrapped_label.templ`, Line: 12, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/wrapped_label.templ`, Line: 16, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
@@ -78,7 +82,7 @@ func wrappedLabelBody(base, label, hint string) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(hintSpanID(base))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/wrapped_label.templ`, Line: 14, Col: 30}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/wrapped_label.templ`, Line: 18, Col: 30}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -91,7 +95,7 @@ func wrappedLabelBody(base, label, hint string) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(hint)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/wrapped_label.templ`, Line: 14, Col: 52}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/wrapped_label.templ`, Line: 18, Col: 52}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -105,7 +109,7 @@ func wrappedLabelBody(base, label, hint string) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/wrapped_label.templ`, Line: 17, Col: 9}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/wrapped_label.templ`, Line: 21, Col: 9}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {

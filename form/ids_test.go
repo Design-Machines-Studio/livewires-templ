@@ -3,7 +3,24 @@ package form
 import (
 	"strings"
 	"testing"
+
+	"github.com/Design-Machines-Studio/livewires-templ/internal/testutil"
 )
+
+func renderRadioHint(t *testing.T) string {
+	t.Helper()
+	return testutil.RenderToString(t, Radio(RadioProps{Name: "plan", Value: "pro", Label: "Pro", Hint: "Billed annually"}))
+}
+
+func renderCheckboxHint(t *testing.T) string {
+	t.Helper()
+	return testutil.RenderToString(t, Checkbox(CheckboxProps{Name: "agree", Label: "I agree", Hint: "Opt out later"}))
+}
+
+func renderSwitchHint(t *testing.T) string {
+	t.Helper()
+	return testutil.RenderToString(t, SwitchComponent(SwitchProps{Name: "notify", Label: "Notifications", Hint: "Weekly digest"}))
+}
 
 // assertDescribedByResolves checks that every IDREF in the control's
 // aria-describedby names an element that actually exists in the markup. A
@@ -134,6 +151,33 @@ func TestDescribedByAttrs(t *testing.T) {
 			}
 			if got := attrs["aria-describedby"]; got != tt.want {
 				t.Errorf("aria-describedby = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+// The hint group is a bare grouping element. Live Wires CSS owns the stacking
+// and spacing of the label and hint lines, so this library must not bake layout
+// classes into the markup.
+func TestWrappedLabelGroupCarriesNoLayoutClasses(t *testing.T) {
+	cases := map[string]string{
+		"radio":    renderRadioHint(t),
+		"checkbox": renderCheckboxHint(t),
+		"switch":   renderSwitchHint(t),
+	}
+	for name, html := range cases {
+		t.Run(name, func(t *testing.T) {
+			for _, unwanted := range []string{"stack", "stack-compact", "cluster"} {
+				if strings.Contains(html, unwanted) {
+					t.Errorf("hint group must carry no %q class, got %s", unwanted, html)
+				}
+			}
+			// The group itself stays unstyled; only the hint keeps its class.
+			if !strings.Contains(html, "<span><span id=") {
+				t.Errorf("expected a bare grouping span, got %s", html)
+			}
+			if !strings.Contains(html, `class="hint"`) {
+				t.Errorf("expected the hint to keep its class, got %s", html)
 			}
 		})
 	}
