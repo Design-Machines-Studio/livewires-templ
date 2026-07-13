@@ -34,6 +34,29 @@ import lw "github.com/Design-Machines-Studio/livewires-templ"
 
 6. **Security: Attrs must not come from untrusted input** — The `Attrs templ.Attributes` field is spread directly into HTML. templ escapes values but does NOT restrict attribute names. Never populate `Attrs` from user input — it is for developer-controlled attributes like `data-*`, `aria-*`, and Datastar directives only.
 
+7. **No layout primitives in markup** — Never bake `stack`, `stack-compact`, `cluster`, or other layout classes into a component. Spacing is the CSS layer's decision. Emit semantic hooks (`.hint`, `.error`) and display utilities (`.block`) only.
+
+8. **Never tag a release without being asked** — See Releasing below. Ask; do not assume.
+
+## Releasing
+
+**Do not tag or publish unless the user explicitly asks for a release.** Finish the work, push the commits, and say what version you would cut and why. Wait.
+
+**A tag is permanent.** The moment any version is fetched, `proxy.golang.org` and `sum.golang.org` cache it forever. Deleting the tag does NOT recall it — the proxy keeps serving that version as the highest, so a "replacement" tagged below it is never resolved. There is no undo. Get the number right the first time.
+
+**Choose the number from the Go API surface, not the rendered output.** This is a component library: its HTML changes on nearly every commit, so "output changed" is not a signal.
+
+| Change | Bump |
+| ------ | ---- |
+| New exported prop, type, or function (e.g. adding `Hint string`) | minor |
+| Renamed, removed, or retyped exported field or function | minor (pre-1.0) |
+| Markup, class names, ids, ARIA wiring, generated output | **patch** |
+| Bug fix, doc, test, tooling | patch |
+
+Adding `Hint` to a Props struct is a minor. Swapping `stack` for `block` in the emitted markup is a patch, no matter how visible it looks in a browser.
+
+**Batch the release.** One tag per unit of work the user asked for — not one per commit. Several related commits land under a single version.
+
 ## Directory Structure
 
 ```
