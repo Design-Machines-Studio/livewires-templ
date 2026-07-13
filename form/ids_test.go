@@ -156,10 +156,10 @@ func TestDescribedByAttrs(t *testing.T) {
 	}
 }
 
-// The hint group is a bare grouping element. Live Wires CSS owns the stacking
-// and spacing of the label and hint lines, so this library must not bake layout
-// classes into the markup.
-func TestWrappedLabelGroupCarriesNoLayoutClasses(t *testing.T) {
+// The label and hint lines stack via the `block` display utility, not a layout
+// primitive: a primitive would inject a gap, and these lines read better snug on
+// their natural line-height. Guard against a primitive creeping back in.
+func TestWrappedLabelStacksWithBlockNotALayoutPrimitive(t *testing.T) {
 	cases := map[string]string{
 		"radio":    renderRadioHint(t),
 		"checkbox": renderCheckboxHint(t),
@@ -167,18 +167,33 @@ func TestWrappedLabelGroupCarriesNoLayoutClasses(t *testing.T) {
 	}
 	for name, html := range cases {
 		t.Run(name, func(t *testing.T) {
-			for _, unwanted := range []string{"stack", "stack-compact", "cluster"} {
+			for _, unwanted := range []string{"stack", "cluster", "flow"} {
 				if strings.Contains(html, unwanted) {
-					t.Errorf("hint group must carry no %q class, got %s", unwanted, html)
+					t.Errorf("hint group must carry no %q layout class, got %s", unwanted, html)
 				}
 			}
-			// The group itself stays unstyled; only the hint keeps its class.
+			// The group itself needs no class -- it is already a flex item.
 			if !strings.Contains(html, "<span><span id=") {
 				t.Errorf("expected a bare grouping span, got %s", html)
 			}
-			if !strings.Contains(html, `class="hint"`) {
-				t.Errorf("expected the hint to keep its class, got %s", html)
+			// Both lines go block so each sits on its own line.
+			if !strings.Contains(html, `class="block"`) {
+				t.Errorf("expected the label line to be block, got %s", html)
+			}
+			if !strings.Contains(html, `class="hint block"`) {
+				t.Errorf("expected the hint line to be block, got %s", html)
 			}
 		})
+	}
+}
+
+// A hint with no visible label still gets its own line.
+func TestWrappedLabelHintWithoutLabelIsStillBlock(t *testing.T) {
+	html := testutil.RenderToString(t, SwitchComponent(SwitchProps{Name: "notify", Hint: "Weekly digest"}))
+	if !strings.Contains(html, `class="hint block"`) {
+		t.Errorf("expected block hint, got %s", html)
+	}
+	if strings.Contains(html, `class="block"><`) {
+		t.Errorf("expected no empty label span, got %s", html)
 	}
 }

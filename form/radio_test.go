@@ -124,21 +124,21 @@ func TestRadioWithHint(t *testing.T) {
 		Label: "Pro",
 		Hint:  "Billed annually",
 	}))
-	if !strings.Contains(html, `<span id="plan-pro-hint" class="hint">Billed annually</span>`) {
+	if !strings.Contains(html, `<span id="plan-pro-hint" class="hint block">Billed annually</span>`) {
 		t.Errorf("expected hint span, got %s", html)
 	}
-	if !strings.Contains(html, `<span id="plan-pro-label">Pro</span>`) {
+	if !strings.Contains(html, `<span id="plan-pro-label" class="block">Pro</span>`) {
 		t.Error("expected label span")
 	}
 	// The hint lives inside the label so the whole label stays a click target.
-	if strings.Contains(html, "</label>") && !strings.Contains(html, `class="hint">Billed annually</span></span></label>`) {
+	if strings.Contains(html, "</label>") && !strings.Contains(html, `class="hint block">Billed annually</span></span></label>`) {
 		t.Error("expected hint nested inside the label element")
 	}
 }
 
 func TestRadioWithoutHint(t *testing.T) {
 	html := testutil.RenderToString(t, RadioSimple("plan", "pro", "Pro", false))
-	for _, unwanted := range []string{`class="hint"`, "aria-describedby", "aria-labelledby", "<span"} {
+	for _, unwanted := range []string{`class="hint block"`, "aria-describedby", "aria-labelledby", "<span"} {
 		if strings.Contains(html, unwanted) {
 			t.Errorf("expected no %s without a hint, got %s", unwanted, html)
 		}
@@ -190,8 +190,8 @@ func TestRadioGroupPropagatesHints(t *testing.T) {
 	if !strings.Contains(html, `<input type="radio" name="plan" value="ent">Enterprise`) {
 		t.Errorf("expected hintless option to render unchanged, got %s", html)
 	}
-	if strings.Count(html, `class="hint"`) != 2 {
-		t.Errorf("expected exactly 2 hint elements, got %d", strings.Count(html, `class="hint"`))
+	if strings.Count(html, `class="hint block"`) != 2 {
+		t.Errorf("expected exactly 2 hint elements, got %d", strings.Count(html, `class="hint block"`))
 	}
 }
 
@@ -359,7 +359,7 @@ func TestRadioHintPreservesState(t *testing.T) {
 		Attrs:    templ.Attributes{"data-testid": "plan-pro"},
 	}))
 	for _, want := range []string{
-		"checked", "disabled", "radio--success", "extra", `data-testid="plan-pro"`, `class="hint"`,
+		"checked", "disabled", "radio--success", "extra", `data-testid="plan-pro"`, `class="hint block"`,
 	} {
 		if !strings.Contains(html, want) {
 			t.Errorf("expected %s alongside a hint, got %s", want, html)
@@ -381,7 +381,7 @@ func TestRadioGroupInlineWithHints(t *testing.T) {
 	if !strings.Contains(html, "<li>") {
 		t.Error("expected list structure preserved")
 	}
-	if !strings.Contains(html, `class="hint"`) {
+	if !strings.Contains(html, `class="hint block"`) {
 		t.Error("expected hint inside an inline group")
 	}
 }

@@ -160,7 +160,7 @@ func TestSwitchWithHint(t *testing.T) {
 	html := testutil.RenderToString(t, SwitchComponent(SwitchProps{
 		Name: "notify", Label: "Notifications", Hint: "Weekly digest",
 	}))
-	if !strings.Contains(html, `<span id="notify-hint" class="hint">Weekly digest</span>`) {
+	if !strings.Contains(html, `<span id="notify-hint" class="hint block">Weekly digest</span>`) {
 		t.Errorf("expected hint span, got %s", html)
 	}
 	if !strings.Contains(html, `aria-labelledby="notify-label"`) {
@@ -175,7 +175,7 @@ func TestSwitchWithHint(t *testing.T) {
 
 func TestSwitchWithoutHintRendersUnchanged(t *testing.T) {
 	html := testutil.RenderToString(t, Switch("notify", "Notifications", true))
-	for _, unwanted := range []string{`class="hint"`, "aria-describedby", "aria-labelledby"} {
+	for _, unwanted := range []string{`class="hint block"`, "aria-describedby", "aria-labelledby"} {
 		if strings.Contains(html, unwanted) {
 			t.Errorf("expected no %s without a hint, got %s", unwanted, html)
 		}

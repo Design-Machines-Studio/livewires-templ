@@ -114,11 +114,11 @@ func TestCheckboxWithHint(t *testing.T) {
 	html := testutil.RenderToString(t, Checkbox(CheckboxProps{
 		Name: "agree", Label: "I agree", Hint: "You can opt out later",
 	}))
-	if !strings.Contains(html, `<span id="agree-hint" class="hint">You can opt out later</span>`) {
+	if !strings.Contains(html, `<span id="agree-hint" class="hint block">You can opt out later</span>`) {
 		t.Errorf("expected hint span, got %s", html)
 	}
 	// The hint sits inside the label, so the whole label stays a click target.
-	if !strings.Contains(html, `class="hint">You can opt out later</span></span></label>`) {
+	if !strings.Contains(html, `class="hint block">You can opt out later</span></span></label>`) {
 		t.Errorf("expected hint nested inside the label, got %s", html)
 	}
 }
@@ -143,7 +143,7 @@ func TestCheckboxHintAccessibleAssociation(t *testing.T) {
 
 func TestCheckboxWithoutHintRendersUnchanged(t *testing.T) {
 	html := testutil.RenderToString(t, CheckboxSimple("agree", "I agree", false))
-	for _, unwanted := range []string{`class="hint"`, "aria-describedby", "aria-labelledby", "<span"} {
+	for _, unwanted := range []string{`class="hint block"`, "aria-describedby", "aria-labelledby", "<span"} {
 		if strings.Contains(html, unwanted) {
 			t.Errorf("expected no %s without a hint, got %s", unwanted, html)
 		}
@@ -185,7 +185,7 @@ func TestCheckboxHintPreservesState(t *testing.T) {
 		Checked: true, Disabled: true, Variant: "large", Class: "extra",
 		Attrs: templ.Attributes{"data-testid": "cb"},
 	}))
-	for _, want := range []string{"checked", "disabled", "checkbox--large", "extra", `data-testid="cb"`, `value="a"`, `class="hint"`} {
+	for _, want := range []string{"checked", "disabled", "checkbox--large", "extra", `data-testid="cb"`, `value="a"`, `class="hint block"`} {
 		if !strings.Contains(html, want) {
 			t.Errorf("expected %s alongside a hint, got %s", want, html)
 		}

@@ -6,16 +6,17 @@ package form
 // the id that wrappedAriaAttrs points the input at. Both stay inside the label,
 // so the whole label -- hint included -- remains a click target.
 //
-// The group carries no layout classes. As a flex item of the label it is
-// blockified, and the two lines are left to sit on their natural line-height;
-// Live Wires CSS owns their stacking and any spacing beyond that.
+// The two lines are put on their own line by the `block` display utility rather
+// than by a layout primitive, so they sit snug on their natural line-height with
+// no injected gap. The group itself needs no class: as a flex item of the label
+// it is already blockified.
 templ wrappedLabelBody(base, label, hint string) {
 	if hint != "" {
 		<span>
 			if label != "" {
-				<span id={ labelSpanID(base) }>{ label }</span>
+				<span id={ labelSpanID(base) } class="block">{ label }</span>
 			}
-			<span id={ hintSpanID(base) } class="hint">{ hint }</span>
+			<span id={ hintSpanID(base) } class="hint block">{ hint }</span>
 		</span>
 	} else if label != "" {
 		{ label }
