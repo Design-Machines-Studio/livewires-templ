@@ -4,16 +4,17 @@ import lw "github.com/Design-Machines-Studio/livewires-templ"
 
 // CheckboxProps holds configuration for a checkbox component.
 type CheckboxProps struct {
-	Name     string           // Field name
-	Value    string           // Field value (submitted when checked)
-	Label    string           // Checkbox label text
-	Hint     string           // Supporting text shown beneath the label
-	Checked  bool             // Whether checkbox is checked
-	Disabled bool             // Whether checkbox is disabled
-	Variant  string           // Style variant: "", "large", "icon", "success", "warning", "error"
-	Error    string           // Error message; when non-empty, applies error variant and aria attributes
-	Class    string           // Additional CSS classes from consumer
-	Attrs    templ.Attributes // Catch-all: data-signals, data-on-change, aria-*, etc.
+	Name       string           // Field name
+	Value      string           // Field value (submitted when checked)
+	Label      string           // Checkbox label text
+	Hint       string           // Supporting text shown beneath the label
+	Checked    bool             // Whether checkbox is checked
+	Disabled   bool             // Whether checkbox is disabled
+	Variant    string           // Style variant: "", "large", "icon", "success", "warning", "error"
+	Error      string           // Error message; when non-empty, applies error variant and aria attributes
+	Class      string           // Additional CSS classes from consumer
+	Attrs      templ.Attributes // Wrapper attributes spread onto the outer <label> (data-*, class hooks). Never populate from untrusted input.
+	InputAttrs templ.Attributes // Developer-controlled attributes for the nested <input> (aria-label, Datastar data-* directives). Rendered after component-generated attributes; on a name collision the component's attribute wins (HTML first-occurrence). Never populate from untrusted input.
 }
 
 // checkboxInputAttrs builds conditional attributes for the checkbox input.
@@ -64,6 +65,7 @@ templ Checkbox(props CheckboxProps) {
 				}
 				{ checkboxAriaAttrs(props)... }
 				{ checkboxInputAttrs(props)... }
+				{ props.InputAttrs... }
 			/>
 			@wrappedLabelBody(checkboxBaseID(props), props.Label, props.Hint)
 		</label>

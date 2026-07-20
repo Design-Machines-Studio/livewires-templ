@@ -12,17 +12,18 @@ import lw "github.com/Design-Machines-Studio/livewires-templ"
 
 // SwitchProps holds configuration for a pill-shaped toggle switch.
 type SwitchProps struct {
-	Name     string           // Field name for the checkbox input
-	ID       string           // ID for the checkbox input
-	Label    string           // Visible label text. If empty, pass aria-label via Attrs.
-	Hint     string           // Supporting text shown beneath the label
-	Checked  bool             // Whether the switch is on
-	Disabled bool             // Whether the switch is disabled
-	Variant  string           // Style variant: "", "small"
-	Value    string           // Value when checked (default "1")
-	Error    string           // Error message; when non-empty, applies error styling and aria attributes
-	Class    string           // Additional CSS classes from consumer
-	Attrs    templ.Attributes // Catch-all: data-*, aria-*, etc.
+	Name       string           // Field name for the switch input
+	ID         string           // ID for the switch input
+	Label      string           // Visible label text. If empty, pass aria-label via InputAttrs.
+	Hint       string           // Supporting text shown beneath the label
+	Checked    bool             // Whether the switch is on
+	Disabled   bool             // Whether the switch is disabled
+	Variant    string           // Style variant: "", "small"
+	Value      string           // Value when checked (default "1")
+	Error      string           // Error message; when non-empty, applies error styling and aria attributes
+	Class      string           // Additional CSS classes from consumer
+	Attrs      templ.Attributes // Wrapper attributes spread onto the outer <label> (data-*, class hooks). Never populate from untrusted input.
+	InputAttrs templ.Attributes // Developer-controlled attributes for the nested <input> (aria-label, Datastar data-* directives). Rendered after component-generated attributes; on a name collision the component's attribute wins (HTML first-occurrence). Never populate from untrusted input.
 }
 
 // switchID returns the effective ID for aria-describedby linkage.
@@ -109,7 +110,7 @@ func SwitchComponent(props SwitchProps) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(props.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/switch.templ`, Line: 51, Col: 22}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/switch.templ`, Line: 52, Col: 22}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -128,7 +129,7 @@ func SwitchComponent(props SwitchProps) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(controlID(props.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/switch.templ`, Line: 54, Col: 29}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/switch.templ`, Line: 55, Col: 29}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -146,7 +147,7 @@ func SwitchComponent(props SwitchProps) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(lw.DefaultStr(props.Value, "1"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/switch.templ`, Line: 56, Col: 43}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/switch.templ`, Line: 57, Col: 43}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -178,6 +179,10 @@ func SwitchComponent(props SwitchProps) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, props.InputAttrs)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "> <span aria-hidden=\"true\"></span>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -198,7 +203,7 @@ func SwitchComponent(props SwitchProps) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(errorID(switchID(props)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/switch.templ`, Line: 68, Col: 35}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/switch.templ`, Line: 70, Col: 35}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -211,7 +216,7 @@ func SwitchComponent(props SwitchProps) templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(props.Error)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/switch.templ`, Line: 68, Col: 78}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/switch.templ`, Line: 70, Col: 78}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
