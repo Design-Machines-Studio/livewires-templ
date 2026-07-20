@@ -138,3 +138,68 @@ func isHTMLSpace(value byte) bool {
 		return false
 	}
 }
+
+// FindElementByID returns the first element carrying the given id attribute,
+// depth-first across the fragment nodes. Returns nil if absent.
+func FindElementByID(nodes []*html.Node, id string) *html.Node {
+	for _, node := range nodes {
+		if found := findElementByID(node, id); found != nil {
+			return found
+		}
+	}
+	return nil
+}
+
+func findElementByID(node *html.Node, id string) *html.Node {
+	if value, ok := AttrVal(node, "id"); node.Type == html.ElementNode && ok && value == id {
+		return node
+	}
+	for child := node.FirstChild; child != nil; child = child.NextSibling {
+		if found := findElementByID(child, id); found != nil {
+			return found
+		}
+	}
+	return nil
+}
+
+// FindElementByClass returns the first element whose class attribute contains the
+// given class token, depth-first across the fragment nodes. Returns nil if absent.
+func FindElementByClass(nodes []*html.Node, class string) *html.Node {
+	for _, node := range nodes {
+		if found := findElementByClass(node, class); found != nil {
+			return found
+		}
+	}
+	return nil
+}
+
+func findElementByClass(node *html.Node, class string) *html.Node {
+	if value, ok := AttrVal(node, "class"); node.Type == html.ElementNode && ok {
+		for _, token := range strings.Fields(value) {
+			if token == class {
+				return node
+			}
+		}
+	}
+	for child := node.FirstChild; child != nil; child = child.NextSibling {
+		if found := findElementByClass(child, class); found != nil {
+			return found
+		}
+	}
+	return nil
+}
+
+// NodeText returns the concatenated text content of a node and its descendants.
+func NodeText(node *html.Node) string {
+	if node == nil {
+		return ""
+	}
+	if node.Type == html.TextNode {
+		return node.Data
+	}
+	var text strings.Builder
+	for child := node.FirstChild; child != nil; child = child.NextSibling {
+		text.WriteString(NodeText(child))
+	}
+	return text.String()
+}

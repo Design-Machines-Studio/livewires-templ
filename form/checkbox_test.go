@@ -7,42 +7,9 @@ import (
 
 	"github.com/Design-Machines-Studio/livewires-templ/internal/testutil"
 	"github.com/a-h/templ"
-	"golang.org/x/net/html"
 )
 
 const checkboxGoldenDefault = `<div><label class="checkbox checkbox--error"><input type="checkbox" name="terms" aria-invalid="true" aria-describedby="terms-accepted-hint terms-error" aria-labelledby="terms-accepted-label" checked disabled value="accepted"><span><span id="terms-accepted-label" class="block">Accept terms</span> <span id="terms-accepted-hint" class="hint block">Required to continue</span></span></label> <p id="terms-error" class="error" role="alert">Acceptance is required</p></div>`
-
-func findCheckboxElementByID(nodes []*html.Node, id string) *html.Node {
-	for _, node := range nodes {
-		if found := findCheckboxElementByIDFrom(node, id); found != nil {
-			return found
-		}
-	}
-	return nil
-}
-
-func findCheckboxElementByIDFrom(node *html.Node, id string) *html.Node {
-	if value, ok := testutil.AttrVal(node, "id"); node.Type == html.ElementNode && ok && value == id {
-		return node
-	}
-	for child := node.FirstChild; child != nil; child = child.NextSibling {
-		if found := findCheckboxElementByIDFrom(child, id); found != nil {
-			return found
-		}
-	}
-	return nil
-}
-
-func checkboxNodeText(node *html.Node) string {
-	if node.Type == html.TextNode {
-		return node.Data
-	}
-	var text strings.Builder
-	for child := node.FirstChild; child != nil; child = child.NextSibling {
-		text.WriteString(checkboxNodeText(child))
-	}
-	return text.String()
-}
 
 func TestCheckboxRenders(t *testing.T) {
 	html := testutil.RenderToString(t, CheckboxSimple("agree", "I agree", false))
@@ -401,7 +368,7 @@ func TestCheckboxHintErrorIDRefsResolveWithInputAttrs(t *testing.T) {
 		t.Fatal("input has no aria-describedby")
 	}
 	for _, ref := range strings.Fields(describedBy) {
-		if findCheckboxElementByID(nodes, ref) == nil {
+		if testutil.FindElementByID(nodes, ref) == nil {
 			t.Errorf("aria-describedby IDREF %q resolves to no element", ref)
 		}
 	}
@@ -412,7 +379,7 @@ func TestCheckboxHintErrorIDRefsResolveWithInputAttrs(t *testing.T) {
 	if got, ok := testutil.AttrVal(errorMessage, "role"); !ok || got != "alert" {
 		t.Errorf("error role = %q, %v; want alert, true", got, ok)
 	}
-	if got := checkboxNodeText(errorMessage); got != "Unavailable" {
+	if got := testutil.NodeText(errorMessage); got != "Unavailable" {
 		t.Errorf("error text = %q; want %q", got, "Unavailable")
 	}
 }

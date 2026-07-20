@@ -7,42 +7,9 @@ import (
 
 	"github.com/Design-Machines-Studio/livewires-templ/internal/testutil"
 	"github.com/a-h/templ"
-	"golang.org/x/net/html"
 )
 
 const switchGoldenDefault = `<div><label class="switch error"><input type="checkbox" role="switch" name="notifications" id="notifications-toggle" value="enabled" checked disabled aria-invalid="true" aria-describedby="notifications-toggle-hint notifications-toggle-error" aria-labelledby="notifications-toggle-label"> <span aria-hidden="true"></span><span><span id="notifications-toggle-label" class="block">Notifications</span> <span id="notifications-toggle-hint" class="hint block">Receive weekly updates</span></span></label> <p id="notifications-toggle-error" class="error" role="alert">Choose a setting</p></div>`
-
-func findSwitchElementByID(nodes []*html.Node, id string) *html.Node {
-	for _, node := range nodes {
-		if found := findSwitchElementByIDFrom(node, id); found != nil {
-			return found
-		}
-	}
-	return nil
-}
-
-func findSwitchElementByIDFrom(node *html.Node, id string) *html.Node {
-	if value, ok := testutil.AttrVal(node, "id"); node.Type == html.ElementNode && ok && value == id {
-		return node
-	}
-	for child := node.FirstChild; child != nil; child = child.NextSibling {
-		if found := findSwitchElementByIDFrom(child, id); found != nil {
-			return found
-		}
-	}
-	return nil
-}
-
-func switchNodeText(node *html.Node) string {
-	if node.Type == html.TextNode {
-		return node.Data
-	}
-	var text strings.Builder
-	for child := node.FirstChild; child != nil; child = child.NextSibling {
-		text.WriteString(switchNodeText(child))
-	}
-	return text.String()
-}
 
 func TestSwitchRenders(t *testing.T) {
 	html := testutil.RenderToString(t, Switch("notifications", "Enable notifications", true))
@@ -425,7 +392,7 @@ func TestSwitchHintErrorIDRefsResolveWithInputAttrs(t *testing.T) {
 		t.Fatal("input has no aria-describedby")
 	}
 	for _, ref := range strings.Fields(describedBy) {
-		if findSwitchElementByID(nodes, ref) == nil {
+		if testutil.FindElementByID(nodes, ref) == nil {
 			t.Errorf("aria-describedby IDREF %q resolves to no element", ref)
 		}
 	}
@@ -436,7 +403,7 @@ func TestSwitchHintErrorIDRefsResolveWithInputAttrs(t *testing.T) {
 	if got, ok := testutil.AttrVal(errorMessage, "role"); !ok || got != "alert" {
 		t.Errorf("error role = %q, %v; want alert, true", got, ok)
 	}
-	if got := switchNodeText(errorMessage); got != "Unavailable" {
+	if got := testutil.NodeText(errorMessage); got != "Unavailable" {
 		t.Errorf("error text = %q; want %q", got, "Unavailable")
 	}
 }

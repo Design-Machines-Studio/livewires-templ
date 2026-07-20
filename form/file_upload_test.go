@@ -7,49 +7,9 @@ import (
 
 	"github.com/Design-Machines-Studio/livewires-templ/internal/testutil"
 	"github.com/a-h/templ"
-	"golang.org/x/net/html"
 )
 
 const fileUploadGoldenDefault = `<label class="file-upload"><input type="file" name="documents" accept=".pdf" disabled multiple> <span class="file-upload-button">Choose documents</span> <span class="file-upload-text">PDF documents only</span></label>`
-
-func findFileUploadElementByClass(nodes []*html.Node, class string) *html.Node {
-	for _, node := range nodes {
-		if found := findFileUploadElementByClassFrom(node, class); found != nil {
-			return found
-		}
-	}
-	return nil
-}
-
-func findFileUploadElementByClassFrom(node *html.Node, class string) *html.Node {
-	if value, ok := testutil.AttrVal(node, "class"); node.Type == html.ElementNode && ok {
-		for _, token := range strings.Fields(value) {
-			if token == class {
-				return node
-			}
-		}
-	}
-	for child := node.FirstChild; child != nil; child = child.NextSibling {
-		if found := findFileUploadElementByClassFrom(child, class); found != nil {
-			return found
-		}
-	}
-	return nil
-}
-
-func fileUploadNodeText(node *html.Node) string {
-	if node == nil {
-		return ""
-	}
-	if node.Type == html.TextNode {
-		return node.Data
-	}
-	var text strings.Builder
-	for child := node.FirstChild; child != nil; child = child.NextSibling {
-		text.WriteString(fileUploadNodeText(child))
-	}
-	return text.String()
-}
 
 func TestFileUploadRenders(t *testing.T) {
 	html := testutil.RenderToString(t, FileUploadSimple("resume", "Upload resume"))
@@ -213,6 +173,32 @@ func TestFileUploadInputAttrsExactlyOnce(t *testing.T) {
 	}
 }
 
+func TestFileUploadInputAttrsCollisionComponentWins(t *testing.T) {
+	// FileUpload emits accept, disabled, and multiple itself; a caller that
+	// re-supplies them through InputAttrs must lose to the component's value
+	// (HTML first-occurrence), and the raw tag must show both occurrences.
+	output := testutil.RenderToString(t, FileUpload(FileUploadProps{
+		Name:     "documents",
+		Accept:   ".pdf",
+		Disabled: true,
+		Multiple: true,
+		InputAttrs: templ.Attributes{
+			"accept":   "bogus",
+			"disabled": "false",
+		},
+	}))
+	input := testutil.FindElement(testutil.ParseFragment(t, output), "input")
+	if got, ok := testutil.AttrVal(input, "accept"); !ok || got != ".pdf" {
+		t.Errorf("parsed accept = %q, %v; want component value %q", got, ok, ".pdf")
+	}
+	inputTag := testutil.RawTag(t, output, "input")
+	for _, key := range []string{"accept", "disabled"} {
+		if got := testutil.CountAttr(inputTag, key); got != 2 {
+			t.Errorf("raw input %s occurrence count = %d; want 2 (component + caller)", key, got)
+		}
+	}
+}
+
 func TestFileUploadInputAttrsDoNotMutateCallerMaps(t *testing.T) {
 	attrs := templ.Attributes{"data-testid": "wrapper"}
 	inputAttrs := templ.Attributes{
@@ -276,15 +262,15 @@ func TestFileUploadInputAttrsNoAriaMachinery(t *testing.T) {
 	if _, ok := testutil.AttrVal(input, "aria-describedby"); ok {
 		t.Error("file input unexpectedly has aria-describedby")
 	}
-	button := findFileUploadElementByClass(nodes, "file-upload-button")
-	if button == nil || fileUploadNodeText(button) != "Choose file" {
-		t.Errorf("default button text missing, got %q", fileUploadNodeText(button))
+	button := testutil.FindElementByClass(nodes, "file-upload-button")
+	if button == nil || testutil.NodeText(button) != "Choose file" {
+		t.Errorf("default button text missing, got %q", testutil.NodeText(button))
 	}
-	status := findFileUploadElementByClass(nodes, "file-upload-text")
-	if status == nil || fileUploadNodeText(status) != "No file selected" {
-		t.Errorf("default status text missing, got %q", fileUploadNodeText(status))
+	status := testutil.FindElementByClass(nodes, "file-upload-text")
+	if status == nil || testutil.NodeText(status) != "No file selected" {
+		t.Errorf("default status text missing, got %q", testutil.NodeText(status))
 	}
-	if findFileUploadElementByClass(nodes, "hint") != nil || findFileUploadElementByClass(nodes, "error") != nil {
+	if testutil.FindElementByClass(nodes, "hint") != nil || testutil.FindElementByClass(nodes, "error") != nil {
 		t.Error("file upload unexpectedly rendered hint or error element")
 	}
 }
