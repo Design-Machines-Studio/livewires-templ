@@ -32,11 +32,13 @@ import lw "github.com/Design-Machines-Studio/livewires-templ"
 
 5. **Match reference HTML** — Output must match `/livewires/public/reference/` HTML examples.
 
-6. **Security: Attrs must not come from untrusted input** — The `Attrs templ.Attributes` field is spread directly into HTML. templ escapes values but does NOT restrict attribute names. Never populate `Attrs` from user input — it is for developer-controlled attributes like `data-*`, `aria-*`, and Datastar directives only.
+6. **Security: Attrs must not come from untrusted input** — both `Attrs` (all `Props`) and `InputAttrs` (on wrapper-based form controls `Switch`/`Checkbox`/`FileUpload`, for the nested `<input>`) are spread directly into HTML; templ escapes values but does NOT restrict attribute names; never populate either from user input — developer-controlled attributes (`data-*`, `aria-*`, Datastar directives) only.
 
 7. **No layout primitives in markup** — Never bake `stack`, `stack-compact`, `cluster`, or other layout classes into a component. Spacing is the CSS layer's decision. Emit semantic hooks (`.hint`, `.error`) and display utilities (`.block`) only.
 
 8. **Never tag a release without being asked** — See Releasing below. Ask; do not assume.
+
+9. **Two-map attribute seam on wrapped form controls** — wrapper-based form controls (`Switch`, `Checkbox`, `FileUpload`) expose both `Attrs` (spread on the outer `<label>`) and `InputAttrs templ.Attributes` (spread on the nested `<input>`, after component-generated attributes); this is the canonical two-map seam for future wrapped controls; on collision the component's attribute wins (first-occurrence); never duplicate through `InputAttrs` any attribute the component already emits (illustrative, not exhaustive: `type`, `role`, `name`, `id`, `value`, `checked`, `disabled`, `accept`, `multiple`, `aria-invalid`, `aria-describedby`), or the caller's copy is silently dropped.
 
 ## Releasing
 
@@ -145,4 +147,4 @@ make all        # generate + test + lint
 
 ## Dependencies
 
-Only one: `github.com/a-h/templ` — keep it minimal.
+`github.com/a-h/templ` is the only runtime dependency. `golang.org/x/net` is a direct module dependency used exclusively by test infrastructure (`internal/testutil`, imported only from `_test.go` files), so consumer builds never link it. Keep dependencies otherwise minimal.

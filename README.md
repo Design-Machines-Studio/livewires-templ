@@ -131,11 +131,41 @@ import (
     Hint:  "You can opt out later",
 })
 
+// Input-level attributes land on the nested <input>, not the wrapper label.
+@form.Checkbox(form.CheckboxProps{
+    Name:  "agree",
+    Label: "I agree",
+    InputAttrs: templ.Attributes{
+        "data-on:change": "@post('/agree')",
+    },
+})
+
 // Toggle switch with a hint
 @form.SwitchComponent(form.SwitchProps{
     Name:  "notifications",
     Label: "Enable notifications",
     Hint:  "We send a weekly digest",
+})
+
+// Autosave toggle — Datastar directives live on InputAttrs, not the label.
+@form.SwitchComponent(form.SwitchProps{
+    Name:    "autosave",
+    Label:   "Autosave",
+    Checked: settings.Autosave,
+    InputAttrs: templ.Attributes{
+        "data-bind":                 "autosave",
+        "data-on:change":            "@post('/settings/autosave')",
+        "data-indicator:autosavePending": "",
+        "data-attr:disabled":        "$autosavePending ? true : false",
+    },
+})
+
+// No visible label — provide an accessible name via InputAttrs.
+@form.SwitchComponent(form.SwitchProps{
+    Name: "notifications",
+    InputAttrs: templ.Attributes{
+        "aria-label": "Enable notifications",
+    },
 })
 
 // Radio
@@ -221,6 +251,15 @@ import (
     Accept:   "image/*",
     Multiple: true,
 })
+
+// FileUpload exposes InputAttrs for directives on the actual <input type="file">.
+@form.FileUpload(form.FileUploadProps{
+    Name:       "avatar",
+    ButtonText: "Upload avatar",
+    InputAttrs: templ.Attributes{
+        "data-on:change": "@post('/upload')",
+    },
+})
 ```
 
 ### Layout
@@ -260,9 +299,17 @@ lw.DateShort("2024-03-15")                        // "Mar 15, 2024"
 | `layout` | HTML base skeleton, page section |
 | root | Class name utilities, text/date helpers |
 
+## Attrs vs InputAttrs
+
+`Attrs` renders on the wrapper/label of wrapped form controls (Switch, Checkbox, FileUpload) — use it for wrapper hooks like `data-testid`. `InputAttrs` renders on the nested `<input>` **after** component-generated attributes — use it for `aria-label` and Datastar directives (`data-bind`, `data-on:*`, `data-indicator:*`, `data-attr:*`).
+
+On a collision the component's own attribute wins (HTML first-occurrence), so never pass an attribute the component already emits — this includes `type`, `role`, `name`, `id`, `value`, `checked`, `disabled`, `accept`, `multiple`, `aria-invalid`, and `aria-describedby`. Treat that list as illustrative, not exhaustive: as a rule, never duplicate through `InputAttrs` any attribute the component renders itself, or the caller's copy is silently dropped. Neither map may come from untrusted input.
+
+Non-wrapped components like `Button` spread their single `Attrs` onto their own element, so `Attrs` is already their element-level seam — there is no separate `InputAttrs` for them.
+
 ## Security
 
-The `Attrs templ.Attributes` field on every Props struct is spread directly into HTML output. templ escapes attribute values but does not restrict attribute names. **Never populate `Attrs` from untrusted user input** — it is designed for developer-controlled attributes like `data-*`, `aria-*`, and Datastar directives.
+Both the `Attrs` field (on every `Props` struct, spread onto the wrapper or own element) and the `InputAttrs` field (on `Switch`/`Checkbox`/`FileUpload`, spread onto the nested `<input>`) are inserted directly into HTML output. templ escapes attribute values but does not restrict attribute names. **Never populate `Attrs` or `InputAttrs` from untrusted user input** — they are for developer-controlled attributes like `data-*`, `aria-*`, and Datastar directives.
 
 ## Design Pattern
 
