@@ -1,12 +1,15 @@
 package form
 
 import (
+	"maps"
 	"strings"
 	"testing"
 
 	"github.com/Design-Machines-Studio/livewires-templ/internal/testutil"
 	"github.com/a-h/templ"
 )
+
+const checkboxGoldenDefault = `<div><label class="checkbox checkbox--error"><input type="checkbox" name="terms" aria-invalid="true" aria-describedby="terms-accepted-hint terms-error" aria-labelledby="terms-accepted-label" checked disabled value="accepted"><span><span id="terms-accepted-label" class="block">Accept terms</span> <span id="terms-accepted-hint" class="hint block">Required to continue</span></span></label> <p id="terms-error" class="error" role="alert">Acceptance is required</p></div>`
 
 func TestCheckboxRenders(t *testing.T) {
 	html := testutil.RenderToString(t, CheckboxSimple("agree", "I agree", false))
@@ -217,15 +220,186 @@ func TestCheckboxHintIDSanitized(t *testing.T) {
 // With no visible label there is no span to name the input from, so
 // aria-labelledby must be omitted rather than point at nothing.
 func TestCheckboxHintWithoutLabelOmitsLabelledby(t *testing.T) {
-	html := testutil.RenderToString(t, Checkbox(CheckboxProps{
+	output := testutil.RenderToString(t, Checkbox(CheckboxProps{
 		Name: "agree", Hint: "You can opt out later",
-		Attrs: templ.Attributes{"aria-label": "I agree"},
+		InputAttrs: templ.Attributes{"aria-label": "I agree"},
 	}))
-	if strings.Contains(html, "aria-labelledby") {
-		t.Errorf("expected no aria-labelledby without a label, got %s", html)
+	if strings.Contains(output, "aria-labelledby") {
+		t.Errorf("expected no aria-labelledby without a label, got %s", output)
 	}
-	if !strings.Contains(html, `aria-label="I agree"`) {
-		t.Error("expected caller aria-label preserved")
+	input := testutil.FindElement(testutil.ParseFragment(t, output), "input")
+	if got, ok := testutil.AttrVal(input, "aria-label"); !ok || got != "I agree" {
+		t.Errorf("input aria-label = %q, %v; want %q, true", got, ok, "I agree")
 	}
-	assertDescribedByResolves(t, html, 1)
+	assertDescribedByResolves(t, output, 1)
+}
+
+func TestCheckboxInputAttrsRenderOnInput(t *testing.T) {
+	inputAttrs := templ.Attributes{
+		"data-bind":                      "autosaveEnabled",
+		"data-on:change":                 "@post('/settings/autosave')",
+		"data-indicator:autosavePending": "",
+		"data-attr:disabled":             "$autosavePending ? true : false",
+		"aria-label":                     "Enable autosave",
+	}
+	output := testutil.RenderToString(t, Checkbox(CheckboxProps{
+		Name:       "autosave",
+		Attrs:      templ.Attributes{"data-testid": "wrapper"},
+		InputAttrs: inputAttrs,
+	}))
+	nodes := testutil.ParseFragment(t, output)
+	label := testutil.FindElement(nodes, "label")
+	input := testutil.FindElement(nodes, "input")
+
+	if got, ok := testutil.AttrVal(label, "data-testid"); !ok || got != "wrapper" {
+		t.Errorf("label data-testid = %q, %v; want %q, true", got, ok, "wrapper")
+	}
+	if _, ok := testutil.AttrVal(input, "data-testid"); ok {
+		t.Error("input unexpectedly contains wrapper data-testid")
+	}
+	for key, want := range inputAttrs {
+		key = strings.ToLower(key)
+		if got, ok := testutil.AttrVal(input, key); !ok || got != want {
+			t.Errorf("input %s = %q, %v; want %q, true", key, got, ok, want)
+		}
+		if _, ok := testutil.AttrVal(label, key); ok {
+			t.Errorf("label unexpectedly contains input attribute %s", key)
+		}
+	}
+}
+
+func TestCheckboxAriaLabelOnInputElement(t *testing.T) {
+	output := testutil.RenderToString(t, Checkbox(CheckboxProps{
+		Name:       "autosave",
+		InputAttrs: templ.Attributes{"aria-label": "Enable autosave"},
+	}))
+	input := testutil.FindElement(testutil.ParseFragment(t, output), "input")
+	if got, ok := testutil.AttrVal(input, "aria-label"); !ok || got != "Enable autosave" {
+		t.Errorf("input aria-label = %q, %v; want %q, true", got, ok, "Enable autosave")
+	}
+}
+
+func TestCheckboxInputAttrsExactlyOnce(t *testing.T) {
+	inputAttrs := templ.Attributes{
+		"data-bind":                      "autosaveEnabled",
+		"data-on:change":                 "@post('/settings/autosave')",
+		"data-indicator:autosavePending": "",
+		"data-attr:disabled":             "$autosavePending ? true : false",
+		"aria-label":                     "Enable autosave",
+	}
+	output := testutil.RenderToString(t, Checkbox(CheckboxProps{
+		Name:       "autosave",
+		Attrs:      templ.Attributes{"data-testid": "wrapper"},
+		InputAttrs: inputAttrs,
+	}))
+	inputTag := testutil.RawTag(t, output, "input")
+	labelTag := testutil.RawTag(t, output, "label")
+	for key := range inputAttrs {
+		if got := testutil.CountAttr(inputTag, key); got != 1 {
+			t.Errorf("input %s occurrence count = %d; want 1", key, got)
+		}
+		if got := testutil.CountAttr(labelTag, key); got != 0 {
+			t.Errorf("label %s occurrence count = %d; want 0", key, got)
+		}
+	}
+}
+
+func TestCheckboxInputAttrsDoNotMutateCallerMaps(t *testing.T) {
+	attrs := templ.Attributes{"data-testid": "wrapper"}
+	inputAttrs := templ.Attributes{
+		"data-bind":                      "autosaveEnabled",
+		"data-on:change":                 "@post('/settings/autosave')",
+		"data-indicator:autosavePending": "",
+		"data-attr:disabled":             "$autosavePending ? true : false",
+		"aria-label":                     "Enable autosave",
+	}
+	attrsBefore := maps.Clone(attrs)
+	inputAttrsBefore := maps.Clone(inputAttrs)
+
+	testutil.RenderToString(t, Checkbox(CheckboxProps{Name: "autosave", Attrs: attrs, InputAttrs: inputAttrs}))
+
+	if !maps.Equal(attrs, attrsBefore) {
+		t.Errorf("Attrs mutated: got %#v, want %#v", attrs, attrsBefore)
+	}
+	if !maps.Equal(inputAttrs, inputAttrsBefore) {
+		t.Errorf("InputAttrs mutated: got %#v, want %#v", inputAttrs, inputAttrsBefore)
+	}
+}
+
+func TestCheckboxEmptyInputAttrsUnchangedOutput(t *testing.T) {
+	omitted := testutil.RenderToString(t, Checkbox(CheckboxProps{
+		Name: "terms", Value: "accepted", Label: "Accept terms", Hint: "Required to continue",
+		Checked: true, Disabled: true, Error: "Acceptance is required",
+	}))
+	nilAttrs := testutil.RenderToString(t, Checkbox(CheckboxProps{
+		Name: "terms", Value: "accepted", Label: "Accept terms", Hint: "Required to continue",
+		Checked: true, Disabled: true, Error: "Acceptance is required", InputAttrs: nil,
+	}))
+	emptyAttrs := testutil.RenderToString(t, Checkbox(CheckboxProps{
+		Name: "terms", Value: "accepted", Label: "Accept terms", Hint: "Required to continue",
+		Checked: true, Disabled: true, Error: "Acceptance is required", InputAttrs: templ.Attributes{},
+	}))
+
+	for name, got := range map[string]string{"omitted": omitted, "nil": nilAttrs, "empty": emptyAttrs} {
+		if got != checkboxGoldenDefault {
+			t.Errorf("%s InputAttrs output changed:\ngot  %q\nwant %q", name, got, checkboxGoldenDefault)
+		}
+	}
+	if omitted != nilAttrs || omitted != emptyAttrs {
+		t.Error("omitted, nil, and empty InputAttrs outputs differ")
+	}
+}
+
+func TestCheckboxHintErrorIDRefsResolveWithInputAttrs(t *testing.T) {
+	inputAttrs := templ.Attributes{
+		"data-bind":                      "autosaveEnabled",
+		"data-on:change":                 "@post('/settings/autosave')",
+		"data-indicator:autosavePending": "",
+		"data-attr:disabled":             "$autosavePending ? true : false",
+		"aria-label":                     "Enable autosave",
+	}
+	output := testutil.RenderToString(t, Checkbox(CheckboxProps{
+		Name: "autosave", Label: "Autosave", Hint: "Saves changes", Error: "Unavailable", InputAttrs: inputAttrs,
+	}))
+	nodes := testutil.ParseFragment(t, output)
+	input := testutil.FindElement(nodes, "input")
+	describedBy, ok := testutil.AttrVal(input, "aria-describedby")
+	if !ok {
+		t.Fatal("input has no aria-describedby")
+	}
+	for _, ref := range strings.Fields(describedBy) {
+		if testutil.FindElementByID(nodes, ref) == nil {
+			t.Errorf("aria-describedby IDREF %q resolves to no element", ref)
+		}
+	}
+	if got, ok := testutil.AttrVal(input, "aria-invalid"); !ok || got != "true" {
+		t.Errorf("input aria-invalid = %q, %v; want true, true", got, ok)
+	}
+	errorMessage := testutil.FindElement(nodes, "p")
+	if got, ok := testutil.AttrVal(errorMessage, "role"); !ok || got != "alert" {
+		t.Errorf("error role = %q, %v; want alert, true", got, ok)
+	}
+	if got := testutil.NodeText(errorMessage); got != "Unavailable" {
+		t.Errorf("error text = %q; want %q", got, "Unavailable")
+	}
+}
+
+func TestCheckboxInputAttrsCollisionComponentWins(t *testing.T) {
+	output := testutil.RenderToString(t, Checkbox(CheckboxProps{
+		Name: "autosave", Label: "Autosave", Hint: "Saves changes", Error: "Unavailable",
+		InputAttrs: templ.Attributes{"aria-invalid": "false", "aria-describedby": "bogus"},
+	}))
+	input := testutil.FindElement(testutil.ParseFragment(t, output), "input")
+	if got, _ := testutil.AttrVal(input, "aria-invalid"); got != "true" {
+		t.Errorf("parsed aria-invalid = %q; want component value true", got)
+	}
+	if got, _ := testutil.AttrVal(input, "aria-describedby"); got != "autosave-hint autosave-error" {
+		t.Errorf("parsed aria-describedby = %q; want component IDREF list", got)
+	}
+	inputTag := testutil.RawTag(t, output, "input")
+	for _, key := range []string{"aria-invalid", "aria-describedby"} {
+		if got := testutil.CountAttr(inputTag, key); got != 2 {
+			t.Errorf("raw input %s occurrence count = %d; want 2", key, got)
+		}
+	}
 }

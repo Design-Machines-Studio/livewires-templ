@@ -13,7 +13,8 @@ type FileUploadProps struct {
 	Multiple   bool             // Allow multiple file selection
 	Disabled   bool             // Disabled state
 	Class      string           // Additional CSS classes from consumer
-	Attrs      templ.Attributes // Catch-all: data-signals, data-on-change, aria-*, etc.
+	Attrs      templ.Attributes // Wrapper attributes spread onto the outer <label> (data-*, class hooks). Never populate from untrusted input.
+	InputAttrs templ.Attributes // Developer-controlled attributes for the nested <input> (aria-label, Datastar data-* directives). Rendered after component-generated attributes; on a name collision the component's attribute wins (HTML first-occurrence). Never populate from untrusted input.
 }
 
 // fileUploadInputAttrs builds conditional attributes for the file input.
@@ -50,7 +51,7 @@ func fileUploadText(props FileUploadProps) string {
 // FileUpload renders a styled file upload input with button and status text.
 templ FileUpload(props FileUploadProps) {
 	<label class={ fileUploadClass(props) } { props.Attrs... }>
-		<input type="file" name={ props.Name } { fileUploadInputAttrs(props)... }/>
+		<input type="file" name={ props.Name } { fileUploadInputAttrs(props)... } { props.InputAttrs... }/>
 		<span class="file-upload-button">{ fileUploadButtonText(props) }</span>
 		<span class="file-upload-text">{ fileUploadText(props) }</span>
 	</label>

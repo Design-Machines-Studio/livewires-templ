@@ -1,12 +1,15 @@
 package form
 
 import (
+	"maps"
 	"strings"
 	"testing"
 
 	"github.com/Design-Machines-Studio/livewires-templ/internal/testutil"
 	"github.com/a-h/templ"
 )
+
+const switchGoldenDefault = `<div><label class="switch error"><input type="checkbox" role="switch" name="notifications" id="notifications-toggle" value="enabled" checked disabled aria-invalid="true" aria-describedby="notifications-toggle-hint notifications-toggle-error" aria-labelledby="notifications-toggle-label"> <span aria-hidden="true"></span><span><span id="notifications-toggle-label" class="block">Notifications</span> <span id="notifications-toggle-hint" class="hint block">Receive weekly updates</span></span></label> <p id="notifications-toggle-error" class="error" role="alert">Choose a setting</p></div>`
 
 func TestSwitchRenders(t *testing.T) {
 	html := testutil.RenderToString(t, Switch("notifications", "Enable notifications", true))
@@ -187,19 +190,20 @@ func TestSwitchWithoutHintRendersUnchanged(t *testing.T) {
 
 // With no visible label there is no span to name the input from, so
 // aria-labelledby must be omitted rather than point at nothing -- the caller
-// supplies aria-label via Attrs.
+// supplies aria-label via InputAttrs.
 func TestSwitchHintWithoutLabelOmitsLabelledby(t *testing.T) {
-	html := testutil.RenderToString(t, SwitchComponent(SwitchProps{
+	output := testutil.RenderToString(t, SwitchComponent(SwitchProps{
 		Name: "notify", Hint: "Weekly digest",
-		Attrs: templ.Attributes{"aria-label": "Notifications"},
+		InputAttrs: templ.Attributes{"aria-label": "Notifications"},
 	}))
-	if strings.Contains(html, "aria-labelledby") {
-		t.Errorf("expected no aria-labelledby without a label, got %s", html)
+	if strings.Contains(output, "aria-labelledby") {
+		t.Errorf("expected no aria-labelledby without a label, got %s", output)
 	}
-	if !strings.Contains(html, `aria-label="Notifications"`) {
-		t.Error("expected caller aria-label preserved")
+	input := testutil.FindElement(testutil.ParseFragment(t, output), "input")
+	if got, ok := testutil.AttrVal(input, "aria-label"); !ok || got != "Notifications" {
+		t.Errorf("input aria-label = %q, %v; want %q, true", got, ok, "Notifications")
 	}
-	assertDescribedByResolves(t, html, 1)
+	assertDescribedByResolves(t, output, 1)
 }
 
 func TestSwitchHintAndErrorBothAssociated(t *testing.T) {
@@ -248,5 +252,178 @@ func TestSwitchHintEscaping(t *testing.T) {
 	}
 	if !strings.Contains(html, "&lt;script&gt;") || !strings.Contains(html, "&amp;") {
 		t.Errorf("expected escaped entities, got %s", html)
+	}
+}
+
+func TestSwitchInputAttrsRenderOnInput(t *testing.T) {
+	inputAttrs := templ.Attributes{
+		"data-bind":                      "autosaveEnabled",
+		"data-on:change":                 "@post('/settings/autosave')",
+		"data-indicator:autosavePending": "",
+		"data-attr:disabled":             "$autosavePending ? true : false",
+		"aria-label":                     "Enable autosave",
+	}
+	output := testutil.RenderToString(t, SwitchComponent(SwitchProps{
+		Name:       "autosave",
+		Attrs:      templ.Attributes{"data-testid": "wrapper"},
+		InputAttrs: inputAttrs,
+	}))
+	nodes := testutil.ParseFragment(t, output)
+	label := testutil.FindElement(nodes, "label")
+	input := testutil.FindElement(nodes, "input")
+
+	if got, ok := testutil.AttrVal(label, "data-testid"); !ok || got != "wrapper" {
+		t.Errorf("label data-testid = %q, %v; want %q, true", got, ok, "wrapper")
+	}
+	if _, ok := testutil.AttrVal(input, "data-testid"); ok {
+		t.Error("input unexpectedly contains wrapper data-testid")
+	}
+	for key, want := range inputAttrs {
+		key = strings.ToLower(key)
+		if got, ok := testutil.AttrVal(input, key); !ok || got != want {
+			t.Errorf("input %s = %q, %v; want %q, true", key, got, ok, want)
+		}
+		if _, ok := testutil.AttrVal(label, key); ok {
+			t.Errorf("label unexpectedly contains input attribute %s", key)
+		}
+	}
+}
+
+func TestSwitchAriaLabelOnInputElement(t *testing.T) {
+	output := testutil.RenderToString(t, SwitchComponent(SwitchProps{
+		Name:       "autosave",
+		InputAttrs: templ.Attributes{"aria-label": "Enable autosave"},
+	}))
+	input := testutil.FindElement(testutil.ParseFragment(t, output), "input")
+	if got, ok := testutil.AttrVal(input, "aria-label"); !ok || got != "Enable autosave" {
+		t.Errorf("input aria-label = %q, %v; want %q, true", got, ok, "Enable autosave")
+	}
+}
+
+func TestSwitchInputAttrsExactlyOnce(t *testing.T) {
+	inputAttrs := templ.Attributes{
+		"data-bind":                      "autosaveEnabled",
+		"data-on:change":                 "@post('/settings/autosave')",
+		"data-indicator:autosavePending": "",
+		"data-attr:disabled":             "$autosavePending ? true : false",
+		"aria-label":                     "Enable autosave",
+	}
+	output := testutil.RenderToString(t, SwitchComponent(SwitchProps{
+		Name:       "autosave",
+		Attrs:      templ.Attributes{"data-testid": "wrapper"},
+		InputAttrs: inputAttrs,
+	}))
+	inputTag := testutil.RawTag(t, output, "input")
+	labelTag := testutil.RawTag(t, output, "label")
+	for key := range inputAttrs {
+		if got := testutil.CountAttr(inputTag, key); got != 1 {
+			t.Errorf("input %s occurrence count = %d; want 1", key, got)
+		}
+		if got := testutil.CountAttr(labelTag, key); got != 0 {
+			t.Errorf("label %s occurrence count = %d; want 0", key, got)
+		}
+	}
+}
+
+func TestSwitchInputAttrsDoNotMutateCallerMaps(t *testing.T) {
+	attrs := templ.Attributes{"data-testid": "wrapper"}
+	inputAttrs := templ.Attributes{
+		"data-bind":                      "autosaveEnabled",
+		"data-on:change":                 "@post('/settings/autosave')",
+		"data-indicator:autosavePending": "",
+		"data-attr:disabled":             "$autosavePending ? true : false",
+		"aria-label":                     "Enable autosave",
+	}
+	attrsBefore := maps.Clone(attrs)
+	inputAttrsBefore := maps.Clone(inputAttrs)
+
+	testutil.RenderToString(t, SwitchComponent(SwitchProps{Name: "autosave", Attrs: attrs, InputAttrs: inputAttrs}))
+
+	if !maps.Equal(attrs, attrsBefore) {
+		t.Errorf("Attrs mutated: got %#v, want %#v", attrs, attrsBefore)
+	}
+	if !maps.Equal(inputAttrs, inputAttrsBefore) {
+		t.Errorf("InputAttrs mutated: got %#v, want %#v", inputAttrs, inputAttrsBefore)
+	}
+}
+
+func TestSwitchEmptyInputAttrsUnchangedOutput(t *testing.T) {
+	omitted := testutil.RenderToString(t, SwitchComponent(SwitchProps{
+		Name: "notifications", ID: "notifications-toggle", Label: "Notifications",
+		Hint: "Receive weekly updates", Checked: true, Disabled: true,
+		Value: "enabled", Error: "Choose a setting",
+	}))
+	nilAttrs := testutil.RenderToString(t, SwitchComponent(SwitchProps{
+		Name: "notifications", ID: "notifications-toggle", Label: "Notifications",
+		Hint: "Receive weekly updates", Checked: true, Disabled: true,
+		Value: "enabled", Error: "Choose a setting", InputAttrs: nil,
+	}))
+	emptyAttrs := testutil.RenderToString(t, SwitchComponent(SwitchProps{
+		Name: "notifications", ID: "notifications-toggle", Label: "Notifications",
+		Hint: "Receive weekly updates", Checked: true, Disabled: true,
+		Value: "enabled", Error: "Choose a setting", InputAttrs: templ.Attributes{},
+	}))
+
+	for name, got := range map[string]string{"omitted": omitted, "nil": nilAttrs, "empty": emptyAttrs} {
+		if got != switchGoldenDefault {
+			t.Errorf("%s InputAttrs output changed:\ngot  %q\nwant %q", name, got, switchGoldenDefault)
+		}
+	}
+	if omitted != nilAttrs || omitted != emptyAttrs {
+		t.Error("omitted, nil, and empty InputAttrs outputs differ")
+	}
+}
+
+func TestSwitchHintErrorIDRefsResolveWithInputAttrs(t *testing.T) {
+	inputAttrs := templ.Attributes{
+		"data-bind":                      "autosaveEnabled",
+		"data-on:change":                 "@post('/settings/autosave')",
+		"data-indicator:autosavePending": "",
+		"data-attr:disabled":             "$autosavePending ? true : false",
+		"aria-label":                     "Enable autosave",
+	}
+	output := testutil.RenderToString(t, SwitchComponent(SwitchProps{
+		Name: "autosave", Label: "Autosave", Hint: "Saves changes", Error: "Unavailable", InputAttrs: inputAttrs,
+	}))
+	nodes := testutil.ParseFragment(t, output)
+	input := testutil.FindElement(nodes, "input")
+	describedBy, ok := testutil.AttrVal(input, "aria-describedby")
+	if !ok {
+		t.Fatal("input has no aria-describedby")
+	}
+	for _, ref := range strings.Fields(describedBy) {
+		if testutil.FindElementByID(nodes, ref) == nil {
+			t.Errorf("aria-describedby IDREF %q resolves to no element", ref)
+		}
+	}
+	if got, ok := testutil.AttrVal(input, "aria-invalid"); !ok || got != "true" {
+		t.Errorf("input aria-invalid = %q, %v; want true, true", got, ok)
+	}
+	errorMessage := testutil.FindElement(nodes, "p")
+	if got, ok := testutil.AttrVal(errorMessage, "role"); !ok || got != "alert" {
+		t.Errorf("error role = %q, %v; want alert, true", got, ok)
+	}
+	if got := testutil.NodeText(errorMessage); got != "Unavailable" {
+		t.Errorf("error text = %q; want %q", got, "Unavailable")
+	}
+}
+
+func TestSwitchInputAttrsCollisionComponentWins(t *testing.T) {
+	output := testutil.RenderToString(t, SwitchComponent(SwitchProps{
+		Name: "autosave", Label: "Autosave", Hint: "Saves changes", Error: "Unavailable",
+		InputAttrs: templ.Attributes{"aria-invalid": "false", "aria-describedby": "bogus"},
+	}))
+	input := testutil.FindElement(testutil.ParseFragment(t, output), "input")
+	if got, _ := testutil.AttrVal(input, "aria-invalid"); got != "true" {
+		t.Errorf("parsed aria-invalid = %q; want component value true", got)
+	}
+	if got, _ := testutil.AttrVal(input, "aria-describedby"); got != "autosave-hint autosave-error" {
+		t.Errorf("parsed aria-describedby = %q; want component IDREF list", got)
+	}
+	inputTag := testutil.RawTag(t, output, "input")
+	for _, key := range []string{"aria-invalid", "aria-describedby"} {
+		if got := testutil.CountAttr(inputTag, key); got != 2 {
+			t.Errorf("raw input %s occurrence count = %d; want 2", key, got)
+		}
 	}
 }
