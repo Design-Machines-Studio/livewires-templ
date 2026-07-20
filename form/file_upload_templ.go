@@ -21,7 +21,8 @@ type FileUploadProps struct {
 	Multiple   bool             // Allow multiple file selection
 	Disabled   bool             // Disabled state
 	Class      string           // Additional CSS classes from consumer
-	Attrs      templ.Attributes // Catch-all: data-signals, data-on-change, aria-*, etc.
+	Attrs      templ.Attributes // Wrapper attributes spread onto the outer <label> (data-*, class hooks). Never populate from untrusted input.
+	InputAttrs templ.Attributes // Developer-controlled attributes for the nested <input> (aria-label, Datastar data-* directives). Rendered after component-generated attributes; on a name collision the component's attribute wins (HTML first-occurrence). Never populate from untrusted input.
 }
 
 // fileUploadInputAttrs builds conditional attributes for the file input.
@@ -110,7 +111,7 @@ func FileUpload(props FileUploadProps) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(props.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/file_upload.templ`, Line: 53, Col: 38}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/file_upload.templ`, Line: 54, Col: 38}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -124,6 +125,10 @@ func FileUpload(props FileUploadProps) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, props.InputAttrs)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "> <span class=\"file-upload-button\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -131,7 +136,7 @@ func FileUpload(props FileUploadProps) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fileUploadButtonText(props))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/file_upload.templ`, Line: 54, Col: 64}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/file_upload.templ`, Line: 55, Col: 64}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -144,7 +149,7 @@ func FileUpload(props FileUploadProps) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fileUploadText(props))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/file_upload.templ`, Line: 55, Col: 56}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/file_upload.templ`, Line: 56, Col: 56}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {

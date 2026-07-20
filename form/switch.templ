@@ -4,17 +4,18 @@ import lw "github.com/Design-Machines-Studio/livewires-templ"
 
 // SwitchProps holds configuration for a pill-shaped toggle switch.
 type SwitchProps struct {
-	Name     string           // Field name for the checkbox input
-	ID       string           // ID for the checkbox input
-	Label    string           // Visible label text. If empty, pass aria-label via Attrs.
-	Hint     string           // Supporting text shown beneath the label
-	Checked  bool             // Whether the switch is on
-	Disabled bool             // Whether the switch is disabled
-	Variant  string           // Style variant: "", "small"
-	Value    string           // Value when checked (default "1")
-	Error    string           // Error message; when non-empty, applies error styling and aria attributes
-	Class    string           // Additional CSS classes from consumer
-	Attrs    templ.Attributes // Catch-all: data-*, aria-*, etc.
+	Name       string           // Field name for the switch input
+	ID         string           // ID for the switch input
+	Label      string           // Visible label text. If empty, pass aria-label via InputAttrs.
+	Hint       string           // Supporting text shown beneath the label
+	Checked    bool             // Whether the switch is on
+	Disabled   bool             // Whether the switch is disabled
+	Variant    string           // Style variant: "", "small"
+	Value      string           // Value when checked (default "1")
+	Error      string           // Error message; when non-empty, applies error styling and aria attributes
+	Class      string           // Additional CSS classes from consumer
+	Attrs      templ.Attributes // Wrapper attributes spread onto the outer <label> (data-*, class hooks). Never populate from untrusted input.
+	InputAttrs templ.Attributes // Developer-controlled attributes for the nested <input> (aria-label, Datastar data-* directives). Rendered after component-generated attributes; on a name collision the component's attribute wins (HTML first-occurrence). Never populate from untrusted input.
 }
 
 // switchID returns the effective ID for aria-describedby linkage.
@@ -60,6 +61,7 @@ templ SwitchComponent(props SwitchProps) {
 					aria-invalid="true"
 				}
 				{ switchAriaAttrs(props)... }
+				{ props.InputAttrs... }
 			/>
 			<span aria-hidden="true"></span>
 			@wrappedLabelBody(switchBaseID(props), props.Label, props.Hint)

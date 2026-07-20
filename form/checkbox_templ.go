@@ -12,16 +12,17 @@ import lw "github.com/Design-Machines-Studio/livewires-templ"
 
 // CheckboxProps holds configuration for a checkbox component.
 type CheckboxProps struct {
-	Name     string           // Field name
-	Value    string           // Field value (submitted when checked)
-	Label    string           // Checkbox label text
-	Hint     string           // Supporting text shown beneath the label
-	Checked  bool             // Whether checkbox is checked
-	Disabled bool             // Whether checkbox is disabled
-	Variant  string           // Style variant: "", "large", "icon", "success", "warning", "error"
-	Error    string           // Error message; when non-empty, applies error variant and aria attributes
-	Class    string           // Additional CSS classes from consumer
-	Attrs    templ.Attributes // Catch-all: data-signals, data-on-change, aria-*, etc.
+	Name       string           // Field name
+	Value      string           // Field value (submitted when checked)
+	Label      string           // Checkbox label text
+	Hint       string           // Supporting text shown beneath the label
+	Checked    bool             // Whether checkbox is checked
+	Disabled   bool             // Whether checkbox is disabled
+	Variant    string           // Style variant: "", "large", "icon", "success", "warning", "error"
+	Error      string           // Error message; when non-empty, applies error variant and aria attributes
+	Class      string           // Additional CSS classes from consumer
+	Attrs      templ.Attributes // Wrapper attributes spread onto the outer <label> (data-*, class hooks). Never populate from untrusted input.
+	InputAttrs templ.Attributes // Developer-controlled attributes for the nested <input> (aria-label, Datastar data-* directives). Rendered after component-generated attributes; on a name collision the component's attribute wins (HTML first-occurrence). Never populate from untrusted input.
 }
 
 // checkboxInputAttrs builds conditional attributes for the checkbox input.
@@ -119,7 +120,7 @@ func Checkbox(props CheckboxProps) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(props.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/checkbox.templ`, Line: 61, Col: 21}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/checkbox.templ`, Line: 62, Col: 21}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -143,6 +144,10 @@ func Checkbox(props CheckboxProps) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, props.InputAttrs)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, ">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -163,7 +168,7 @@ func Checkbox(props CheckboxProps) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(errorID(props.Name))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/checkbox.templ`, Line: 71, Col: 30}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/checkbox.templ`, Line: 73, Col: 30}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -176,7 +181,7 @@ func Checkbox(props CheckboxProps) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(props.Error)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/checkbox.templ`, Line: 71, Col: 73}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/checkbox.templ`, Line: 73, Col: 73}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
