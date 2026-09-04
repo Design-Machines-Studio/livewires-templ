@@ -13,7 +13,7 @@ type TextareaProps struct {
 	Value       string           // Current value
 	Rows        int              // Number of rows (default: 4)
 	Placeholder string           // Placeholder text
-	Hint        string           // Helper text below the field
+	Hint        string           // Helper text above the textarea
 	Error       string           // Error message; when non-empty, applies error styling and aria attributes
 	Required    bool             // Whether field is required
 	Class       string           // Additional CSS classes on the wrapper
@@ -33,6 +33,9 @@ templ Textarea(props TextareaProps) {
 	<div class={ lw.ClassNames("field stack stack-compact", props.Class) }>
 		if props.Error != "" {
 			<label for={ controlID(props.Name) } class="error">{ props.Label }</label>
+			if props.Hint != "" {
+				<p id={ hintID(props.Name) } class="hint">{ props.Hint }</p>
+			}
 			<textarea
 				id={ controlID(props.Name) }
 				name={ props.Name }
@@ -50,6 +53,9 @@ templ Textarea(props TextareaProps) {
 			<p id={ errorID(props.Name) } class="error" role="alert">{ props.Error }</p>
 		} else {
 			<label for={ controlID(props.Name) }>{ props.Label }</label>
+			if props.Hint != "" {
+				<p id={ hintID(props.Name) } class="hint">{ props.Hint }</p>
+			}
 			<textarea
 				id={ controlID(props.Name) }
 				name={ props.Name }
@@ -62,9 +68,6 @@ templ Textarea(props TextareaProps) {
 				{ describedByAttrs(props.Name, props.Hint, props.Error)... }
 				{ props.Attrs... }
 			>{ props.Value }</textarea>
-		}
-		if props.Hint != "" {
-			<p id={ hintID(props.Name) } class="hint">{ props.Hint }</p>
 		}
 	</div>
 }

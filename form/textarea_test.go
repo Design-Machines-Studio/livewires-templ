@@ -35,6 +35,9 @@ func TestTextareaWithHint(t *testing.T) {
 	if !strings.Contains(html, "Keep it short") {
 		t.Error("expected hint text")
 	}
+	if hint, textarea := strings.Index(html, `id="bio-hint"`), strings.Index(html, `<textarea`); hint == -1 || textarea == -1 || hint > textarea {
+		t.Errorf("expected hint before textarea, got %s", html)
+	}
 }
 
 func TestTextareaWithError(t *testing.T) {
@@ -97,6 +100,12 @@ func TestTextareaHintAndErrorBothAssociated(t *testing.T) {
 		Label: "Bio", Name: "bio", Hint: "Max 200 characters", Error: "Too long",
 	}))
 	assertDescribedByResolves(t, html, 2)
+	if hint, textarea := strings.Index(html, `id="bio-hint"`), strings.Index(html, `<textarea`); hint == -1 || textarea == -1 || hint > textarea {
+		t.Errorf("expected hint before textarea in error state, got %s", html)
+	}
+	if textarea, err := strings.Index(html, `<textarea`), strings.Index(html, `id="bio-error"`); textarea == -1 || err == -1 || textarea > err {
+		t.Errorf("expected error after textarea, got %s", html)
+	}
 }
 
 func TestTextareaWithoutHintHasNoDescription(t *testing.T) {
