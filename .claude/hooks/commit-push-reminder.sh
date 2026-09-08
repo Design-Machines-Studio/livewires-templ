@@ -2,8 +2,8 @@
 # commit-push-reminder.sh — Nudge toward frequent commits and pushes
 #
 # PostToolUse hook on Edit|Write. After file edits, checks:
-# 1. Uncommitted file count → suggest commit at 3+ files, insist at 5+
-# 2. Unpushed commit count → suggest push at 3+ commits
+# 1. Uncommitted file count → suggest commit at 2+ files, insist at 3+
+# 2. Unpushed commit count → suggest push at 2+ commits
 
 INPUT=$(cat)
 
