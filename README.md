@@ -102,6 +102,23 @@ import (
 // Toast
 @component.Toast("Saved!", "success")
 
+// Dropdown checkbox filter (details.dropdown--panel with a checkbox group)
+@component.CheckboxFilter("circle-options", "Circles", "circle", options)
+
+// Checkbox filter with summary, footer, and consumer-owned spacing
+@component.CheckboxFilterComponent(component.CheckboxFilterProps{
+    OptionsID:   "circle-options",
+    Label:       "Circles",
+    Summary:     "All",
+    GroupLabel:  "Filter by circle",
+    Name:        "circle",
+    CountLabel:  "members",
+    Options:     options,
+    BodyClass:   "stack stack-compact px-05 py-025",
+    FooterClass: "cluster cluster-start pb-0 pt-025",
+    Footer:      clearButton,
+})
+
 // Full props control
 @component.ButtonComponent(component.ButtonProps{
     Variant:  "accent",

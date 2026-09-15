@@ -1,0 +1,103 @@
+package component
+
+import (
+	"strconv"
+
+	lw "github.com/Design-Machines-Studio/livewires-templ"
+)
+
+// CheckboxFilterOption holds data for one checkbox in a checkbox filter.
+type CheckboxFilterOption struct {
+	ID      string // Input id; also used for the label's for attribute
+	Value   string // Submitted value
+	Label   string // Visible option text
+	Count   int    // Result count shown beside the label
+	Checked bool   // Whether the option is selected
+}
+
+// CheckboxFilterProps holds configuration for a dropdown checkbox filter.
+type CheckboxFilterProps struct {
+	ID           string                 // Optional id on the <details> element
+	TriggerID    string                 // Optional id on the <summary> trigger
+	OptionsID    string                 // Id of the options group; referenced by the trigger's aria-controls
+	Label        string                 // Trigger label, e.g. "Circles"
+	Summary      string                 // Muted selection summary beside the label, e.g. "All" or "2 selected"
+	GroupLabel   string                 // aria-label for the options group; defaults to Label
+	Name         string                 // Submitted name shared by every checkbox
+	CountLabel   string                 // Screen-reader noun after each count, e.g. "members"; omitted when empty
+	Icon         templ.Component        // Optional leading icon inside the trigger; nil omits it
+	SummaryAttrs templ.Attributes       // Developer-controlled attributes for the summary span (e.g. Datastar data-text). Never populate from untrusted input.
+	InputAttrs   templ.Attributes       // Developer-controlled attributes for every checkbox <input>, rendered after component-generated attributes; on a name collision the component's attribute wins (HTML first-occurrence). Never populate from untrusted input.
+	Options      []CheckboxFilterOption // Checkbox options
+	BodyClass    string                 // Additional classes on .dropdown-body; consumers pass layout and spacing utilities here
+	FooterClass  string                 // Classes on the footer; consumers pass layout and spacing utilities here
+	Footer       templ.Component        // Optional footer content (e.g. a "Clear all" control); nil omits the footer
+	Class        string                 // Additional CSS classes on the <details> element
+	Attrs        templ.Attributes       // Attributes spread onto the <details> element (data-*, Datastar directives). Never populate from untrusted input.
+}
+
+// CheckboxFilterComponent renders a dropdown panel of filter checkboxes with full Props control.
+templ CheckboxFilterComponent(props CheckboxFilterProps) {
+	<details
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		class={ lw.ClassNames("dropdown dropdown--panel", props.Class) }
+		{ props.Attrs... }
+	>
+		<summary
+			if props.TriggerID != "" {
+				id={ props.TriggerID }
+			}
+			class="trigger button--subtle button--small"
+			if props.OptionsID != "" {
+				aria-controls={ props.OptionsID }
+			}
+		>
+			if props.Icon != nil {
+				@props.Icon
+			}
+			<span>{ props.Label }</span>
+			if props.Summary != "" || len(props.SummaryAttrs) > 0 {
+				<span class="text-muted ml-025" { props.SummaryAttrs... }>{ props.Summary }</span>
+			}
+			<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+		</summary>
+		<div class="menu">
+			<div
+				if props.OptionsID != "" {
+					id={ props.OptionsID }
+				}
+				class={ lw.ClassNames("dropdown-body", props.BodyClass) }
+				role="group"
+				aria-label={ lw.DefaultStr(props.GroupLabel, props.Label) }
+			>
+				for _, opt := range props.Options {
+					<label class="checkbox" for={ opt.ID }>
+						<input type="checkbox" id={ opt.ID } name={ props.Name } value={ opt.Value } checked?={ opt.Checked } { props.InputAttrs... }/>
+						<span>{ opt.Label }</span>
+						if props.CountLabel != "" {
+							<span class="text-muted">{ strconv.Itoa(opt.Count) }<span class="sr-only">{ props.CountLabel }</span></span>
+						} else {
+							<span class="text-muted">{ strconv.Itoa(opt.Count) }</span>
+						}
+					</label>
+				}
+			</div>
+			if props.Footer != nil {
+				<footer
+					if props.FooterClass != "" {
+						class={ props.FooterClass }
+					}
+				>
+					@props.Footer
+				</footer>
+			}
+		</div>
+	</details>
+}
+
+// CheckboxFilter renders a dropdown checkbox filter (convenience wrapper).
+templ CheckboxFilter(optionsID string, label string, name string, options []CheckboxFilterOption) {
+	@CheckboxFilterComponent(CheckboxFilterProps{OptionsID: optionsID, Label: label, Name: name, Options: options})
+}
