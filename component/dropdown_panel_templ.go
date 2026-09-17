@@ -15,12 +15,12 @@ type DropdownPanelProps struct {
 	ID           string           // Optional id on the <details> element
 	TriggerID    string           // Optional id on the <summary> trigger
 	Label        string           // Trigger label, e.g. "Circles"; visually hidden when IconOnly
-	IconOnly     bool             // Icon-only trigger: Label becomes visually hidden text and the chevron is omitted. Give Icon or Label an accessible name.
+	IconOnly     bool             // Icon-only trigger: Label becomes visually hidden text and the chevron is omitted. Set Icon, which is the only visible trigger content; Icon or Label must supply the accessible name.
 	Summary      string           // Muted selection summary beside the label, e.g. "All" or "2"
 	SummaryAttrs templ.Attributes // Developer-controlled attributes for the summary span (e.g. Datastar data-text). Never populate from untrusted input.
 	Icon         templ.Component  // Optional leading icon inside the trigger; nil omits it
 	TriggerClass string           // Additional classes on the <summary> trigger, e.g. "button--subtle"
-	TriggerAttrs templ.Attributes // Developer-controlled attributes on the <summary> trigger (e.g. aria-controls). Never populate from untrusted input.
+	TriggerAttrs templ.Attributes // Developer-controlled attributes on the <summary> trigger (e.g. aria-controls), rendered after component attributes; do not pass id (use TriggerID) or class (use TriggerClass), since the component's attribute wins. Never populate from untrusted input.
 	Variant      string           // "end", "up"
 	Open         bool             // Render the panel open
 	MenuTag      string           // "form" (default) or "div" when the panel sits inside another form or filters client-side
