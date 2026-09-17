@@ -2,6 +2,8 @@
 package testutil
 
 import (
+	"sort"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -202,4 +204,50 @@ func NodeText(node *html.Node) string {
 		text.WriteString(NodeText(child))
 	}
 	return text.String()
+}
+
+// CanonicalHTML serializes a fragment for structural comparison: attributes are
+// sorted, whitespace runs collapse to one space, and whitespace-only text is dropped.
+func CanonicalHTML(t *testing.T, fragment string) string {
+	t.Helper()
+	var b strings.Builder
+	for _, node := range ParseFragment(t, fragment) {
+		writeCanonical(&b, node, 0)
+	}
+	return b.String()
+}
+
+func writeCanonical(b *strings.Builder, node *html.Node, depth int) {
+	indent := strings.Repeat("  ", depth)
+	switch node.Type {
+	case html.TextNode:
+		text := strings.Join(strings.FieldsFunc(node.Data, func(r rune) bool { return r < 128 && isHTMLSpace(byte(r)) }), " ")
+		if text == "" {
+			return
+		}
+		if isHTMLSpace(node.Data[0]) {
+			text = " " + text
+		}
+		if isHTMLSpace(node.Data[len(node.Data)-1]) {
+			text += " "
+		}
+		b.WriteString(indent + strconv.Quote(text) + "\n")
+		return
+	case html.ElementNode:
+		attrs := make([]string, 0, len(node.Attr))
+		for _, a := range node.Attr {
+			attrs = append(attrs, a.Key+"="+strconv.Quote(a.Val))
+		}
+		sort.Strings(attrs)
+		b.WriteString(indent + "<" + node.Data)
+		for _, a := range attrs {
+			b.WriteString(" " + a)
+		}
+		b.WriteString(">\n")
+	default:
+		return
+	}
+	for child := node.FirstChild; child != nil; child = child.NextSibling {
+		writeCanonical(b, child, depth+1)
+	}
 }

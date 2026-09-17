@@ -1,0 +1,33 @@
+<details class="dropdown dropdown--panel dropdown--end">
+  <summary class="trigger button button--small">
+    <span>Status</span>
+    <span class="text-muted">2</span>
+    <svg class="icon chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+  </summary>
+  <form class="menu" method="get">
+    <header class="cluster cluster-between">
+      <strong class="text-sm">Status</strong>
+      <button type="reset" class="button button--small">Clear</button>
+    </header>
+    <div class="body" role="group" aria-label="Filter by status">
+      <label class="checkbox">
+        <input type="checkbox" name="status" value="draft" checked>
+        <span>Draft</span>
+        <span class="text-muted">4<span class="visually-hidden"> items</span></span>
+      </label>
+      <label class="checkbox">
+        <input type="checkbox" name="status" value="active" checked>
+        <span>Active</span>
+        <span class="text-muted">21<span class="visually-hidden"> items</span></span>
+      </label>
+      <label class="checkbox">
+        <input type="checkbox" name="status" value="archived">
+        <span>Archived</span>
+        <span class="text-muted">7<span class="visually-hidden"> items</span></span>
+      </label>
+    </div>
+    <footer class="cluster cluster-end">
+      <button type="submit" class="button button--small button--accent">Apply</button>
+    </footer>
+  </form>
+</details>

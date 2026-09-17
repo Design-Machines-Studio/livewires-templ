@@ -1,0 +1,113 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// DropdownPanelProps holds configuration for a native <details> panel dropdown.
+type DropdownPanelProps struct {
+	ID           string           // Optional id on the <details> element
+	TriggerID    string           // Optional id on the <summary> trigger
+	Label        string           // Trigger label, e.g. "Circles"
+	Summary      string           // Muted selection summary beside the label, e.g. "All" or "2"
+	SummaryAttrs templ.Attributes // Developer-controlled attributes for the summary span (e.g. Datastar data-text). Never populate from untrusted input.
+	Icon         templ.Component  // Optional leading icon inside the trigger; nil omits it
+	TriggerClass string           // Additional classes on the <summary> trigger, e.g. "button--subtle"
+	Variant      string           // "end", "up"
+	Open         bool             // Render the panel open
+	MenuTag      string           // "form" (default) or "div" when the panel sits inside another form or filters client-side
+	Method       string           // Form method; defaults to "get". Ignored when MenuTag is "div"
+	Action       string           // Optional form action. Ignored when MenuTag is "div"
+	MenuAttrs    templ.Attributes // Developer-controlled attributes on the .menu element. Never populate from untrusted input.
+	Header       templ.Component  // Optional header content; nil omits the <header>
+	HeaderClass  string           // Classes on the header; consumers pass layout utilities here
+	BodyClass    string           // Additional classes on .body
+	BodyAttrs    templ.Attributes // Developer-controlled attributes on .body (e.g. role, aria-label). Never populate from untrusted input.
+	Footer       templ.Component  // Optional footer content; nil omits the <footer>
+	FooterClass  string           // Classes on the footer; consumers pass layout utilities here
+	Class        string           // Additional CSS classes on the <details> element
+	Attrs        templ.Attributes // Attributes spread onto the <details> element. Never populate from untrusted input.
+}
+
+// panelChevron renders the trigger chevron that flips while the panel is open.
+templ panelChevron() {
+	<svg class="icon chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+}
+
+// panelRegions renders the header, body, and footer inside the panel menu.
+templ panelRegions(props DropdownPanelProps) {
+	if props.Header != nil {
+		<header
+			if props.HeaderClass != "" {
+				class={ props.HeaderClass }
+			}
+		>
+			@props.Header
+		</header>
+	}
+	<div class={ lw.ClassNames("body", props.BodyClass) } { props.BodyAttrs... }>
+		{ children... }
+	</div>
+	if props.Footer != nil {
+		<footer
+			if props.FooterClass != "" {
+				class={ props.FooterClass }
+			}
+		>
+			@props.Footer
+		</footer>
+	}
+}
+
+// DropdownPanelComponent renders a panel dropdown with a scrollable body; children fill the body.
+templ DropdownPanelComponent(props DropdownPanelProps) {
+	<details
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		class={ lw.ClassNames("dropdown dropdown--panel", lw.VariantClass("dropdown", props.Variant), props.Class) }
+		open?={ props.Open }
+		{ props.Attrs... }
+	>
+		<summary
+			if props.TriggerID != "" {
+				id={ props.TriggerID }
+			}
+			class={ lw.ClassNames("trigger button button--small", props.TriggerClass) }
+		>
+			if props.Icon != nil {
+				@props.Icon
+			}
+			<span>{ props.Label }</span>
+			if props.Summary != "" || len(props.SummaryAttrs) > 0 {
+				<span class="text-muted" { props.SummaryAttrs... }>{ props.Summary }</span>
+			}
+			@panelChevron()
+		</summary>
+		if props.MenuTag == "div" {
+			<div class="menu" { props.MenuAttrs... }>
+				@panelRegions(props) {
+					{ children... }
+				}
+			</div>
+		} else {
+			<form
+				class="menu"
+				method={ lw.DefaultStr(props.Method, "get") }
+				if props.Action != "" {
+					action={ templ.SafeURL(props.Action) }
+				}
+				{ props.MenuAttrs... }
+			>
+				@panelRegions(props) {
+					{ children... }
+				}
+			</form>
+		}
+	</details>
+}
+
+// DropdownPanel renders a panel dropdown with a label (convenience wrapper).
+templ DropdownPanel(label string) {
+	@DropdownPanelComponent(DropdownPanelProps{Label: label}) {
+		{ children... }
+	}
+}

@@ -1,0 +1,110 @@
+package component
+
+import (
+	"strconv"
+	"time"
+
+	lw "github.com/Design-Machines-Studio/livewires-templ"
+)
+
+// CalendarProps holds configuration for a month grid. The grid is state, not behaviour:
+// the server render or a script decides the month and which days carry which state.
+type CalendarProps struct {
+	Month       time.Time                             // Any day in the month to render (required)
+	ID          string                                // Title id referenced by the grid's aria-labelledby; defaults to "cal-YYYY-MM"
+	Title       string                                // Visible month heading; defaults to "January 2006" format
+	Today       time.Time                             // Day marked with .today and aria-current="date"; zero omits it
+	Selected    time.Time                             // Single selected day; zero omits it
+	RangeStart  time.Time                             // First day of a selected range; zero omits it
+	RangeEnd    time.Time                             // Last day of a selected range; zero omits it
+	Marked      []time.Time                           // Days that carry a dot marker
+	SundayFirst bool                                  // Start weeks on Sunday instead of Monday
+	HidePrev    bool                                  // Omit the previous-month button (e.g. second month in a group)
+	HideNext    bool                                  // Omit the next-month button (e.g. first month in a group)
+	PrevAttrs   templ.Attributes                      // Developer-controlled attributes on the previous-month button. Never populate from untrusted input.
+	NextAttrs   templ.Attributes                      // Developer-controlled attributes on the next-month button. Never populate from untrusted input.
+	DayAttrs    func(date time.Time) templ.Attributes // Developer-controlled attributes per day button, rendered after component attributes. Never populate from untrusted input.
+	Variant     string                                // "compact"
+	Class       string                                // Additional CSS classes from consumer
+	Attrs       templ.Attributes                      // Catch-all: data-*, aria-*, etc.
+}
+
+// CalendarComponent renders a six-week month grid with full Props control.
+templ CalendarComponent(props CalendarProps) {
+	<div class={ lw.ClassNames("calendar", lw.VariantClass("calendar", props.Variant), props.Class) } { props.Attrs... }>
+		<header>
+			if !props.HidePrev {
+				<button type="button" class="prev" aria-label="Previous month" { props.PrevAttrs... }><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg></button>
+			}
+			<span class="title" id={ calendarTitleID(props) }>{ calendarTitle(props) }</span>
+			if !props.HideNext {
+				<button type="button" class="next" aria-label="Next month" { props.NextAttrs... }><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></button>
+			}
+		</header>
+		<table role="grid" aria-labelledby={ calendarTitleID(props) }>
+			<thead>
+				<tr>
+					for _, wd := range calendarWeekdays(props) {
+						<th scope="col" abbr={ wd.Long }>{ wd.Short }</th>
+					}
+				</tr>
+			</thead>
+			<tbody>
+				for _, week := range calendarWeeks(props) {
+					<tr>
+						for _, day := range week {
+							<td
+								if day.Class != "" {
+									class={ day.Class }
+								}
+							>
+								<button
+									type="button"
+									if day.Outside {
+										tabindex="-1"
+									}
+									if day.Today {
+										aria-current="date"
+									}
+									if day.Pressed {
+										aria-pressed="true"
+									}
+									{ calendarDayAttrs(props, day.Date)... }
+								>{ strconv.Itoa(day.Date.Day()) }</button>
+							</td>
+						}
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}
+
+// Calendar renders a month grid with today marked (convenience wrapper).
+templ Calendar(month, today time.Time) {
+	@CalendarComponent(CalendarProps{Month: month, Today: today})
+}
+
+// CalendarGroupProps holds configuration for side-by-side month grids.
+type CalendarGroupProps struct {
+	Class string           // Additional CSS classes from consumer
+	Attrs templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// CalendarGroupComponent renders a row of calendars with full Props control.
+// Omit .prev on the first calendar and .next on the last (HidePrev, HideNext).
+templ CalendarGroupComponent(props CalendarGroupProps) {
+	<div class={ lw.ClassNames("calendar-group", props.Class) } { props.Attrs... }>
+		{ children... }
+	</div>
+}
+
+// CalendarGroup renders consecutive months side by side, sharing selection state from props.
+// Month in props is the first month; navigation shows only on the outer edges.
+templ CalendarGroup(props CalendarProps, months int) {
+	@CalendarGroupComponent(CalendarGroupProps{}) {
+		for i := 0; i < months; i++ {
+			@CalendarComponent(calendarGroupMonth(props, i, months))
+		}
+	}
+}

@@ -14,8 +14,14 @@ func TestDateRangeRenders(t *testing.T) {
 		Label:     "Date Range",
 	}
 	html := testutil.RenderToString(t, DateRange(data))
-	if !strings.Contains(html, "date-range") {
-		t.Error("expected date-range class")
+	if !strings.Contains(html, `<div class="date-range"><input type="date" id="from" name="from" value="" aria-label="Start date"> <span aria-hidden="true">–</span> <input type="date" id="to" name="to" value="" aria-label="End date"></div>`) {
+		t.Errorf("expected Live Wires .date-range markup, got %s", html)
+	}
+	if strings.Contains(html, "stack") || strings.Contains(html, "cluster") || strings.Contains(html, "<label") {
+		t.Error("expected no layout classes or visible labels")
+	}
+	if strings.Contains(html, "<fieldset class") || strings.Contains(html, "<legend class") {
+		t.Error("expected no empty class attributes")
 	}
 	if !strings.Contains(html, "Date Range") {
 		t.Error("expected legend text")
@@ -58,8 +64,9 @@ func TestDateRangeSanitizesIDs(t *testing.T) {
 	html := testutil.RenderToString(t, DateRange(DateRangeProps{
 		StartName: "from date", EndName: "to date", Label: "Range", Error: "Invalid range",
 	}))
-	assertLabelPointsAtControl(t, html, "from date")
-	assertLabelPointsAtControl(t, html, "to date")
+	if strings.Count(html, `aria-describedby="`+errorID("from date")+`"`) != 2 {
+		t.Errorf("expected both inputs to reference the sanitized error id, got %s", html)
+	}
 	if !strings.Contains(html, `<p id="`+errorID("from date")+`"`) {
 		t.Errorf("expected sanitized error paragraph id, got %s", html)
 	}

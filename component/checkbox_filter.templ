@@ -1,0 +1,114 @@
+package component
+
+import (
+	"strconv"
+
+	lw "github.com/Design-Machines-Studio/livewires-templ"
+)
+
+// CheckboxFilterOption holds data for one checkbox in a checkbox filter.
+type CheckboxFilterOption struct {
+	ID      string // Optional input id; omitted when empty
+	Value   string // Submitted value
+	Label   string // Visible option text
+	Count   int    // Result count shown beside the label
+	Checked bool   // Whether the option is selected
+}
+
+// CheckboxFilterProps holds configuration for a dropdown checkbox filter.
+type CheckboxFilterProps struct {
+	ID           string                 // Optional id on the <details> element
+	TriggerID    string                 // Optional id on the <summary> trigger
+	OptionsID    string                 // Optional id on the options group
+	Label        string                 // Trigger label, e.g. "Circles"
+	Summary      string                 // Muted selection summary beside the label, e.g. "All" or "2"
+	SummaryAttrs templ.Attributes       // Developer-controlled attributes for the summary span (e.g. Datastar data-text). Never populate from untrusted input.
+	GroupLabel   string                 // aria-label for the options group; defaults to Label
+	Name         string                 // Submitted name shared by every checkbox
+	CountLabel   string                 // Visually hidden noun after each count, e.g. "members"; omitted when empty
+	Icon         templ.Component        // Optional leading icon inside the trigger; nil omits it
+	TriggerClass string                 // Additional classes on the <summary> trigger
+	InputAttrs   templ.Attributes       // Developer-controlled attributes for every checkbox <input>, rendered after component-generated attributes; on a name collision the component's attribute wins (HTML first-occurrence). Never populate from untrusted input.
+	Options      []CheckboxFilterOption // Checkbox options
+	Variant      string                 // "end", "up"
+	Open         bool                   // Render the panel open
+	MenuTag      string                 // "form" (default) or "div"
+	Method       string                 // Form method; defaults to "get"
+	Action       string                 // Optional form action
+	Header       templ.Component        // Optional header content; nil omits the <header>
+	HeaderClass  string                 // Classes on the header; consumers pass layout utilities here
+	BodyClass    string                 // Additional classes on .body
+	Footer       templ.Component        // Optional footer content (e.g. Clear all and Apply); nil omits the footer
+	FooterClass  string                 // Classes on the footer; consumers pass layout utilities here
+	Class        string                 // Additional CSS classes on the <details> element
+	Attrs        templ.Attributes       // Attributes spread onto the <details> element. Never populate from untrusted input.
+}
+
+// checkboxFilterBodyAttrs returns the group role, label, and optional id for the options body.
+func checkboxFilterBodyAttrs(props CheckboxFilterProps) templ.Attributes {
+	attrs := templ.Attributes{
+		"role":       "group",
+		"aria-label": lw.DefaultStr(props.GroupLabel, props.Label),
+	}
+	if props.OptionsID != "" {
+		attrs["id"] = props.OptionsID
+	}
+	return attrs
+}
+
+// checkboxFilterCount renders the trailing count with an optional visually hidden noun.
+templ checkboxFilterCount(count int, label string) {
+	if label != "" {
+		<span class="text-muted">{ strconv.Itoa(count) }<span class="visually-hidden">{ " " + label }</span></span>
+	} else {
+		<span class="text-muted">{ strconv.Itoa(count) }</span>
+	}
+}
+
+// CheckboxFilterComponent renders a dropdown panel of filter checkboxes with full Props control.
+templ CheckboxFilterComponent(props CheckboxFilterProps) {
+	@DropdownPanelComponent(DropdownPanelProps{
+		ID:           props.ID,
+		TriggerID:    props.TriggerID,
+		Label:        props.Label,
+		Summary:      props.Summary,
+		SummaryAttrs: props.SummaryAttrs,
+		Icon:         props.Icon,
+		TriggerClass: props.TriggerClass,
+		Variant:      props.Variant,
+		Open:         props.Open,
+		MenuTag:      props.MenuTag,
+		Method:       props.Method,
+		Action:       props.Action,
+		Header:       props.Header,
+		HeaderClass:  props.HeaderClass,
+		BodyClass:    props.BodyClass,
+		BodyAttrs:    checkboxFilterBodyAttrs(props),
+		Footer:       props.Footer,
+		FooterClass:  props.FooterClass,
+		Class:        props.Class,
+		Attrs:        props.Attrs,
+	}) {
+		for _, opt := range props.Options {
+			<label class="checkbox">
+				<input
+					type="checkbox"
+					if opt.ID != "" {
+						id={ opt.ID }
+					}
+					name={ props.Name }
+					value={ opt.Value }
+					checked?={ opt.Checked }
+					{ props.InputAttrs... }
+				/>
+				<span>{ opt.Label }</span>
+				@checkboxFilterCount(opt.Count, props.CountLabel)
+			</label>
+		}
+	}
+}
+
+// CheckboxFilter renders a dropdown checkbox filter (convenience wrapper).
+templ CheckboxFilter(label, name string, options []CheckboxFilterOption) {
+	@CheckboxFilterComponent(CheckboxFilterProps{Label: label, Name: name, Options: options})
+}

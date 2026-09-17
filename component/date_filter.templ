@@ -1,0 +1,148 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// DateRangeInputsProps holds configuration for two date fields joined by a separator.
+type DateRangeInputsProps struct {
+	StartName  string           // Start field name
+	EndName    string           // End field name
+	StartValue string           // Start value, e.g. "2027-01-08"
+	EndValue   string           // End value
+	StartLabel string           // Start aria-label; defaults to "Start date"
+	EndLabel   string           // End aria-label; defaults to "End date"
+	Type       string           // Input type: "date" (default) or "datetime-local"
+	Size       string           // "small"
+	StartAttrs templ.Attributes // Developer-controlled attributes on the start <input>, after component attributes. Never populate from untrusted input.
+	EndAttrs   templ.Attributes // Developer-controlled attributes on the end <input>, after component attributes. Never populate from untrusted input.
+	Class      string           // Additional CSS classes from consumer
+	Attrs      templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// DateRangeInputsComponent renders a .date-range pair of fields with full Props control.
+templ DateRangeInputsComponent(props DateRangeInputsProps) {
+	<div class={ lw.ClassNames("date-range", lw.VariantClass("date-range", props.Size), props.Class) } { props.Attrs... }>
+		<input
+			type={ lw.DefaultStr(props.Type, "date") }
+			name={ props.StartName }
+			if props.StartValue != "" {
+				value={ props.StartValue }
+			}
+			aria-label={ lw.DefaultStr(props.StartLabel, "Start date") }
+			{ props.StartAttrs... }
+		/>
+		<span aria-hidden="true">–</span>
+		<input
+			type={ lw.DefaultStr(props.Type, "date") }
+			name={ props.EndName }
+			if props.EndValue != "" {
+				value={ props.EndValue }
+			}
+			aria-label={ lw.DefaultStr(props.EndLabel, "End date") }
+			{ props.EndAttrs... }
+		/>
+	</div>
+}
+
+// DateRangeInputs renders a pair of date fields (convenience wrapper).
+templ DateRangeInputs(startName, endName, startValue, endValue string) {
+	@DateRangeInputsComponent(DateRangeInputsProps{StartName: startName, EndName: endName, StartValue: startValue, EndValue: endValue})
+}
+
+// PresetOption holds data for one preset radio.
+type PresetOption struct {
+	Value   string // Submitted value
+	Label   string // Visible text
+	Checked bool   // Whether the preset is selected
+}
+
+// PresetsProps holds configuration for a radio group styled as a list of choices.
+type PresetsProps struct {
+	Name       string           // Radio group name
+	Label      string           // Group aria-label; defaults to "Preset ranges"
+	Options    []PresetOption   // Preset choices
+	Inline     bool             // Wrapping row instead of a stacked list
+	InputAttrs templ.Attributes // Developer-controlled attributes for every radio <input>, after component attributes; component wins on collision. Never populate from untrusted input.
+	Class      string           // Additional CSS classes from consumer
+	Attrs      templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// PresetsComponent renders a .presets radio group with full Props control.
+templ PresetsComponent(props PresetsProps) {
+	<div
+		class={ lw.ClassNames("presets", lw.If(props.Inline, "presets--inline"), props.Class) }
+		role="group"
+		aria-label={ lw.DefaultStr(props.Label, "Preset ranges") }
+		{ props.Attrs... }
+	>
+		for _, opt := range props.Options {
+			<label class="radio"><input type="radio" name={ props.Name } value={ opt.Value } checked?={ opt.Checked } { props.InputAttrs... }/><span>{ opt.Label }</span></label>
+		}
+	</div>
+}
+
+// Presets renders a stacked preset radio group (convenience wrapper).
+templ Presets(name string, options []PresetOption) {
+	@PresetsComponent(PresetsProps{Name: name, Options: options})
+}
+
+// DateFilterProps holds configuration for a date filter panel.
+// Compose the body from Presets, DateRangeInputs, Calendar, and CalendarGroup.
+type DateFilterProps struct {
+	ID           string           // Optional id on the <details> element
+	TriggerID    string           // Optional id on the <summary> trigger
+	Label        string           // Trigger label, e.g. "Last week" or "Jan 8 – Jan 14, 2027"
+	SummaryAttrs templ.Attributes // Developer-controlled attributes for a muted summary span; the span renders only when set. Never populate from untrusted input.
+	Icon         templ.Component  // Leading trigger icon; nil renders the default calendar icon
+	TriggerClass string           // Additional classes on the <summary> trigger
+	Sidebar      bool             // Wide layout: first body child (presets) beside the rest (calendars)
+	Variant      string           // "end", "up"
+	Open         bool             // Render the panel open
+	MenuTag      string           // "form" (default) or "div"
+	Method       string           // Form method; defaults to "get"
+	Action       string           // Optional form action
+	Header       templ.Component  // Optional header content; nil omits the <header>
+	HeaderClass  string           // Classes on the header; consumers pass layout utilities here
+	BodyClass    string           // Additional classes on .body
+	Footer       templ.Component  // Optional footer content (e.g. Cancel and Apply); nil omits the footer
+	FooterClass  string           // Classes on the footer; consumers pass layout utilities here
+	Class        string           // Additional CSS classes on the <details> element
+	Attrs        templ.Attributes // Attributes spread onto the <details> element. Never populate from untrusted input.
+}
+
+// dateFilterIcon renders the default calendar trigger icon.
+templ dateFilterIcon() {
+	<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>
+}
+
+// DateFilterComponent renders a date filter panel with full Props control; children fill the body.
+templ DateFilterComponent(props DateFilterProps) {
+	@DropdownPanelComponent(DropdownPanelProps{
+		ID:           props.ID,
+		TriggerID:    props.TriggerID,
+		Label:        props.Label,
+		SummaryAttrs: props.SummaryAttrs,
+		Icon:         dateFilterTriggerIcon(props.Icon),
+		TriggerClass: props.TriggerClass,
+		Variant:      props.Variant,
+		Open:         props.Open,
+		MenuTag:      props.MenuTag,
+		Method:       props.Method,
+		Action:       props.Action,
+		Header:       props.Header,
+		HeaderClass:  props.HeaderClass,
+		BodyClass:    lw.ClassNames(lw.If(props.Sidebar, "sidebar"), props.BodyClass),
+		Footer:       props.Footer,
+		FooterClass:  props.FooterClass,
+		Class:        lw.ClassNames("date-filter", props.Class),
+		Attrs:        props.Attrs,
+	}) {
+		{ children... }
+	}
+}
+
+// DateFilter renders a presets-only date filter panel (convenience wrapper).
+templ DateFilter(label, name string, options []PresetOption) {
+	@DateFilterComponent(DateFilterProps{Label: label}) {
+		@Presets(name, options)
+	}
+}
