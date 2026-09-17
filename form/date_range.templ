@@ -1,64 +1,62 @@
 package form
 
-import lw "github.com/Design-Machines-Studio/livewires-templ"
-
 // DateRangeProps holds configuration for a date range picker.
 type DateRangeProps struct {
 	StartName  string           // Field name for start date
 	EndName    string           // Field name for end date
 	StartValue string           // Current start date value
 	EndValue   string           // Current end date value
-	Label      string           // Label for the date range
+	Label      string           // Legend for the date range; omitted when empty
 	Error      string           // Error message; when non-empty, applies error styling and aria attributes
-	Class      string           // Additional CSS classes from consumer
-	Attrs      templ.Attributes // Catch-all: data-*, aria-*, etc.
+	Class      string           // Additional CSS classes on the fieldset
+	Attrs      templ.Attributes // Catch-all for the fieldset: data-*, aria-*, etc.
 }
 
-// DateRange renders a pair of date inputs for range selection.
+// dateRangeInputAttrs returns error wiring for both inputs; both point at the one error paragraph.
+func dateRangeInputAttrs(props DateRangeProps) templ.Attributes {
+	if props.Error == "" {
+		return nil
+	}
+	return templ.Attributes{
+		"class":            "error",
+		"aria-invalid":     "true",
+		"aria-describedby": errorID(props.StartName),
+	}
+}
+
+// DateRange renders a legend and a .date-range pair of date inputs joined by a separator.
 templ DateRange(props DateRangeProps) {
-	<fieldset class={ lw.ClassNames("date-range stack stack-compact", props.Class) } { props.Attrs... }>
-		if props.Label != "" {
-			if props.Error != "" {
-				<legend class="error">{ props.Label }</legend>
-			} else {
-				<legend>{ props.Label }</legend>
-			}
+	<fieldset
+		if props.Class != "" {
+			class={ props.Class }
 		}
-		<div class="cluster">
-			<div class="stack stack-compact">
+		{ props.Attrs... }
+	>
+		if props.Label != "" {
+			<legend
 				if props.Error != "" {
-					<label for={ controlID(props.StartName) } class="error">From</label>
-					<input
-						type="date"
-						id={ controlID(props.StartName) }
-						name={ props.StartName }
-						value={ props.StartValue }
-						class="error"
-						aria-invalid="true"
-						aria-describedby={ errorID(props.StartName) }
-					/>
-				} else {
-					<label for={ controlID(props.StartName) }>From</label>
-					<input type="date" id={ controlID(props.StartName) } name={ props.StartName } value={ props.StartValue }/>
+					class="error"
 				}
-			</div>
-			<div class="stack stack-compact">
-				if props.Error != "" {
-					<label for={ controlID(props.EndName) } class="error">To</label>
-					<input
-						type="date"
-						id={ controlID(props.EndName) }
-						name={ props.EndName }
-						value={ props.EndValue }
-						class="error"
-						aria-invalid="true"
-						aria-describedby={ errorID(props.StartName) }
-					/>
-				} else {
-					<label for={ controlID(props.EndName) }>To</label>
-					<input type="date" id={ controlID(props.EndName) } name={ props.EndName } value={ props.EndValue }/>
-				}
-			</div>
+			>{ props.Label }</legend>
+		}
+		<div class="date-range">
+			<input
+				type="date"
+				id={ controlID(props.StartName) }
+				name={ props.StartName }
+				value={ props.StartValue }
+				aria-label="Start date"
+				{ dateRangeInputAttrs(props)... }
+			/>
+			<span aria-hidden="true">–</span>
+			<input
+				type="date"
+				id={ controlID(props.EndName) }
+				name={ props.EndName }
+				value={ props.EndValue }
+				aria-label="End date"
+				{ dateRangeInputAttrs(props)... }
+			/>
 		</div>
 		if props.Error != "" {
 			<p id={ errorID(props.StartName) } class="error" role="alert">{ props.Error }</p>
