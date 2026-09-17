@@ -111,6 +111,19 @@ import (
     ...body content...
 }
 
+// Icon-only panel trigger: Label is visually hidden text, no chevron
+@component.DropdownPanelComponent(component.DropdownPanelProps{
+    Label:        "Notifications",
+    Icon:         bellIcon,
+    IconOnly:     true,
+    TriggerClass: "button--subtle",
+    TriggerAttrs: templ.Attributes{"aria-controls": "notifications-body"},
+    MenuTag:      "div",
+    Variant:      "end",
+}) {
+    ...body content...
+}
+
 // Checkbox filter panel
 @component.CheckboxFilter("Circles", "circle", options)
 

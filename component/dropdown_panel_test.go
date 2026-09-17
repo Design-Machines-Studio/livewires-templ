@@ -219,3 +219,36 @@ func TestPresetsInputAttrs(t *testing.T) {
 		t.Error("expected label override and InputAttrs after component attrs")
 	}
 }
+
+func TestDropdownPanelIconOnlyTrigger(t *testing.T) {
+	html := testutil.RenderToString(t, DropdownPanelComponent(DropdownPanelProps{
+		Label:        "Notifications",
+		IconOnly:     true,
+		Icon:         staticHTML(`<svg class="icon" aria-hidden="true"></svg>`),
+		TriggerAttrs: templ.Attributes{"aria-controls": "notifications-body"},
+	}))
+	nodes := testutil.ParseFragment(t, html)
+	summary := testutil.FindElement(nodes, "summary")
+	if v, _ := testutil.AttrVal(summary, "aria-controls"); v != "notifications-body" {
+		t.Errorf("expected TriggerAttrs on summary, got aria-controls=%q", v)
+	}
+	if _, ok := testutil.AttrVal(summary, "aria-label"); ok {
+		t.Error("icon-only trigger must name itself with text content, not aria-label")
+	}
+	if !strings.Contains(html, `<span class="visually-hidden">Notifications</span>`) {
+		t.Errorf("expected visually hidden label:\n%s", html)
+	}
+	if testutil.FindElementByClass(nodes, "chevron") != nil {
+		t.Error("expected no chevron on an icon-only trigger")
+	}
+}
+
+func TestDropdownPanelIconOnlyWithoutLabelOmitsEmptySpan(t *testing.T) {
+	html := testutil.RenderToString(t, DropdownPanelComponent(DropdownPanelProps{
+		IconOnly: true,
+		Icon:     staticHTML(`<span id="bell">Bell<span class="visually-hidden">Notifications</span></span>`),
+	}))
+	if strings.Contains(html, `<span></span>`) || strings.Contains(html, `<span class="visually-hidden"></span>`) {
+		t.Errorf("expected no empty label span:\n%s", html)
+	}
+}
