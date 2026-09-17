@@ -6,11 +6,13 @@ import lw "github.com/Design-Machines-Studio/livewires-templ"
 type DropdownPanelProps struct {
 	ID           string           // Optional id on the <details> element
 	TriggerID    string           // Optional id on the <summary> trigger
-	Label        string           // Trigger label, e.g. "Circles"
+	Label        string           // Trigger label, e.g. "Circles"; visually hidden when IconOnly
+	IconOnly     bool             // Icon-only trigger: Label becomes visually hidden text and the chevron is omitted. Give Icon or Label an accessible name.
 	Summary      string           // Muted selection summary beside the label, e.g. "All" or "2"
 	SummaryAttrs templ.Attributes // Developer-controlled attributes for the summary span (e.g. Datastar data-text). Never populate from untrusted input.
 	Icon         templ.Component  // Optional leading icon inside the trigger; nil omits it
 	TriggerClass string           // Additional classes on the <summary> trigger, e.g. "button--subtle"
+	TriggerAttrs templ.Attributes // Developer-controlled attributes on the <summary> trigger (e.g. aria-controls). Never populate from untrusted input.
 	Variant      string           // "end", "up"
 	Open         bool             // Render the panel open
 	MenuTag      string           // "form" (default) or "div" when the panel sits inside another form or filters client-side
@@ -72,15 +74,24 @@ templ DropdownPanelComponent(props DropdownPanelProps) {
 				id={ props.TriggerID }
 			}
 			class={ lw.ClassNames("trigger button button--small", props.TriggerClass) }
+			{ props.TriggerAttrs... }
 		>
 			if props.Icon != nil {
 				@props.Icon
 			}
-			<span>{ props.Label }</span>
+			if props.IconOnly {
+				if props.Label != "" {
+					<span class="visually-hidden">{ props.Label }</span>
+				}
+			} else {
+				<span>{ props.Label }</span>
+			}
 			if props.Summary != "" || len(props.SummaryAttrs) > 0 {
 				<span class="text-muted" { props.SummaryAttrs... }>{ props.Summary }</span>
 			}
-			@panelChevron()
+			if !props.IconOnly {
+				@panelChevron()
+			}
 		</summary>
 		if props.MenuTag == "div" {
 			<div class="menu" { props.MenuAttrs... }>
