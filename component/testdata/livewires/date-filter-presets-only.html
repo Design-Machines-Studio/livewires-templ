@@ -1,0 +1,27 @@
+<details class="dropdown dropdown--panel date-filter">
+  <summary class="trigger button button--small">
+    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>
+    <span>Last week</span>
+    <svg class="icon chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+  </summary>
+  <form class="menu" method="get">
+    <div class="body">
+      <div class="presets" role="group" aria-label="Preset ranges">
+        <label class="radio"><input type="radio" name="r1" value="today"><span>Today</span></label>
+        <label class="radio"><input type="radio" name="r1" value="yesterday"><span>Yesterday</span></label>
+        <label class="radio"><input type="radio" name="r1" value="week"><span>This week</span></label>
+        <label class="radio"><input type="radio" name="r1" value="7d" checked><span>Last week</span></label>
+        <label class="radio"><input type="radio" name="r1" value="month"><span>This month</span></label>
+        <label class="radio"><input type="radio" name="r1" value="30d"><span>Last month</span></label>
+        <label class="radio"><input type="radio" name="r1" value="year"><span>This year</span></label>
+        <label class="radio"><input type="radio" name="r1" value="12m"><span>Last 12 months</span></label>
+        <label class="radio"><input type="radio" name="r1" value="fy"><span>This fiscal year</span></label>
+        <label class="radio"><input type="radio" name="r1" value="all"><span>All time</span></label>
+      </div>
+    </div>
+    <footer class="grid grid-columns-2">
+      <button type="reset" class="button button--small">Cancel</button>
+      <button type="submit" class="button button--small button--accent">Apply</button>
+    </footer>
+  </form>
+</details>

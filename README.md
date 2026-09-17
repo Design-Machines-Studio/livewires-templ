@@ -102,22 +102,54 @@ import (
 // Toast
 @component.Toast("Saved!", "success")
 
-// Dropdown checkbox filter (details.dropdown--panel with a checkbox group)
-@component.CheckboxFilter("circle-options", "Circles", "circle", options)
+// Panel dropdown (details.dropdown--panel, form.menu, scrollable .body)
+@component.DropdownPanelComponent(component.DropdownPanelProps{
+    Label:       "Status",
+    Footer:      applyButtons,
+    FooterClass: "cluster cluster-between",
+}) {
+    ...body content...
+}
 
-// Checkbox filter with summary, footer, and consumer-owned spacing
+// Checkbox filter panel
+@component.CheckboxFilter("Circles", "circle", options)
+
+// Checkbox filter with summary, footer, and consumer-owned layout classes
 @component.CheckboxFilterComponent(component.CheckboxFilterProps{
-    OptionsID:   "circle-options",
     Label:       "Circles",
     Summary:     "All",
     GroupLabel:  "Filter by circle",
     Name:        "circle",
     CountLabel:  "members",
     Options:     options,
-    BodyClass:   "stack stack-compact px-05 py-025",
-    FooterClass: "cluster cluster-start pb-0 pt-025",
+    MenuTag:     "div", // client-side filtering or nested in another form
     Footer:      clearButton,
+    FooterClass: "cluster cluster-between",
 })
+
+// Calendar month grid (six weeks, Monday first)
+@component.CalendarComponent(component.CalendarProps{
+    Month:      month,
+    Today:      today,
+    RangeStart: from,
+    RangeEnd:   to,
+    DayAttrs:   func(d time.Time) templ.Attributes { return templ.Attributes{"data-date": d.Format("2006-01-02")} },
+})
+
+// Two months side by side, navigation on the outer edges
+@component.CalendarGroup(component.CalendarProps{Month: month, Today: today}, 2)
+
+// Date filter: compose the body from Presets, DateRangeInputs, and calendars
+@component.DateFilterComponent(component.DateFilterProps{
+    Label:       "Jan 8 – Jan 14, 2027",
+    Sidebar:     true,
+    Footer:      applyButtons,
+    FooterClass: "cluster cluster-between",
+}) {
+    @component.Presets("range", presets)
+    @component.CalendarGroup(component.CalendarProps{Month: month, RangeStart: from, RangeEnd: to}, 2)
+}
+@component.DateRangeInputsComponent(component.DateRangeInputsProps{StartName: "from", EndName: "to", Size: "small"})
 
 // Full props control
 @component.ButtonComponent(component.ButtonProps{
