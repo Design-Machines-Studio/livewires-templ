@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/Design-Machines-Studio/livewires-templ/internal/testutil"
+	"github.com/a-h/templ"
 )
 
 func TestDateRangeRenders(t *testing.T) {
@@ -14,23 +15,48 @@ func TestDateRangeRenders(t *testing.T) {
 		Label:     "Date Range",
 	}
 	html := testutil.RenderToString(t, DateRange(data))
-	if !strings.Contains(html, `<div class="date-range"><input type="date" id="from" name="from" value="" aria-label="Start date"> <span aria-hidden="true">–</span> <input type="date" id="to" name="to" value="" aria-label="End date"></div>`) {
-		t.Errorf("expected Live Wires .date-range markup, got %s", html)
-	}
-	if strings.Contains(html, "stack") || strings.Contains(html, "cluster") || strings.Contains(html, "<label") {
-		t.Error("expected no layout classes or visible labels")
-	}
-	if strings.Contains(html, "<fieldset class") || strings.Contains(html, "<legend class") {
-		t.Error("expected no empty class attributes")
-	}
-	if !strings.Contains(html, "Date Range") {
-		t.Error("expected legend text")
+	if !strings.Contains(html, `<fieldset><legend>Date Range</legend><div class="date-range">`) {
+		t.Errorf("expected fieldset with legend around div.date-range, got %s", html)
 	}
 	if !strings.Contains(html, `name="from"`) {
 		t.Error("expected start date field name")
 	}
 	if !strings.Contains(html, `name="to"`) {
 		t.Error("expected end date field name")
+	}
+	if !strings.Contains(html, `aria-label="Start date"`) || !strings.Contains(html, `aria-label="End date"`) {
+		t.Error("expected default aria-labels on both inputs")
+	}
+	if !strings.Contains(html, `<span aria-hidden="true">–</span>`) {
+		t.Error("expected hidden separator")
+	}
+	if strings.Contains(html, "stack") || strings.Contains(html, "cluster") {
+		t.Error("must not bake layout primitives into markup")
+	}
+}
+
+// Without a label or error the root is the reference div.date-range and carries Class and Attrs.
+func TestDateRangeBare(t *testing.T) {
+	html := testutil.RenderToString(t, DateRange(DateRangeProps{
+		StartName:  "r-from",
+		EndName:    "r-to",
+		StartLabel: "From",
+		Small:      true,
+		Class:      "extra",
+		Attrs:      templ.Attributes{"data-test": "x"},
+		EndAttrs:   templ.Attributes{"data-bind": "end"},
+	}))
+	if strings.Contains(html, "<fieldset") {
+		t.Error("expected no fieldset without label or error")
+	}
+	if !strings.Contains(html, `<div class="date-range date-range--small extra" data-test="x">`) {
+		t.Errorf("expected small date-range root with class and attrs, got %s", html)
+	}
+	if !strings.Contains(html, `aria-label="From"`) {
+		t.Error("expected custom start aria-label")
+	}
+	if !strings.Contains(html, `data-bind="end"`) {
+		t.Error("expected EndAttrs on the end input")
 	}
 }
 
@@ -41,36 +67,34 @@ func TestDateRangeWithError(t *testing.T) {
 		Label:     "Date Range",
 		Error:     "End date must be after start",
 	}))
-	if !strings.Contains(html, `class="error"`) {
-		t.Error("expected error class")
+	if !strings.Contains(html, `<legend class="error">`) {
+		t.Error("expected error legend")
 	}
-	if !strings.Contains(html, `aria-invalid="true"`) {
-		t.Error("expected aria-invalid on inputs")
+	if strings.Count(html, `aria-invalid="true"`) != 2 {
+		t.Error("expected aria-invalid on both inputs")
 	}
-	if !strings.Contains(html, `id="from-error"`) {
-		t.Error("expected error message id")
+	if strings.Count(html, `aria-describedby="from-error"`) != 2 {
+		t.Error("expected both inputs to describe the shared error")
 	}
-	if !strings.Contains(html, `role="alert"`) {
-		t.Error("expected role=alert")
-	}
-	if !strings.Contains(html, "End date must be after start") {
-		t.Error("expected error message text")
+	if !strings.Contains(html, `<p id="from-error" class="error" role="alert">End date must be after start</p>`) {
+		t.Error("expected shared error paragraph")
 	}
 }
 
-// Both inputs point at the single shared error paragraph, so both IDREFs must
+// Both inputs point at the single shared error paragraph, so the IDREF must
 // resolve after sanitization.
 func TestDateRangeSanitizesIDs(t *testing.T) {
 	html := testutil.RenderToString(t, DateRange(DateRangeProps{
-		StartName: "from date", EndName: "to date", Label: "Range", Error: "Invalid range",
+		StartName: "from date", EndName: "to date", Error: "Invalid range",
 	}))
-	if strings.Count(html, `aria-describedby="`+errorID("from date")+`"`) != 2 {
-		t.Errorf("expected both inputs to reference the sanitized error id, got %s", html)
-	}
-	if !strings.Contains(html, `<p id="`+errorID("from date")+`"`) {
+	id := errorID("from date")
+	if !strings.Contains(html, `<p id="`+id+`"`) {
 		t.Errorf("expected sanitized error paragraph id, got %s", html)
 	}
-	if strings.Contains(html, `id="from date"`) || strings.Contains(html, `id="to date"`) {
+	if strings.Count(html, `aria-describedby="`+id+`"`) != 2 {
+		t.Error("expected both inputs to reference the sanitized error id")
+	}
+	if strings.Contains(html, `id="from date"`) {
 		t.Error("ids must not contain whitespace")
 	}
 }

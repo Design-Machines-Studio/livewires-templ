@@ -262,7 +262,7 @@ import (
 @form.Filter(form.FilterProps{Title: "Status", Name: "status", Options: options})
 
 // Date range
-@form.DateRange(form.DateRangeProps{Legend: "Date range", StartName: "from", EndName: "to"})
+@form.DateRange(form.DateRangeProps{Label: "Date range", StartName: "from", EndName: "to"})
 
 // Field with error
 @form.Field(form.FieldProps{
