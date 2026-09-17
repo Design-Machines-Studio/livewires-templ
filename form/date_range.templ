@@ -1,65 +1,72 @@
 package form
 
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
 // DateRangeProps holds configuration for a date range picker.
 type DateRangeProps struct {
 	StartName  string           // Field name for start date
 	EndName    string           // Field name for end date
 	StartValue string           // Current start date value
 	EndValue   string           // Current end date value
-	Label      string           // Legend for the date range; omitted when empty
+	StartLabel string           // Accessible name for the start input (default "Start date")
+	EndLabel   string           // Accessible name for the end input (default "End date")
+	Label      string           // Legend; when set (or Error is set) the inputs are wrapped in a fieldset
 	Error      string           // Error message; when non-empty, applies error styling and aria attributes
-	Class      string           // Additional CSS classes on the fieldset
-	Attrs      templ.Attributes // Catch-all for the fieldset: data-*, aria-*, etc.
+	Small      bool             // Adds date-range--small for toolbars and panels
+	StartAttrs templ.Attributes // Spread on the start input, after component attributes
+	EndAttrs   templ.Attributes // Spread on the end input, after component attributes
+	Class      string           // Additional CSS classes from consumer
+	Attrs      templ.Attributes // Catch-all on the root: the fieldset when present, else div.date-range
 }
 
-// dateRangeInputAttrs returns error wiring for both inputs; both point at the one error paragraph.
-func dateRangeInputAttrs(props DateRangeProps) templ.Attributes {
-	if props.Error == "" {
-		return nil
-	}
-	return templ.Attributes{
-		"class":            "error",
-		"aria-invalid":     "true",
-		"aria-describedby": errorID(props.StartName),
-	}
-}
-
-// DateRange renders a legend and a .date-range pair of date inputs joined by a separator.
+// DateRange renders two date inputs joined by a separator (div.date-range).
+// With a Label or Error it wraps them in a fieldset with a legend and one shared error.
 templ DateRange(props DateRangeProps) {
-	<fieldset
-		if props.Class != "" {
-			class={ props.Class }
-		}
-		{ props.Attrs... }
-	>
-		if props.Label != "" {
-			<legend
+	if props.Label != "" || props.Error != "" {
+		<fieldset
+			if props.Class != "" {
+				class={ props.Class }
+			}
+			{ props.Attrs... }
+		>
+			if props.Label != "" {
 				if props.Error != "" {
-					class="error"
+					<legend class="error">{ props.Label }</legend>
+				} else {
+					<legend>{ props.Label }</legend>
 				}
-			>{ props.Label }</legend>
-		}
-		<div class="date-range">
-			<input
-				type="date"
-				id={ controlID(props.StartName) }
-				name={ props.StartName }
-				value={ props.StartValue }
-				aria-label="Start date"
-				{ dateRangeInputAttrs(props)... }
-			/>
-			<span aria-hidden="true">–</span>
-			<input
-				type="date"
-				id={ controlID(props.EndName) }
-				name={ props.EndName }
-				value={ props.EndValue }
-				aria-label="End date"
-				{ dateRangeInputAttrs(props)... }
-			/>
-		</div>
-		if props.Error != "" {
-			<p id={ errorID(props.StartName) } class="error" role="alert">{ props.Error }</p>
-		}
-	</fieldset>
+			}
+			@dateRangeInputs(props, "", nil)
+			if props.Error != "" {
+				<p id={ errorID(props.StartName) } class="error" role="alert">{ props.Error }</p>
+			}
+		</fieldset>
+	} else {
+		@dateRangeInputs(props, props.Class, props.Attrs)
+	}
+}
+
+templ dateRangeInputs(props DateRangeProps, class string, attrs templ.Attributes) {
+	<div class={ lw.ClassNames("date-range", lw.If(props.Small, "date-range--small"), class) } { attrs... }>
+		@dateRangeInput(props, props.StartName, props.StartValue, lw.DefaultStr(props.StartLabel, "Start date"), props.StartAttrs)
+		<span aria-hidden="true">–</span>
+		@dateRangeInput(props, props.EndName, props.EndValue, lw.DefaultStr(props.EndLabel, "End date"), props.EndAttrs)
+	</div>
+}
+
+templ dateRangeInput(props DateRangeProps, name, value, label string, attrs templ.Attributes) {
+	if props.Error != "" {
+		<input
+			type="date"
+			name={ name }
+			value={ value }
+			class="error"
+			aria-label={ label }
+			aria-invalid="true"
+			aria-describedby={ errorID(props.StartName) }
+			{ attrs... }
+		/>
+	} else {
+		<input type="date" name={ name } value={ value } aria-label={ label } { attrs... }/>
+	}
 }
