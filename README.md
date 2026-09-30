@@ -399,3 +399,10 @@ make all        # generate + test + lint
 ## License
 
 Unlicense
+
+Required Field, Select, and Textarea labels display muted `Required` text from
+the existing `Required` prop. Native required semantics remain authoritative;
+the decorative indicator is hidden from assistive technology. Custom labels and
+group legends can compose `form.RequiredIndicator(required)`. Markdown adapters
+can use the static `form.RequiredIndicatorMarkup(required)` with escaped labels.
+Consumers must provide readable contrast for Live Wires `text-muted`.

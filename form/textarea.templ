@@ -32,7 +32,7 @@ func getRows(r int) string {
 templ Textarea(props TextareaProps) {
 	<div class={ lw.ClassNames("field stack stack-compact", props.Class) }>
 		if props.Error != "" {
-			<label for={ controlID(props.Name) } class="error">{ props.Label }</label>
+			<label for={ controlID(props.Name) } class="error">{ props.Label }@RequiredIndicator(props.Required)</label>
 			if props.Hint != "" {
 				<p id={ hintID(props.Name) } class="hint">{ props.Hint }</p>
 			}
@@ -52,7 +52,7 @@ templ Textarea(props TextareaProps) {
 			>{ props.Value }</textarea>
 			<p id={ errorID(props.Name) } class="error" role="alert">{ props.Error }</p>
 		} else {
-			<label for={ controlID(props.Name) }>{ props.Label }</label>
+			<label for={ controlID(props.Name) }>{ props.Label }@RequiredIndicator(props.Required)</label>
 			if props.Hint != "" {
 				<p id={ hintID(props.Name) } class="hint">{ props.Hint }</p>
 			}
