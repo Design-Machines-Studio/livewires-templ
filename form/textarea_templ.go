@@ -107,6 +107,10 @@ func Textarea(props TextareaProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
+			templ_7745c5c3_Err = RequiredIndicator(props.Required).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</label> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -290,6 +294,10 @@ func Textarea(props TextareaProps) templ.Component {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/textarea.templ`, Line: 55, Col: 53}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = RequiredIndicator(props.Required).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

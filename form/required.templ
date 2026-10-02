@@ -1,0 +1,8 @@
+package form
+
+// RequiredIndicator composes with custom labels and appropriate group legends.
+// Group minimum-selection rules must not mark every checkbox required.
+templ RequiredIndicator(required bool) {
+ // safe: RequiredIndicatorMarkup returns only static library-owned markup.
+ @templ.Raw(RequiredIndicatorMarkup(required))
+}

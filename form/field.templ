@@ -28,7 +28,7 @@ func fieldType(t string) string {
 templ Field(props FieldProps) {
 	<div class={ lw.ClassNames("field stack stack-compact", props.Class) }>
 		if props.Error != "" {
-			<label for={ controlID(props.Name) } class="error">{ props.Label }</label>
+			<label for={ controlID(props.Name) } class="error">{ props.Label }@RequiredIndicator(props.Required)</label>
 			<input
 				type={ fieldType(props.Type) }
 				id={ controlID(props.Name) }
@@ -46,7 +46,7 @@ templ Field(props FieldProps) {
 			/>
 			<p id={ errorID(props.Name) } class="error" role="alert">{ props.Error }</p>
 		} else {
-			<label for={ controlID(props.Name) }>{ props.Label }</label>
+			<label for={ controlID(props.Name) }>{ props.Label }@RequiredIndicator(props.Required)</label>
 			<input
 				type={ fieldType(props.Type) }
 				id={ controlID(props.Name) }
