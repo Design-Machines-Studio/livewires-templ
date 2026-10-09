@@ -289,11 +289,15 @@ with lock_file.open('a') as lifecycle_lock:
         result=command(plan['argv'],check=False)
         result_path=evidence/(token+'-result.json')
         write(result_path,dict(schema_version=1,argv=plan['argv'],exit_code=result.returncode,stdout=result.stdout,stderr=result.stderr))
-        after,blocked=inventory(token+'-after',allow_blocked=True)
+        after,_=inventory(token+'-after',allow_blocked=True)
         receipt=kernel('record-create','--state-dir',state,'--plan',plan_path,'--result',result_path,'--before-inventory',before,'--after-inventory',after,check=False)
         (evidence/(token+'-creation-receipt.json')).write_text(receipt.stdout)
-        if result.returncode or receipt.returncode or blocked:
-            fail('Creation failed or current-run cleanup blocked; record-create was attempted. Inspect its receipt before stop. Evidence: '+str(result_path))
+        if result.returncode or receipt.returncode:
+            fail('Creation failed; record-create was attempted. Inspect its receipt before stop. Evidence: '+str(result_path))
+        # Registration can resolve a network dependency on the newly created
+        # container. The pre-registration plan is observation, not readiness.
+        kernel('validate-resource-registry','--state-dir',state,'--run-id',m['runId'],'--node-id',m['nodeId'])
+        reconcile(evidence/(token+'-registered-inventory-plans.json'))
 
     def stop():
         if not (state/'run-state.json').exists():

@@ -72,10 +72,12 @@ current-run plan. For creation recording, the sweep inventory supplies fresh
 observations of resources not yet registered; only this run's owned resources
 are passed to `record-create`. No sweep action is executed.
 After Docker returns, a valid observation reaches `record-create` even if Docker
-failed or the current plan has become blocked. The wrapper then reports failure
-and preserves the result and receipt. A registration attempt is not a claim
-that registration succeeded: inspect the receipt. Invalid/missing artifacts,
-unexpected statuses and current-run blockers prevent further lifecycle actions.
+failed or the current plan has become blocked. Failed Docker or registration
+commands preserve the result and receipt and stop creation. After both succeed,
+the wrapper validates the resource registry and obtains a fresh validated
+current-run projection. Registration can resolve a network dependency on the
+new app; the earlier observation does not determine readiness. Invalid/missing
+artifacts, unexpected statuses and fresh current-run blockers still stop creation.
 The wrapper initializes its unique shadow run under `.workflow-kernel/runs/`;
 that scratch state and returned overrides must never be staged.
 
@@ -135,8 +137,12 @@ retained preview allocation's `evidence/` directory (the allocation ending in
 supported Kernel observations and executes the wrapper's actual functions
 against temporary copies and stubbed commands. It checks known statuses,
 malformed artifacts, owner/path mismatches, partial-creation recording, safe
-current-run cleanup and initial/fresh current-run blockers. It never invokes
-Docker or Kernel, starts/stops an app, or modifies the retained allocation.
+current-run cleanup and initial/fresh current-run blockers. The registration
+interleaving uses the retained successful app result, registration receipt and
+pre-registration network blocker. Its post-registration projection and registry
+outcomes are stubbed; this checks wrapper decisions, not live Kernel behavior.
+It never invokes Docker or Kernel, starts/stops an app, or modifies the retained
+allocation.
 
 ```sh
 rtk proxy python3 - "$SORTABLE_LIFECYCLE_FIXTURES" <<'PY'
@@ -154,6 +160,13 @@ manifest = json.loads((fixtures/'lifecycle.json').read_text())
 current = json.loads((fixtures/'stop-972e3c97e6c047a0845b5663f26f58f2.current-run.json').read_text())
 sweep = json.loads((fixtures/'stop-972e3c97e6c047a0845b5663f26f58f2.stale-sweep.json').read_text())
 empty_current = json.loads((fixtures/'8c11ab066c134053954569cab0643f95-after-inventory-plans.current-run.json').read_text())
+app_token = 'bde09a2882494154bdfc994393787a3e'
+app_before = json.loads((fixtures/(app_token+'-before-inventory-plans.current-run.json')).read_text())
+app_blocked = json.loads((fixtures/(app_token+'-after-inventory-plans.current-run.json')).read_text())
+app_sweep = json.loads((fixtures/(app_token+'-after-inventory-plans.stale-sweep.json')).read_text())
+app_plan = json.loads((fixtures/(app_token+'-creation-plan.json')).read_text())
+app_result = json.loads((fixtures/(app_token+'-result.json')).read_text())
+app_receipt = json.loads((fixtures/(app_token+'-creation-receipt.json')).read_text())
 scope_id = current['plan']['scope']['repository_scope_id']
 args = (manifest['runId'],manifest['nodeId'],scope_id)
 count = 0
@@ -209,19 +222,28 @@ with tempfile.TemporaryDirectory(prefix='sortable-lifecycle-regression-') as tem
     calls=[];plans=[current]
     creation_plan=json.loads((fixtures/'8c11ab066c134053954569cab0643f95-creation-plan.json').read_text())
     creation_result=json.loads((fixtures/'8c11ab066c134053954569cab0643f95-result.json').read_text())
+    observed_sweep=sweep
+    record_status=3;record_stdout='{"command_succeeded":false}'
+    registry_status=0;fresh_status=3
+    after_ids=['2a33a8445c73']
     def kernel(*argv,check=True):
         calls.append(tuple(map(str,argv)));name=argv[0]
         def arg(key):return pathlib.Path(argv[argv.index(key)+1])
         if name=='plan-reconcile':
             cur=plans.pop(0) if len(plans)>1 else plans[0]
-            emit(arg('--output'),cur=cur)
-            return types.SimpleNamespace(returncode=3,stdout='',stderr='')
+            emit(arg('--output'),cur=cur,stale=observed_sweep)
+            code=fresh_status if '-registered-' in str(arg('--output')) else 3
+            return types.SimpleNamespace(returncode=code,stdout='',stderr='')
         if name=='plan-compose':
             ns['write'](arg('--output'),creation_plan)
         elif name=='record-create':
             after=ns['read'](arg('--after-inventory'))
-            assert [r['resource_id'] for r in after['resources']]==['2a33a8445c73']
-            return types.SimpleNamespace(returncode=3,stdout='{"command_succeeded":false}',stderr='')
+            assert [r['resource_id'] for r in after['resources']]==after_ids
+            return types.SimpleNamespace(returncode=record_status,stdout=record_stdout,stderr='')
+        elif name=='validate-resource-registry':
+            assert check and calls[-2][0]=='record-create'
+            if registry_status:
+                ns['fail']('stubbed registry validation failure')
         elif name=='next-cleanup-step':
             assert '.current-run.json' in str(arg('--plan'))
             done=bool(ns['read'](arg('--outcomes')))
@@ -241,6 +263,44 @@ with tempfile.TemporaryDirectory(prefix='sortable-lifecycle-regression-') as tem
     calls.clear();plans[:]=[empty_current,blocked]
     rejected(lambda: ns['create'](creation_plan['argv']))
     assert any(c[0]=='record-create' for c in calls);count+=1
+    # Exact retained interleaving: the existing network is in use by an app
+    # absent from the registered-only projection; record-create adds that app.
+    assert app_result['exit_code']==0 and app_receipt['command_succeeded'] is True
+    assert [(d['disposition'],d['reason']) for d in app_blocked['plan']['dispositions']]==[('retained_for_dependency','resource_in_use')]
+    registered_ids={r['resource_id'] for r in app_receipt['registered']}
+    assert registered_ids and registered_ids.isdisjoint(r['resource_id'] for r in app_blocked['inventory']['resources'])
+    # Stub a fresh blocker-free projection over those same observed resources.
+    registered=copy.deepcopy(app_blocked)
+    registered['plan']['dispositions']=[]
+    registered['inventory']=copy.deepcopy(app_sweep['inventory'])
+    registered['inventory']['source']='registered_exact'
+    registered['plan']['before']=[r['kind']+':'+r['resource_id'] for r in registered['inventory']['resources']]
+    creation_plan=app_plan;creation_result=app_result;observed_sweep=app_sweep
+    record_status=0;record_stdout=json.dumps(app_receipt)
+    after_ids=[r['resource_id'] for r in app_sweep['inventory']['resources']]
+    calls.clear();plans[:]=[app_before,app_blocked,registered]
+    ns['create'](creation_plan['argv'])
+    assert [c[0] for c in calls]==['plan-reconcile','plan-compose','plan-reconcile','record-create','validate-resource-registry','plan-reconcile']
+    assert len({c[c.index('--output')+1] for c in calls if c[0]=='plan-reconcile'})==3
+    assert not any(c[0]=='execute-cleanup-step' for c in calls);count+=1
+    calls.clear();plans[:]=[app_before,app_blocked,app_blocked]
+    rejected(lambda: ns['create'](creation_plan['argv']))
+    assert calls[-1][0]=='plan-reconcile';count+=1
+    malformed=copy.deepcopy(registered);malformed['schema_version']=2
+    calls.clear();plans[:]=[app_before,app_blocked,malformed]
+    rejected(lambda: ns['create'](creation_plan['argv']))
+    assert calls[-1][0]=='plan-reconcile';count+=1
+    # Unexpected reconciliation statuses must also be rejected after recording.
+    for fresh_status in [0,1,2,4,5,6]:
+        calls.clear();plans[:]=[app_before,app_blocked,registered]
+        rejected(lambda: ns['create'](creation_plan['argv']))
+        assert calls[-1][0]=='plan-reconcile';count+=1
+    fresh_status=3
+    registry_status=2
+    calls.clear();plans[:]=[app_before,app_blocked,registered]
+    rejected(lambda: ns['create'](creation_plan['argv']))
+    assert calls[-1][0]=='validate-resource-registry';count+=1
+    registry_status=0;observed_sweep=sweep
     calls.clear();plans[:]=[current]
     ns['stop']()
     assert [c[0] for c in calls]==['plan-reconcile','next-cleanup-step','plan-reconcile','execute-cleanup-step','next-cleanup-step','record-cleanup'];count+=1
