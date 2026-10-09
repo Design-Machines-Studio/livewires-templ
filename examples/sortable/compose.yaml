@@ -3,7 +3,7 @@ services:
   builder:
     profiles: [build]
     build:
-      context: ../..
+      context: .
       dockerfile: Dockerfile
     image: ${SORTABLE_PROJECT:?task project}-toolchain
     working_dir: /app
@@ -17,7 +17,7 @@ services:
     command: [sh, -c, 'go build -trimpath -ldflags "-X main.buildReceipt=$$SORTABLE_BUILD_RECEIPT" -o /build/sortable ./examples/sortable']
   app:
     build:
-      context: ../..
+      context: .
       dockerfile: Dockerfile
     image: ${SORTABLE_PROJECT:?task project}-toolchain
     entrypoint: [/build/sortable]

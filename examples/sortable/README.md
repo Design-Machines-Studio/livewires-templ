@@ -54,12 +54,28 @@ encoded build receipt before builder planning. The same prefix supplies values
 to direct checks, Kernel inspection, returned execution and status; Kernel's
 restricted environment remains unchanged. Failed commands retain bounded
 stdout and stderr in structured diagnostics.
+Both services use build context `.`. With this exact `--project-directory`
+prefix, that means the selected physical repository root and its existing
+`Dockerfile`; `../..` would resolve outside the checkout.
 Creating calls are `run --rm --build builder` and
 `up --detach --wait --wait-timeout 30 app`. The wrapper sends each original argv
 to Kernel `plan-compose` with the exact repository project binding, materializes
 the returned label-only override, executes only the returned argv and immediately
 calls `record-create`. Kernel inventory projections are retained before and
 after each call, including partial failures. There is no raw creation fallback.
+`plan-reconcile` emits separate current-run and stale-sweep plans and returns
+their maximum status. The wrapper accepts only status 0 or 3, validates the
+descriptor's schema and exact companion paths, checks both artifacts and their
+status, and binds the current plan to this run, node and repository scope.
+A stale-sweep-only `lease_proof_stale` blocker does not invalidate a safe
+current-run plan. For creation recording, the sweep inventory supplies fresh
+observations of resources not yet registered; only this run's owned resources
+are passed to `record-create`. No sweep action is executed.
+After Docker returns, a valid observation reaches `record-create` even if Docker
+failed or the current plan has become blocked. The wrapper then reports failure
+and preserves the result and receipt. A registration attempt is not a claim
+that registration succeeded: inspect the receipt. Invalid/missing artifacts,
+unexpected statuses and current-run blockers prevent further lifecycle actions.
 The wrapper initializes its unique shadow run under `.workflow-kernel/runs/`;
 that scratch state and returned overrides must never be staged.
 
@@ -88,12 +104,155 @@ stop, recompiles and starts the same application with the same store. On SIGTERM
 the Go server closes its listener and drains HTTP handlers before exiting;
 writes are synchronous. A failed lifecycle retains its exact evidence for the
 host to inspect and recover with `stop` then `start` or `rebuild`.
+Each cleanup step requires a new validated current-run reconciliation witness
+and the existing Kernel execution guard. A blocked initial or fresh current
+plan stops cleanup; an unrelated stale-sweep blocker alone does not.
 
 Host/root owns live serving, browser evidence, image removal and final filesystem
 cleanup. After the final browser/restart proof, run `stop`, verify its receipt,
 remove only the exact task image recorded in `evidence/image-receipt.json` if
 still owned and unused, then finish the host's exact run using `owned-run-finish`.
 Workers do not start this target or clean parent resources.
+
+The exact-prefix build-context check is read-only (run from the selected checkout,
+with the recorded project and run root):
+
+```sh
+rtk docker --context rootless compose --env-file "$SORTABLE_RUN_DIR/evidence/compose.env" --project-name "$SORTABLE_PROJECT" --project-directory "$PWD" -f "$PWD/examples/sortable/compose.yaml" --profile '*' config --format json
+rtk proxy bash -n examples/sortable/run.sh
+```
+
+Inspect `services.builder.build` and `services.app.build`: both contexts must
+equal the physical checkout, and both Dockerfiles must remain `Dockerfile`.
+Successful configuration and fixture checks do not prove build/start/stop or
+browser behavior. Host/root must capture that live evidence after this repair.
+
+## Lifecycle fixture regression check
+
+Run this from the selected checkout. Set `SORTABLE_LIFECYCLE_FIXTURES` to the
+retained preview allocation's `evidence/` directory (the allocation ending in
+`pipeline-sortable-9-preview-20261009-1355-6rl2jjtq`). This check reads those
+supported Kernel observations and executes the wrapper's actual functions
+against temporary copies and stubbed commands. It checks known statuses,
+malformed artifacts, owner/path mismatches, partial-creation recording, safe
+current-run cleanup and initial/fresh current-run blockers. It never invokes
+Docker or Kernel, starts/stops an app, or modifies the retained allocation.
+
+```sh
+rtk proxy python3 - "$SORTABLE_LIFECYCLE_FIXTURES" <<'PY'
+import ast, copy, datetime, json, os, pathlib, re, sys, tempfile, types, uuid
+
+checkout = pathlib.Path.cwd().resolve()
+fixtures = pathlib.Path(sys.argv[1])
+source = (checkout/'examples/sortable/run.sh').read_text().split("<<'PY'\n",1)[1].rsplit('\nPY',1)[0]
+tree = ast.parse(source)
+names = {'fail','read','write','exact_object','string_list','validate_inventory','validate_cleanup_artifact','load_reconciliation','reconcile','inventory','create','stop'}
+functions = [node for node in ast.walk(tree) if isinstance(node,ast.FunctionDef) and node.name in names]
+ns = dict(datetime=datetime,json=json,os=os,pathlib=pathlib,re=re,uuid=uuid)
+exec(compile(ast.Module(body=functions,type_ignores=[]),'run.sh functions','exec'),ns)
+manifest = json.loads((fixtures/'lifecycle.json').read_text())
+current = json.loads((fixtures/'stop-972e3c97e6c047a0845b5663f26f58f2.current-run.json').read_text())
+sweep = json.loads((fixtures/'stop-972e3c97e6c047a0845b5663f26f58f2.stale-sweep.json').read_text())
+empty_current = json.loads((fixtures/'8c11ab066c134053954569cab0643f95-after-inventory-plans.current-run.json').read_text())
+scope_id = current['plan']['scope']['repository_scope_id']
+args = (manifest['runId'],manifest['nodeId'],scope_id)
+count = 0
+
+def rejected(fn):
+    global count
+    try:
+        fn()
+    except (SystemExit,ValueError,TypeError,KeyError):
+        count += 1
+    else:
+        raise AssertionError('expected fail-closed rejection')
+
+with tempfile.TemporaryDirectory(prefix='sortable-lifecycle-regression-') as temp:
+    root = pathlib.Path(temp)
+    evidence = root/'evidence'; evidence.mkdir()
+    state = root/'.workflow-kernel/runs'/manifest['runId']; state.mkdir(parents=True)
+    ns.update(checkout=root,evidence=evidence,state=state,m=manifest)
+    ns['write'](root/'.workflow-kernel/repository-scope.json',dict(scope_id=scope_id))
+    ns['write'](state/'run-state.json',dict(revision=1,updated_at='2026-10-09T00:00:00Z',nodes={}))
+    def emit(descriptor,cur=current,stale=sweep):
+        a=descriptor.with_name(descriptor.stem+'.current-run.json')
+        b=descriptor.with_name(descriptor.stem+'.stale-sweep.json')
+        ns['write'](a,cur);ns['write'](b,stale)
+        ns['write'](descriptor,dict(schema_version=1,kind='cleanup-plan-set',current_run_plan=str(a),stale_sweep_plan=str(b),ttl_hours=876000))
+    descriptor=evidence/'check.json';emit(descriptor)
+    assert ns['load_reconciliation'](descriptor,3,*args)[2] is False;count+=1
+    safe=copy.deepcopy(sweep);safe['plan']['dispositions']=[]
+    emit(descriptor,stale=safe)
+    assert ns['load_reconciliation'](descriptor,0,*args)[2] is False;count+=1
+    emit(descriptor)
+    for code in [0,1,2,4,5,6]:rejected(lambda: ns['load_reconciliation'](descriptor,code,*args))
+    for mutation in [
+        lambda d: d['plan']['scope'].update(run_id='foreign'),
+        lambda d: d['plan']['scope'].update(repository_scope_id='0'*64),
+        lambda d: d.update(schema_version=2),
+        lambda d: d['plan']['actions'][0].update(proof_digest='bad'),
+        lambda d: d['inventory']['resources'][0].update(inspect_ok='yes'),
+        lambda d: d['inventory']['resources'][0]['labels'].update({'com.designmachines.depot.run-id':'foreign'}),
+    ]:
+        modified=copy.deepcopy(current);mutation(modified);emit(descriptor,cur=modified)
+        rejected(lambda: ns['load_reconciliation'](descriptor,3,*args))
+    emit(descriptor)
+    doc=ns['read'](descriptor);doc['current_run_plan']=str(fixtures/'stop-972e3c97e6c047a0845b5663f26f58f2.current-run.json');ns['write'](descriptor,doc)
+    rejected(lambda: ns['load_reconciliation'](descriptor,3,*args))
+    emit(descriptor)
+    descriptor.write_text(descriptor.read_text().replace('"schema_version": 1','"schema_version": 1, "schema_version": 1'))
+    rejected(lambda: ns['load_reconciliation'](descriptor,3,*args))
+    emit(descriptor)
+    path=descriptor.with_name(descriptor.stem+'.current-run.json');path.unlink();path.symlink_to(fixtures/'stop-972e3c97e6c047a0845b5663f26f58f2.current-run.json')
+    rejected(lambda: ns['load_reconciliation'](descriptor,3,*args));path.unlink()
+    blocked=copy.deepcopy(current);blocked['plan']['actions']=[];blocked['plan']['dispositions']=copy.deepcopy(sweep['plan']['dispositions'])
+    calls=[];plans=[current]
+    creation_plan=json.loads((fixtures/'8c11ab066c134053954569cab0643f95-creation-plan.json').read_text())
+    creation_result=json.loads((fixtures/'8c11ab066c134053954569cab0643f95-result.json').read_text())
+    def kernel(*argv,check=True):
+        calls.append(tuple(map(str,argv)));name=argv[0]
+        def arg(key):return pathlib.Path(argv[argv.index(key)+1])
+        if name=='plan-reconcile':
+            cur=plans.pop(0) if len(plans)>1 else plans[0]
+            emit(arg('--output'),cur=cur)
+            return types.SimpleNamespace(returncode=3,stdout='',stderr='')
+        if name=='plan-compose':
+            ns['write'](arg('--output'),creation_plan)
+        elif name=='record-create':
+            after=ns['read'](arg('--after-inventory'))
+            assert [r['resource_id'] for r in after['resources']]==['2a33a8445c73']
+            return types.SimpleNamespace(returncode=3,stdout='{"command_succeeded":false}',stderr='')
+        elif name=='next-cleanup-step':
+            assert '.current-run.json' in str(arg('--plan'))
+            done=bool(ns['read'](arg('--outcomes')))
+            ns['write'](arg('--output'),dict(complete=done,step_index=0))
+        elif name=='execute-cleanup-step':
+            assert '.current-run.json' in str(arg('--plan'))
+            assert ns['read'](arg('--inventory'))==current['inventory']
+            ns['write'](arg('--output'),dict(guarded=True))
+        elif name!='record-cleanup':
+            raise AssertionError('unexpected command '+name)
+        return types.SimpleNamespace(returncode=0,stdout='{}',stderr='')
+    ns['kernel']=kernel
+    ns['command']=lambda argv,check=False: types.SimpleNamespace(returncode=creation_result['exit_code'],stdout=creation_result['stdout'],stderr=creation_result['stderr'])
+    plans[:]=[empty_current,empty_current]
+    rejected(lambda: ns['create'](creation_plan['argv']))
+    assert any(c[0]=='record-create' for c in calls);count+=1
+    calls.clear();plans[:]=[empty_current,blocked]
+    rejected(lambda: ns['create'](creation_plan['argv']))
+    assert any(c[0]=='record-create' for c in calls);count+=1
+    calls.clear();plans[:]=[current]
+    ns['stop']()
+    assert [c[0] for c in calls]==['plan-reconcile','next-cleanup-step','plan-reconcile','execute-cleanup-step','next-cleanup-step','record-cleanup'];count+=1
+    calls.clear();plans[:]=[blocked]
+    rejected(lambda: ns['stop']())
+    assert not any(c[0]=='execute-cleanup-step' for c in calls);count+=1
+    calls.clear();plans[:]=[current,blocked]
+    rejected(lambda: ns['stop']())
+    assert not any(c[0]=='execute-cleanup-step' for c in calls);count+=1
+print(f'PASS: {count} fixture assertions; no Docker or installed Kernel commands executed')
+PY
+```
 
 ## Personas and request boundary
 

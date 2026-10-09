@@ -10,7 +10,7 @@ case "$1" in assets|start|status|rebuild|stop) ;; *) exit 2 ;; esac
 export DOCKER_CONTEXT=rootless
 unset DOCKER_HOST
 exec python3 - "$1" "$3" "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd -P)" <<'PY'
-import base64, datetime, fcntl, hashlib, json, os, pathlib, pwd, shutil, subprocess, sys, time, urllib.request, uuid
+import base64, datetime, fcntl, hashlib, json, os, pathlib, pwd, re, shutil, subprocess, sys, time, urllib.request, uuid
 
 action, run_arg, checkout_arg = sys.argv[1:]
 checkout = pathlib.Path(checkout_arg)
@@ -34,10 +34,118 @@ def write(path, value):
     path.write_text(json.dumps(value, indent=2)+'\n')
 
 def read(path):
-    return json.loads(path.read_text())
+    def unique(pairs):
+        value={}
+        for key,item in pairs:
+            if key in value:
+                fail('Duplicate lifecycle artifact key: '+key)
+            value[key]=item
+        return value
+    return json.loads(path.read_text(),object_pairs_hook=unique,parse_constant=lambda x: fail('Invalid JSON constant: '+x))
 
 def sha(data):
     return hashlib.sha256(data).hexdigest()
+
+def exact_object(value, fields):
+    if type(value) is not dict or set(value)!=set(fields.split()):
+        fail('Malformed lifecycle artifact object.')
+
+def string_list(value):
+    if type(value) is not list or any(type(x) is not str for x in value):
+        fail('Malformed lifecycle artifact list.')
+
+def validate_inventory(value, source):
+    exact_object(value,'schema_version kind resources queried absent source evidence')
+    if type(value['schema_version']) is not int or value['schema_version']!=1 or value['kind']!='docker-inventory' or value['source']!=source:
+        fail('Unsupported Docker inventory schema/source.')
+    for field in ['resources','queried','absent','evidence']:
+        if type(value[field]) is not list:
+            fail('Malformed Docker inventory collection.')
+    for field in ['queried','absent']:
+        for row in value[field]:
+            string_list(row)
+            if len(row)!=2 or row[0] not in ['container','network','volume'] or not row[1]:
+                fail('Malformed Docker inventory identity.')
+    identities=set()
+    for resource in value['resources']:
+        exact_object(resource,'resource_id kind labels created_at running in_use system inspect_ok name use_known')
+        identity=(resource['kind'],resource['resource_id'])
+        if resource['kind'] not in ['container','network','volume'] or type(resource['resource_id']) is not str or not resource['resource_id'] or identity in identities:
+            fail('Malformed or repeated Docker resource identity.')
+        identities.add(identity)
+        if type(resource['labels']) is not dict or any(type(k) is not str or type(v) is not str for k,v in resource['labels'].items()):
+            fail('Malformed Docker resource labels.')
+        if any(type(resource[k]) is not bool for k in ['running','in_use','system','inspect_ok','use_known']) or type(resource['name']) is not str:
+            fail('Malformed Docker resource state.')
+        if type(resource['created_at']) is not str or datetime.datetime.fromisoformat(resource['created_at'].replace('Z','+00:00')).tzinfo is None:
+            fail('Malformed Docker resource timestamp.')
+    for result in value['evidence']:
+        exact_object(result,'schema_version argv exit_code stdout stderr')
+        string_list(result['argv'])
+        if type(result['schema_version']) is not int or result['schema_version']!=1 or type(result['exit_code']) is not int or any(type(result[k]) is not str for k in ['stdout','stderr']):
+            fail('Malformed Docker observation evidence.')
+
+def validate_cleanup_artifact(value, run_id, node_id, scope_id, stale):
+    exact_object(value,'schema_version kind plan inventory')
+    if type(value['schema_version']) is not int or value['schema_version']!=1 or value['kind']!='cleanup-plan-artifact':
+        fail('Unsupported cleanup artifact schema.')
+    plan=value['plan'];exact_object(plan,'schema_version scope before actions dispositions')
+    expected=dict(run_id='stale' if stale else run_id,terminal=not stale,stale_sweep=stale,repository_scope_id=scope_id)
+    if type(plan['schema_version']) is not int or plan['schema_version']!=1 or plan['scope']!=expected or any(type(plan['scope'][k]) is not bool for k in ['terminal','stale_sweep']):
+        fail('Cleanup plan is not bound to the selected run/repository scope.')
+    string_list(plan['before'])
+    for field in ['actions','dispositions']:
+        if type(plan[field]) is not list:
+            fail('Malformed cleanup plan collection.')
+        for row in plan[field]:
+            if field=='actions':
+                exact_object(row,'resource_id kind action argv requires_success_of owner lifecycle proof_digest preconditions environment predecessor_result_id evidence_digest')
+                string_list(row['argv']);string_list(row['preconditions'])
+                if row['action'] not in ['stop','remove'] or not row['argv'] or not row['preconditions'] or len(set(row['preconditions']))!=len(row['preconditions']) or type(row['environment']) is not dict or any(type(k) is not str or type(v) is not str for k,v in row['environment'].items()):
+                    fail('Malformed cleanup action.')
+                for key in ['proof_digest','evidence_digest','predecessor_result_id']:
+                    if key=='predecessor_result_id' and row[key] is None:
+                        continue
+                    if type(row[key]) is not str or re.fullmatch(r'sha256:[0-9a-f]{64}',row[key]) is None:
+                        fail('Malformed cleanup proof digest.')
+                dependency=row['requires_success_of']
+                if dependency is not None and (type(dependency) is not int or dependency<0):
+                    fail('Malformed cleanup dependency.')
+            else:
+                fields='resource_id kind owner lifecycle disposition action reason command_evidence evidence'
+                exact_object(row,fields+(' follow_up' if 'follow_up' in row else ''))
+                if row['disposition'] not in ['removed','retained_for_dependency','blocked','foreign','missing'] or row['action'] not in ['none','remove_exact_id'] or type(row['reason']) is not str or any(type(row[k]) is not list for k in ['command_evidence','evidence']):
+                    fail('Malformed cleanup disposition.')
+            exact_object(row['owner'],'run_id node_id')
+            if row['kind'] not in ['container','network','volume'] or type(row['resource_id']) is not str or not row['resource_id'] or row['lifecycle'] not in ['run','chunk'] or any(type(x) is not str or not x for x in row['owner'].values()):
+                fail('Malformed cleanup ownership.')
+            if not stale and (row['owner']!=dict(run_id=run_id,node_id=node_id) or row['lifecycle']!='run'):
+                fail('Cleanup row is outside the selected lifecycle owner.')
+    validate_inventory(value['inventory'],'managed_orphan_sweep' if stale else 'registered_exact')
+    if not stale:
+        for resource in value['inventory']['resources']:
+            labels=resource['labels']
+            if any(labels.get('com.designmachines.depot.'+key)!=expected for key,expected in [('managed','true'),('run-id',run_id),('node-id',node_id),('repository-scope-id',scope_id),('lifecycle','run')]):
+                fail('Current-run inventory ownership mismatch.')
+    return any(row['disposition'] in ['blocked','retained_for_dependency'] for row in plan['dispositions'])
+
+def load_reconciliation(descriptor, status, run_id, node_id, scope_id):
+    # Status is the maximum of two independent plans, not current-run authority.
+    if status not in [0,3]:
+        fail('Unexpected plan-reconcile status '+str(status)+'; evidence: '+str(descriptor))
+    paths=[descriptor,descriptor.with_name(descriptor.stem+'.current-run.json'),descriptor.with_name(descriptor.stem+'.stale-sweep.json')]
+    for path in paths:
+        if not path.is_file() or path.resolve()!=path or path.stat().st_uid!=os.getuid():
+            fail('Missing or unsafe reconciliation artifact: '+str(path))
+    document=read(descriptor);exact_object(document,'schema_version kind current_run_plan stale_sweep_plan ttl_hours')
+    if type(document['schema_version']) is not int or document['schema_version']!=1 or document['kind']!='cleanup-plan-set' or document['ttl_hours']!=876000 or document['current_run_plan']!=str(paths[1]) or document['stale_sweep_plan']!=str(paths[2]):
+        fail('Reconciliation descriptor schema/path binding mismatch.')
+    current=read(paths[1]);sweep=read(paths[2])
+    blocked=validate_cleanup_artifact(current,run_id,node_id,scope_id,False)
+    stale_blocked=validate_cleanup_artifact(sweep,run_id,node_id,scope_id,True)
+    if status!=(3 if blocked or stale_blocked else 0):
+        fail('Reconciliation status disagrees with emitted dispositions.')
+    return current,sweep,blocked
 
 if not run.is_absolute() or not run.is_dir() or run.resolve()!=run or run.stat().st_uid!=os.getuid():
     fail('Use the fresh, existing, ned-owned absolute run root allocated by the host.')
@@ -125,6 +233,8 @@ with lock_file.open('a') as lifecycle_lock:
     write_compose_env('not-building')
     compose=['docker','compose','--env-file',str(compose_env),'--project-name',m['project'],'--project-directory',str(checkout),'-f',str(checkout/'examples/sortable/compose.yaml')]
     state=pathlib.Path(m['kernelStateDir'])
+    if state!=checkout/'.workflow-kernel'/'runs'/m['runId']:
+        fail('Kernel state directory is outside the selected run.')
 
     def docker_preflight():
         info=json.loads(command(['docker','info','--format','{{json .}}']).stdout)
@@ -135,21 +245,37 @@ with lock_file.open('a') as lifecycle_lock:
         if not (state/'run-state.json').exists():
             kernel('init',state,'--run-id',m['runId'],'--mode','shadow','--occurred-at',datetime.datetime.now(datetime.timezone.utc).isoformat())
 
-    def inventory(prefix):
+    def reconcile(descriptor, allow_blocked=False):
+        if descriptor.parent!=evidence or descriptor.exists():
+            fail('Reconciliation requires a fresh owned descriptor path.')
+        result=kernel('plan-reconcile','--state-dir',state,'--run-id',m['runId'],'--ttl-hours','876000','--output',descriptor,check=False)
+        scope_id=read(checkout/'.workflow-kernel/repository-scope.json')['scope_id']
+        current,sweep,blocked=load_reconciliation(descriptor,result.returncode,m['runId'],m['nodeId'],scope_id)
+        if blocked and not allow_blocked:
+            fail('Selected current-run cleanup is blocked; evidence: '+str(descriptor))
+        return current,sweep,blocked
+
+    def inventory(prefix, allow_blocked=False):
         # Kernel's inventory projection, not a competing resource registry.
         descriptor=evidence/(prefix+'-inventory-plans.json')
-        kernel('plan-reconcile','--state-dir',state,'--run-id',m['runId'],'--ttl-hours','876000','--output',descriptor)
-        plans=read(descriptor)
+        current,sweep,blocked=reconcile(descriptor,allow_blocked=allow_blocked)
+        observation=sweep['inventory']
+        # The registered-only projection cannot see partial, not-yet-recorded
+        # creation. Use sweep observations, never its cleanup actions.
+        observation=dict(observation,resources=[r for r in observation['resources'] if r['labels'].get('com.designmachines.depot.run-id')==m['runId']])
+        for resource in observation['resources']:
+            if any(resource['labels'].get('com.designmachines.depot.'+key)!=expected for key,expected in [('managed','true'),('node-id',m['nodeId']),('repository-scope-id',current['plan']['scope']['repository_scope_id']),('lifecycle','run')]):
+                fail('Creation observation ownership mismatch.')
         path=evidence/(prefix+'-inventory.json')
-        write(path,read(pathlib.Path(plans['stale_sweep_plan']))['inventory'])
-        return path
+        write(path,observation)
+        return path,blocked
 
     def create(argv):
         token=uuid.uuid4().hex
         argv_path=evidence/(token+'-argv.json');write(argv_path,argv)
         deps=evidence/(token+'-dependencies.json');write(deps,[])
         plan_path=evidence/(token+'-creation-plan.json')
-        before=inventory(token+'-before')
+        before,_=inventory(token+'-before')
         kernel('plan-compose','--state-dir',state,'--run-id',m['runId'],'--node-id',m['nodeId'],'--lifecycle','run','--cleanup-policy','stop-remove','--repository-project-name',m['project'],'--argv-json',argv_path,'--dependent-node-ids-json',deps,'--output',plan_path)
         plan=read(plan_path)
         if not plan['managed'] or plan['project_name']!=m['project']:
@@ -163,17 +289,17 @@ with lock_file.open('a') as lifecycle_lock:
         result=command(plan['argv'],check=False)
         result_path=evidence/(token+'-result.json')
         write(result_path,dict(schema_version=1,argv=plan['argv'],exit_code=result.returncode,stdout=result.stdout,stderr=result.stderr))
-        after=inventory(token+'-after')
+        after,blocked=inventory(token+'-after',allow_blocked=True)
         receipt=kernel('record-create','--state-dir',state,'--plan',plan_path,'--result',result_path,'--before-inventory',before,'--after-inventory',after,check=False)
         (evidence/(token+'-creation-receipt.json')).write_text(receipt.stdout)
-        if result.returncode or receipt.returncode:
-            fail('Creation failed; partial resources were recorded. Run stop. Evidence: '+str(result_path))
+        if result.returncode or receipt.returncode or blocked:
+            fail('Creation failed or current-run cleanup blocked; record-create was attempted. Inspect its receipt before stop. Evidence: '+str(result_path))
 
     def stop():
         if not (state/'run-state.json').exists():
             return
         descriptor=evidence/('stop-'+uuid.uuid4().hex+'.json')
-        kernel('plan-reconcile','--state-dir',state,'--run-id',m['runId'],'--ttl-hours','876000','--output',descriptor)
+        reconcile(descriptor)
         plan_path=pathlib.Path(read(descriptor)['current_run_plan'])
         # Never execute the unrelated stale-sweep plan.
         outcomes=evidence/(descriptor.stem+'-outcomes.json');write(outcomes,[])
@@ -183,9 +309,8 @@ with lock_file.open('a') as lifecycle_lock:
             step=read(step_path)
             if step['complete']:
                 break
-            fresh=evidence/(descriptor.stem+'-fresh.json')
-            kernel('plan-reconcile','--state-dir',state,'--run-id',m['runId'],'--ttl-hours','876000','--output',fresh)
-            fresh_plan=read(pathlib.Path(read(fresh)['current_run_plan']))
+            fresh=evidence/(descriptor.stem+'-fresh-'+uuid.uuid4().hex+'.json')
+            fresh_plan,_,_=reconcile(fresh)
             witness=evidence/(descriptor.stem+'-witness.json');write(witness,fresh_plan['inventory'])
             run_state=read(state/'run-state.json')
             statuses=evidence/(descriptor.stem+'-nodes.json')
