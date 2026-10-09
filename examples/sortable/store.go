@@ -113,6 +113,9 @@ func (s *store) reload() error {
 func (s *store) snapshot(key string) listState {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	if s.unavailable {
+		return listState{}
+	}
 	v := s.lists[key]
 	v.Order = slices.Clone(v.Order)
 	return v

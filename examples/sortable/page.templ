@@ -29,7 +29,7 @@ templ personaPage(s session) {
 	}
 }
 
-templ sortablePage(a *app, s session, p presentation) {
+templ sortablePage(a *app, s session, p presentation, reading, requirements listState) {
 	@layout.Base(layout.BaseProps{Title:"Persistent sortable example",BodyClass:"scheme-default",CSSPath:"/dist/main.css",DatastarPath:"/vendor/datastar.js",ExtraHead:exampleHead()}) {
 		<a href="#main" class="skip-link">Skip to main content</a>
 		<main id="main" data-signals="{readingResult: null, requirementsResult: null, readingCase: 'normal', requirementsCase: 'normal'}">
@@ -52,10 +52,10 @@ templ sortablePage(a *app, s session, p presentation) {
 				if p.Controls=="handle" {
 					<p>Handle-only mode requires JavaScript enhancement. Choose arrows or combined controls to move without JavaScript.</p>
 				}
-				@listHost(listView{List:"reading",State:a.store.snapshot("reading"),Session:s,Presentation:p,CanReorder:grant(s.Actor,"reorder","reading")})
+				@listHost(listView{List:"reading",State:reading,Session:s,Presentation:p,CanReorder:grant(s.Actor,"reorder","reading")})
 				<h2>In a lined table</h2>
 				<p>The same optional element can enhance rows inside a semantic table. The handle sits at the far left of each row. The table keeps its heading, row headers and horizontal rules, with no vertical borders.</p>
-				@listHost(listView{List:"requirements",State:a.store.snapshot("requirements"),Session:s,Presentation:p,CanReorder:grant(s.Actor,"reorder","requirements")})
+				@listHost(listView{List:"requirements",State:requirements,Session:s,Presentation:p,CanReorder:grant(s.Actor,"reorder","requirements")})
 				<h2>Example response cases</h2>
 				<p>Select a one-shot case, then move that list. The delayed and diagnostic responses finish automatically. Reload clears selected cases and obtains current authoritative order.</p>
 				for _, list := range []string{"reading","requirements"} {

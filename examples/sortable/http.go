@@ -165,11 +165,15 @@ func fields(w http.ResponseWriter, r *http.Request, allowed ...string) (map[stri
 			if _, exists := out[key]; exists {
 				return nil, errors.New("repeated field")
 			}
-			var value string
-			if err := d.Decode(&value); err != nil {
+			value, err := d.Token()
+			if err != nil {
 				return nil, err
 			}
-			out[key] = value
+			text, ok := value.(string)
+			if !ok {
+				return nil, errors.New("string field required")
+			}
+			out[key] = text
 		}
 		if _, err := d.Token(); err != nil {
 			return nil, err
@@ -315,13 +319,18 @@ func (a *app) page(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid presentation.", 400)
 		return
 	}
+	reading, requirements := a.store.snapshot("reading"), a.store.snapshot("requirements")
+	if reading.Revision == 0 || requirements.Revision == 0 {
+		http.Error(w, "Saving could not be confirmed. Restart and reload required.", http.StatusServiceUnavailable)
+		return
+	}
 	a.mu.Lock()
 	if current := a.sessions[id]; current != nil {
 		clear(current.Cases)
 	}
 	a.mu.Unlock()
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	sortablePage(a, s, p).Render(r.Context(), w)
+	sortablePage(a, s, p, reading, requirements).Render(r.Context(), w)
 }
 
 var exampleCases = []string{"normal", "reject", "delay", "stale", "missing", "invalid", "unrelated"}
@@ -435,6 +444,11 @@ func (a *app) move(w http.ResponseWriter, r *http.Request) {
 		delete(current.Cases, list)
 	}
 	a.mu.Unlock()
+	state := a.store.snapshot(list)
+	if state.Revision == 0 {
+		http.Error(w, "Saving could not be confirmed. Restart and reload required.", http.StatusServiceUnavailable)
+		return
+	}
 	if enhanced {
 		w.Header().Set("Content-Type", "text/event-stream")
 		w.Header().Set("X-Accel-Buffering", "no")
@@ -453,12 +467,12 @@ func (a *app) move(w http.ResponseWriter, r *http.Request) {
 			if mode == "invalid" {
 				status = "unknown"
 			}
-			a.result(w, list, request, f["marker"], status, "Example result; real reply follows.", a.store.snapshot(list).Revision)
+			a.result(w, list, request, f["marker"], status, "Example result; real reply follows.", state.Revision)
 			if !waitRequest(r, 3*time.Second) {
 				return
 			}
 		case "unrelated":
-			if a.patch(w, r, s, list, p, f["marker"], "unrelated", a.store.snapshot(list)) != nil {
+			if a.patch(w, r, s, list, p, f["marker"], "unrelated", state) != nil {
 				return
 			}
 			if !waitRequest(r, 3*time.Second) {
@@ -478,7 +492,7 @@ func (a *app) move(w http.ResponseWriter, r *http.Request) {
 	if err == nil && (mode == "reject" || mode == "unrelated") {
 		err = errors.New("Example write rejected before saving.")
 	}
-	state := a.store.snapshot(list)
+	state = a.store.snapshot(list)
 	if err == nil {
 		state, err = a.store.move(list, f["itemId"], f["before"], rev)
 	}

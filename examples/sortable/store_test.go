@@ -120,21 +120,30 @@ func TestOversizedStoreIsRejected(t *testing.T) {
 		t.Fatal("oversized/corrupt tail accepted")
 	}
 }
-func TestUncertainReloadFailureDoesNotPublishOldCache(t *testing.T) {
-	s := testStore(t)
+func corruptAfterRename(s *store) {
 	s.rename = func(from, to string) error {
 		if err := os.Rename(from, to); err != nil {
 			return err
 		}
-		return os.Remove(to)
+		return os.WriteFile(to, []byte("{}"), 0600)
 	}
 	s.syncDir = func(dir string) error { return syncDirectory(filepath.Join(dir, "missing")) }
+}
+
+func TestUncertainReloadFailureDoesNotPublishOldCache(t *testing.T) {
+	s := testStore(t)
+	corruptAfterRename(s)
 	state, err := s.move("reading", "essay-02", "essay-01", 1)
 	if err == nil || !strings.Contains(err.Error(), "uncertain") || state.Revision != 0 || !s.unavailable {
 		t.Fatal("unreadable authoritative state misreported", state, err)
 	}
 	if state, err := s.move("reading", "essay-03", "essay-01", 1); err == nil || state.Revision != 0 {
 		t.Fatal("unavailable store returned old state")
+	}
+	for list := range initialOrders {
+		if state := s.snapshot(list); state.Revision != 0 || len(state.Order) != 0 {
+			t.Fatal("unavailable snapshot returned old cache", list, state)
+		}
 	}
 }
 

@@ -47,7 +47,13 @@ Changes to source, generated files, branch/head or relevant dirty state require
 source fingerprint.
 
 The exact repository Docker boundary is the argv prefix
-`docker compose --project-name <unique recorded project> --project-directory <physical checkout> -f <physical checkout>/examples/sortable/compose.yaml`.
+`docker compose --env-file <absolute run root>/evidence/compose.env --project-name <unique recorded project> --project-directory <physical checkout> -f <physical checkout>/examples/sortable/compose.yaml`.
+The wrapper writes that task-owned external env file with only
+`SORTABLE_RUN_DIR`, `SORTABLE_PROJECT` and `SORTABLE_BUILD_RECEIPT`. It updates the
+encoded build receipt before builder planning. The same prefix supplies values
+to direct checks, Kernel inspection, returned execution and status; Kernel's
+restricted environment remains unchanged. Failed commands retain bounded
+stdout and stderr in structured diagnostics.
 Creating calls are `run --rm --build builder` and
 `up --detach --wait --wait-timeout 30 app`. The wrapper sends each original argv
 to Kernel `plan-compose` with the exact repository project binding, materializes
@@ -72,6 +78,7 @@ Kernel ownership before reporting a live target.
 | `cache/` | Task-only module/build cache |
 | `build/` | Frozen source, compiled binary |
 | `evidence/` | Lifecycle binding, build/binary/image receipts, exact Docker argv, inventories and cleanup receipts |
+| `evidence/compose.env` | Curated Compose interpolation values for this run/build |
 
 `stop` plans reconciliation for this recorded run only and executes/records
 guarded Kernel cleanup steps. It never executes the unrelated stale-sweep plan,
@@ -116,6 +123,8 @@ moves return 303; validation/stale/storage failures return a rejection page with
 the authorized current list and refreshed boundaries. Cross-list IDs,
 self-before, malformed/repeated fields, wrong revisions and forbidden actors
 never write.
+Every JSON field must be a string. JSON `null` is rejected, including `before`
+and presentation choices; only the explicit empty string means append.
 
 Enhanced requests use Datastar `@post`, with the unchanged producer event detail
 `{itemId, before, requestId}`. HTTP-only fields add CSRF, revision, a per-request

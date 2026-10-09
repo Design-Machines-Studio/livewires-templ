@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
@@ -244,6 +245,134 @@ func TestStrictValidationAndCSRF(t *testing.T) {
 		t.Fatal("invalid requests wrote state")
 	}
 }
+func TestJSONNullFieldsNeverWrite(t *testing.T) {
+	a := testApp(t)
+	cookie, csrf := login(t, a, "editor")
+	before, err := os.ReadFile(a.store.path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, route := range []struct {
+		path   string
+		values map[string]string
+	}{
+		{"/sortable/lists/reading/move", payload(csrf, "essay-01", "", "reading", 1)},
+		{"/session", map[string]string{"csrf": csrf, "persona": "viewer"}},
+		{"/sortable/lists/reading/case", map[string]string{"csrf": csrf, "case": "reject"}},
+	} {
+		for key := range route.values {
+			t.Run(route.path+"/"+key, func(t *testing.T) {
+				values := make(map[string]any)
+				for name, value := range route.values {
+					values[name] = value
+				}
+				values[key] = nil
+				w := request(a, "POST", route.path, encode(values), cookie, true)
+				if w.Code != http.StatusBadRequest {
+					t.Fatal("null field admitted", key, w.Code, responseBody(w))
+				}
+				after, err := os.ReadFile(a.store.path)
+				if err != nil || string(before) != string(after) || a.store.snapshot("reading").Revision != 1 {
+					t.Fatal("null field changed order file", key, err)
+				}
+			})
+		}
+	}
+	// Unlike null, the explicit empty string must still append and commit.
+	w := request(a, "POST", "/sortable/lists/reading/move", encode(payload(csrf, "essay-01", "", "reading", 1)), cookie, true)
+	state := a.store.snapshot("reading")
+	if w.Code != 200 || !strings.Contains(responseBody(w), `"status":"accepted"`) || state.Revision != 2 || state.Order[2] != "essay-01" {
+		t.Fatal("explicit empty string did not append", state, responseBody(w))
+	}
+}
+
+func TestHTTPUnavailableAfterCorruptRename(t *testing.T) {
+	for _, enhanced := range []bool{false, true} {
+		t.Run(fmt.Sprintf("enhanced=%t", enhanced), func(t *testing.T) {
+			a := testApp(t)
+			cookie, csrf := login(t, a, "editor")
+			corruptAfterRename(a.store)
+			assertUnavailable := func(w *httptest.ResponseRecorder) {
+				t.Helper()
+				body := responseBody(w)
+				if w.Code != 503 || !strings.Contains(body, "Restart and reload required") {
+					t.Fatal("unavailable outcome misreported", w.Code, body)
+				}
+				for _, cached := range []string{"essay-", "governance", "data-sortable-list", "datastar-patch-"} {
+					if strings.Contains(body, cached) {
+						t.Fatal("unavailable response published cached state", body)
+					}
+				}
+			}
+			body := form(csrf, "essay-02", "essay-01", "1").Encode()
+			if enhanced {
+				body = encode(payload(csrf, "essay-02", "essay-01", "reading", 1))
+			}
+			assertUnavailable(request(a, "POST", "/sortable/lists/reading/move", body, cookie, enhanced))
+			corrupt, err := os.ReadFile(a.store.path)
+			if err != nil || string(corrupt) != "{}" || !a.store.unavailable {
+				t.Fatal("real corrupt post-rename reload failure not reached", err)
+			}
+			assertUnavailable(request(a, "GET", "/sortable", "", cookie, false))
+			for _, list := range []string{"reading", "requirements"} {
+				for _, transport := range []bool{false, true} {
+					for _, mode := range []string{"normal", "membership", "reject", "unrelated", "stale", "missing", "invalid"} {
+						item, before := "essay-02", "essay-01"
+						if list == "requirements" {
+							item, before = "governance", "orientation"
+						}
+						if mode == "membership" {
+							item = "not-a-member"
+						} else {
+							w := request(a, "POST", "/sortable/lists/"+list+"/case", encode(map[string]string{"csrf": csrf, "case": mode}), cookie, true)
+							if w.Code != 200 {
+								t.Fatal("case selection failed", responseBody(w))
+							}
+						}
+						body := form(csrf, item, before, "1").Encode()
+						if transport {
+							body = encode(payload(csrf, item, before, list, 1))
+						}
+						assertUnavailable(request(a, "POST", "/sortable/lists/"+list+"/move", body, cookie, transport))
+					}
+				}
+			}
+			after, err := os.ReadFile(a.store.path)
+			if err != nil || string(after) != string(corrupt) {
+				t.Fatal("unavailable HTTP requests wrote state", err)
+			}
+		})
+	}
+}
+
+func TestHTTPUncertainReloadReturnsAuthoritativeOrder(t *testing.T) {
+	for _, enhanced := range []bool{false, true} {
+		t.Run(fmt.Sprintf("enhanced=%t", enhanced), func(t *testing.T) {
+			a := testApp(t)
+			cookie, csrf := login(t, a, "editor")
+			a.store.syncDir = func(dir string) error { return syncDirectory(filepath.Join(dir, "missing")) }
+			body := form(csrf, "essay-02", "essay-01", "1").Encode()
+			code := 409
+			if enhanced {
+				body = encode(payload(csrf, "essay-02", "essay-01", "reading", 1))
+				code = 200
+			}
+			w := request(a, "POST", "/sortable/lists/reading/move", body, cookie, enhanced)
+			response := responseBody(w)
+			first, second := strings.Index(response, `data-item-id="essay-02"`), strings.Index(response, `data-item-id="essay-01"`)
+			if w.Code != code || !strings.Contains(response, "uncertain") || !strings.Contains(response, `data-revision="2"`) || first < 0 || second <= first {
+				t.Fatal("reloaded outcome/order misreported", w.Code, response)
+			}
+			if enhanced && !strings.Contains(response, `"status":"rejected"`) {
+				t.Fatal("uncertain save reported accepted", response)
+			}
+			if w := request(a, "GET", "/sortable", "", cookie, false); w.Code != 200 || !strings.Contains(w.Body.String(), `data-revision="2"`) {
+				t.Fatal("authoritative reload not readable", w.Code)
+			}
+		})
+	}
+}
+
 func nodes(t *testing.T, body string, match func(*html.Node) bool) []*html.Node {
 	t.Helper()
 	root, err := html.Parse(strings.NewReader(body))

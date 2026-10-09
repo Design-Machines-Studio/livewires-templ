@@ -24,7 +24,7 @@ def fail(message):
 def command(argv, check=True):
     result = subprocess.run([str(x) for x in argv], cwd=checkout, capture_output=True, text=True)
     if check and result.returncode:
-        fail('Command failed: '+repr(argv)+'\n'+result.stderr[-4000:])
+        fail(json.dumps(dict(error='command_failed',argv=[str(x) for x in argv],exit_code=result.returncode,stdout=result.stdout[-4000:],stderr=result.stderr[-4000:])))
     return result
 
 def kernel(*args, check=True):
@@ -112,8 +112,18 @@ with lock_file.open('a') as lifecycle_lock:
         dirt=command(['git','status','--porcelain','--',*names]).stdout
         return dict(application=APP,physicalCheckout=str(checkout),branch=command(['git','branch','--show-current']).stdout.strip(),commit=command(['git','rev-parse','HEAD']).stdout.strip(),sourceFingerprint=fingerprint,dirty=bool(dirt),lockDigest=sha(locked)),hashes
 
-    os.environ.update(SORTABLE_RUN_DIR=str(run),SORTABLE_PROJECT=m['project'],SORTABLE_BUILD_RECEIPT='not-building')
-    compose=['docker','compose','--project-name',m['project'],'--project-directory',str(checkout),'-f',str(checkout/'examples/sortable/compose.yaml')]
+    compose_env=evidence/'compose.env'
+    def write_compose_env(receipt):
+        if compose_env.is_symlink():
+            fail('Unsafe Compose env file.')
+        values=dict(SORTABLE_RUN_DIR=str(run),SORTABLE_PROJECT=m['project'],SORTABLE_BUILD_RECEIPT=receipt)
+        # Single-quoted dotenv values do not expand dollar signs. Kernel's
+        # fixed Docker environment need not forward any application variables.
+        compose_env.write_text(''.join(key+"='"+value.replace("'", "\\'")+"'\n" for key,value in values.items()))
+        for key in values:
+            os.environ.pop(key,None)
+    write_compose_env('not-building')
+    compose=['docker','compose','--env-file',str(compose_env),'--project-name',m['project'],'--project-directory',str(checkout),'-f',str(checkout/'examples/sortable/compose.yaml')]
     state=pathlib.Path(m['kernelStateDir'])
 
     def docker_preflight():
@@ -240,7 +250,7 @@ with lock_file.open('a') as lifecycle_lock:
         for folder in ['modules','go-build']:
             (run/'cache'/folder).mkdir(exist_ok=True)
         encoded=base64.urlsafe_b64encode(json.dumps(receipt,separators=(',',':')).encode()).decode().rstrip('=')
-        os.environ['SORTABLE_BUILD_RECEIPT']=encoded
+        write_compose_env(encoded)
         # Config/assets/source validation all precede application listening.
         command(compose+['--profile','*','config','--quiet'])
         create(compose+['run','--rm','--build','builder'])

@@ -100,7 +100,7 @@ func personaPage(s session) templ.Component {
 	})
 }
 
-func sortablePage(a *app, s session, p presentation) templ.Component {
+func sortablePage(a *app, s session, p presentation, reading, requirements listState) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -278,7 +278,7 @@ func sortablePage(a *app, s session, p presentation) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = listHost(listView{List: "reading", State: a.store.snapshot("reading"), Session: s, Presentation: p, CanReorder: grant(s.Actor, "reorder", "reading")}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = listHost(listView{List: "reading", State: reading, Session: s, Presentation: p, CanReorder: grant(s.Actor, "reorder", "reading")}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -286,7 +286,7 @@ func sortablePage(a *app, s session, p presentation) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = listHost(listView{List: "requirements", State: a.store.snapshot("requirements"), Session: s, Presentation: p, CanReorder: grant(s.Actor, "reorder", "requirements")}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = listHost(listView{List: "requirements", State: requirements, Session: s, Presentation: p, CanReorder: grant(s.Actor, "reorder", "requirements")}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
