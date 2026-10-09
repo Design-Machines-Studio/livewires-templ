@@ -3,8 +3,12 @@ package main
 import "github.com/Design-Machines-Studio/livewires-templ/component"
 import "github.com/Design-Machines-Studio/livewires-templ/layout"
 
-templ exampleHead() {
+templ sortableStyles() {
 	<link rel="stylesheet" href="/dist/sortable-list.css"/>
+}
+
+templ exampleHead() {
+	@sortableStyles()
 	<link rel="stylesheet" href="/dist/css/print.css" media="print"/>
 	<script type="module" src="/dist/sortable-list.js"></script>
 	<script type="module" src="/bridge.js"></script>
@@ -143,7 +147,7 @@ templ moveMetadata(v listView) {
 }
 
 templ nativeRejection(message string,v listView) {
-	@layout.Base(layout.BaseProps{Title:"Move rejected",BodyClass:"scheme-default",CSSPath:"/dist/main.css"}) {
+	@layout.Base(layout.BaseProps{Title:"Move rejected",BodyClass:"scheme-default",CSSPath:"/dist/main.css",ExtraHead:sortableStyles()}) {
 		<main id="main"><article class="section prose"><h1>Move rejected</h1><p role="status">{ message }</p><a href="/sortable">Reload current order</a>@listHost(v)</article></main>
 	}
 }

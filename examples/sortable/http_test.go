@@ -97,6 +97,55 @@ func responseBody(w *httptest.ResponseRecorder) string {
 	return body
 }
 
+// Inspect the first signal result only; a later real reply must not hide a
+// status accidentally emitted in the diagnostic scalar envelope.
+func missingStatusError(body, list string) error {
+	for _, line := range strings.Split(body, "\n") {
+		if !strings.HasPrefix(line, "data: signals ") {
+			continue
+		}
+		var signals map[string]json.RawMessage
+		if err := json.Unmarshal([]byte(strings.TrimPrefix(line, "data: signals ")), &signals); err != nil {
+			return fmt.Errorf("decode first signals: %w", err)
+		}
+		var envelope string
+		if err := json.Unmarshal(signals[list+"Result"], &envelope); err != nil {
+			return fmt.Errorf("decode scalar result: %w", err)
+		}
+		var result map[string]json.RawMessage
+		if err := json.Unmarshal([]byte(envelope), &result); err != nil {
+			return fmt.Errorf("decode result envelope: %w", err)
+		}
+		if result == nil {
+			return fmt.Errorf("result envelope is not an object")
+		}
+		if status, present := result["status"]; present {
+			return fmt.Errorf("missing-status case fabricated status: %s", status)
+		}
+		return nil
+	}
+	return fmt.Errorf("first signal payload missing")
+}
+
+func TestMissingStatusEnvelopeSensitivity(t *testing.T) {
+	a := testApp(t)
+	for _, status := range []string{"", "accepted", "rejected"} {
+		t.Run("status="+status, func(t *testing.T) {
+			w := httptest.NewRecorder()
+			a.result(w, "reading", "request-1", "connection-1", status, "Diagnostic reply", 1)
+			// A subsequent status-free reply must not mask the first result.
+			a.result(w, "reading", "request-2", "connection-1", "", "Later reply", 1)
+			err := missingStatusError(w.Body.String(), "reading")
+			if status == "" && err != nil {
+				t.Fatal("status-free scalar envelope rejected", err)
+			}
+			if status != "" && (err == nil || !strings.Contains(err.Error(), "fabricated status: "+strconv.Quote(status))) {
+				t.Fatal("explicit status escaped the missing-status assertion", status, err)
+			}
+		})
+	}
+}
+
 func TestSessionValidationAndOrigin(t *testing.T) {
 	a := testApp(t)
 	cookie, csrf := login(t, a, "editor")
@@ -448,6 +497,66 @@ func TestNativeFormsAndPresentation(t *testing.T) {
 		t.Fatal("unallowlisted choice accepted")
 	}
 }
+
+func TestNativeRejectionStylesAndForms(t *testing.T) {
+	for _, list := range []string{"reading", "requirements"} {
+		t.Run(list, func(t *testing.T) {
+			a := testApp(t)
+			cookie, csrf := login(t, a, "editor")
+			item, before, foreign := "essay-02", "essay-01", "governance"
+			if list == "requirements" {
+				item, before, foreign = "governance", "orientation", "essay-01"
+			}
+			path := "/sortable/lists/" + list + "/move"
+			if w := request(a, "POST", path, form(csrf, item, before, "1").Encode(), cookie, false); w.Code != 303 {
+				t.Fatal("native setup move failed", w.Code)
+			}
+			for _, rejection := range []struct{ name, before, revision string }{
+				{"stale", before, "1"},
+				{"cross-list", foreign, "2"},
+			} {
+				t.Run(rejection.name, func(t *testing.T) {
+					w := request(a, "POST", path, form(csrf, item, rejection.before, rejection.revision).Encode(), cookie, false)
+					if w.Code != 409 {
+						t.Fatal("native rejection missing", w.Code)
+					}
+					page := w.Body.String()
+					styles := nodes(t, page, func(n *html.Node) bool {
+						return n.Data == "link" && attr(n, "rel") == "stylesheet" && attr(n, "href") == "/dist/sortable-list.css" && n.Parent.Data == "head"
+					})
+					if len(styles) != 1 {
+						t.Fatal("native rejection requires the pinned sortable stylesheet in its head")
+					}
+					if scripts := nodes(t, page, func(n *html.Node) bool { return n.Data == "script" }); len(scripts) != 0 {
+						t.Fatal("native rejection loaded enhancement scripts")
+					}
+					forms := nodes(t, page, func(n *html.Node) bool { return n.Data == "form" })
+					if len(forms) != 6 {
+						t.Fatal("native rejection lost move forms", len(forms))
+					}
+					for _, f := range forms {
+						if attr(f, "method") != "post" || attr(f, "action") != path {
+							t.Fatal("native rejection changed form transport")
+						}
+						inputs := map[string]string{}
+						for n := f.FirstChild; n != nil; n = n.NextSibling {
+							if n.Data == "input" {
+								name := attr(n, "name")
+								if _, duplicate := inputs[name]; duplicate || attr(n, "type") != "hidden" {
+									t.Fatal("invalid native move field", name)
+								}
+								inputs[name] = attr(n, "value")
+							}
+						}
+						if _, present := inputs["before"]; !present || len(inputs) != 4 || inputs["csrf"] != csrf || inputs["revision"] != "2" || !contains(initialOrders[list], inputs["itemId"]) || (inputs["before"] != "" && !contains(initialOrders[list], inputs["before"])) {
+							t.Fatal("native rejection lost current move fields", inputs)
+						}
+					}
+				})
+			}
+		})
+	}
+}
 func TestOrderedSSEAndCorrelation(t *testing.T) {
 	a := testApp(t)
 	cookie, csrf := login(t, a, "editor")
@@ -546,9 +655,8 @@ func TestConcurrentEndpointsAndExampleCases(t *testing.T) {
 				t.Fatal("case delivery missing", body)
 			}
 			if mode == "missing" {
-				first := strings.Split(body, "\n\n")[0]
-				if strings.Contains(first, `"status"`) {
-					t.Fatal("missing-status case fabricated status")
+				if err := missingStatusError(w.Body.String(), "reading"); err != nil {
+					t.Fatal(err)
 				}
 			}
 			if strings.LastIndex(body, "event: datastar-patch-signals") <= strings.LastIndex(body, "event: datastar-patch-elements") {
