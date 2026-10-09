@@ -205,13 +205,19 @@ func (a *app) routes() http.Handler {
 	m.HandleFunc("POST /sortable/lists/{list}/move", a.move)
 	m.HandleFunc("POST /sortable/lists/{list}/case", a.setCase)
 	m.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) {
+		a.store.mu.Lock()
+		healthy := !a.store.unavailable
+		a.store.mu.Unlock()
 		w.Header().Set("Content-Type", "application/json")
+		if !healthy {
+			w.WriteHeader(http.StatusServiceUnavailable)
+		}
 		json.NewEncoder(w).Encode(struct {
 			Healthy  bool            `json:"healthy"`
 			Source   sourceReceipt   `json:"source"`
 			Producer string          `json:"producerCommit"`
 			Assets   []assetIdentity `json:"assets"`
-		}{true, a.receipt, a.lock.ProducerCommit, a.lock.Assets})
+		}{healthy, a.receipt, a.lock.ProducerCommit, a.lock.Assets})
 	})
 	m.HandleFunc("GET /bridge.js", func(w http.ResponseWriter, r *http.Request) {
 		b, _ := authored.ReadFile("bridge.js")

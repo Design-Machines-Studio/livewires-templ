@@ -341,6 +341,7 @@ func TestHTTPUnavailableAfterCorruptRename(t *testing.T) {
 			a := testApp(t)
 			cookie, csrf := login(t, a, "editor")
 			corruptAfterRename(a.store)
+			assertHealth(t, a, true)
 			assertUnavailable := func(w *httptest.ResponseRecorder) {
 				t.Helper()
 				body := responseBody(w)
@@ -362,6 +363,7 @@ func TestHTTPUnavailableAfterCorruptRename(t *testing.T) {
 			if err != nil || string(corrupt) != "{}" || !a.store.unavailable {
 				t.Fatal("real corrupt post-rename reload failure not reached", err)
 			}
+			assertHealth(t, a, false)
 			assertUnavailable(request(a, "GET", "/sortable", "", cookie, false))
 			for _, list := range []string{"reading", "requirements"} {
 				for _, transport := range []bool{false, true} {
@@ -418,6 +420,7 @@ func TestHTTPUncertainReloadReturnsAuthoritativeOrder(t *testing.T) {
 			if w := request(a, "GET", "/sortable", "", cookie, false); w.Code != 200 || !strings.Contains(w.Body.String(), `data-revision="2"`) {
 				t.Fatal("authoritative reload not readable", w.Code)
 			}
+			assertHealth(t, a, true)
 		})
 	}
 }
@@ -667,17 +670,29 @@ func TestConcurrentEndpointsAndExampleCases(t *testing.T) {
 }
 func TestReferenceBytesAndAllowlist(t *testing.T) {
 	a := testApp(t)
-	b, err := os.ReadFile("../../plans/sortable-components-9/producer/sortable-list.html")
+	b, err := os.ReadFile("testdata/sortable-list.html")
 	if err != nil {
 		t.Fatal(err)
 	}
-	locked, _ := authored.ReadFile("assets.lock.json")
+	locked, err := authored.ReadFile("assets.lock.json")
+	if err != nil {
+		t.Fatal(err)
+	}
 	var lock assetLock
-	json.Unmarshal(locked, &lock)
+	if err := json.Unmarshal(locked, &lock); err != nil {
+		t.Fatal(err)
+	}
+	found := false
 	for _, v := range lock.Assets {
-		if v.Serve == "/manual/components/sortable-list.html" && digest(b) != v.SHA256 {
-			t.Fatal("reference evidence/lock mismatch")
+		if v.Serve == "/manual/components/sortable-list.html" {
+			found = true
+			if digest(b) != v.SHA256 {
+				t.Fatal("reference fixture/lock mismatch")
+			}
 		}
+	}
+	if !found {
+		t.Fatal("reference identity missing from asset lock")
 	}
 	a.files["/manual/components/sortable-list.html"] = b
 	w := request(a, "GET", "/manual/components/sortable-list.html", "", nil, false)
@@ -697,13 +712,40 @@ func TestReferenceBytesAndAllowlist(t *testing.T) {
 		t.Fatal("missing assets accepted")
 	}
 }
+func assertHealth(t *testing.T, a *app, healthy bool) {
+	t.Helper()
+	w := request(a, "GET", "/healthz", "", nil, false)
+	code := http.StatusOK
+	if !healthy {
+		code = http.StatusServiceUnavailable
+	}
+	if w.Code != code || w.Header().Get("Content-Type") != "application/json" {
+		t.Fatal("health status/content type mismatch", w.Code, responseBody(w))
+	}
+	var got struct {
+		Healthy  *bool           `json:"healthy"`
+		Source   sourceReceipt   `json:"source"`
+		Producer string          `json:"producerCommit"`
+		Assets   []assetIdentity `json:"assets"`
+	}
+	if err := json.Unmarshal(w.Body.Bytes(), &got); err != nil {
+		t.Fatal(err)
+	}
+	if got.Healthy == nil || *got.Healthy != healthy || encode(got.Source) != encode(a.receipt) || got.Producer != a.lock.ProducerCommit || encode(got.Assets) != encode(a.lock.Assets) {
+		t.Fatal("health availability/receipt mismatch", responseBody(w))
+	}
+}
 func TestHealthReceiptAndRestartSessions(t *testing.T) {
 	a := testApp(t)
-	cookie, csrf := login(t, a, "editor")
-	w := request(a, "GET", "/healthz", "", nil, false)
-	if !strings.Contains(responseBody(w), a.receipt.Fingerprint) {
-		t.Fatal("receipt absent")
+	locked, err := authored.ReadFile("assets.lock.json")
+	if err != nil {
+		t.Fatal(err)
 	}
+	if err := json.Unmarshal(locked, &a.lock); err != nil {
+		t.Fatal(err)
+	}
+	cookie, csrf := login(t, a, "editor")
+	assertHealth(t, a, true)
 	s, err := openStore(a.store.path)
 	if err != nil {
 		t.Fatal(err)
