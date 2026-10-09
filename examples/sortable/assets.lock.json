@@ -1,0 +1,167 @@
+{
+  "schema": 1,
+  "producerCommit": "21cff3f08d156feabd9da4bbd3d366781c463f96",
+  "datastarVersion": "v1.0.4",
+  "assets": [
+    {
+      "file": "reference/components/sortable-list.html",
+      "url": "https://raw.githubusercontent.com/Design-Machines-Studio/livewires/21cff3f08d156feabd9da4bbd3d366781c463f96/public/reference/components/sortable-list.html",
+      "sha256": "2c98ac1aab9e3876d6ea6433ddb9db5eebc8ec692c6cde6aff0115457d033778",
+      "size": 13138,
+      "serve": "/manual/components/sortable-list.html",
+      "version": "21cff3f08d156feabd9da4bbd3d366781c463f96",
+      "revision": "21cff3f08d156feabd9da4bbd3d366781c463f96",
+      "license": "MIT",
+      "notice": "LICENSE-MIT"
+    },
+    {
+      "file": "_includes/head.html",
+      "url": "https://raw.githubusercontent.com/Design-Machines-Studio/livewires/21cff3f08d156feabd9da4bbd3d366781c463f96/public/_includes/head.html",
+      "sha256": "35e0f519452f2052c35f2c4138db76831fd5ad97d2171d4e1fd7fa684c4f5ff9",
+      "size": 811,
+      "serve": "/_includes/head.html",
+      "version": "21cff3f08d156feabd9da4bbd3d366781c463f96",
+      "revision": "21cff3f08d156feabd9da4bbd3d366781c463f96",
+      "license": "MIT",
+      "notice": "LICENSE-MIT"
+    },
+    {
+      "file": "_includes/header.html",
+      "url": "https://raw.githubusercontent.com/Design-Machines-Studio/livewires/21cff3f08d156feabd9da4bbd3d366781c463f96/public/_includes/header.html",
+      "sha256": "a18739045016cb086862c60150118be2bd658482b9f8103d94b9ddb6ecd07511",
+      "size": 435,
+      "serve": "/_includes/header.html",
+      "version": "21cff3f08d156feabd9da4bbd3d366781c463f96",
+      "revision": "21cff3f08d156feabd9da4bbd3d366781c463f96",
+      "license": "MIT",
+      "notice": "LICENSE-MIT"
+    },
+    {
+      "file": "_includes/footer.html",
+      "url": "https://raw.githubusercontent.com/Design-Machines-Studio/livewires/21cff3f08d156feabd9da4bbd3d366781c463f96/public/_includes/footer.html",
+      "sha256": "48a901e45b80063db693244a7dcdfb723ff83a98f93948da2cce3a324b3c7fc7",
+      "size": 672,
+      "serve": "/_includes/footer.html",
+      "version": "21cff3f08d156feabd9da4bbd3d366781c463f96",
+      "revision": "21cff3f08d156feabd9da4bbd3d366781c463f96",
+      "license": "MIT",
+      "notice": "LICENSE-MIT"
+    },
+    {
+      "file": "dist/main.js",
+      "url": "https://raw.githubusercontent.com/Design-Machines-Studio/livewires/21cff3f08d156feabd9da4bbd3d366781c463f96/public/dist/main.js",
+      "sha256": "cdde927d62e5782db1e638b2f769469a0da1abf82ccba88128c466d1d158f309",
+      "size": 24575,
+      "serve": "/dist/main.js",
+      "version": "21cff3f08d156feabd9da4bbd3d366781c463f96",
+      "revision": "21cff3f08d156feabd9da4bbd3d366781c463f96",
+      "license": "MIT",
+      "notice": "LICENSE-MIT"
+    },
+    {
+      "file": "dist/main.css",
+      "url": "https://raw.githubusercontent.com/Design-Machines-Studio/livewires/21cff3f08d156feabd9da4bbd3d366781c463f96/public/dist/main.css",
+      "sha256": "d620656d2db4b0f2b0ae597308e7537cafc4a262dbc3bb29287dd5cd7e5f5758",
+      "size": 164137,
+      "serve": "/dist/main.css",
+      "version": "21cff3f08d156feabd9da4bbd3d366781c463f96",
+      "revision": "21cff3f08d156feabd9da4bbd3d366781c463f96",
+      "license": "MIT",
+      "notice": "LICENSE-MIT"
+    },
+    {
+      "file": "dist/sortable-list.js",
+      "url": "https://raw.githubusercontent.com/Design-Machines-Studio/livewires/21cff3f08d156feabd9da4bbd3d366781c463f96/public/dist/sortable-list.js",
+      "sha256": "7382877602bc1f7584b98e91d2f557d4b602bf0602d503d1e3c35794303a7c90",
+      "size": 14172,
+      "serve": "/dist/sortable-list.js",
+      "version": "21cff3f08d156feabd9da4bbd3d366781c463f96",
+      "revision": "21cff3f08d156feabd9da4bbd3d366781c463f96",
+      "license": "MIT",
+      "notice": "LICENSE-MIT"
+    },
+    {
+      "file": "dist/sortable-list.css",
+      "url": "https://raw.githubusercontent.com/Design-Machines-Studio/livewires/21cff3f08d156feabd9da4bbd3d366781c463f96/public/dist/sortable-list.css",
+      "sha256": "38b18c98ecf29b377a14399b4b395af88628e3de4548b22bfd593dcdc41d549e",
+      "size": 11396,
+      "serve": "/dist/sortable-list.css",
+      "version": "21cff3f08d156feabd9da4bbd3d366781c463f96",
+      "revision": "21cff3f08d156feabd9da4bbd3d366781c463f96",
+      "license": "MIT",
+      "notice": "LICENSE-MIT"
+    },
+    {
+      "file": "dist/css/print.css",
+      "url": "https://raw.githubusercontent.com/Design-Machines-Studio/livewires/21cff3f08d156feabd9da4bbd3d366781c463f96/public/dist/css/print.css",
+      "sha256": "027c2319203964389fc665f904bb0f383a8733c63e677eccd1d03626f0efb142",
+      "size": 1825,
+      "serve": "/dist/css/print.css",
+      "version": "21cff3f08d156feabd9da4bbd3d366781c463f96",
+      "revision": "21cff3f08d156feabd9da4bbd3d366781c463f96",
+      "license": "MIT",
+      "notice": "LICENSE-MIT"
+    },
+    {
+      "file": "LICENSE-MIT",
+      "url": "https://raw.githubusercontent.com/Design-Machines-Studio/livewires/21cff3f08d156feabd9da4bbd3d366781c463f96/LICENSE-MIT",
+      "sha256": "b40ce43107aba6de6db66cbb0ee3b4a89c171263471735fba26e8e6d00f38bd1",
+      "size": 1056,
+      "serve": "",
+      "version": "21cff3f08d156feabd9da4bbd3d366781c463f96",
+      "revision": "21cff3f08d156feabd9da4bbd3d366781c463f96",
+      "license": "MIT",
+      "notice": "LICENSE-MIT"
+    },
+    {
+      "file": "vendor/datastar.js",
+      "url": "https://cdn.jsdelivr.net/gh/starfederation/datastar@v1.0.4/bundles/datastar.js",
+      "sha256": "727844adfc825ee651fb93c544a2a739986f9a21820a94524b35f0cac470cf91",
+      "size": 33553,
+      "serve": "/vendor/datastar.js",
+      "version": "v1.0.4",
+      "revision": "1efcdc3cb336ec3e9139491604e770e0329657bc",
+      "license": "MIT",
+      "notice": "notices/datastar-LICENSE.md"
+    },
+    {
+      "file": "notices/datastar-LICENSE.md",
+      "url": "https://raw.githubusercontent.com/starfederation/datastar/1efcdc3cb336ec3e9139491604e770e0329657bc/LICENSE.md",
+      "sha256": "17da0e216d3c6a819526f5b72a6a44d84d34bcd9beb4191ac6af89c1508ef08f",
+      "size": 1052,
+      "serve": "",
+      "version": "v1.0.4",
+      "revision": "1efcdc3cb336ec3e9139491604e770e0329657bc",
+      "license": "MIT",
+      "notice": "notices/datastar-LICENSE.md"
+    }
+  ],
+  "missingOptional": [
+    {
+      "url": "/img/favicon.ico",
+      "source": "https://raw.githubusercontent.com/Design-Machines-Studio/livewires/21cff3f08d156feabd9da4bbd3d366781c463f96/public/img/favicon.ico",
+      "observed": "404"
+    },
+    {
+      "url": "/img/apple-touch-icon-precomposed.png",
+      "source": "https://raw.githubusercontent.com/Design-Machines-Studio/livewires/21cff3f08d156feabd9da4bbd3d366781c463f96/public/img/apple-touch-icon-precomposed.png",
+      "observed": "404"
+    }
+  ],
+  "externalUnpinned": [
+    "https://fonts.googleapis.com/css2?family=Flow+Block&display=swap",
+    "https://fonts.gstatic.com"
+  ],
+  "inspection": {
+    "actions": "https://data-star.dev/reference/actions",
+    "sse": "https://data-star.dev/reference/sse_events",
+    "options": [
+      "payload",
+      "retry: never",
+      "retryMaxCount: 0",
+      "requestCancellation: disabled"
+    ],
+    "patchMode": "replace on ol/tbody child only",
+    "delivery": "Element patches run synchronously on SSE dispatch before following signal patches run effects. Host must verify browser delivery."
+  }
+}
