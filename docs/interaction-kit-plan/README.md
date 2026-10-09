@@ -1,6 +1,25 @@
 # Live Wires interaction plan
 
-Start with [Live Wires #11](https://github.com/Design-Machines-Studio/livewires/issues/11): prove a sortable list and settle the optional behavior contract. No parallel implementation lane is recommended before that contract is established. This is the only task marked Next in this plan.
+## Widget follow-up — 2026-10-09
+
+**Current recommended next chunk: [W00 global metric typography](https://github.com/Design-Machines-Studio/assembly-baseplate/issues/1160).** W01 then establishes the shared widget reference. The user requested unifying existing Baseplate/Fixture widget designs after the original interaction plan. [The source inventory](widgets.md) establishes real repeated consumers; this track does not depend on Rocket, sortable lists or a new dashboard engine. The original sortable issue remains independently Next, but do not start simultaneous Live Wires styling/review work without checking shared paths and serving ownership. No parallel lane is recommended initially.
+
+| ID | Native issue | Depends on | Fresh-session prompt |
+| --- | --- | --- | --- |
+| W00 | [Global font-metric token and utility](https://github.com/Design-Machines-Studio/assembly-baseplate/issues/1160) | none | [W00](W00.md) |
+| W01 | [Widgets: establish shared frame, metric and message references](https://github.com/Design-Machines-Studio/livewires/issues/23) | W00 | [W01](W01.md) |
+| W02 | [Widgets: add shared frame, metric and message Templ components](https://github.com/Design-Machines-Studio/livewires-templ/issues/13) | W01 | [W02](W02.md) |
+| W03 | [Widgets: adopt shared Live Wires presentation without changing the editor](https://github.com/Design-Machines-Studio/assembly-baseplate/issues/1159) | W00, W02 | [W03](W03.md) |
+| W04 | [Widgets: replace Governance body duplication with shared components](https://github.com/Design-Machines-Studio/assembly-governance/issues/114) | W02, W03, W07 | [W04](W04.md) |
+| W05 | [Widgets: unify Atlas frames while preserving chart and data semantics](https://github.com/Design-Machines-Studio/assembly-atlas/issues/60) | W02, W03, W07 | [W05](W05.md) |
+| W06 | [Widgets: teach the shared widget contract in the Fixture template](https://github.com/Design-Machines-Studio/assembly-fixture-jig/issues/42) | W02, W03 | [W06](W06.md) |
+| W07 | [Per-widget size, weight and variable-font width](https://github.com/Design-Machines-Studio/assembly-baseplate/issues/1161) | W00, W03 | [W07](W07.md) |
+
+W00 is Next; W01–W07 are Blocked on named producer contracts/publication. W03 additionally depends on W00; W04/W05 additionally depend on W07 for typography acceptance. All are P3 / Design in Project 1. Production adoption is a separate stage from component publication. The original dashboard discovery #22 now evaluates remaining gaps in the existing editor after W03; its former assumption of no demonstrated dashboard consumer is superseded. No old application/Fixture issue was closed.
+
+The sections below preserve the original 16-task planning snapshot; use current native Issue/Project state and the widget follow-up for selection.
+
+The original interaction track starts with [Live Wires #11](https://github.com/Design-Machines-Studio/livewires/issues/11): prove a sortable list and settle the optional behavior contract. No parallel implementation lane is recommended before that contract is established. It remains Next within that track; W00 is the current recommendation after the widget and typography requests.
 
 Parent issue: https://github.com/Design-Machines-Studio/livewires-templ/issues/8. Project: https://github.com/orgs/Design-Machines-Studio/projects/1. Native issues and dependency edges are authoritative; these prompts are handoffs, not a second task database. The explicitly requested 16-task set and its parent are projected in Project 1 under Design / P3; this does not import the repositories' unrelated backlog or create a beta/release gate.
 
@@ -23,7 +42,7 @@ Parent issue: https://github.com/Design-Machines-Studio/livewires-templ/issues/8
 | 13 | [Components: load optional modules on demand when measured use warrants it](https://github.com/Design-Machines-Studio/livewires/issues/19) | livewires | Blocked | 01, 03, 04, 07 + admission condition | [Prompt](13.md) |
 | 14 | [Discovery: scope a lazy tree only against a real navigation use case](https://github.com/Design-Machines-Studio/livewires/issues/20) | livewires | Blocked | 01 + admission condition | [Prompt](14.md) |
 | 15 | [Discovery: measure whether a virtual list or data table is needed](https://github.com/Design-Machines-Studio/livewires/issues/21) | livewires | Blocked | 01 + admission condition | [Prompt](15.md) |
-| 16 | [Discovery: define a user-arranged dashboard only if a consumer needs it](https://github.com/Design-Machines-Studio/livewires/issues/22) | livewires | Blocked | 01, 09 + admission condition | [Prompt](16.md) |
+| 16 | [Discovery: assess remaining gaps in the existing dashboard editor](https://github.com/Design-Machines-Studio/livewires/issues/22) | livewires | Blocked | W03 + measured remaining gap | [Prompt](16.md) |
 
 Tasks 14–16 are discovery only. A missing real consumer or measured need should produce a defer decision; it must not produce a speculative component. Task 13 similarly allows a no-change outcome if explicit imports remain simpler. Every implementation prompt invokes Pipeline explicitly. Do not launch dependent prompts until their native blockers are cleared at the stated evidence level.
 
