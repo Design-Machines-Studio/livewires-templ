@@ -127,7 +127,7 @@ def validate_cleanup_artifact(value, run_id, node_id, scope_id, stale):
             labels=resource['labels']
             if any(labels.get('com.designmachines.depot.'+key)!=expected for key,expected in [('managed','true'),('run-id',run_id),('node-id',node_id),('repository-scope-id',scope_id),('lifecycle','run')]):
                 fail('Current-run inventory ownership mismatch.')
-    return any(row['disposition'] in ['blocked','retained_for_dependency'] for row in plan['dispositions'])
+    return any(row['disposition']=='blocked' for row in plan['dispositions'])
 
 def load_reconciliation(descriptor, status, run_id, node_id, scope_id):
     # Status is the maximum of two independent plans, not current-run authority.
@@ -143,7 +143,8 @@ def load_reconciliation(descriptor, status, run_id, node_id, scope_id):
     current=read(paths[1]);sweep=read(paths[2])
     blocked=validate_cleanup_artifact(current,run_id,node_id,scope_id,False)
     stale_blocked=validate_cleanup_artifact(sweep,run_id,node_id,scope_id,True)
-    if status!=(3 if blocked or stale_blocked else 0):
+    incomplete=any(row['disposition'] in ['blocked','retained_for_dependency'] for artifact in [current,sweep] for row in artifact['plan']['dispositions'])
+    if status!=(3 if incomplete else 0):
         fail('Reconciliation status disagrees with emitted dispositions.')
     return current,sweep,blocked
 
@@ -303,27 +304,51 @@ with lock_file.open('a') as lifecycle_lock:
         if not (state/'run-state.json').exists():
             return
         descriptor=evidence/('stop-'+uuid.uuid4().hex+'.json')
-        reconcile(descriptor)
-        plan_path=pathlib.Path(read(descriptor)['current_run_plan'])
-        # Never execute the unrelated stale-sweep plan.
-        outcomes=evidence/(descriptor.stem+'-outcomes.json');write(outcomes,[])
-        step_path=evidence/(descriptor.stem+'-step.json')
-        while True:
-            kernel('next-cleanup-step','--state-dir',state,'--plan',plan_path,'--outcomes',outcomes,'--output',step_path)
-            step=read(step_path)
-            if step['complete']:
-                break
-            fresh=evidence/(descriptor.stem+'-fresh-'+uuid.uuid4().hex+'.json')
-            fresh_plan,_,_=reconcile(fresh)
-            witness=evidence/(descriptor.stem+'-witness.json');write(witness,fresh_plan['inventory'])
-            run_state=read(state/'run-state.json')
-            statuses=evidence/(descriptor.stem+'-nodes.json')
-            write(statuses,dict(schema_version=1,run_id=m['runId'],revision=run_state['revision'],updated_at=run_state['updated_at'],node_statuses={k:v['status'] for k,v in run_state['nodes'].items()}))
-            result_path=evidence/(descriptor.stem+'-step-result.json')
-            kernel('execute-cleanup-step','--state-dir',state,'--plan',plan_path,'--step-index',str(step['step_index']),'--inventory',witness,'--node-statuses',statuses,'--outcomes',outcomes,'--output',result_path)
-            prior=read(outcomes);prior.append(read(result_path));write(outcomes,prior)
-        result=kernel('record-cleanup','--state-dir',state,'--plan',plan_path,'--outcomes',outcomes)
-        (evidence/(descriptor.stem+'-receipt.json')).write_text(result.stdout)
+        current,_,_=reconcile(descriptor)
+        def remaining(artifact):
+            return {(row['kind'],row['resource_id']) for row in artifact['inventory']['resources']+artifact['plan']['actions']+artifact['plan']['dispositions']}
+        # Each further pass must retire at least one exact owned identity.
+        for attempt in range(len(remaining(current))+1):
+            plan_path=pathlib.Path(read(descriptor)['current_run_plan'])
+            # Never execute the unrelated stale-sweep plan.
+            outcomes=evidence/(descriptor.stem+'-outcomes.json');write(outcomes,[])
+            step_path=evidence/(descriptor.stem+'-step.json')
+            while True:
+                kernel('next-cleanup-step','--state-dir',state,'--plan',plan_path,'--outcomes',outcomes,'--output',step_path)
+                step=read(step_path)
+                if step['complete']:
+                    break
+                fresh=evidence/(descriptor.stem+'-fresh-'+uuid.uuid4().hex+'.json')
+                fresh_plan,_,_=reconcile(fresh)
+                witness=evidence/(descriptor.stem+'-witness.json');write(witness,fresh_plan['inventory'])
+                run_state=read(state/'run-state.json')
+                statuses=evidence/(descriptor.stem+'-nodes.json')
+                write(statuses,dict(schema_version=1,run_id=m['runId'],revision=run_state['revision'],updated_at=run_state['updated_at'],node_statuses={k:v['status'] for k,v in run_state['nodes'].items()}))
+                result_path=evidence/(descriptor.stem+'-step-result.json')
+                kernel('execute-cleanup-step','--state-dir',state,'--plan',plan_path,'--step-index',str(step['step_index']),'--inventory',witness,'--node-statuses',statuses,'--outcomes',outcomes,'--output',result_path)
+                prior=read(outcomes);prior.append(read(result_path));write(outcomes,prior)
+            result=kernel('record-cleanup','--state-dir',state,'--plan',plan_path,'--outcomes',outcomes,check=False)
+            receipt_path=evidence/(descriptor.stem+'-receipt.json');receipt_path.write_text(result.stdout)
+            if result.returncode not in [0,3]:
+                fail('Cleanup recording failed; evidence: '+str(receipt_path))
+            receipt=read(receipt_path);exact_object(receipt,'schema_version scope before after dispositions')
+            string_list(receipt['after'])
+            receipt_plan=dict(current['plan'],schema_version=receipt['schema_version'],scope=receipt['scope'],before=receipt['before'],actions=[],dispositions=receipt['dispositions'])
+            scope_id=current['plan']['scope']['repository_scope_id']
+            blocked=validate_cleanup_artifact(dict(current,plan=receipt_plan),m['runId'],m['nodeId'],scope_id,False)
+            incomplete=any(row['disposition'] in ['blocked','retained_for_dependency'] for row in receipt['dispositions'])
+            if receipt['before']!=current['plan']['before'] or result.returncode!=(3 if incomplete else 0) or blocked:
+                fail('Cleanup receipt is blocked or inconsistent; evidence: '+str(receipt_path))
+            # Status 3 with dependency retention is recorded history, not stopped.
+            following=evidence/('stop-'+uuid.uuid4().hex+'.json')
+            fresh_plan,_,_=reconcile(following)
+            before,after=remaining(current),remaining(fresh_plan)
+            if not after:
+                return
+            if not read(outcomes) or not after<before:
+                fail('Cleanup dependencies remain without owned progress; evidence: '+str(following))
+            descriptor,current=following,fresh_plan
+        fail('Cleanup progress bound exhausted; evidence: '+str(descriptor))
 
     def status():
         current,_=source()

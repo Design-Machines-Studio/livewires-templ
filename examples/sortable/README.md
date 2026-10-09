@@ -75,8 +75,11 @@ After Docker returns, a valid observation reaches `record-create` even if Docker
 failed or the current plan has become blocked. Failed Docker or registration
 commands preserve the result and receipt and stop creation. After both succeed,
 the wrapper validates the resource registry and obtains a fresh validated
-current-run projection. Registration can resolve a network dependency on the
-new app; the earlier observation does not determine readiness. Invalid/missing
+current-run projection. A healthy registered app can keep its registered network
+in use. That
+`retained_for_dependency` disposition is valid during startup; it does not
+mean cleanup is complete. The earlier observation does not determine readiness.
+Invalid/missing
 artifacts, unexpected statuses and fresh current-run blockers still stop creation.
 The wrapper initializes its unique shadow run under `.workflow-kernel/runs/`;
 that scratch state and returned overrides must never be staged.
@@ -109,6 +112,13 @@ host to inspect and recover with `stop` then `start` or `rebuild`.
 Each cleanup step requires a new validated current-run reconciliation witness
 and the existing Kernel execution guard. A blocked initial or fresh current
 plan stops cleanup; an unrelated stale-sweep blocker alone does not.
+Dependency retention allows available guarded current-run actions to run.
+`record-cleanup` returns 3 for a receipt that retains a dependency, even when
+its container removal succeeded. The wrapper saves that partial receipt, then
+replans so a newly unused network can be removed with fresh proofs. Each further
+pass must retire an owned identity; dependency-only plans, no progress, failed
+recording and genuine blockers fail with evidence. Only a fresh empty current-run
+plan permits `stopped`. The store and assets remain in place.
 
 Host/root owns live serving, browser evidence, image removal and final filesystem
 cleanup. After the final browser/restart proof, run `stop`, verify its receipt,
@@ -137,10 +147,12 @@ retained preview allocation's `evidence/` directory (the allocation ending in
 supported Kernel observations and executes the wrapper's actual functions
 against temporary copies and stubbed commands. It checks known statuses,
 malformed artifacts, owner/path mismatches, partial-creation recording, safe
-current-run cleanup and initial/fresh current-run blockers. The registration
+current-run cleanup, two-stage container/network removal, healthy startup
+dependency retention and initial/fresh current-run blockers. The registration
 interleaving uses the retained successful app result, registration receipt and
-pre-registration network blocker. Its post-registration projection and registry
-outcomes are stubbed; this checks wrapper decisions, not live Kernel behavior.
+pre-registration network retention. The post-registration projection uses the
+retained healthy app/network observation; registry and cleanup outcomes are
+stubbed. This checks wrapper decisions, not live Kernel behavior.
 It never invokes Docker or Kernel, starts/stops an app, or modifies the retained
 allocation.
 
@@ -157,6 +169,7 @@ functions = [node for node in ast.walk(tree) if isinstance(node,ast.FunctionDef)
 ns = dict(datetime=datetime,json=json,os=os,pathlib=pathlib,re=re,uuid=uuid)
 exec(compile(ast.Module(body=functions,type_ignores=[]),'run.sh functions','exec'),ns)
 manifest = json.loads((fixtures/'lifecycle.json').read_text())
+healthy = json.loads((fixtures/'stop-40b87d03524341ae8f7575257483b9f0.current-run.json').read_text())
 current = json.loads((fixtures/'stop-972e3c97e6c047a0845b5663f26f58f2.current-run.json').read_text())
 sweep = json.loads((fixtures/'stop-972e3c97e6c047a0845b5663f26f58f2.stale-sweep.json').read_text())
 empty_current = json.loads((fixtures/'8c11ab066c134053954569cab0643f95-after-inventory-plans.current-run.json').read_text())
@@ -244,15 +257,7 @@ with tempfile.TemporaryDirectory(prefix='sortable-lifecycle-regression-') as tem
             assert check and calls[-2][0]=='record-create'
             if registry_status:
                 ns['fail']('stubbed registry validation failure')
-        elif name=='next-cleanup-step':
-            assert '.current-run.json' in str(arg('--plan'))
-            done=bool(ns['read'](arg('--outcomes')))
-            ns['write'](arg('--output'),dict(complete=done,step_index=0))
-        elif name=='execute-cleanup-step':
-            assert '.current-run.json' in str(arg('--plan'))
-            assert ns['read'](arg('--inventory'))==current['inventory']
-            ns['write'](arg('--output'),dict(guarded=True))
-        elif name!='record-cleanup':
+        else:
             raise AssertionError('unexpected command '+name)
         return types.SimpleNamespace(returncode=0,stdout='{}',stderr='')
     ns['kernel']=kernel
@@ -269,12 +274,9 @@ with tempfile.TemporaryDirectory(prefix='sortable-lifecycle-regression-') as tem
     assert [(d['disposition'],d['reason']) for d in app_blocked['plan']['dispositions']]==[('retained_for_dependency','resource_in_use')]
     registered_ids={r['resource_id'] for r in app_receipt['registered']}
     assert registered_ids and registered_ids.isdisjoint(r['resource_id'] for r in app_blocked['inventory']['resources'])
-    # Stub a fresh blocker-free projection over those same observed resources.
-    registered=copy.deepcopy(app_blocked)
-    registered['plan']['dispositions']=[]
-    registered['inventory']=copy.deepcopy(app_sweep['inventory'])
-    registered['inventory']['source']='registered_exact'
-    registered['plan']['before']=[r['kind']+':'+r['resource_id'] for r in registered['inventory']['resources']]
+    # Actual healthy registered container/network projection retains its network.
+    registered=copy.deepcopy(healthy)
+    assert ns['validate_cleanup_artifact'](registered,*args,False) is False;count+=1
     creation_plan=app_plan;creation_result=app_result;observed_sweep=app_sweep
     record_status=0;record_stdout=json.dumps(app_receipt)
     after_ids=[r['resource_id'] for r in app_sweep['inventory']['resources']]
@@ -283,7 +285,7 @@ with tempfile.TemporaryDirectory(prefix='sortable-lifecycle-regression-') as tem
     assert [c[0] for c in calls]==['plan-reconcile','plan-compose','plan-reconcile','record-create','validate-resource-registry','plan-reconcile']
     assert len({c[c.index('--output')+1] for c in calls if c[0]=='plan-reconcile'})==3
     assert not any(c[0]=='execute-cleanup-step' for c in calls);count+=1
-    calls.clear();plans[:]=[app_before,app_blocked,app_blocked]
+    calls.clear();plans[:]=[app_before,app_blocked,blocked]
     rejected(lambda: ns['create'](creation_plan['argv']))
     assert calls[-1][0]=='plan-reconcile';count+=1
     malformed=copy.deepcopy(registered);malformed['schema_version']=2
@@ -301,15 +303,92 @@ with tempfile.TemporaryDirectory(prefix='sortable-lifecycle-regression-') as tem
     rejected(lambda: ns['create'](creation_plan['argv']))
     assert calls[-1][0]=='validate-resource-registry';count+=1
     registry_status=0;observed_sweep=sweep
-    calls.clear();plans[:]=[current]
+    # A stateful stub models fresh Docker observations and Kernel receipts.
+    # Proof issuance/execution remains Kernel-owned; this checks wrapper control.
+    live=copy.deepcopy(current)
+    injections=[];cleanup_code=None;cleanup_blocked=False;no_progress=False
+    receipts=[];executed=[];witnesses=[]
+    def cleanup_kernel(*argv,check=True):
+        global live
+        calls.append(tuple(map(str,argv)));name=argv[0]
+        def arg(key):return pathlib.Path(argv[argv.index(key)+1])
+        if name=='plan-reconcile':
+            projection=injections.pop(0) if injections else live
+            emit(arg('--output'),cur=projection)
+            return types.SimpleNamespace(returncode=3,stdout='',stderr='')
+        plan=ns['read'](arg('--plan'))['plan']
+        assert '.current-run.json' in str(arg('--plan')) and not plan['scope']['stale_sweep']
+        prior=ns['read'](arg('--outcomes'))
+        if name=='next-cleanup-step':
+            assert len(prior)<=len(plan['actions'])
+            ns['write'](arg('--output'),dict(complete=len(prior)==len(plan['actions']),step_index=len(prior)))
+        elif name=='execute-cleanup-step':
+            index=int(argv[argv.index('--step-index')+1]);row=plan['actions'][index]
+            assert index==len(prior)
+            witness=ns['read'](arg('--inventory'))
+            assert witness==live['inventory']
+            witnesses.append(copy.deepcopy(witness))
+            assert ns['read'](arg('--node-statuses'))['run_id']==manifest['runId']
+            executed.append((row['kind'],row['action'],row['resource_id']))
+            ns['write'](arg('--output'),dict(type='command',result=dict(schema_version=1,argv=row['argv'],exit_code=0,stdout='',stderr='')))
+            if not no_progress:
+                for resource in live['inventory']['resources']:
+                    if resource['resource_id']==row['resource_id'] and row['action']=='stop':resource['running']=False
+                if row['action']=='remove':
+                    live['inventory']['resources']=[r for r in live['inventory']['resources'] if r['resource_id']!=row['resource_id']]
+                    live['plan']['actions']=[r for r in live['plan']['actions'] if r['resource_id']!=row['resource_id']]
+                    if row['kind']=='container':
+                        for resource in live['inventory']['resources']:resource['in_use']=False
+                live['plan']['before']=[r['kind']+':'+r['resource_id'] for r in live['inventory']['resources']]
+        elif name=='record-cleanup':
+            assert check is False and len(prior)==len(plan['actions'])
+            dispositions=copy.deepcopy(plan['dispositions'])
+            for row in plan['actions']:
+                if row['action']=='remove':
+                    dispositions.append(dict(resource_id=row['resource_id'],kind=row['kind'],owner=row['owner'],lifecycle=row['lifecycle'],disposition='removed',action='remove_exact_id',reason='confirmed_removed',command_evidence=row['argv'],evidence=['exit=0']))
+            if cleanup_blocked:
+                dispositions[-1].update(disposition='blocked',reason='resource_still_present')
+            receipt=dict(schema_version=1,scope=plan['scope'],before=plan['before'],after=live['plan']['before'],dispositions=dispositions)
+            code=3 if any(d['disposition'] in ['blocked','retained_for_dependency'] for d in dispositions) else 0
+            receipts.append((code,copy.deepcopy(receipt)))
+            # Removing the container frees the network for a NEW guarded plan.
+            if executed and executed[-1][0]=='container' and not no_progress:
+                network=live['inventory']['resources'][0]
+                row=copy.deepcopy(current['plan']['actions'][0])
+                row.update(resource_id=network['resource_id'],argv=['docker','network','rm',network['resource_id']])
+                live['plan']['actions']=[row];live['plan']['dispositions']=[]
+            return types.SimpleNamespace(returncode=code if cleanup_code is None else cleanup_code,stdout=json.dumps(receipt),stderr='')
+        else:raise AssertionError(name)
+        return types.SimpleNamespace(returncode=0,stdout='{}',stderr='')
+    ns['kernel']=cleanup_kernel
+    calls.clear();ns['stop']()
+    assert receipts[-1][0]==0 and not live['inventory']['resources'];count+=1
+    live=copy.deepcopy(healthy);calls.clear();executed.clear();receipts.clear();witnesses.clear()
     ns['stop']()
-    assert [c[0] for c in calls]==['plan-reconcile','next-cleanup-step','plan-reconcile','execute-cleanup-step','next-cleanup-step','record-cleanup'];count+=1
-    calls.clear();plans[:]=[blocked]
+    assert [(kind,action) for kind,action,_ in executed]==[('container','stop'),('container','remove'),('network','remove')]
+    assert receipts[0][0]==3 and receipts[0][1]['after'] and receipts[-1][0]==0 and receipts[-1][1]['after']==[]
+    assert witnesses[0]['resources'][0]['running'] is True and witnesses[1]['resources'][0]['running'] is False
+    assert len(witnesses[2]['resources'])==1 and witnesses[2]['resources'][0]['in_use'] is False
+    assert len({c[c.index('--output')+1] for c in calls if c[0]=='plan-reconcile'})==6
+    count+=4
+    # Initial and fresh blockers still stop guarded execution.
+    for sequence in [[blocked],[current,blocked]]:
+        live=copy.deepcopy(current);injections[:]=sequence;calls.clear()
+        rejected(lambda: ns['stop']())
+        assert not any(c[0]=='execute-cleanup-step' for c in calls);count+=1
+    live=copy.deepcopy(healthy);live['plan']['actions']=[];calls.clear()
     rejected(lambda: ns['stop']())
     assert not any(c[0]=='execute-cleanup-step' for c in calls);count+=1
-    calls.clear();plans[:]=[current,blocked]
-    rejected(lambda: ns['stop']())
-    assert not any(c[0]=='execute-cleanup-step' for c in calls);count+=1
+    live=copy.deepcopy(current);no_progress=True;calls.clear()
+    rejected(lambda: ns['stop']());count+=1
+    assert len([c for c in calls if c[0]=='record-cleanup'])==1;count+=1
+    no_progress=False
+    for cleanup_code in [1,2,3,4,5,6]:
+        live=copy.deepcopy(current);calls.clear()
+        rejected(lambda: ns['stop']())
+        assert not any(c[0]=='plan-reconcile' for c in calls[calls.index(next(c for c in calls if c[0]=='record-cleanup'))+1:]);count+=1
+    cleanup_code=None;cleanup_blocked=True;live=copy.deepcopy(current)
+    rejected(lambda: ns['stop']());count+=1
 print(f'PASS: {count} fixture assertions; no Docker or installed Kernel commands executed')
 PY
 ```
