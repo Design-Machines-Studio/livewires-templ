@@ -1,0 +1,163 @@
+package main
+
+import "github.com/Design-Machines-Studio/livewires-templ/component"
+import "github.com/Design-Machines-Studio/livewires-templ/layout"
+
+templ sortableStyles() {
+	<link rel="stylesheet" href="/dist/sortable-list.css"/>
+}
+
+templ exampleHead() {
+	@sortableStyles()
+	<link rel="stylesheet" href="/dist/css/print.css" media="print"/>
+	<script type="module" src="/dist/sortable-list.js"></script>
+	<script type="module" src="/bridge.js"></script>
+}
+
+templ personaPage(s session) {
+	@layout.Base(layout.BaseProps{Title:"Sortable demo personas",BodyClass:"scheme-default",CSSPath:"/dist/main.css"}) {
+		<main id="main"><article class="section prose">
+			<h1>Choose a local demo persona</h1>
+			<p>Anyone with access to this isolated demo can select these published fake personas. This is not a deployable authentication system. Sessions expire on restart.</p>
+			<form method="post" action="/session">
+				<input type="hidden" name="csrf" value={ s.CSRF }/>
+				<label for="persona">Persona</label>
+				<select id="persona" name="persona">
+					<option value="editor">Editor — reorder both lists</option>
+					<option value="reading-editor">Reading editor — reorder reading only</option>
+					<option value="viewer">Viewer — read both lists</option>
+				</select>
+				<button type="submit">Use persona</button>
+			</form>
+		</article></main>
+	}
+}
+
+templ sortablePage(a *app, s session, p presentation, reading, requirements listState) {
+	@layout.Base(layout.BaseProps{Title:"Persistent sortable example",BodyClass:"scheme-default",CSSPath:"/dist/main.css",DatastarPath:"/vendor/datastar.js",ExtraHead:exampleHead()}) {
+		<a href="#main" class="skip-link">Skip to main content</a>
+		<main id="main" data-signals="{readingResult: null, requirementsResult: null, readingCase: 'normal', requirementsCase: 'normal'}">
+			<article class="section prose">
+				<h1>Sortable list</h1>
+				<p>Moves save to this demo’s order file. An empty insertion point appends the item. Reload after an uncertain save.</p>
+				<p>Persona: { s.Actor }. <a href="/session">Choose persona</a>. <a href="/sortable">Reload and clear example cases</a>.</p>
+				<p id="source-build" data-source-fingerprint={ a.receipt.Fingerprint } data-source-head={ a.receipt.Commit }>
+					Build: { a.receipt.Commit } / { a.receipt.Fingerprint }
+				</p>
+				<form method="get" action="/sortable">
+					<label for="variant">Reading rows</label>
+					<select id="variant" name="variant"><option value="cards" selected?={ p.Variant=="cards" }>Cards</option><option value="dividers" selected?={ p.Variant=="dividers" }>Dividers</option></select>
+					<label for="density">Density</label>
+					<select id="density" name="density"><option value="default" selected?={ p.Density=="default" }>Default</option><option value="compact" selected?={ p.Density=="compact" }>Compact</option></select>
+					<label for="controls">Move controls</label>
+					<select id="controls" name="controls"><option value="both" selected?={ p.Controls=="both" }>Handle and arrows</option><option value="arrows" selected?={ p.Controls=="arrows" }>Arrows</option><option value="handle" selected?={ p.Controls=="handle" }>Handle</option></select>
+					<button type="submit">View</button>
+				</form>
+				if p.Controls=="handle" {
+					<p>Handle-only mode requires JavaScript enhancement. Choose arrows or combined controls to move without JavaScript.</p>
+				}
+				@listHost(listView{List:"reading",State:reading,Session:s,Presentation:p,CanReorder:grant(s.Actor,"reorder","reading")})
+				<h2>In a lined table</h2>
+				<p>The same optional element can enhance rows inside a semantic table. The handle sits at the far left of each row. The table keeps its heading, row headers and horizontal rules, with no vertical borders.</p>
+				@listHost(listView{List:"requirements",State:requirements,Session:s,Presentation:p,CanReorder:grant(s.Actor,"reorder","requirements")})
+				<h2>Example response cases</h2>
+				<p>Select a one-shot case, then move that list. The delayed and diagnostic responses finish automatically. Reload clears selected cases and obtains current authoritative order.</p>
+				for _, list := range []string{"reading","requirements"} {
+					if grant(s.Actor,"reorder",list) {
+						@caseControls(s,list)
+					}
+				}
+			</article>
+		</main>
+	}
+}
+
+templ listHost(v listView) {
+	@component.SortableListComponent(v.host()) {
+		if v.List=="reading" {
+			@orderFragment(v)
+		} else {
+			<table class="table--lined">
+				<caption>Member requirements</caption>
+				<thead><tr><th scope="col"><span class="visually-hidden">Order</span></th><th scope="col">Member practice</th><th scope="col">Shared purpose</th><th scope="col"><span class="visually-hidden">Position controls</span></th></tr></thead>
+				@orderFragment(v)
+			</table>
+		}
+	}
+}
+
+templ orderFragment(v listView) {
+	if v.List=="reading" {
+		<ol id="order-reading" data-sortable-list data-revision={ v.revision() } data-delivery={ v.Delivery }>
+			for i, id := range v.State.Order {
+				@component.SortableItemComponent(component.SortableItemProps{ItemID:id,Label:itemLabel(id)}) {
+					<span data-sortable-content>
+						switch id {
+							case "essay-01":
+								<a href="#field-notes">Field notes</a> <small>— a link stays usable</small>
+							case "essay-02":
+								<a href="#on-paper">On paper</a> <small>— nested controls remain available</small>
+							case "essay-03":
+								<a href="#an-index">An index</a>
+								<label>Note <input type="text" aria-label="Note about An index" value="Keep this input usable"/></label>
+						}
+					</span>
+					if v.CanReorder {
+						<span data-sortable-actions>
+							if v.Presentation.Controls!="arrows" {
+								@component.SortableHandleComponent(component.SortableHandleProps{Label:itemLabel(id),Attrs:v.controls()})
+							}
+							if v.Presentation.Controls!="handle" {
+								@component.SortableMoveComponent(v.moveProps(i,"up"))
+								@component.SortableMoveComponent(v.moveProps(i,"down"))
+							}
+						</span>
+					}
+				}
+			}
+		</ol>
+	} else {
+		<tbody id="order-requirements" data-sortable-list data-revision={ v.revision() } data-delivery={ v.Delivery }>
+			for i, id := range v.State.Order {
+				@component.SortableItemComponent(component.SortableItemProps{ItemID:id,Label:itemLabel(id),AsRow:true}) {
+					<td>
+						if v.CanReorder && v.Presentation.Controls!="arrows" {
+							<span data-sortable-actions>@component.SortableHandleComponent(component.SortableHandleProps{Label:itemLabel(id),Attrs:v.controls()})</span>
+						}
+					</td>
+					<th scope="row" data-sortable-content>{ itemLabel(id) }</th>
+					<td data-th="Shared purpose">{ purpose(id) }</td>
+					<td data-th="Position">
+						if v.CanReorder && v.Presentation.Controls!="handle" {
+							<span data-sortable-actions>
+								@component.SortableMoveComponent(v.moveProps(i,"up"))
+								@component.SortableMoveComponent(v.moveProps(i,"down"))
+							</span>
+						}
+					</td>
+				}
+			}
+		</tbody>
+	}
+}
+
+templ moveMetadata(v listView) {
+	<input type="hidden" name="revision" value={ v.revision() }/>
+	<input type="hidden" name="csrf" value={ v.Session.CSRF }/>
+}
+
+templ nativeRejection(message string,v listView) {
+	@layout.Base(layout.BaseProps{Title:"Move rejected",BodyClass:"scheme-default",CSSPath:"/dist/main.css",ExtraHead:sortableStyles()}) {
+		<main id="main"><article class="section prose"><h1>Move rejected</h1><p role="status">{ message }</p><a href="/sortable">Reload current order</a>@listHost(v)</article></main>
+	}
+}
+
+templ caseControls(s session,list string) {
+	<form><fieldset><legend>{ list } response for the next move (JavaScript)</legend>
+		<input type="hidden" name="csrf" value={ s.CSRF }/>
+		for _, mode := range exampleCases {
+			<button type="button" data-on:click={ caseAction(list,mode) }>{ mode }</button>
+		}
+		<p role="status" data-text={ "$"+list+"Case" }>normal</p>
+	</fieldset></form>
+}

@@ -1,0 +1,38 @@
+# Separate consumer. Root development Compose and toolchain remain unchanged.
+services:
+  builder:
+    profiles: [build]
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ${SORTABLE_PROJECT:?task project}-toolchain
+    working_dir: /app
+    environment:
+      SORTABLE_BUILD_RECEIPT: ${SORTABLE_BUILD_RECEIPT:?compiled receipt}
+    volumes:
+      - ${SORTABLE_RUN_DIR:?owned run}/build/source:/app:ro
+      - ${SORTABLE_RUN_DIR}/build:/build
+      - ${SORTABLE_RUN_DIR}/cache/modules:/go/pkg/mod
+      - ${SORTABLE_RUN_DIR}/cache/go-build:/root/.cache/go-build
+    command: [sh, -c, 'go build -trimpath -ldflags "-X main.buildReceipt=$$SORTABLE_BUILD_RECEIPT" -o /build/sortable ./examples/sortable']
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ${SORTABLE_PROJECT:?task project}-toolchain
+    entrypoint: [/build/sortable]
+    command: [-listen, '0.0.0.0:8080', -assets, /assets, -store, /data/orders.json]
+    volumes:
+      - ${SORTABLE_RUN_DIR}/build:/build:ro
+      - ${SORTABLE_RUN_DIR}/assets:/assets:ro
+      - ${SORTABLE_RUN_DIR}/data:/data
+    ports:
+      - target: 8080
+        host_ip: 127.0.0.1
+        protocol: tcp
+    healthcheck:
+      test: [CMD, wget, -q, -O, /dev/null, 'http://127.0.0.1:8080/healthz']
+      interval: 1s
+      timeout: 2s
+      retries: 20
+    stop_grace_period: 35s

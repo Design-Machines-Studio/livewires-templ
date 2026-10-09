@@ -1,0 +1,56 @@
+      <lw-sortable-list data-sortable-variant="cards" aria-label="Reading list">
+        <ol data-sortable-list>
+          <li data-sortable-item data-item-id="essay-01" data-item-label="Field notes">
+            <span data-sortable-content><a href="#field-notes">Field notes</a> <small>— a link stays usable</small></span>
+            <span data-sortable-actions>
+              <button type="button" data-sortable-handle aria-label="Move Field notes" title="Drag or press Space to stage">⠿</button>
+              <form method="post" action="/items/reorder">
+                <input type="hidden" name="itemId" value="essay-01">
+                <input type="hidden" name="before" value="essay-01">
+                <button type="submit" data-sortable-move="up" aria-label="Move Field notes up" disabled>↑</button>
+              </form>
+              <form method="post" action="/items/reorder">
+                <input type="hidden" name="itemId" value="essay-01">
+                <input type="hidden" name="before" value="essay-03">
+                <button type="submit" data-sortable-move="down" aria-label="Move Field notes down">↓</button>
+              </form>
+            </span>
+          </li>
+          <li data-sortable-item data-item-id="essay-02" data-item-label="On paper">
+            <span data-sortable-content><a href="#on-paper">On paper</a> <small>— nested controls remain available</small></span>
+            <span data-sortable-actions>
+              <button type="button" data-sortable-handle aria-label="Move On paper" title="Drag or press Space to stage">⠿</button>
+              <form method="post" action="/items/reorder">
+                <input type="hidden" name="itemId" value="essay-02">
+                <input type="hidden" name="before" value="essay-01">
+                <button type="submit" data-sortable-move="up" aria-label="Move On paper up">↑</button>
+              </form>
+              <form method="post" action="/items/reorder">
+                <input type="hidden" name="itemId" value="essay-02">
+                <input type="hidden" name="before" value="">
+                <button type="submit" data-sortable-move="down" aria-label="Move On paper down">↓</button>
+              </form>
+            </span>
+          </li>
+          <li data-sortable-item data-item-id="essay-03" data-item-label="An index">
+            <span data-sortable-content>
+              <a href="#an-index">An index</a>
+              <label>Note <input type="text" aria-label="Note about An index" value="Keep this input usable"></label>
+            </span>
+            <span data-sortable-actions>
+              <button type="button" data-sortable-handle aria-label="Move An index" title="Drag or press Space to stage">⠿</button>
+              <form method="post" action="/items/reorder">
+                <input type="hidden" name="itemId" value="essay-03">
+                <input type="hidden" name="before" value="essay-02">
+                <button type="submit" data-sortable-move="up" aria-label="Move An index up">↑</button>
+              </form>
+              <form method="post" action="/items/reorder">
+                <input type="hidden" name="itemId" value="essay-03">
+                <input type="hidden" name="before" value="">
+                <button type="submit" data-sortable-move="down" aria-label="Move An index down" disabled>↓</button>
+              </form>
+            </span>
+          </li>
+        </ol>
+        <p data-sortable-status role="status" aria-live="polite" aria-atomic="true" tabindex="-1"></p>
+      </lw-sortable-list>

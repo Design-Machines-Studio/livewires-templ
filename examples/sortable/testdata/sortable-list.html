@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script type="module" src="/dist/main.js"></script>
+  <script type="module" src="/dist/sortable-list.js"></script>
+  <html-include src="/_includes/head.html"></html-include>
+  <link rel="stylesheet" href="/dist/sortable-list.css">
+  <title>Sortable list – Components Reference – Live Wires</title>
+</head>
+<body class="scheme-default">
+  <html-include src="/_includes/header.html"></html-include>
+  <main id="main">
+    <article class="section prose">
+      <h1>Sortable list</h1>
+      <p>This optional enhancement moves an item into its requested position immediately. The visible order is provisional while your application decides whether and how to apply it.</p>
+      <p>This static reference includes a small local responder so the interaction can be tried. It updates each list as the application would, then confirms the matching request. It is an example only, not persistence or a server integration.</p>
+      <p>Use the handle and arrow keys to stage a position, Space to request it, and Escape to cancel. Dragging moves the row with the pointer; on release, it lands in the requested position while the application catches up. A rejection restores the previous position unless the application has already replaced the list markup. The move buttons request the previous or next position directly. In an application, point each form to its own reorder endpoint for a no-JavaScript fallback.</p>
+      <p>Use <code>data-sortable-variant="cards"</code> for separate bordered rows; omit it for simple dividers. <code>data-sortable-density="compact"</code> reduces text and spacing while keeping the controls' touch targets intact. Include a handle, move buttons, or both to choose the controls each list needs.</p>
+
+      <lw-sortable-list data-sortable-variant="cards" aria-label="Reading list">
+        <ol data-sortable-list>
+          <li data-sortable-item data-item-id="essay-01" data-item-label="Field notes">
+            <span data-sortable-content><a href="#field-notes">Field notes</a> <small>— a link stays usable</small></span>
+            <span data-sortable-actions>
+              <button type="button" data-sortable-handle aria-label="Move Field notes" title="Drag or press Space to stage">⠿</button>
+              <form method="post" action="/items/reorder">
+                <input type="hidden" name="itemId" value="essay-01">
+                <input type="hidden" name="before" value="essay-01">
+                <button type="submit" data-sortable-move="up" aria-label="Move Field notes up" disabled>↑</button>
+              </form>
+              <form method="post" action="/items/reorder">
+                <input type="hidden" name="itemId" value="essay-01">
+                <input type="hidden" name="before" value="essay-03">
+                <button type="submit" data-sortable-move="down" aria-label="Move Field notes down">↓</button>
+              </form>
+            </span>
+          </li>
+          <li data-sortable-item data-item-id="essay-02" data-item-label="On paper">
+            <span data-sortable-content><a href="#on-paper">On paper</a> <small>— nested controls remain available</small></span>
+            <span data-sortable-actions>
+              <button type="button" data-sortable-handle aria-label="Move On paper" title="Drag or press Space to stage">⠿</button>
+              <form method="post" action="/items/reorder">
+                <input type="hidden" name="itemId" value="essay-02">
+                <input type="hidden" name="before" value="essay-01">
+                <button type="submit" data-sortable-move="up" aria-label="Move On paper up">↑</button>
+              </form>
+              <form method="post" action="/items/reorder">
+                <input type="hidden" name="itemId" value="essay-02">
+                <input type="hidden" name="before" value="">
+                <button type="submit" data-sortable-move="down" aria-label="Move On paper down">↓</button>
+              </form>
+            </span>
+          </li>
+          <li data-sortable-item data-item-id="essay-03" data-item-label="An index">
+            <span data-sortable-content>
+              <a href="#an-index">An index</a>
+              <label>Note <input type="text" aria-label="Note about An index" value="Keep this input usable"></label>
+            </span>
+            <span data-sortable-actions>
+              <button type="button" data-sortable-handle aria-label="Move An index" title="Drag or press Space to stage">⠿</button>
+              <form method="post" action="/items/reorder">
+                <input type="hidden" name="itemId" value="essay-03">
+                <input type="hidden" name="before" value="essay-02">
+                <button type="submit" data-sortable-move="up" aria-label="Move An index up">↑</button>
+              </form>
+              <form method="post" action="/items/reorder">
+                <input type="hidden" name="itemId" value="essay-03">
+                <input type="hidden" name="before" value="">
+                <button type="submit" data-sortable-move="down" aria-label="Move An index down" disabled>↓</button>
+              </form>
+            </span>
+          </li>
+        </ol>
+        <p data-sortable-status role="status" aria-live="polite" aria-atomic="true" tabindex="-1"></p>
+      </lw-sortable-list>
+
+      <h2>In a lined table</h2>
+      <p>The same optional element can enhance rows inside a semantic table. The handle sits at the far left of each row. The table keeps its heading, row headers and horizontal rules, with no vertical borders.</p>
+      <lw-sortable-list aria-label="Member requirements">
+        <table class="table--lined">
+          <caption>Member requirements</caption>
+          <thead>
+            <tr>
+              <th scope="col"><span class="visually-hidden">Order</span></th>
+              <th scope="col">Member practice</th>
+              <th scope="col">Shared purpose</th>
+              <th scope="col"><span class="visually-hidden">Position controls</span></th>
+            </tr>
+          </thead>
+          <tbody data-sortable-list>
+            <tr data-sortable-item data-item-id="orientation" data-item-label="Member orientation">
+              <td><span data-sortable-actions><button type="button" data-sortable-handle aria-label="Move Member orientation" title="Drag or press Space to stage">⠿</button></span></td>
+              <th scope="row" data-sortable-content>Member orientation</th>
+              <td data-th="Shared purpose">Welcome people into the co-op and how members work together.</td>
+              <td data-th="Position"><span data-sortable-actions><button type="button" data-sortable-move="up" aria-label="Move Member orientation up">↑</button><button type="button" data-sortable-move="down" aria-label="Move Member orientation down">↓</button></span></td>
+            </tr>
+            <tr data-sortable-item data-item-id="agreements" data-item-label="Shared agreements">
+              <td><span data-sortable-actions><button type="button" data-sortable-handle aria-label="Move Shared agreements" title="Drag or press Space to stage">⠿</button></span></td>
+              <th scope="row" data-sortable-content>Shared agreements</th>
+              <td data-th="Shared purpose">Review the agreements members use to work together.</td>
+              <td data-th="Position"><span data-sortable-actions><button type="button" data-sortable-move="up" aria-label="Move Shared agreements up">↑</button><button type="button" data-sortable-move="down" aria-label="Move Shared agreements down">↓</button></span></td>
+            </tr>
+            <tr data-sortable-item data-item-id="governance" data-item-label="Governance participation">
+              <td><span data-sortable-actions><button type="button" data-sortable-handle aria-label="Move Governance participation" title="Drag or press Space to stage">⠿</button></span></td>
+              <th scope="row" data-sortable-content>Governance participation</th>
+              <td data-th="Shared purpose">Take part in a member meeting or decision round.</td>
+              <td data-th="Position"><span data-sortable-actions><button type="button" data-sortable-move="up" aria-label="Move Governance participation up">↑</button><button type="button" data-sortable-move="down" aria-label="Move Governance participation down">↓</button></span></td>
+            </tr>
+          </tbody>
+        </table>
+        <p data-sortable-status role="status" aria-live="polite" aria-atomic="true" tabindex="-1"></p>
+      </lw-sortable-list>
+
+      <h2>Contract</h2>
+      <p>The component emits a bubbling <code>sortable-move-request</code> event with <code>{ itemId, before, requestId }</code> and immediately moves the row as provisional UI state. An empty <code>before</code> means append at the end. The application owns authorization, persistence, ordering and retry. Apply authoritative markup before calling <code>list.resolveMove({ requestId, status, message? })</code> with <code>accepted</code> or <code>rejected</code>. Only a matching result clears pending state. A matching rejection restores the previous order only if the original item nodes are still in the provisional order; if the application has replaced the list markup, the component leaves those new nodes intact. The opaque request ID correlates this UI response; it is not an authorization or idempotency token. One move may be pending per list.</p>
+      <pre><code>list.addEventListener('sortable-move-request', async (event) =&gt; {
+  const { itemId, before, requestId } = event.detail;
+  const result = await saveAuthorizedMove({ itemId, before });
+  renderAuthoritativeList(result.items);
+  list.resolveMove({ requestId, status: result.accepted ? 'accepted' : 'rejected' });
+});</code></pre>
+      <p>Use <code>data-sortable-list</code>, <code>data-sortable-item</code>, a unique <code>data-item-id</code>, <code>data-sortable-handle</code>, optional <code>data-sortable-move="up|down"</code>, and <code>data-sortable-status</code>. Component styles use those hooks for the staged source, target, end cue, pending state and status. The reading-list example includes per-direction forms for a no-JavaScript fallback; the lined-table example uses buttons to demonstrate the client-side request flow. Applications can author fallback forms in table action cells too.</p>
+      <p>Load <code>/dist/sortable-list.js</code> and <code>/dist/sortable-list.css</code> only on pages that use the element. It is outside <code>main.js</code>. Removing an instance cancels staging and invalidates its outstanding request; reinsertion attaches one listener set and ignores old results. A consumer must render authoritative markup before calling <code>resolveMove</code>. The component never observes DOM changes as confirmation.</p>
+    </article>
+  </main>
+  <html-include src="/_includes/footer.html"></html-include>
+  <script type="module">
+    const lists = [...document.querySelectorAll('lw-sortable-list')];
+
+    for (const list of lists) {
+      const orderedList = list.querySelector('[data-sortable-list]');
+
+      function updateFallbackForms() {
+        const items = [...orderedList.querySelectorAll('[data-sortable-item]')];
+        items.forEach((item, index) => {
+          const forms = [...item.querySelectorAll('form')];
+          const up = forms[0];
+          const down = forms[1];
+          if (!up || !down) return;
+          up.querySelector('[name="before"]').value = items[index - 1]?.dataset.itemId || item.dataset.itemId;
+          down.querySelector('[name="before"]').value = items[index + 2]?.dataset.itemId || '';
+          up.querySelector('button').disabled = index === 0;
+          down.querySelector('button').disabled = index === items.length - 1;
+          if ((document.activeElement === up.querySelector('button') && index === 0)
+            || (document.activeElement === down.querySelector('button') && index === items.length - 1)) {
+            item.querySelector('[data-sortable-handle]').focus({ preventScroll: true });
+          }
+        });
+      }
+
+      list.addEventListener('sortable-move-request', ({ detail }) => {
+        const source = [...orderedList.querySelectorAll('[data-sortable-item]')]
+          .find((item) => item.dataset.itemId === detail.itemId);
+        const target = detail.before
+          ? [...orderedList.querySelectorAll('[data-sortable-item]')]
+            .find((item) => item.dataset.itemId === detail.before)
+          : null;
+        if (!source || (detail.before && !target)) {
+          list.resolveMove({ requestId: detail.requestId, status: 'rejected', message: 'The list changed before the move was applied.' });
+          return;
+        }
+        // The component has already staged this order; avoid moving the focused node twice.
+        updateFallbackForms();
+        list.resolveMove({ requestId: detail.requestId, status: 'accepted' });
+      });
+
+      updateFallbackForms();
+    }
+  </script>
+</body>
+</html>

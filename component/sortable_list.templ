@@ -1,0 +1,179 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// SortableListProps configures the host, not its list/table children.
+// Consumers compose ol or tbody[data-sortable-list], content and action wrappers.
+// Load the optional Live Wires sortable CSS/module in the application; this API
+// emits no assets, directives, request handling or persistence.
+// All attribute maps in this API are developer-controlled. Never build them
+// from request input or repeat component-owned attributes in them. Spreads
+// retain duplicate attributes; the component's first occurrence wins in HTML.
+type SortableListProps struct {
+	ID      string           // Optional stable host ID
+	Label   string           // Accessible host name
+	Variant string           // "cards" or default dividers (empty)
+	Density string           // "compact" or default (empty)
+	Class   string           // Additional host classes
+	Attrs   templ.Attributes // Host attributes, after owned attributes
+}
+
+// SortableListComponent renders children followed by the exact owned status.
+// Children must contain one list/table, with status outside that list/table.
+templ SortableListComponent(props SortableListProps) {
+	<lw-sortable-list
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		if props.Variant == "cards" {
+			data-sortable-variant="cards"
+		}
+		if props.Density == "compact" {
+			data-sortable-density="compact"
+		}
+		aria-label={ props.Label }
+		if props.Class != "" {
+			class={ lw.ClassNames(props.Class) }
+		}
+		{ props.Attrs... }
+	>
+		{ children... }
+		<p data-sortable-status role="status" aria-live="polite" aria-atomic="true" tabindex="-1"></p>
+	</lw-sortable-list>
+}
+
+// SortableList wraps a default divider list/table supplied as children.
+templ SortableList(label string) {
+	@SortableListComponent(SortableListProps{Label: label}) {
+		{ children... }
+	}
+}
+
+// SortableItemProps configures a list item or table row. ItemID must be nonempty,
+// have no surrounding whitespace, be unique within its list and remain stable
+// across reorders. The application owns those guarantees and all permissions.
+type SortableItemProps struct {
+	ItemID string
+	Label  string
+	AsRow  bool             // Render tr instead of li; children must be cells
+	Class  string           // Additional li/tr classes
+	Attrs  templ.Attributes // li/tr attributes, after owned attributes
+}
+
+// SortableItemComponent preserves semantic li/tr children without extra wrappers.
+templ SortableItemComponent(props SortableItemProps) {
+	if props.AsRow {
+		<tr
+			data-sortable-item data-item-id={ props.ItemID } data-item-label={ props.Label }
+			if props.Class != "" {
+				class={ lw.ClassNames(props.Class) }
+			}
+			{ props.Attrs... }
+		>
+			{ children... }
+		</tr>
+	} else {
+		<li
+			data-sortable-item data-item-id={ props.ItemID } data-item-label={ props.Label }
+			if props.Class != "" {
+				class={ lw.ClassNames(props.Class) }
+			}
+			{ props.Attrs... }
+		>
+			{ children... }
+		</li>
+	}
+}
+
+// SortableItem renders a list item; use AsRow in the full component for a table.
+templ SortableItem(itemID string, label string) {
+	@SortableItemComponent(SortableItemProps{ItemID: itemID, Label: label}) {
+		{ children... }
+	}
+}
+
+// SortableHandleProps names a handle for its item.
+type SortableHandleProps struct {
+	Label string           // Item label, used in "Move <label>"
+	Class string           // Additional button classes
+	Attrs templ.Attributes // Button attributes, after owned attributes
+}
+
+// SortableHandleComponent renders the reference staging handle and glyph.
+templ SortableHandleComponent(props SortableHandleProps) {
+	<button
+		type="button" data-sortable-handle aria-label={ "Move " + props.Label } title="Drag or press Space to stage"
+		if props.Class != "" {
+			class={ lw.ClassNames(props.Class) }
+		}
+		{ props.Attrs... }
+	>⠿</button>
+}
+
+// SortableHandle renders the reference handle for an item label.
+templ SortableHandle(label string) {
+	@SortableHandleComponent(SortableHandleProps{Label: label})
+}
+
+// SortableMoveProps renders a native form when Action is nonempty; an empty
+// Action explicitly selects client-button mode (no form, inputs or metadata).
+// The application calculates Before: first-up=self, up=previous ID,
+// down=two positions ahead, empty=append. It also supplies boundary Disabled.
+type SortableMoveProps struct {
+	Label     string           // Item label, used in "Move <label> <direction>"
+	Direction string           // "up" or "down"; caller supplies a valid direction
+	Action    string           // Application reorder URL; empty selects client mode
+	Method    string           // Native form method; defaults to "post"
+	ItemID    string           // Native form itemId value
+	Before    string           // Native form before value, including empty append
+	Disabled  bool             // Button boundary state in either mode
+	Metadata  templ.Component  // Developer-owned hidden CSRF/revision fields, after itemId/before
+	FormAttrs templ.Attributes // Form only, after action/method; ignored in client mode
+	Class     string           // Button classes in both modes (never form classes)
+	Attrs     templ.Attributes // Button only, after owned attributes in both modes
+}
+
+templ sortableMoveButton(props SortableMoveProps) {
+	<button
+		if props.Action != "" {
+			type="submit"
+		} else {
+			type="button"
+		}
+		data-sortable-move={ props.Direction } aria-label={ "Move " + props.Label + " " + props.Direction }
+		disabled?={ props.Disabled }
+		if props.Class != "" {
+			class={ lw.ClassNames(props.Class) }
+		}
+		{ props.Attrs... }
+	>
+		if props.Direction == "up" {
+			↑
+		} else {
+			↓
+		}
+	</button>
+}
+
+// SortableMoveComponent renders application values verbatim, escaping values
+// and sanitizing the action URL. Metadata must not duplicate itemId or before.
+// Do not nest native move forms inside another form.
+templ SortableMoveComponent(props SortableMoveProps) {
+	if props.Action != "" {
+		<form method={ lw.DefaultStr(props.Method, "post") } action={ templ.URL(props.Action) } { props.FormAttrs... }>
+			<input type="hidden" name="itemId" value={ props.ItemID }/>
+			<input type="hidden" name="before" value={ props.Before }/>
+			if props.Metadata != nil {
+				@props.Metadata
+			}
+			@sortableMoveButton(props)
+		</form>
+	} else {
+		@sortableMoveButton(props)
+	}
+}
+
+// SortableMove renders a client-mode move button; use Props for native forms.
+templ SortableMove(label string, direction string) {
+	@SortableMoveComponent(SortableMoveProps{Label: label, Direction: direction})
+}

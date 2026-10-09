@@ -21,6 +21,14 @@ import (
 
 ### Components
 
+The sortable API composes `SortableListComponent`, `SortableItemComponent`,
+`SortableHandleComponent` and `SortableMoveComponent`. Supply an `ol` or semantic
+table, stable item IDs, native form endpoints and application-owned CSRF/revision
+fields. Attribute keys must remain developer-controlled. Optional Live Wires
+sortable CSS/JavaScript are peer assets; the library handles no persistence or
+authorization. See the [persistent Go/Templ/Datastar example and serving runbook](examples/sortable/README.md)
+for two lists, native arrows, explicit move confirmation and isolated serving.
+
 ```go
 // Button
 @component.Button("Save", "accent")
