@@ -11,8 +11,10 @@ import (
 	"github.com/a-h/templ"
 )
 
-// Reference fixtures in testdata/livewires are copied verbatim from
-// livewires/public/reference/components (dropdown.html, calendar.html, date-filter.html).
+// Reference fixtures in testdata/livewires are copied from
+// livewires/public/reference/components. Relative-time and copy-button
+// fixtures are pinned to producer commit f73b8a2; see
+// docs/interaction-utilities.md for full revisions and asset digests.
 
 func staticHTML(markup string) templ.Component {
 	return templ.ComponentFunc(func(_ context.Context, w io.Writer) error {

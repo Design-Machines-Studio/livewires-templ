@@ -16,3 +16,27 @@ func toastRole(variant string) string {
 	}
 	return "status"
 }
+
+func toastKind(props ToastProps) string {
+	if props.Kind != "" {
+		return props.Kind
+	}
+	if props.Variant != "" {
+		return props.Variant
+	}
+	return "info"
+}
+
+func toastDismissLabel(label string) string {
+	if label == "" {
+		return "Dismiss notification"
+	}
+	return label
+}
+
+func copyButtonLabel(label string) string {
+	if label == "" {
+		return "Copy"
+	}
+	return label
+}
