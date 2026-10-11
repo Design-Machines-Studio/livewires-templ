@@ -29,3 +29,45 @@ templ LoaderComponent(props LoaderProps) {
 templ Loader(label string, variant string) {
 	@LoaderComponent(LoaderProps{Label: label, Variant: variant})
 }
+
+// LoadingRegionProps configures a local loading operation's stable ownership boundary.
+type LoadingRegionProps struct {
+	ID    string           // Stable ID for the operation root
+	Label string           // Accessible name for this operation region
+	Class string           // Additional CSS classes from consumer
+	Attrs templ.Attributes // Developer-controlled data-*, aria-* and Datastar attributes
+}
+
+// LoadingRegionComponent keeps the busy content separate from its announcement.
+// Children are operation-local content. The optional controller owns the data hooks.
+templ LoadingRegionComponent(props LoadingRegionProps) {
+	<section
+		data-loading-region
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		if props.Label != "" {
+			aria-label={ props.Label }
+		}
+		if props.Class != "" {
+			class={ lw.ClassNames(props.Class) }
+		}
+		{ props.Attrs... }
+	>
+		<div data-loading-content aria-busy="false">
+			{ children... }
+			<div class="loading" data-loading-indicator hidden aria-hidden="true">
+				<div class="skeleton skeleton--text"></div>
+				<div class="skeleton skeleton--text"></div>
+			</div>
+		</div>
+		<p data-loading-status role="status" aria-live="polite" aria-atomic="true"></p>
+	</section>
+}
+
+// LoadingRegion wraps operation content with native fallback hooks for optional loading behavior.
+templ LoadingRegion(label string) {
+	@LoadingRegionComponent(LoadingRegionProps{Label: label}) {
+		{ children... }
+	}
+}

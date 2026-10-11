@@ -1,0 +1,69 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// RelativeTimeProps renders a semantic absolute time with an optional relative label.
+type RelativeTimeProps struct {
+	DateTime string           // ISO date/date-time string for the time element
+	Fallback string           // Useful absolute text shown before enhancement and on failure
+	Lang     string           // Optional BCP 47 language tag for relative formatting
+	TimeZone string           // Optional IANA zone for calendar-day boundaries
+	Class    string           // Additional custom-element classes
+	Attrs    templ.Attributes // Developer-controlled data-*, aria-* and Datastar attributes
+}
+
+// RelativeTimeComponent preserves an absolute date if the optional module is absent.
+templ RelativeTimeComponent(props RelativeTimeProps) {
+	<lw-relative-time
+		if props.Lang != "" {
+			lang={ props.Lang }
+		}
+		if props.TimeZone != "" {
+			time-zone={ props.TimeZone }
+		}
+		if props.Class != "" {
+			class={ lw.ClassNames(props.Class) }
+		}
+		{ props.Attrs... }
+	>
+		<time datetime={ props.DateTime }>
+			<span data-relative-time-fallback>{ props.Fallback }</span>
+			<span data-relative-time-output hidden></span>
+		</time>
+	</lw-relative-time>
+}
+
+// RelativeTime renders a progressively enhanced absolute date.
+templ RelativeTime(dateTime string, fallback string) {
+	@RelativeTimeComponent(RelativeTimeProps{DateTime: dateTime, Fallback: fallback})
+}
+
+// CopyProps renders selectable text with optional clipboard behavior hooks.
+type CopyProps struct {
+	ID          string           // Stable unique ID used to associate the visible label with the text
+	Label       string           // Visible label for the text field
+	Value       string           // Read-only text retained for manual copy fallback
+	ButtonLabel string           // Native action label; defaults to "Copy"
+	Class       string           // Additional custom-element classes
+	Attrs       templ.Attributes // Developer-controlled data-*, aria-* and Datastar attributes
+}
+
+// CopyComponent keeps its value visible and selectable when the optional module is absent or denied.
+templ CopyComponent(props CopyProps) {
+	<lw-copy
+		if props.Class != "" {
+			class={ lw.ClassNames(props.Class) }
+		}
+		{ props.Attrs... }
+	>
+		<label for={ props.ID }>{ props.Label }</label>
+		<textarea id={ props.ID } data-copy-source rows="2" readonly>{ props.Value }</textarea>
+		<button type="button" data-copy-button>{ copyButtonLabel(props.ButtonLabel) }</button>
+		<p data-copy-status role="status" aria-live="polite" aria-atomic="true"></p>
+	</lw-copy>
+}
+
+// Copy renders selectable text and a truthful, optional copy action.
+templ Copy(id string, label string, value string) {
+	@CopyComponent(CopyProps{ID: id, Label: label, Value: value})
+}

@@ -7,6 +7,11 @@ type ToastProps struct {
 	Message     string           // Toast message text
 	Variant     string           // CSS modifier: "success", "error", "warning", "info"
 	Dismissible bool             // Whether to show a close button
+	ID          string           // Stable occurrence ID, required for managed region behavior
+	Kind        string           // Optional semantic kind; defaults to Variant
+	Duration    *int             // Optional positive duration in milliseconds; nil is sticky
+	DismissLabel string          // Accessible button name; defaults to "Dismiss notification"
+	Managed     bool             // Omit standalone live role when a ToastRegion owns announcements
 	Class       string           // Additional CSS classes from consumer
 	Attrs       templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
@@ -16,12 +21,24 @@ type ToastProps struct {
 templ ToastComponent(props ToastProps) {
 	<div
 		class={ lw.ClassNames("toast", lw.VariantClass("toast", props.Variant), props.Class) }
-		role={ toastRole(props.Variant) }
+		if !props.Managed {
+			role={ toastRole(props.Variant) }
+		}
+		if props.ID != "" {
+			data-toast-id={ props.ID }
+		}
+		if toastKind(props) != "" {
+			data-toast-kind={ toastKind(props) }
+		}
+		if props.Duration != nil {
+			data-toast-duration={ *props.Duration }
+		}
 		{ props.Attrs... }
 	>
-		<p class="content">{ props.Message }</p>
+		<p class="content" data-toast-message>{ props.Message }</p>
+		{ children... }
 		if props.Dismissible {
-			<button class="close" aria-label="Dismiss">&times;</button>
+			<button class="close" data-toast-dismiss type="button" aria-label={ toastDismissLabel(props.DismissLabel) }>&times;</button>
 		}
 	</div>
 }
@@ -29,4 +46,38 @@ templ ToastComponent(props ToastProps) {
 // Toast renders a toast notification (convenience wrapper).
 templ Toast(message string, variant string) {
 	@ToastComponent(ToastProps{Message: message, Variant: variant, Dismissible: true})
+}
+
+// ToastRegionProps configures the stable owner boundary for optional toast behavior.
+// Attributes are developer-controlled; never populate them from request data.
+type ToastRegionProps struct {
+	Label string           // Accessible name for this independent feedback region
+	Class string           // Additional CSS classes from consumer
+	Attrs templ.Attributes // Developer-controlled data-*, aria-* and Datastar attributes
+}
+
+// ToastRegionComponent wraps toast occurrences in stable region/list boundaries.
+// Its children should be ToastComponent values with Managed=true and unique IDs.
+templ ToastRegionComponent(props ToastRegionProps) {
+	<section
+		data-toast-region
+		if props.Label != "" {
+			aria-label={ props.Label }
+		}
+		if props.Class != "" {
+			class={ lw.ClassNames(props.Class) }
+		}
+		{ props.Attrs... }
+	>
+		<div data-toast-list>
+			{ children... }
+		</div>
+	</section>
+}
+
+// ToastRegion wraps managed toast occurrences in one independently managed region.
+templ ToastRegion(label string) {
+	@ToastRegionComponent(ToastRegionProps{Label: label}) {
+		{ children... }
+	}
 }

@@ -30,7 +30,7 @@ func TestToastRoleAlert(t *testing.T) {
 
 func TestToastDismissible(t *testing.T) {
 	html := testutil.RenderToString(t, Toast("Notice", "info"))
-	if !strings.Contains(html, `aria-label="Dismiss"`) {
+	if !strings.Contains(html, `aria-label="Dismiss notification"`) || !strings.Contains(html, `type="button"`) {
 		t.Error("expected dismiss button with aria-label")
 	}
 }
