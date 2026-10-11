@@ -27,9 +27,7 @@ templ ToastComponent(props ToastProps) {
 		if props.ID != "" {
 			data-toast-id={ props.ID }
 		}
-		if toastKind(props) != "" {
-			data-toast-kind={ toastKind(props) }
-		}
+		data-toast-kind={ toastKind(props) }
 		if props.Duration != nil {
 			data-toast-duration={ *props.Duration }
 		}
