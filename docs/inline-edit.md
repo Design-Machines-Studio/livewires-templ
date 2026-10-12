@@ -12,6 +12,12 @@ application can use its existing CSRF component. `FormAttrs` land on `<form>`;
 `InputAttrs` land on the actual `<input>`; `Attrs` land on the editor root.
 Only pass developer-controlled attributes to these maps.
 
+`TriggerLabel` is the visible edit control text. In the compact variant,
+`EditLabel` supplies the link's accessible name, so a short visible “Edit” can
+have a more specific accessible label. Disclosure values use a neutral
+paragraph element; consumers can place the component under their own heading
+without forcing an inappropriate heading level.
+
 Choose `Class`, `RowClass`, `FormClass` and `ActionsClass` values in the consuming
 application. The components do not add layout primitives. The compact form
 starts visible: without JavaScript, its Edit link targets the form and the

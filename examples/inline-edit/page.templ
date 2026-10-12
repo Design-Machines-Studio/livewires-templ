@@ -21,11 +21,11 @@ templ Page() {
 		<body class="scheme-default">
 			<main id="main" class="section">
 				<h1>Inline editing</h1>
-				<p>This page demonstrates native form markup. It saves nothing. The optional producer assets are pinned to { producerCommit }.</p>
+				<p>This page demonstrates native form markup. It saves nothing. Without JavaScript, submitting sends the example text in the page URL as query parameters; use fictional text. The optional producer assets are pinned to { producerCommit }.</p>
 				@form.InlineEditCompact(form.InlineEditCompactProps{
 					ID: "title-a", ContextID: "record-a", Value: "Community gathering",
 					Label: "First title", Name: "title-a", Action: "", Method: "get",
-					EditLabel: "Edit first title", SaveLabel: "Save", CancelLabel: "Cancel",
+					TriggerLabel: "Edit", EditLabel: "Edit first title", SaveLabel: "Save", CancelLabel: "Cancel",
 					CancelHref: "#main", Class: "stack",
 					RowClass: "cluster cluster-compact items-baseline",
 					FormClass: "cluster cluster-compact", ActionsClass: "cluster cluster-compact",
@@ -33,7 +33,7 @@ templ Page() {
 				@form.InlineEditDisclosure(form.InlineEditDisclosureProps{
 					ID: "title-b", ContextID: "record-b", Value: "Shared workspace",
 					Label: "Second title", Name: "title-b", Action: "", Method: "get",
-					EditLabel: "Edit second title", SaveLabel: "Save second title",
+					TriggerLabel: "Edit second title", SaveLabel: "Save second title",
 					CancelLabel: "Cancel editing", CancelHref: "#main", Class: "stack",
 					FormClass: "stack", ActionsClass: "cluster",
 				})

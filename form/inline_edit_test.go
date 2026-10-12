@@ -15,7 +15,7 @@ func TestInlineEditEscapesTextAndAttributes(t *testing.T) {
 	html := testutil.RenderToString(t, InlineEditDisclosure(InlineEditDisclosureProps{
 		ID: "edit-one", ContextID: `record&"one`, Value: `<script>title</script>`,
 		Label: `Title & owner`, Name: `title"name`, Action: `/save?title="x"`, Method: "post",
-		EditLabel: "Edit title", SaveLabel: "Save", CancelLabel: "Cancel",
+		TriggerLabel: "Edit title", SaveLabel: "Save", CancelLabel: "Cancel",
 		Error: `<img src=x onerror=alert(1)>`, Status: `<script>status</script>`,
 	}))
 	if strings.Contains(html, "<script>title</script>") || strings.Contains(html, `<img src=x`) || strings.Contains(html, "<script>status</script>") {
@@ -37,12 +37,12 @@ func TestInlineEditInstancesHaveDistinctIDsAndNativeComposition(t *testing.T) {
 	components := []templ.Component{
 		InlineEditCompact(InlineEditCompactProps{
 			ID: "first", ContextID: "record-first", Value: "First", Label: "First value",
-			Name: "first", Action: "/first", Method: "post", EditLabel: "Edit first",
+			Name: "first", Action: "/first", Method: "post", TriggerLabel: "Edit", EditLabel: "Edit first",
 			SaveLabel: "Save", CancelLabel: "Cancel",
 		}),
 		InlineEditDisclosure(InlineEditDisclosureProps{
 			ID: "second", ContextID: "record-second", Value: "Second", Label: "Second value",
-			Name: "second", Action: "/second", Method: "post", EditLabel: "Edit second",
+			Name: "second", Action: "/second", Method: "post", TriggerLabel: "Edit second",
 			SaveLabel: "Save", CancelLabel: "Cancel",
 		}),
 	}
@@ -65,6 +65,12 @@ func TestInlineEditInstancesHaveDistinctIDsAndNativeComposition(t *testing.T) {
 	}
 	if !strings.Contains(rendered, `href="#first-panel"`) || !strings.Contains(rendered, `data-inline-edit="compact"`) {
 		t.Fatalf("compact native link/panel hooks are missing: %s", rendered)
+	}
+	if !strings.Contains(rendered, `aria-label="Edit first"`) || !strings.Contains(rendered, `>Edit</a>`) {
+		t.Fatalf("compact visible and accessible labels are not distinct: %s", rendered)
+	}
+	if !strings.Contains(rendered, `<p data-inline-edit-value>Second</p>`) {
+		t.Fatalf("disclosure value should use neutral heading-independent markup: %s", rendered)
 	}
 }
 

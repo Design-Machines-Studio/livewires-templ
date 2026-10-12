@@ -14,6 +14,7 @@ type InlineEditCompactProps struct {
 	Name          string
 	Action        string
 	Method        string
+	TriggerLabel  string
 	EditLabel     string
 	SaveLabel     string
 	CancelLabel   string
@@ -40,7 +41,7 @@ type InlineEditDisclosureProps struct {
 	Name          string
 	Action        string
 	Method        string
-	EditLabel     string
+	TriggerLabel  string
 	SaveLabel     string
 	CancelLabel   string
 	CancelHref    string
@@ -61,7 +62,7 @@ templ InlineEditCompactComponent(props InlineEditCompactProps) {
 	<section id={ props.ID } data-inline-edit="compact" data-context-id={ props.ContextID } class={ lw.ClassNames(props.Class) } { props.Attrs... }>
 		<div class={ lw.ClassNames(props.RowClass) }>
 			<span data-inline-edit-value>{ props.Value }</span>
-			<a class="button button--small button--ghost button--accent" href={ "#" + props.ID + "-panel" } data-inline-edit-trigger aria-label={ props.EditLabel }>{ props.EditLabel }</a>
+			<a class="button button--small button--ghost button--accent" href={ "#" + props.ID + "-panel" } data-inline-edit-trigger aria-label={ props.EditLabel }>{ props.TriggerLabel }</a>
 			<div id={ props.ID + "-panel" } data-inline-edit-panel>
 				<form action={ props.Action } method={ props.Method } data-inline-edit-form class={ lw.ClassNames(props.FormClass) } { props.FormAttrs... }>
 					<label class="visually-hidden" for={ props.ID + "-input" }>{ props.Label }</label>
@@ -87,9 +88,9 @@ templ InlineEditCompactComponent(props InlineEditCompactProps) {
 // InlineEditDisclosure renders the producer's native disclosure and form.
 templ InlineEditDisclosureComponent(props InlineEditDisclosureProps) {
 	<section id={ props.ID } data-inline-edit data-context-id={ props.ContextID } class={ lw.ClassNames(props.Class) } { props.Attrs... }>
-		<h3 data-inline-edit-value>{ props.Value }</h3>
+		<p data-inline-edit-value>{ props.Value }</p>
 		<details id={ props.ID + "-panel" } data-inline-edit-panel>
-			<summary data-inline-edit-trigger>{ props.EditLabel }</summary>
+			<summary data-inline-edit-trigger>{ props.TriggerLabel }</summary>
 			<form action={ props.Action } method={ props.Method } data-inline-edit-form class={ lw.ClassNames(props.FormClass) } { props.FormAttrs... }>
 				<label for={ props.ID + "-input" }>{ props.Label }</label>
 				<input id={ props.ID + "-input" } name={ props.Name } type="text" value={ props.Value } data-inline-edit-input aria-describedby={ props.ID + "-error" } { props.InputAttrs... }/>

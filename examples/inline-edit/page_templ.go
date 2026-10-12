@@ -75,14 +75,14 @@ func Page() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\"></script></head><body class=\"scheme-default\"><main id=\"main\" class=\"section\"><h1>Inline editing</h1><p>This page demonstrates native form markup. It saves nothing. The optional producer assets are pinned to ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\"></script></head><body class=\"scheme-default\"><main id=\"main\" class=\"section\"><h1>Inline editing</h1><p>This page demonstrates native form markup. It saves nothing. Without JavaScript, submitting sends the example text in the page URL as query parameters; use fictional text. The optional producer assets are pinned to ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(producerCommit)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/inline-edit/page.templ`, Line: 24, Col: 127}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/inline-edit/page.templ`, Line: 24, Col: 238}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -95,7 +95,7 @@ func Page() templ.Component {
 		templ_7745c5c3_Err = form.InlineEditCompact(form.InlineEditCompactProps{
 			ID: "title-a", ContextID: "record-a", Value: "Community gathering",
 			Label: "First title", Name: "title-a", Action: "", Method: "get",
-			EditLabel: "Edit first title", SaveLabel: "Save", CancelLabel: "Cancel",
+			TriggerLabel: "Edit", EditLabel: "Edit first title", SaveLabel: "Save", CancelLabel: "Cancel",
 			CancelHref: "#main", Class: "stack",
 			RowClass:  "cluster cluster-compact items-baseline",
 			FormClass: "cluster cluster-compact", ActionsClass: "cluster cluster-compact",
@@ -106,7 +106,7 @@ func Page() templ.Component {
 		templ_7745c5c3_Err = form.InlineEditDisclosure(form.InlineEditDisclosureProps{
 			ID: "title-b", ContextID: "record-b", Value: "Shared workspace",
 			Label: "Second title", Name: "title-b", Action: "", Method: "get",
-			EditLabel: "Edit second title", SaveLabel: "Save second title",
+			TriggerLabel: "Edit second title", SaveLabel: "Save second title",
 			CancelLabel: "Cancel editing", CancelHref: "#main", Class: "stack",
 			FormClass: "stack", ActionsClass: "cluster",
 		}).Render(ctx, templ_7745c5c3_Buffer)
