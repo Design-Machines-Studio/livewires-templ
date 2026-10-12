@@ -12,6 +12,7 @@ func TestPinnedInlineEditExampleRendersNativeVariants(t *testing.T) {
 	for _, want := range []string{
 		producerCommit, producerBaseCSS, producerInlineEditCSS, producerInlineEditJS,
 		"cdn.jsdelivr.net/gh/Design-Machines-Studio/livewires@", "/public/dist/inline-edit.js",
+		`<main id="main" class="section stack">`,
 		`data-inline-edit="compact"`, `data-inline-edit-panel`, `<details`, `<summary`,
 		`name="title-a"`, `name="title-b"`, `method="get"`,
 		`href="#title-a-panel"`, `data-inline-edit-status`,

@@ -76,7 +76,7 @@ func Page() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\"></script></head><body class=\"scheme-default\"><main id=\"main\" class=\"section\"><h1>Inline editing</h1><p>This page attaches no inline-edit controller and saves nothing. Submitting sends the example text in the page URL as query parameters whether or not JavaScript is enabled; use fictional text. The optional producer assets are pinned to ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\"></script></head><body class=\"scheme-default\"><main id=\"main\" class=\"section stack\"><h1>Inline editing</h1><p>This page attaches no inline-edit controller and saves nothing. Submitting sends the example text in the page URL as query parameters whether or not JavaScript is enabled; use fictional text. The optional producer assets are pinned to ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

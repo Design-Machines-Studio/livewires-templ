@@ -27,7 +27,11 @@ starts visible: without JavaScript, its Edit link targets the form and the
 browser submits it normally. The disclosure uses native `<details>` and
 `<summary>` around the same kind of form. An application can provide
 `CancelHref` for a no-JavaScript back or cancel destination; the Cancel button
-is an enhancement hook for the optional controller.
+is an enhancement hook for the optional controller. The compact form groups
+its Save, Cancel and optional return link in an actions `<div>` that receives
+`ActionsClass`; the producer reference places these controls directly in the
+form. This wrapper is the class seam for consumers who want to group the
+actions.
 
 ## Optional producer assets
 
