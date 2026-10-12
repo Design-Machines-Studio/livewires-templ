@@ -239,6 +239,7 @@ test('combobox keeps native form values authoritative through typing, selection,
 
 test('combobox required validation, fieldset disabling and external form ownership stay native', async ({ page }) => {
   await page.goto('/examples/combobox');
+  await expect(page.locator('body')).toHaveAttribute('data-demo-ready', 'true');
   await page.getByRole('button', { name: 'Submit choices' }).click();
   expect(await page.locator('#remote-zone').evaluate(select => select.validity.valueMissing)).toBe(true);
   expect(await page.locator('#remote-choice input').evaluate(input => input === document.activeElement)).toBe(true);
@@ -277,6 +278,7 @@ test('combobox required validation, fieldset disabling and external form ownersh
 
 test('combobox remote results reject stale replies, report failures, and retain selected values', async ({ page }) => {
   await page.goto('/examples/combobox');
+  await expect(page.locator('body')).toHaveAttribute('data-demo-ready', 'true');
   const input = page.locator('#remote-choice input');
   const options = page.locator('#remote-choice [role=option]');
   await page.locator('#remote-scenario').selectOption('normal');
@@ -315,6 +317,7 @@ test('combobox remote results reject stale replies, report failures, and retain 
 
 test('combobox local DOM updates preserve query and no-JavaScript fallback submits natively', async ({ page, browser }) => {
   await page.goto('/examples/combobox');
+  await expect(page.locator('body')).toHaveAttribute('data-demo-ready', 'true');
   const input = page.locator('#local-choice input');
   await input.fill('sao');
   await input.evaluate(element => element.setSelectionRange(1, 2));

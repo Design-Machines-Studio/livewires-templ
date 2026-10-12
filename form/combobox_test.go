@@ -131,6 +131,17 @@ func TestComboboxSupportsRequiredEmptyPlaceholderAndConvenienceModes(t *testing.
 		t.Fatalf("required must remain on the native select, got %s", selectTag)
 	}
 
+	saved := testutil.RenderToString(t, ComboboxComponent(ComboboxProps{
+		ID: "required-saved-zone", Name: "timezone", Label: "Timezone", Required: true,
+		Placeholder: "Choose a timezone", Value: "America/Whitehorse", SelectedLabel: "Whitehorse",
+	}))
+	if !strings.Contains(saved, `<option value="">Choose a timezone</option> <option value="America/Whitehorse" selected>Whitehorse</option>`) {
+		t.Fatalf("the required empty placeholder must precede the retained selected value: %s", saved)
+	}
+	if !strings.Contains(testutil.RawTag(t, saved, "select"), `required`) {
+		t.Fatalf("required validation must remain on the native select: %s", saved)
+	}
+
 	simple := testutil.RenderToString(t, ComboboxSimple("Timezone", "timezone", "Choose a timezone", "UTC", []SelectOption{{Value: "UTC", Label: "UTC"}}, true))
 	if !strings.Contains(simple, `name="timezone"`) || !strings.Contains(simple, `required`) || !strings.Contains(simple, `<option value="">Choose a timezone</option>`) || strings.Contains(simple, `data-search`) {
 		t.Fatalf("expected simple local convenience wrapper, got %s", simple)

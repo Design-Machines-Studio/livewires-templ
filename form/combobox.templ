@@ -93,14 +93,14 @@ func comboboxRemoteProps(props ComboboxProps) ComboboxProps {
 }
 
 templ comboboxOptions(props ComboboxProps) {
-	if props.Value != "" && !comboboxOptionsHaveValue(props.Options, props.Value) {
-		<option value={ props.Value } selected>{ comboboxSelectedLabel(props) }</option>
-	}
 	if props.Placeholder != "" && !comboboxOptionsHaveEmptyValue(props.Options) {
 		<option value="" selected?={props.Value == "" && len(props.Options) == 0}>{ props.Placeholder }</option>
 	}
 	for _, option := range props.Options {
 		<option value={ option.Value } selected?={ comboboxOptionSelected(props, option) }>{ option.Label }</option>
+	}
+	if props.Value != "" && !comboboxOptionsHaveValue(props.Options, props.Value) {
+		<option value={ props.Value } selected>{ comboboxSelectedLabel(props) }</option>
 	}
 }
 
