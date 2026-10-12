@@ -10,9 +10,4 @@ Run its render check inside the repository's Docker development service:
 docker compose run --rm dev go test ./examples/utility-feedback
 ```
 
-The repository has no maintained serving command or bound browser target for
-this utility example. The render test does not establish that external modules
-load, and it does not replace the producer-reference browser cases. Resolve a
-maintained consumer/serving checkout and its exact source/domain binding before
-claiming browser acceptance; do not start or repoint an unregistered local
-server for this fixture.
+For maintained local serving and browser review, use the [component gallery](../gallery/README.md). It shares these example templates and loads verified local assets.

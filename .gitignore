@@ -13,3 +13,9 @@ todos
 .claude
 CLAUDE.md
 .serena
+
+# Worktree-local gallery and Workflow Kernel runtime state
+.gallery/
+.workflow-kernel/
+examples/gallery/node_modules/
+examples/gallery/test-results/

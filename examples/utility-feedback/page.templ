@@ -25,11 +25,9 @@ templ Page() {
 			<main id="main">
 				<h1>Interaction utility hooks</h1>
 				<p>Updated</p>
-				@component.RelativeTimeComponent(component.RelativeTimeProps{DateTime: "2026-10-10", Fallback: "October 10, 2026", Lang: "en"})
-				@component.CopyComponent(component.CopyProps{ID: "share-address", Label: "Share address", Value: "https://example.test/meeting", ButtonLabel: "Copy address"})
-				@component.LoadingRegionComponent(component.LoadingRegionProps{ID: "editor-save", Label: "Editor save"}) {
-					<p>Editor content remains available while an operation is pending.</p>
-				}
+				@Example("relative-time")
+				@Example("copy")
+				@Example("loading")
 				@component.ToastRegionComponent(component.ToastRegionProps{Label: "Editor feedback"}) {
 					@component.ToastComponent(component.ToastProps{ID: "save-42:confirmed", Message: "Your changes were saved.", Variant: "success", Dismissible: true, DismissLabel: "Dismiss saved message", Managed: true})
 				}
