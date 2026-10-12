@@ -284,25 +284,38 @@ test('combobox remote results reject stale replies, report failures, and retain 
   const options = page.locator('#remote-choice [role=option]');
   await page.evaluate(() => {
     window.comboboxQueries = [];
+    window.comboboxReplies = [];
     document.querySelector('#remote-choice').addEventListener('combobox-query', event => {
       window.comboboxQueries.push(event.detail.query);
     });
+    const setTimeout = window.setTimeout.bind(window);
+    window.setTimeout = (callback, delay, ...args) => {
+      if (delay !== 900 && delay !== 100) return setTimeout(callback, delay, ...args);
+      return setTimeout(() => {
+        window.comboboxReplies.push(delay);
+        callback(...args);
+      }, delay);
+    };
   });
   await page.locator('#remote-scenario').selectOption('normal');
   await input.fill('Choose');
   await expect(page.locator('#remote-choice [role=status]')).toHaveText('No results.');
   expect(await options.count()).toBe(0);
   await page.locator('#remote-scenario').selectOption('out-of-order');
+  await page.clock.pauseAt(new Date(Date.now() + 60_000));
   await page.evaluate(() => { window.comboboxQueries = []; });
   await input.fill('pa');
-  await expect.poll(() => page.evaluate(() => window.comboboxQueries)).toEqual(['pa']);
   await page.clock.runFor(300);
+  await expect.poll(() => page.evaluate(() => window.comboboxQueries)).toEqual(['pa']);
   await input.fill('par');
+  await page.clock.runFor(300);
   await expect.poll(() => page.evaluate(() => window.comboboxQueries)).toEqual(['pa', 'par']);
   await page.clock.runFor(100);
   await expect(page.locator('#remote-choice [role=option]')).toHaveText(['Paris']);
   await page.clock.runFor(500);
+  await expect.poll(() => page.evaluate(() => window.comboboxReplies)).toEqual([100, 900]);
   await expect(page.locator('#remote-choice [role=option]')).toHaveText(['Paris']);
+  await page.clock.resume();
 
   await page.locator('#remote-scenario').selectOption('error');
   await input.fill('fail');
