@@ -71,8 +71,9 @@ Status compares the current checkout with the compiled receipt. A
 `source-mismatch` means the running output needs a rebuild. `/healthz` reports
 the immutable compiled source and asset lock, independently of runtime labels.
 
-`verify` runs all Go tests and vet inside the isolated Docker builder, then
-checks committed generated output against fresh generation. It does not restart
+`verify` runs the Python runner regression checks, all Go tests and vet inside
+the isolated Docker builder, then checks the complete generated-file inventory
+and contents against the checkout, including newly generated files. It does not restart
 a running gallery. Stale generated files are a failure; run `make generate`
 inside the repository's Docker development service and commit the generated
 files before retrying.

@@ -15,6 +15,7 @@ import pathlib
 import pwd
 import shutil
 import subprocess
+import sys
 import urllib.request
 import uuid
 
@@ -39,6 +40,14 @@ def write(path, value):
 
 def sha(data):
     return hashlib.sha256(data).hexdigest()
+
+
+def generated_changes(snapshot, hashes):
+    expected = {name: digest for name, digest in hashes.items() if name.endswith("_templ.go")}
+    actual = {path.relative_to(snapshot).as_posix(): sha(path.read_bytes())
+              for path in snapshot.rglob("*_templ.go") if path.is_file()}
+    return sorted(name for name in expected.keys() | actual.keys()
+                  if expected.get(name) != actual.get(name))
 
 
 def command(argv, check=True):
@@ -281,10 +290,11 @@ def main():
         receipt = base64.urlsafe_b64encode(json.dumps(identity, separators=(",", ":")).encode()).decode().rstrip("=")
         compose_env(receipt)
         if args.action == "verify":
+            command([sys.executable, "-B", "-m", "unittest", "discover", "-s", "examples/gallery", "-p", "test_run.py"])
             create(compose + ["run", "--rm", "--build", "builder", "sh", "-c", "templ generate && go test ./... && go vet ./..."])
         else:
             create(compose + ["run", "--rm", "--build", "builder"])
-        changed = [n for n,h in hashes.items() if n.endswith("_templ.go") and sha((snapshot / n).read_bytes()) != h]
+        changed = generated_changes(snapshot, hashes)
         if changed:
             fail("Generated files are stale. Run make generate in Docker and commit them: " + ", ".join(changed))
         if source()[0] != identity:
