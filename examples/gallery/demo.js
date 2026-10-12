@@ -26,10 +26,33 @@ async function setup() {
     toasts = createToastRegion({ root: document.querySelector('[data-toast-region]') });
     controllers.push(toasts);
   }
+  if (name === 'inline-edit') {
+    const { createInlineEditor } = await import('/assets/inline-edit.js');
+    for (const root of document.querySelectorAll('[data-inline-edit]')) {
+      const editor = createInlineEditor({ root });
+      controllers.push(editor);
+      root.addEventListener('lw-inline-edit-commit', (event) => {
+        const detail = event.detail;
+        const scenario = document.querySelector('#scenario').value;
+        const settle = () => {
+          const result = { ...detail, outcome: scenario === 'failure' ? 'rejected' : scenario === 'unknown' ? 'unknown' : 'confirmed', value: detail.value, message: scenario === 'failure' ? 'Simulated rejection. Your draft remains.' : scenario === 'unknown' ? 'Simulated unknown result. Cancel or reload to recover.' : 'Simulated confirmation. Nothing was saved.' };
+          if (editor.applyResult(result)) outcome.textContent = result.message;
+        };
+        if (scenario === 'delayed') later(settle, 800); else settle();
+      }, { signal: lifecycle.signal });
+    }
+    unrelated.addEventListener('click', () => {
+      for (const editor of controllers) editor.updateConfirmed?.('Simulated external update');
+    }, { signal: lifecycle.signal });
+  }
   const form = document.querySelector('#scenario-form');
   let occurrence = 0;
   form?.addEventListener('submit', async (event) => {
-    if (name === 'sortable') return;
+    if (name === 'sortable' || name === 'inline-edit') {
+      event.preventDefault();
+      outcome.textContent = 'Scenario selected. Use the component controls to run it.';
+      return;
+    }
     event.preventDefault();
     const token = loading?.begin({ signal: lifecycle.signal });
     outcome.textContent = 'Simulated request pending.';

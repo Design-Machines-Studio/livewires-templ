@@ -13,3 +13,6 @@ Ownership refreshed: authenticated issue #17 open/unassigned; inline-edit #16 ca
 Native hook: exact planning context supplied, but no native SessionStart input supplied for the newly selected worktree. Hook activation unavailable; do not invent/rebind native identity. Mandatory pre-PR producer gate remains required.
 
 Ledger: ownership/base confirmed; original prompt and lean scope retained; producer APIs/asset closure being inspected. Review, publication, final-head CI, feedback settlement and designer acceptance remain pending.
+
+Ownership refresh: inline-edit PR #18 merged at 66cf4fbb61c585943eb388ee9e2b7dbac8d2ce1b. Integrated origin/main by merge, never candidate cherry-pick/copy. Final execution base refreshed to that commit.
+Design authority: user explicitly authorized the built-in Depot design skills instead of unavailable claude-design. Apply Live Wires, Design Machines strategy and accessibility instructions; retain independent design-consultant review.

@@ -3,6 +3,7 @@ package main
 import "strings"
 import "github.com/Design-Machines-Studio/livewires-templ/component"
 import utility "github.com/Design-Machines-Studio/livewires-templ/examples/utility-feedback"
+import "github.com/Design-Machines-Studio/livewires-templ/form"
 
 templ page(name string, source sourceIdentity, order []string, message string) {
 	<!DOCTYPE html>
@@ -16,6 +17,9 @@ templ page(name string, source sourceIdentity, order []string, message string) {
 			if name=="sortable" {
 <link rel="stylesheet" href="/assets/sortable-list.css"/>
 }
+			if name=="inline-edit" {
+				<link rel="stylesheet" href="/assets/inline-edit.css"/>
+			}
 			if name!="" {
 <script type="module" src="/demo.js"></script>
 }
@@ -48,8 +52,10 @@ else {
  @utility.Example(name) }
 						case "sortable":
 							@sortableExample(order)
+						case "inline-edit":
+							@inlineExample()
 					}
-					if name=="loading" || name=="toast" || name=="sortable" {
+					if name=="loading" || name=="toast" || name=="sortable" || name=="inline-edit" {
 						<form method="get" action={ templ.URL("/examples/"+name) } id="scenario-form">
 							<label for="scenario">Response scenario</label>
 							<select id="scenario" name="scenario">
@@ -105,4 +111,18 @@ templ orderMetadata(order []string) {
 func before(order []string, i int, direction string) string {
 	if direction=="up" { if i==0 { return order[i] }; return order[i-1] }
 	if i+2<len(order) { return order[i+2] }; return ""
+}
+
+templ inlineExample() {
+	<p>Use fictional text. Native submission carries text in the page URL. Enhanced confirmation is a simulation and resets on reload.</p>
+	@form.InlineEditCompact(form.InlineEditCompactProps{
+		ID:"title-a",ContextID:"gallery-a",Value:"Community gathering",Label:"First title",Name:"title-a",Action:"/examples/inline-edit",Method:"get",
+		TriggerLabel:"Edit",EditLabel:"Edit first title",SaveLabel:"Save",CancelLabel:"Cancel",CancelHref:"/examples/inline-edit",CancelLinkLabel:"Reload without saving",
+		Class:"stack",RowClass:"cluster cluster-compact items-baseline",FormClass:"cluster cluster-compact",ActionsClass:"cluster cluster-compact",
+	})
+	@form.InlineEditDisclosure(form.InlineEditDisclosureProps{
+		ID:"title-b",ContextID:"gallery-b",Value:"Shared workspace",Label:"Second title",Name:"title-b",Action:"/examples/inline-edit",Method:"get",
+		TriggerLabel:"Edit second title",SaveLabel:"Save second title",CancelLabel:"Cancel editing",CancelHref:"/examples/inline-edit",CancelLinkLabel:"Reload without saving",
+		Class:"stack",FormClass:"stack",ActionsClass:"cluster",
+	})
 }

@@ -9,7 +9,8 @@
       "size": 165512,
       "serve": "/assets/main.css",
       "revision": "cf6ef2e4627336c09a84825e50d6c97a1b265aff",
-      "license": "MIT"
+      "license": "MIT",
+      "notice": "LICENSE-MIT"
     },
     {
       "file": "relative-time.js",
@@ -18,7 +19,8 @@
       "size": 3752,
       "serve": "/assets/relative-time.js",
       "revision": "cf6ef2e4627336c09a84825e50d6c97a1b265aff",
-      "license": "MIT"
+      "license": "MIT",
+      "notice": "LICENSE-MIT"
     },
     {
       "file": "copy-button.js",
@@ -27,7 +29,8 @@
       "size": 1569,
       "serve": "/assets/copy-button.js",
       "revision": "cf6ef2e4627336c09a84825e50d6c97a1b265aff",
-      "license": "MIT"
+      "license": "MIT",
+      "notice": "LICENSE-MIT"
     },
     {
       "file": "loading.js",
@@ -36,7 +39,8 @@
       "size": 4828,
       "serve": "/assets/loading.js",
       "revision": "cf6ef2e4627336c09a84825e50d6c97a1b265aff",
-      "license": "MIT"
+      "license": "MIT",
+      "notice": "LICENSE-MIT"
     },
     {
       "file": "toast-region.js",
@@ -45,7 +49,8 @@
       "size": 9004,
       "serve": "/assets/toast-region.js",
       "revision": "cf6ef2e4627336c09a84825e50d6c97a1b265aff",
-      "license": "MIT"
+      "license": "MIT",
+      "notice": "LICENSE-MIT"
     },
     {
       "file": "sortable-list.js",
@@ -54,7 +59,8 @@
       "size": 14172,
       "serve": "/assets/sortable-list.js",
       "revision": "cf6ef2e4627336c09a84825e50d6c97a1b265aff",
-      "license": "MIT"
+      "license": "MIT",
+      "notice": "LICENSE-MIT"
     },
     {
       "file": "sortable-list.css",
@@ -63,7 +69,8 @@
       "size": 11396,
       "serve": "/assets/sortable-list.css",
       "revision": "cf6ef2e4627336c09a84825e50d6c97a1b265aff",
-      "license": "MIT"
+      "license": "MIT",
+      "notice": "LICENSE-MIT"
     },
     {
       "file": "LICENSE-MIT",
@@ -72,7 +79,28 @@
       "size": 1056,
       "serve": "",
       "revision": "cf6ef2e4627336c09a84825e50d6c97a1b265aff",
-      "license": "MIT"
+      "license": "MIT",
+      "notice": "LICENSE-MIT"
+    },
+    {
+      "file": "inline-edit.js",
+      "url": "https://raw.githubusercontent.com/Design-Machines-Studio/livewires/cf6ef2e4627336c09a84825e50d6c97a1b265aff/public/dist/inline-edit.js",
+      "sha256": "a6b4ae7d4fe3b148b5ef39869fab1506081eb895b324007ba93f9aced6bc7e74",
+      "size": 7933,
+      "serve": "/assets/inline-edit.js",
+      "revision": "cf6ef2e4627336c09a84825e50d6c97a1b265aff",
+      "license": "MIT",
+      "notice": "LICENSE-MIT"
+    },
+    {
+      "file": "inline-edit.css",
+      "url": "https://raw.githubusercontent.com/Design-Machines-Studio/livewires/cf6ef2e4627336c09a84825e50d6c97a1b265aff/public/dist/inline-edit.css",
+      "sha256": "aabcef9d3a9e67563b79428c58d8d557714751a9ffd00b230c9adbaee80a0d4a",
+      "size": 892,
+      "serve": "/assets/inline-edit.css",
+      "revision": "cf6ef2e4627336c09a84825e50d6c97a1b265aff",
+      "license": "MIT",
+      "notice": "LICENSE-MIT"
     }
   ]
 }

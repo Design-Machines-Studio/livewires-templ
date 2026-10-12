@@ -22,7 +22,7 @@ Startup acquires and verifies the locked assets, freezes the current worktree
 inputs, generates and builds in Docker, then publishes an unused Docker-assigned
 port on `127.0.0.1`. Read the actual `url` from status; no fixed port is reserved
 or taken over. The index is `/`; example URLs are `/examples/relative-time`,
-`/examples/copy`, `/examples/loading`, `/examples/toast` and `/examples/sortable`.
+`/examples/copy`, `/examples/loading`, `/examples/toast` `/examples/sortable` and `/examples/inline-edit`.
 
 The runner uses the host-selected user installation from Claude's
 `installed_plugins.json`, checks its plugin identity/version, and invokes the
@@ -122,5 +122,7 @@ bytes by suppressing verification. Keep the producer license with cached files.
    `tests/gallery.spec.mjs`. Generate in Docker, commit `_templ.go`, run `verify`,
    rebuild and capture evidence from the resulting source.
 
-Inline-edit #16 is separately owned. Its gallery acceptance remains pending
-until its implementation merges into trusted main; do not copy its candidate.
+Inline editing uses the actual wrappers merged in PR #18 at trusted main
+66cf4fbb61c585943eb388ee9e2b7dbac8d2ce1b. Its application adapter uses matching
+context/edit/request IDs, simulated confirmation/rejection/unknown results,
+and late-result cancellation. It does not modify the producer or save text.

@@ -46,7 +46,7 @@ type assetLock struct {
 	Assets         []asset `json:"assets"`
 }
 
-var examples = []string{"relative-time", "copy", "loading", "toast", "sortable"}
+var examples = []string{"relative-time", "copy", "loading", "toast", "sortable", "inline-edit"}
 var itemNames = map[string]string{"notes": "Field notes", "paper": "On paper", "index": "An index"}
 
 func digest(b []byte) string { s := sha256.Sum256(b); return hex.EncodeToString(s[:]) }
@@ -168,6 +168,9 @@ func routes(source sourceIdentity, files map[string][]byte, lock assetLock) http
 		message := ""
 		if r.URL.Query().Has("run") {
 			message = outcome(r.URL.Query().Get("scenario"))
+		}
+		if name == "inline-edit" && (r.URL.Query().Has("title-a") || r.URL.Query().Has("title-b")) {
+			message = "Native example submission. Fictional text is carried in the URL; nothing was saved."
 		}
 		if name == "sortable" && r.URL.Query().Has("itemId") {
 			order = moveOrder(order, r.URL.Query().Get("itemId"), r.URL.Query().Get("before"))

@@ -12,7 +12,7 @@ import (
 
 func TestRoutesRenderCurrentComponentsAndNativeMoves(t *testing.T) {
 	app := routes(sourceIdentity{Commit: strings.Repeat("a", 40), AssetRevision: "producer"}, map[string][]byte{"/assets/main.css": []byte("verified css")}, assetLock{})
-	cases := map[string]string{"/": "Component gallery", "/examples/relative-time": "lw-relative-time", "/examples/copy": "data-copy-source", "/examples/loading": "data-loading-region", "/examples/toast": "data-toast-region", "/examples/sortable": "lw-sortable-list", "/examples/sortable?order=notes,paper,index&itemId=notes&before=index": "value=\"paper,notes,index\"", "/examples/loading?run=1&scenario=failure": "Simulated failure", "/assets/main.css": "verified css"}
+	cases := map[string]string{"/": "Component gallery", "/examples/relative-time": "lw-relative-time", "/examples/copy": "data-copy-source", "/examples/loading": "data-loading-region", "/examples/toast": "data-toast-region", "/examples/inline-edit": "data-inline-edit", "/examples/sortable": "lw-sortable-list", "/examples/sortable?order=notes,paper,index&itemId=notes&before=index": "value=\"paper,notes,index\"", "/examples/loading?run=1&scenario=failure": "Simulated failure", "/assets/main.css": "verified css"}
 	for path, want := range cases {
 		t.Run(path, func(t *testing.T) {
 			w := httptest.NewRecorder()
