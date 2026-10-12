@@ -1,10 +1,6 @@
 package form
 
-import (
-	"strings"
-
-	lw "github.com/Design-Machines-Studio/livewires-templ"
-)
+import lw "github.com/Design-Machines-Studio/livewires-templ"
 
 // ComboboxProps configures a native select with optional Live Wires combobox hooks.
 type ComboboxProps struct {
@@ -39,20 +35,6 @@ func comboboxRootID(props ComboboxProps) string {
 		return props.RootID
 	}
 	return comboboxControlID(props) + "-combobox"
-}
-
-func comboboxDescriptionAttrs(id, hint, errMsg string) templ.Attributes {
-	if hint == "" && errMsg == "" {
-		return nil
-	}
-	var refs []string
-	if hint != "" {
-		refs = append(refs, id+"-hint")
-	}
-	if errMsg != "" {
-		refs = append(refs, id+"-error")
-	}
-	return templ.Attributes{"aria-describedby": strings.Join(refs, " ")}
 }
 
 func comboboxOptionSelected(props ComboboxProps, option SelectOption) bool {
@@ -136,7 +118,7 @@ templ ComboboxComponent(props ComboboxProps) {
 			if props.Error != "" {
 				aria-invalid="true"
 			}
-			{ comboboxDescriptionAttrs(comboboxControlID(props), props.Hint, props.Error)... }
+			{ describedByControlAttrs(comboboxControlID(props), props.Hint, props.Error)... }
 			{ props.InputAttrs... }
 		>
 			@comboboxOptions(props)
@@ -156,9 +138,9 @@ templ Combobox(props ComboboxProps) {
 }
 
 // ComboboxSimple creates a local-search control using the ordinary field arguments.
-templ ComboboxSimple(label, name, placeholder, value string, options []SelectOption, required bool) {
+templ ComboboxSimple(label, name string, options []SelectOption, required bool) {
 	@ComboboxComponent(ComboboxProps{
-		Label: label, Name: name, Placeholder: placeholder, Value: value, Options: options, Required: required,
+		Label: label, Name: name, Options: options, Required: required,
 	})
 }
 

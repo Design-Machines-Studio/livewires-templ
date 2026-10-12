@@ -122,21 +122,25 @@ func wrappedAriaAttrs(base, label, hint, errID string) templ.Attributes {
 	return attrs
 }
 
-// describedByAttrs wires a control to its hint and error text. The hint comes
-// first so assistive technology reads the guidance before the failure. Returns
-// no attributes when there is nothing to describe, so a control never carries
-// an empty aria-describedby.
-func describedByAttrs(name, hint, errMsg string) templ.Attributes {
+// describedByControlAttrs wires a control ID to its hint and error text. The
+// hint comes first so assistive technology reads the guidance before the
+// failure. Returns no attributes when there is nothing to describe, so a
+// control never carries an empty aria-describedby.
+func describedByControlAttrs(id, hint, errMsg string) templ.Attributes {
 	if hint == "" && errMsg == "" {
 		return nil
 	}
 
 	var refs []string
 	if hint != "" {
-		refs = append(refs, hintID(name))
+		refs = append(refs, id+"-hint")
 	}
 	if errMsg != "" {
-		refs = append(refs, errorID(name))
+		refs = append(refs, id+"-error")
 	}
 	return templ.Attributes{"aria-describedby": strings.Join(refs, " ")}
+}
+
+func describedByAttrs(name, hint, errMsg string) templ.Attributes {
+	return describedByControlAttrs(controlID(name), hint, errMsg)
 }
