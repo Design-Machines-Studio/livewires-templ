@@ -100,6 +100,7 @@ test('native fallback: content, URL-carried move and simulated response', async 
     await page.goto(process.env.GALLERY_URL + '/examples/' + name);
     await expect(page.locator('h1')).toHaveText(name);
   }
+  await page.goto(process.env.GALLERY_URL + '/examples/sortable');
   await page.getByRole('button', { name: 'Move Field notes down', exact: true }).click();
   await expect(page.locator('[data-sortable-item]').first()).toHaveAttribute('data-item-id', 'paper');
   await page.goto(process.env.GALLERY_URL + '/examples/loading');
