@@ -145,6 +145,24 @@ func TestComboboxSupportsRequiredEmptyPlaceholderAndConvenienceModes(t *testing.
 		t.Fatalf("required validation must remain on the native select: %s", saved)
 	}
 
+	lateEmpty := testutil.RenderToString(t, ComboboxComponent(ComboboxProps{
+		ID: "late-empty-saved-zone", Name: "timezone", Label: "Timezone", Required: true,
+		Placeholder: "Choose a timezone", Value: "America/Whitehorse", SelectedLabel: "Whitehorse",
+		Options: []SelectOption{
+			{Value: "UTC", Label: "UTC"},
+			{Value: "", Label: "Choose a timezone", Selected: true},
+		},
+	}))
+	firstOption := strings.Index(lateEmpty, `<option value="">Choose a timezone</option>`)
+	utcOption := strings.Index(lateEmpty, `<option value="UTC">UTC</option>`)
+	savedOption := strings.Index(lateEmpty, `<option value="America/Whitehorse" selected>Whitehorse</option>`)
+	if firstOption < 0 || utcOption < 0 || savedOption < 0 || !(firstOption < utcOption && utcOption < savedOption) {
+		t.Fatalf("the first empty placeholder must precede ordinary and retained options: %s", lateEmpty)
+	}
+	if got := strings.Count(lateEmpty, `<option value=""`); got != 1 {
+		t.Fatalf("late empty option must be rendered once: %s", lateEmpty)
+	}
+
 	simple := testutil.RenderToString(t, ComboboxSimple("Timezone", "timezone", "Choose a timezone", "UTC", []SelectOption{{Value: "UTC", Label: "UTC"}}, true))
 	if !strings.Contains(simple, `name="timezone"`) || !strings.Contains(simple, `required`) || !strings.Contains(simple, `<option value="">Choose a timezone</option>`) || strings.Contains(simple, `data-search`) {
 		t.Fatalf("expected simple local convenience wrapper, got %s", simple)
