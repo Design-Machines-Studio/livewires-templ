@@ -11,9 +11,10 @@ import templruntime "github.com/a-h/templ/runtime"
 import "github.com/Design-Machines-Studio/livewires-templ/form"
 
 const producerCommit = "cf6ef2e4627336c09a84825e50d6c97a1b265aff"
-const producerBaseCSS = "https://raw.githubusercontent.com/Design-Machines-Studio/livewires/" + producerCommit + "/public/dist/main.css"
-const producerInlineEditCSS = "https://raw.githubusercontent.com/Design-Machines-Studio/livewires/" + producerCommit + "/public/dist/inline-edit.css"
-const producerInlineEditJS = "https://raw.githubusercontent.com/Design-Machines-Studio/livewires/" + producerCommit + "/public/dist/inline-edit.js"
+const producerAssetsBase = "https://cdn.jsdelivr.net/gh/Design-Machines-Studio/livewires@" + producerCommit + "/public/dist"
+const producerBaseCSS = producerAssetsBase + "/main.css"
+const producerInlineEditCSS = producerAssetsBase + "/inline-edit.css"
+const producerInlineEditJS = producerAssetsBase + "/inline-edit.js"
 
 func Page() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -43,7 +44,7 @@ func Page() templ.Component {
 		var templ_7745c5c3_Var2 templ.SafeURL
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs(producerBaseCSS)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/inline-edit/page.templ`, Line: 17, Col: 48}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/inline-edit/page.templ`, Line: 18, Col: 48}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -56,7 +57,7 @@ func Page() templ.Component {
 		var templ_7745c5c3_Var3 templ.SafeURL
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs(producerInlineEditCSS)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/inline-edit/page.templ`, Line: 18, Col: 54}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/inline-edit/page.templ`, Line: 19, Col: 54}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -69,20 +70,20 @@ func Page() templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(producerInlineEditJS)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/inline-edit/page.templ`, Line: 19, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/inline-edit/page.templ`, Line: 20, Col: 51}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\"></script></head><body class=\"scheme-default\"><main id=\"main\" class=\"section\"><h1>Inline editing</h1><p>This page demonstrates native form markup. It saves nothing. Without JavaScript, submitting sends the example text in the page URL as query parameters; use fictional text. The optional producer assets are pinned to ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\"></script></head><body class=\"scheme-default\"><main id=\"main\" class=\"section\"><h1>Inline editing</h1><p>This page attaches no inline-edit controller and saves nothing. Submitting sends the example text in the page URL as query parameters whether or not JavaScript is enabled; use fictional text. The optional producer assets are pinned to ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(producerCommit)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/inline-edit/page.templ`, Line: 24, Col: 238}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/inline-edit/page.templ`, Line: 25, Col: 258}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -96,7 +97,7 @@ func Page() templ.Component {
 			ID: "title-a", ContextID: "record-a", Value: "Community gathering",
 			Label: "First title", Name: "title-a", Action: "", Method: "get",
 			TriggerLabel: "Edit", EditLabel: "Edit first title", SaveLabel: "Save", CancelLabel: "Cancel",
-			CancelHref: "#main", Class: "stack",
+			CancelHref: "#main", CancelLinkLabel: "Cancel and return to page", Class: "stack",
 			RowClass:  "cluster cluster-compact items-baseline",
 			FormClass: "cluster cluster-compact", ActionsClass: "cluster cluster-compact",
 		}).Render(ctx, templ_7745c5c3_Buffer)
@@ -107,13 +108,13 @@ func Page() templ.Component {
 			ID: "title-b", ContextID: "record-b", Value: "Shared workspace",
 			Label: "Second title", Name: "title-b", Action: "", Method: "get",
 			TriggerLabel: "Edit second title", SaveLabel: "Save second title",
-			CancelLabel: "Cancel editing", CancelHref: "#main", Class: "stack",
+			CancelLabel: "Cancel editing", CancelHref: "#main", CancelLinkLabel: "Cancel and return to page", Class: "stack",
 			FormClass: "stack", ActionsClass: "cluster",
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<p>Without JavaScript, the compact form remains available and the disclosure opens the native form. Submitting reloads this page and persists nothing.</p></main></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<p>Without a controller, the compact form remains visible and the disclosure opens the native form. Submitting reloads this page and persists nothing.</p></main></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

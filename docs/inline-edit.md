@@ -11,6 +11,9 @@ Each instance needs a unique `ID` for its HTML IDs and a stable application-owne
 application can use its existing CSRF component. `FormAttrs` land on `<form>`;
 `InputAttrs` land on the actual `<input>`; `Attrs` land on the editor root.
 Only pass developer-controlled attributes to these maps.
+`CancelLabel` labels the controller's cancel button. When `CancelHref` is set,
+`CancelLinkLabel` labels the native return link; if omitted, it reads “Return
+without saving” so the link stays distinct from the button.
 
 `TriggerLabel` is the visible edit control text. In the compact variant,
 `EditLabel` supplies the link's accessible name, so a short visible “Edit” can

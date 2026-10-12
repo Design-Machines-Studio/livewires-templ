@@ -19,6 +19,7 @@ type InlineEditCompactProps struct {
 	SaveLabel     string
 	CancelLabel   string
 	CancelHref    string
+	CancelLinkLabel string
 	Error         string
 	Status        string
 	Class         string
@@ -45,6 +46,7 @@ type InlineEditDisclosureProps struct {
 	SaveLabel     string
 	CancelLabel   string
 	CancelHref    string
+	CancelLinkLabel string
 	Error         string
 	Status        string
 	Class         string
@@ -74,7 +76,11 @@ templ InlineEditCompactComponent(props InlineEditCompactProps) {
 						<button class="button button--small" type="submit" data-inline-edit-save>{ props.SaveLabel }</button>
 						<button class="button button--small button--ghost" type="button" data-inline-edit-cancel>{ props.CancelLabel }</button>
 						if props.CancelHref != "" {
-							<a href={ props.CancelHref }>{ props.CancelLabel }</a>
+							if props.CancelLinkLabel != "" {
+								<a href={ props.CancelHref }>{ props.CancelLinkLabel }</a>
+							} else {
+								<a href={ props.CancelHref }>Return without saving</a>
+							}
 						}
 					</div>
 					<p id={ props.ID + "-error" } data-inline-edit-error role="alert">{ props.Error }</p>
@@ -102,7 +108,11 @@ templ InlineEditDisclosureComponent(props InlineEditDisclosureProps) {
 					<button class="button" type="submit" data-inline-edit-save>{ props.SaveLabel }</button>
 					<button class="button button--ghost" type="button" data-inline-edit-cancel>{ props.CancelLabel }</button>
 					if props.CancelHref != "" {
-						<a href={ props.CancelHref }>{ props.CancelLabel }</a>
+						if props.CancelLinkLabel != "" {
+							<a href={ props.CancelHref }>{ props.CancelLinkLabel }</a>
+						} else {
+							<a href={ props.CancelHref }>Return without saving</a>
+						}
 					}
 				</div>
 			</form>

@@ -82,7 +82,7 @@ func TestInlineEditAttributesLandOnTheirNativeElements(t *testing.T) {
 	html := testutil.RenderToString(t, InlineEditCompact(InlineEditCompactProps{
 		ID: "title", ContextID: "record", Value: "A title", Label: "Title", Name: "title",
 		Action: "/records/title", Method: "post", EditLabel: "Edit", SaveLabel: "Save",
-		CancelLabel: "Cancel", CSRF: csrf,
+		CancelLabel: "Cancel", CancelHref: "/records", CancelLinkLabel: "Cancel and return to records", CSRF: csrf,
 		Attrs:      templ.Attributes{"data-root": "root-value"},
 		FormAttrs:  templ.Attributes{"data-form": "form-value", "autocomplete": "off"},
 		InputAttrs: templ.Attributes{"data-input": "input-value", "aria-label": "Title editor"},
@@ -118,5 +118,30 @@ func TestInlineEditAttributesLandOnTheirNativeElements(t *testing.T) {
 	}
 	if csrfField < 0 || formStart < 0 || formEnd < 0 || csrfField < formStart || csrfField >= formStart+formEnd {
 		t.Errorf("application CSRF field missing from native form: %s", html)
+	}
+}
+
+func TestInlineEditCancelLinkHasDistinctNativePurpose(t *testing.T) {
+	for _, render := range []struct {
+		name string
+		component templ.Component
+	}{
+		{name: "compact", component: InlineEditCompact(InlineEditCompactProps{
+			ID: "compact", ContextID: "record", Value: "Title", Label: "Title", Name: "title",
+			Action: "/save", Method: "post", TriggerLabel: "Edit", EditLabel: "Edit title",
+			SaveLabel: "Save", CancelLabel: "Cancel", CancelHref: "/back",
+		})},
+		{name: "disclosure", component: InlineEditDisclosure(InlineEditDisclosureProps{
+			ID: "disclosure", ContextID: "record", Value: "Title", Label: "Title", Name: "title",
+			Action: "/save", Method: "post", TriggerLabel: "Edit title",
+			SaveLabel: "Save", CancelLabel: "Cancel editing", CancelHref: "/back",
+		})},
+	} {
+		t.Run(render.name, func(t *testing.T) {
+			html := testutil.RenderToString(t, render.component)
+			if !strings.Contains(html, `>Return without saving</a>`) || strings.Contains(html, `href="/back">Cancel</a>`) {
+				t.Fatalf("native cancel link needs a distinct return label: %s", html)
+			}
+		})
 	}
 }
