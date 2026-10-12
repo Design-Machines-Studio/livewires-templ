@@ -13,7 +13,8 @@ type ComboboxProps struct {
 	Name       string           // Submitted field name. Only the native select receives this name.
 	Label      string           // Visible label for the native select and enhanced search input.
 	Placeholder string          // Optional empty-value option. Required selects still reject this value.
-	Value      string           // Initial selected non-empty value; an Option.Selected empty value remains supported.
+	Value      string           // Initial selected value; if absent from Options, it is retained as a selected native option.
+	SelectedLabel string        // Optional display label for Value when that value is absent from Options; defaults to Value.
 	Options    []SelectOption   // Native fallback options; the selected option is retained by the producer while searching.
 	Hint       string           // Supporting text associated with the native select.
 	Error      string           // Server validation error associated with the native select.
@@ -61,6 +62,22 @@ func comboboxOptionSelected(props ComboboxProps, option SelectOption) bool {
 	return option.Selected
 }
 
+func comboboxSelectedLabel(props ComboboxProps) string {
+	if props.SelectedLabel != "" {
+		return props.SelectedLabel
+	}
+	return props.Value
+}
+
+func comboboxOptionsHaveValue(options []SelectOption, value string) bool {
+	for _, option := range options {
+		if option.Value == value {
+			return true
+		}
+	}
+	return false
+}
+
 func comboboxOptionsHaveEmptyValue(options []SelectOption) bool {
 	for _, option := range options {
 		if option.Value == "" {
@@ -76,6 +93,9 @@ func comboboxRemoteProps(props ComboboxProps) ComboboxProps {
 }
 
 templ comboboxOptions(props ComboboxProps) {
+	if props.Value != "" && !comboboxOptionsHaveValue(props.Options, props.Value) {
+		<option value={ props.Value } selected>{ comboboxSelectedLabel(props) }</option>
+	}
 	if props.Placeholder != "" && !comboboxOptionsHaveEmptyValue(props.Options) {
 		<option value="" selected?={props.Value == "" && len(props.Options) == 0}>{ props.Placeholder }</option>
 	}

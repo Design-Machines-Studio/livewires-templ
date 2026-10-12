@@ -359,12 +359,17 @@ matching optional `combobox.css` and `combobox.js` in the application and
 initialize Live Wires' `createCombobox` API. The application owns remote
 queries, authorization, validation and saving.
 
+If `Value` is not in `Options`, the component adds it as the selected native
+option so saved values remain submitted. Set `SelectedLabel` to provide a
+friendly label for that value; it defaults to the value itself.
+
 The evidenced future consumer candidate is Baseplate's account Timezone
 override field, `interface_timezone`, in
 [`internal/baseplate/account/pages/interface.templ`](https://github.com/Design-Machines-Studio/assembly-baseplate/blob/6accb8a27c746d1cbc3e19a734d8303b8e9191b0/internal/baseplate/account/pages/interface.templ)
 and [`internal/timezone/options.go`](https://github.com/Design-Machines-Studio/assembly-baseplate/blob/6accb8a27c746d1cbc3e19a734d8303b8e9191b0/internal/timezone/options.go).
 An empty value means “use organization default”; saved zones outside the
-curated list remain application-owned. This issue does not change Baseplate.
+curated list remain application-owned and can use `SelectedLabel` for display.
+This issue does not change Baseplate.
 Later adoption requires a merged and published Go module version containing
 the additive exported API, plus compatible published Live Wires assets and
 verified checksums. The new exported API requires a minor version under this

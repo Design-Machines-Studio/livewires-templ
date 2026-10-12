@@ -93,6 +93,14 @@ func TestComboboxValueAndEmptyOptionSelection(t *testing.T) {
 		t.Fatalf("expected only the requested native option selected, got %s", valueHTML)
 	}
 
+	retainedHTML := testutil.RenderToString(t, ComboboxComponent(ComboboxProps{
+		ID: "saved-zone", Name: "timezone", Label: "Timezone", Value: "America/Whitehorse",
+		SelectedLabel: "Whitehorse", Options: []SelectOption{{Value: "UTC", Label: "UTC"}},
+	}))
+	if !strings.Contains(retainedHTML, `<option value="America/Whitehorse" selected>Whitehorse</option>`) || strings.Contains(retainedHTML, `<option value="UTC" selected>`) {
+		t.Fatalf("expected a saved value and its label to survive when absent from curated options, got %s", retainedHTML)
+	}
+
 	emptyHTML := testutil.RenderToString(t, ComboboxComponent(ComboboxProps{
 		ID: "optional-zone", Name: "zone", Label: "Timezone",
 		Options: []SelectOption{{Value: "", Label: "Use organization default", Selected: true}, {Value: "UTC", Label: "UTC"}},
