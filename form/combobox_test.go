@@ -111,10 +111,13 @@ func TestComboboxValueAndEmptyOptionSelection(t *testing.T) {
 
 	withPlaceholder := testutil.RenderToString(t, ComboboxComponent(ComboboxProps{
 		ID: "default-zone", Name: "zone", Label: "Timezone", Placeholder: "Use organization default",
-		Options: []SelectOption{{Value: "", Label: "Use organization default", Selected: true}, {Value: "UTC", Label: "UTC"}},
+		Options: []SelectOption{{Value: "UTC", Label: "UTC"}, {Value: "", Label: "Use organization default", Selected: true}},
 	}))
 	if got := strings.Count(withPlaceholder, `<option value=""`); got != 1 {
 		t.Fatalf("placeholder must not duplicate an explicit empty option, got %s", withPlaceholder)
+	}
+	if !strings.Contains(withPlaceholder, `<option value="" selected>Use organization default</option><option value="UTC"`) {
+		t.Fatalf("the explicit empty option must be moved before other options, got %s", withPlaceholder)
 	}
 }
 

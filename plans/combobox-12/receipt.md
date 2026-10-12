@@ -25,7 +25,7 @@
 
 - The maintained gallery baseline started from this worktree at the clean base head. Initial status URL: `http://127.0.0.1:32814`.
 - Final dirty-source rebuild status URL: `http://127.0.0.1:32819`.
-- Latest clean built head: `80e69cf0dc1732b8e82bc6c9a817163ab911aef2`, fingerprint `44ce775b594f5109aa8d25163ec8afa26e33e5a276ad9f6bd03ff18e536fdfc6`, URL `http://127.0.0.1:32832`. It uses the exact Live Wires asset lock at `5db085d2918375811ee30562bc4229b414f314e4` (`7a1a5ea7fac2709cffe28172130e46735da51dc49c7e9e45f7569d462be65f88`).
+- Latest placeholder-normalization build is based on `8b5bf85c2ea4f6f44b4d45c14210ca799012a530`, dirty fingerprint `70bb36013a666f96fc607474cf45e8053bee9270914cea29ba4a524074b0a81b`, URL `http://127.0.0.1:32834`. The clean commit rebuild remains required. It uses the exact Live Wires asset lock at `5db085d2918375811ee30562bc4229b414f314e4` (`7a1a5ea7fac2709cffe28172130e46735da51dc49c7e9e45f7569d462be65f88`).
 - Asset hashes and sizes were fetched from immutable raw URLs at the producer commit. The runner rejected the old cached `main.css` as expected after the lock update; only that named task-owned cache file was removed, then rebuild succeeded.
 
 ## Verification so far
@@ -33,14 +33,14 @@
 - Docker `templ generate`: passed; generated `form/combobox_templ.go` and `examples/gallery/combobox_templ.go` are present.
 - Docker `go test ./...`: passed.
 - Docker `go vet ./...`: passed.
-- Docker `go test ./...` and `go vet ./...` passed after the required-placeholder option-order fix. `examples/gallery/run.sh verify` passed on clean head `80e69cf0dc1732b8e82bc6c9a817163ab911aef2`; it verified Docker tests/vet and the complete generated-file inventory.
-- Local Playwright 1.64.0 with pinned Chromium passed `25/25` on clean head `80e69cf0dc1732b8e82bc6c9a817163ab911aef2`, including every maintained route at 1440×1000 and 390×844, plus FormData/GET submission, reset, required validation, disabled fieldsets, form association, keyboard/Escape, stale/out-of-order results, failed searches, retained selection, two instances, DOM updates and no-JavaScript fallback.
-- Latest screenshot and test evidence is retained under `/home/ned/.local/state/design-machines/depot/runs/pipeline-combobox-12-20261012-a1d39eb1-jmwyt6wn/gallery-evidence-final/clean-80e69/`.
+- Docker `go test ./...` and `go vet ./...` passed after the placeholder normalization fix. `examples/gallery/run.sh verify` passed on the latest repair-pass fingerprint above; it verified Docker tests/vet and the complete generated-file inventory.
+- Local Playwright 1.64.0 with pinned Chromium passed `25/25` on the latest repair-pass source, including every maintained route at 1440×1000 and 390×844, plus FormData/GET submission, reset, required validation, disabled fieldsets, form association, keyboard/Escape, stale/out-of-order results, failed searches, retained selection, two instances, DOM updates and no-JavaScript fallback.
+- Latest screenshot and test evidence is retained under `/home/ned/.local/state/design-machines/depot/runs/pipeline-combobox-12-20261012-a1d39eb1-jmwyt6wn/gallery-evidence-final/final-empty-option-order/`.
 - The browser suite simulated composition and asserted DOM/ARIA relationships. No physical IME or screen-reader testing is claimed.
 
 ## Remaining
 
-1. Bind and complete final source review and designer recheck on a clean head. The separate code-simplicity role is unavailable after OpenRouter returned HTTP 402 `insufficient_credits`.
+1. Commit the placeholder normalization fix, rebuild from the clean head, and complete the final source review/design recheck. The separate code-simplicity role is unavailable after OpenRouter returned HTTP 402 `insufficient_credits`.
 2. Push the reviewed candidate and run the installed reviewed-PR publication gate. Create a draft only if that gate passes; then register it with T3 and verify the remote head.
 3. Keep any draft PR unmerged until final-head CI, feedback settlement and owner UI acceptance pass. No release, tag, issue closure or Baseplate changes.
 
@@ -52,4 +52,4 @@ The T3 collaborative preview was available but `preview_open` returned an explic
 - The design consultation raised gallery clarity and sample-data issues. The simple wrapper now accepts a placeholder; local/remote controls have distinct labels; the example explains JavaScript and native fallback behavior; response mode comes before the remote field; submit/reset follow both controls and use native `form` association; empty placeholder options are excluded from simulated remote results; Chatham uses `Pacific/Chatham`; the submission result echoes both values including an empty one; and README release-state text was removed. A test confirms every sample zone resolves with `time.LoadLocation`.
 - After those repairs, Docker tests/vet and gallery verification passed. The full Playwright suite passed 25/25 on final clean head `725f27057dc232174f18e3a1016aa2e40620e7c0`; final screenshots were inspected at 1440×1000 and 390×844. A fresh source review and design consultation still need to bind to this exact head.
 - The final pattern review found that a non-empty `Value` absent from `Options` fell through to the browser's first option. The wrapper now retains it as a selected native option and accepts `SelectedLabel` for a friendly display string. The Go test exercises the missing-option case. A separate-family code-simplicity dispatch was unavailable after OpenRouter returned HTTP 402 `insufficient_credits`; the router closed that rail and it was not retried. The final source review and design consultation must bind after the saved-value repair commit.
-- The design recheck then found that the retained non-empty option was emitted before the empty placeholder, defeating required validation. Rendering now places the empty placeholder first, and a test covers `Required` + `Placeholder` + a missing saved value. The affected component and gallery suites pass; the clean-head gallery verification and 25/25 browser suite also pass. A final source-bound review/design check remains pending for this clean head.
+- The design recheck then found that the retained non-empty option was emitted before the empty placeholder, defeating required validation. Rendering now moves the first explicit empty option ahead of non-empty options and keeps the saved value selected after it. Tests cover `Required` + `Placeholder` + a missing saved value, and an explicitly supplied empty option placed after `UTC`. Docker tests/vet, gallery verification and all 25 desktop/mobile Playwright cases pass. A final source-bound review/design check remains pending for the clean commit.

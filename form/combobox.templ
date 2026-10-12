@@ -87,21 +87,38 @@ func comboboxOptionsHaveEmptyValue(options []SelectOption) bool {
 	return false
 }
 
+func comboboxFirstEmptyOption(options []SelectOption) SelectOption {
+	for _, option := range options {
+		if option.Value == "" {
+			return option
+		}
+	}
+	return SelectOption{}
+}
+
 func comboboxRemoteProps(props ComboboxProps) ComboboxProps {
 	props.SearchMode = "remote"
 	return props
 }
 
 templ comboboxOptions(props ComboboxProps) {
-	if props.Placeholder != "" && !comboboxOptionsHaveEmptyValue(props.Options) {
+	if comboboxOptionsHaveEmptyValue(props.Options) {
+		@comboboxEmptyOption(comboboxFirstEmptyOption(props.Options), props)
+	} else if props.Placeholder != "" {
 		<option value="" selected?={props.Value == "" && len(props.Options) == 0}>{ props.Placeholder }</option>
 	}
 	for _, option := range props.Options {
-		<option value={ option.Value } selected?={ comboboxOptionSelected(props, option) }>{ option.Label }</option>
+		if option.Value != "" {
+			<option value={ option.Value } selected?={ comboboxOptionSelected(props, option) }>{ option.Label }</option>
+		}
 	}
 	if props.Value != "" && !comboboxOptionsHaveValue(props.Options, props.Value) {
 		<option value={ props.Value } selected>{ comboboxSelectedLabel(props) }</option>
 	}
+}
+
+templ comboboxEmptyOption(option SelectOption, props ComboboxProps) {
+	<option value="" selected?={ comboboxOptionSelected(props, option) }>{ option.Label }</option>
 }
 
 // ComboboxComponent emits a useful native select fallback with stable producer hooks.
