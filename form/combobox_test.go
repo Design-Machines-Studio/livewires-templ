@@ -8,6 +8,7 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/Design-Machines-Studio/livewires-templ/internal/testutil"
+	"golang.org/x/net/html"
 )
 
 func TestComboboxRendersEscapedNativeOptionsAndAccessibleMessages(t *testing.T) {
@@ -89,36 +90,37 @@ func TestComboboxValueAndEmptyOptionSelection(t *testing.T) {
 	if nativeSelect == nil {
 		t.Fatal("native select is missing")
 	}
-	if !strings.Contains(valueHTML, `<option value="Asia/Makassar" selected>`) || strings.Contains(valueHTML, `<option value="UTC" selected>`) {
-		t.Fatalf("expected only the requested native option selected, got %s", valueHTML)
-	}
+	assertRenderedComboboxOptions(t, valueHTML, []renderedComboboxOption{
+		{value: "UTC", label: "UTC"},
+		{value: "Asia/Makassar", label: "Makassar", selected: true},
+	})
 
 	retainedHTML := testutil.RenderToString(t, ComboboxComponent(ComboboxProps{
 		ID: "saved-zone", Name: "timezone", Label: "Timezone", Value: "America/Whitehorse",
 		SelectedLabel: "Whitehorse", Options: []SelectOption{{Value: "UTC", Label: "UTC"}},
 	}))
-	if !strings.Contains(retainedHTML, `<option value="America/Whitehorse" selected>Whitehorse</option>`) || strings.Contains(retainedHTML, `<option value="UTC" selected>`) {
-		t.Fatalf("expected a saved value and its label to survive when absent from curated options, got %s", retainedHTML)
-	}
+	assertRenderedComboboxOptions(t, retainedHTML, []renderedComboboxOption{
+		{value: "UTC", label: "UTC"},
+		{value: "America/Whitehorse", label: "Whitehorse", selected: true},
+	})
 
 	emptyHTML := testutil.RenderToString(t, ComboboxComponent(ComboboxProps{
 		ID: "optional-zone", Name: "zone", Label: "Timezone",
 		Options: []SelectOption{{Value: "", Label: "Use organization default", Selected: true}, {Value: "UTC", Label: "UTC"}},
 	}))
-	if !strings.Contains(emptyHTML, `<option value="" selected`) {
-		t.Fatalf("expected explicit empty default option, got %s", emptyHTML)
-	}
+	assertRenderedComboboxOptions(t, emptyHTML, []renderedComboboxOption{
+		{value: "", label: "Use organization default", selected: true},
+		{value: "UTC", label: "UTC"},
+	})
 
 	withPlaceholder := testutil.RenderToString(t, ComboboxComponent(ComboboxProps{
 		ID: "default-zone", Name: "zone", Label: "Timezone", Placeholder: "Use organization default",
 		Options: []SelectOption{{Value: "UTC", Label: "UTC"}, {Value: "", Label: "Use organization default", Selected: true}},
 	}))
-	if got := strings.Count(withPlaceholder, `<option value=""`); got != 1 {
-		t.Fatalf("placeholder must not duplicate an explicit empty option, got %s", withPlaceholder)
-	}
-	if !strings.Contains(withPlaceholder, `<option value="" selected>Use organization default</option><option value="UTC"`) {
-		t.Fatalf("the explicit empty option must be moved before other options, got %s", withPlaceholder)
-	}
+	assertRenderedComboboxOptions(t, withPlaceholder, []renderedComboboxOption{
+		{value: "", label: "Use organization default", selected: true},
+		{value: "UTC", label: "UTC"},
+	})
 }
 
 func TestComboboxSupportsRequiredEmptyPlaceholderAndConvenienceModes(t *testing.T) {
@@ -138,9 +140,10 @@ func TestComboboxSupportsRequiredEmptyPlaceholderAndConvenienceModes(t *testing.
 		ID: "required-saved-zone", Name: "timezone", Label: "Timezone", Required: true,
 		Placeholder: "Choose a timezone", Value: "America/Whitehorse", SelectedLabel: "Whitehorse",
 	}))
-	if !strings.Contains(saved, `<option value="">Choose a timezone</option> <option value="America/Whitehorse" selected>Whitehorse</option>`) {
-		t.Fatalf("the required empty placeholder must precede the retained selected value: %s", saved)
-	}
+	assertRenderedComboboxOptions(t, saved, []renderedComboboxOption{
+		{value: "", label: "Choose a timezone"},
+		{value: "America/Whitehorse", label: "Whitehorse", selected: true},
+	})
 	if !strings.Contains(testutil.RawTag(t, saved, "select"), `required`) {
 		t.Fatalf("required validation must remain on the native select: %s", saved)
 	}
@@ -153,19 +156,52 @@ func TestComboboxSupportsRequiredEmptyPlaceholderAndConvenienceModes(t *testing.
 			{Value: "", Label: "Choose a timezone", Selected: true},
 		},
 	}))
-	firstOption := strings.Index(lateEmpty, `<option value="">Choose a timezone</option>`)
-	utcOption := strings.Index(lateEmpty, `<option value="UTC">UTC</option>`)
-	savedOption := strings.Index(lateEmpty, `<option value="America/Whitehorse" selected>Whitehorse</option>`)
-	if firstOption < 0 || utcOption < 0 || savedOption < 0 || !(firstOption < utcOption && utcOption < savedOption) {
-		t.Fatalf("the first empty placeholder must precede ordinary and retained options: %s", lateEmpty)
-	}
-	if got := strings.Count(lateEmpty, `<option value=""`); got != 1 {
-		t.Fatalf("late empty option must be rendered once: %s", lateEmpty)
-	}
+	assertRenderedComboboxOptions(t, lateEmpty, []renderedComboboxOption{
+		{value: "", label: "Choose a timezone"},
+		{value: "UTC", label: "UTC"},
+		{value: "America/Whitehorse", label: "Whitehorse", selected: true},
+	})
 
 	simple := testutil.RenderToString(t, ComboboxSimple("Timezone", "timezone", "Choose a timezone", "UTC", []SelectOption{{Value: "UTC", Label: "UTC"}}, true))
 	if !strings.Contains(simple, `name="timezone"`) || !strings.Contains(simple, `required`) || !strings.Contains(simple, `<option value="">Choose a timezone</option>`) || strings.Contains(simple, `data-search`) {
 		t.Fatalf("expected simple local convenience wrapper, got %s", simple)
+	}
+}
+
+type renderedComboboxOption struct {
+	value    string
+	label    string
+	selected bool
+}
+
+func assertRenderedComboboxOptions(t *testing.T, rendered string, want []renderedComboboxOption) {
+	t.Helper()
+
+	selectNode := testutil.FindElement(testutil.ParseFragment(t, rendered), "select")
+	if selectNode == nil {
+		t.Fatal("native select is missing")
+	}
+	var got []renderedComboboxOption
+	for child := selectNode.FirstChild; child != nil; child = child.NextSibling {
+		if child.Type != html.ElementNode || child.Data != "option" {
+			continue
+		}
+		value, ok := testutil.AttrVal(child, "value")
+		if !ok {
+			t.Fatalf("option has no value attribute: %s", rendered)
+		}
+		_, selected := testutil.AttrVal(child, "selected")
+		got = append(got, renderedComboboxOption{
+			value: value, label: testutil.NodeText(child), selected: selected,
+		})
+	}
+	if len(got) != len(want) {
+		t.Fatalf("rendered %d options, want %d: %#v", len(got), len(want), got)
+	}
+	for i := range want {
+		if got[i] != want[i] {
+			t.Errorf("option %d = %#v, want %#v", i, got[i], want[i])
+		}
 	}
 }
 

@@ -78,15 +78,6 @@ func comboboxOptionsHaveValue(options []SelectOption, value string) bool {
 	return false
 }
 
-func comboboxOptionsHaveEmptyValue(options []SelectOption) bool {
-	for _, option := range options {
-		if option.Value == "" {
-			return true
-		}
-	}
-	return false
-}
-
 func comboboxFirstEmptyOption(options []SelectOption) SelectOption {
 	for _, option := range options {
 		if option.Value == "" {
@@ -102,7 +93,7 @@ func comboboxRemoteProps(props ComboboxProps) ComboboxProps {
 }
 
 templ comboboxOptions(props ComboboxProps) {
-	if comboboxOptionsHaveEmptyValue(props.Options) {
+	if comboboxOptionsHaveValue(props.Options, "") {
 		@comboboxEmptyOption(comboboxFirstEmptyOption(props.Options), props)
 	} else if props.Placeholder != "" {
 		<option value="" selected?={props.Value == "" && len(props.Options) == 0}>{ props.Placeholder }</option>

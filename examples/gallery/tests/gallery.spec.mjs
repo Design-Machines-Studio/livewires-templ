@@ -277,20 +277,31 @@ test('combobox required validation, fieldset disabling and external form ownersh
 });
 
 test('combobox remote results reject stale replies, report failures, and retain selected values', async ({ page }) => {
+  await page.clock.install();
   await page.goto('/examples/combobox');
   await expect(page.locator('body')).toHaveAttribute('data-demo-ready', 'true');
   const input = page.locator('#remote-choice input');
   const options = page.locator('#remote-choice [role=option]');
+  await page.evaluate(() => {
+    window.comboboxQueries = [];
+    document.querySelector('#remote-choice').addEventListener('combobox-query', event => {
+      window.comboboxQueries.push(event.detail.query);
+    });
+  });
   await page.locator('#remote-scenario').selectOption('normal');
   await input.fill('Choose');
   await expect(page.locator('#remote-choice [role=status]')).toHaveText('No results.');
   expect(await options.count()).toBe(0);
   await page.locator('#remote-scenario').selectOption('out-of-order');
+  await page.evaluate(() => { window.comboboxQueries = []; });
   await input.fill('pa');
-  await page.waitForTimeout(300);
+  await expect.poll(() => page.evaluate(() => window.comboboxQueries)).toEqual(['pa']);
+  await page.clock.runFor(300);
   await input.fill('par');
+  await expect.poll(() => page.evaluate(() => window.comboboxQueries)).toEqual(['pa', 'par']);
+  await page.clock.runFor(100);
   await expect(page.locator('#remote-choice [role=option]')).toHaveText(['Paris']);
-  await page.waitForTimeout(850);
+  await page.clock.runFor(500);
   await expect(page.locator('#remote-choice [role=option]')).toHaveText(['Paris']);
 
   await page.locator('#remote-scenario').selectOption('error');
