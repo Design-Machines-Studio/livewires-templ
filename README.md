@@ -408,21 +408,21 @@ lw.DateShort("2024-03-15")                        // "Mar 15, 2024"
 | Package | Purpose |
 | ----------- | ----------- |
 | `component` | UI components: button, badge, avatar, card, dialog, tabs, toast, etc. |
-| `form` | Form elements: field, select, checkbox, radio, switch, textarea, search, filter, date range, file upload |
+| `form` | Form elements: field, select, combobox, checkbox, radio, switch, textarea, search, filter, date range, file upload |
 | `layout` | HTML base skeleton, page section |
 | root | Class name utilities, text/date helpers |
 
 ## Attrs vs InputAttrs
 
-`Attrs` renders on the wrapper/label of wrapped form controls (Switch, Checkbox, FileUpload) — use it for wrapper hooks like `data-testid`. `InputAttrs` renders on the nested `<input>` **after** component-generated attributes — use it for `aria-label` and Datastar directives (`data-bind`, `data-on:*`, `data-indicator:*`, `data-attr:*`).
+`Attrs` renders on the wrapper/label of wrapped form controls (Switch, Checkbox, FileUpload) and on the Combobox wrapper — use it for wrapper hooks like `data-testid`. `InputAttrs` renders on the nested `<input>` for Switch, Checkbox, and FileUpload, and on the native `<select>` for Combobox, **after** component-generated attributes. Use it for developer-controlled hooks such as `aria-label` and Datastar directives (`data-bind`, `data-on:*`, `data-indicator:*`, `data-attr:*`).
 
-On a collision the component's own attribute wins (HTML first-occurrence), so never pass an attribute the component already emits — this includes `type`, `role`, `name`, `id`, `value`, `checked`, `disabled`, `accept`, `multiple`, `aria-invalid`, and `aria-describedby`. Treat that list as illustrative, not exhaustive: as a rule, never duplicate through `InputAttrs` any attribute the component renders itself, or the caller's copy is silently dropped. Neither map may come from untrusted input.
+On a collision the component's own attribute wins (HTML first-occurrence), so never pass an attribute the component already emits — this includes `type`, `role`, `name`, `id`, `value`, `checked`, `disabled`, `required`, `form`, `accept`, `multiple`, `aria-invalid`, and `aria-describedby`. Treat that list as illustrative, not exhaustive: as a rule, never duplicate through `InputAttrs` any attribute the component renders itself, or the caller's copy is silently dropped. Neither map may come from untrusted input.
 
 Non-wrapped components like `Button` spread their single `Attrs` onto their own element, so `Attrs` is already their element-level seam — there is no separate `InputAttrs` for them.
 
 ## Security
 
-Both the `Attrs` field (on every `Props` struct, spread onto the wrapper or own element) and the `InputAttrs` field (on `Switch`/`Checkbox`/`FileUpload`, spread onto the nested `<input>`) are inserted directly into HTML output. templ escapes attribute values but does not restrict attribute names. **Never populate `Attrs` or `InputAttrs` from untrusted user input** — they are for developer-controlled attributes like `data-*`, `aria-*`, and Datastar directives.
+Both the `Attrs` field (on every `Props` struct, spread onto the wrapper or own element) and the `InputAttrs` field (on Switch/Checkbox/FileUpload's nested `<input>` and Combobox's native `<select>`) are inserted directly into HTML output. templ escapes attribute values but does not restrict attribute names. **Never populate `Attrs` or `InputAttrs` from untrusted user input** — they are for developer-controlled attributes like `data-*`, `aria-*`, and Datastar directives.
 
 ## Design Pattern
 
