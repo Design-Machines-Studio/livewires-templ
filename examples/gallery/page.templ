@@ -1,0 +1,108 @@
+package main
+
+import "strings"
+import "github.com/Design-Machines-Studio/livewires-templ/component"
+import utility "github.com/Design-Machines-Studio/livewires-templ/examples/utility-feedback"
+
+templ page(name string, source sourceIdentity, order []string, message string) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="utf-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			<title>{ "Live Wires gallery · " + name }</title>
+			<link rel="icon" href="data:,"/>
+			<link rel="stylesheet" href="/assets/main.css"/>
+			if name=="sortable" {
+<link rel="stylesheet" href="/assets/sortable-list.css"/>
+}
+			if name!="" {
+<script type="module" src="/demo.js"></script>
+}
+		</head>
+		<body class="scheme-default" data-example={ name }>
+			<a href="#main" class="skip-link">Skip to example</a>
+			<main class="section center stack" id="main">
+				<nav aria-label="Gallery"><a href="/">Component gallery</a></nav>
+				if name=="" {
+					<h1>Component gallery</h1>
+					<p>Generated Templ components from this checkout, with pinned Live Wires assets.</p>
+					<ul>
+						for _, example := range examples {
+<li><a href={ templ.URL("/examples/"+example) }>{ example }</a></li>
+}
+					</ul>
+				}
+else {
+
+					<h1>{ name }</h1>
+					<p>Local demonstration. Outcomes are simulated; nothing is saved. Reload the example URL to reset.</p>
+					switch name {
+						case "relative-time", "copy", "loading", "toast":
+							if name=="toast" && message!="" {
+								@component.ToastRegionComponent(component.ToastRegionProps{Label:"Editor feedback"}) {
+									@component.ToastComponent(component.ToastProps{ID:"demo:result",Message:message,Variant:"info",Dismissible:true,Managed:true})
+								}
+							}
+else {
+ @utility.Example(name) }
+						case "sortable":
+							@sortableExample(order)
+					}
+					if name=="loading" || name=="toast" || name=="sortable" {
+						<form method="get" action={ templ.URL("/examples/"+name) } id="scenario-form">
+							<label for="scenario">Response scenario</label>
+							<select id="scenario" name="scenario">
+								<option value="normal">Normal</option><option value="delayed">Delayed</option><option value="failure">Failure</option><option value="unknown">Unknown result</option>
+							</select>
+							<button name="run" value="1" type="submit">Run scenario</button>
+						</form>
+						<button id="unrelated" type="button" hidden>Update unrelated note</button>
+						<p id="unrelated-note">Unrelated note stays available.</p>
+						<label for="unrelated-input">Unrelated input</label><input id="unrelated-input" value="Keep editing"/>
+						<a href={ templ.URL("/examples/"+name) }>Reload and recover</a>
+					}
+					<p id="demo-outcome" role="status">{ message }</p>
+					<noscript><p>Native controls and visible content remain available. Choose a scenario and submit to see its simulated outcome.</p></noscript>
+				}
+				<footer class="stack text-sm" id="source-build" data-source-head={ source.Commit } data-source-fingerprint={ source.Fingerprint } data-source-dirty={ source.Dirty }>
+					<p>Source: <code>{ source.Commit }</code>. Branch: { source.Branch }.</p>
+					if source.Dirty {
+<p>Dirty build: the fingerprint identifies these uncommitted bytes.</p>
+}
+else {
+
+<p>Clean checkout build.</p>
+}
+					<details><summary>Build provenance</summary><p>Checkout: { source.Checkout }</p><p>Fingerprint: { source.Fingerprint }</p><p>Live Wires: { source.AssetRevision }</p></details>
+				</footer>
+			</main>
+		</body>
+	</html>
+}
+
+templ sortableExample(order []string) {
+	@component.SortableListComponent(component.SortableListProps{ID:"demo-sortable", Label:"Review reading order", Variant:"cards"}) {
+		<ol data-sortable-list>
+			for i, id := range order {
+				@component.SortableItemComponent(component.SortableItemProps{ItemID:id,Label:itemNames[id]}) {
+					<span data-sortable-content>{ itemNames[id] }</span>
+					<span data-sortable-actions>
+						@component.SortableHandle(itemNames[id])
+						@component.SortableMoveComponent(component.SortableMoveProps{Label:itemNames[id],Direction:"up",Action:"/examples/sortable",Method:"get",ItemID:id,Before:before(order,i,"up"),Disabled:i==0,Metadata:orderMetadata(order)})
+						@component.SortableMoveComponent(component.SortableMoveProps{Label:itemNames[id],Direction:"down",Action:"/examples/sortable",Method:"get",ItemID:id,Before:before(order,i,"down"),Disabled:i==len(order)-1,Metadata:orderMetadata(order)})
+					</span>
+				}
+			}
+		</ol>
+	}
+}
+
+templ orderMetadata(order []string) {
+<input type="hidden" name="order" value={ strings.Join(order,",") }/>
+}
+
+func before(order []string, i int, direction string) string {
+	if direction=="up" { if i==0 { return order[i] }; return order[i-1] }
+	if i+2<len(order) { return order[i+2] }; return ""
+}

@@ -414,3 +414,9 @@ the decorative indicator is hidden from assistive technology. Custom labels and
 group legends can compose `form.RequiredIndicator(required)`. Markdown adapters
 can use the static `form.RequiredIndicatorMarkup(required)` with escaped labels.
 Consumers must provide readable contrast for Live Wires `text-muted`.
+
+## Browser gallery
+
+Serve the generated components locally with `examples/gallery/run.sh start`.
+See the [gallery runbook](examples/gallery/README.md) for pinned assets, Playwright,
+source receipts and isolated rebuild/stop commands.

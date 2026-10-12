@@ -1,0 +1,22 @@
+package utilityfeedback
+
+import "github.com/Design-Machines-Studio/livewires-templ/component"
+
+// Example is shared by the render fixture and the maintained browser gallery.
+templ Example(name string) {
+	switch name {
+		case "relative-time":
+			@component.RelativeTimeComponent(component.RelativeTimeProps{DateTime:"2026-10-10",Fallback:"October 10, 2026",Lang:"en"})
+			@component.RelativeTimeComponent(component.RelativeTimeProps{DateTime:"invalid",Fallback:"Unknown date; absolute fallback remains visible.",Lang:"en"})
+		case "copy":
+			@component.CopyComponent(component.CopyProps{ID:"share-address",Label:"Share address",Value:"https://example.test/meeting",ButtonLabel:"Copy address"})
+		case "loading":
+			@component.LoadingRegionComponent(component.LoadingRegionProps{ID:"editor-save",Label:"Editor save"}) {
+<p>Editor content remains available while an operation is pending.</p>
+}
+		case "toast":
+			@component.ToastRegionComponent(component.ToastRegionProps{Label:"Editor feedback"}) {
+				@component.ToastComponent(component.ToastProps{ID:"demo:initial",Message:"Example feedback. This is not a saved result.",Variant:"info",Dismissible:true,DismissLabel:"Dismiss example message",Managed:true})
+			}
+	}
+}

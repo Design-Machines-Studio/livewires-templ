@@ -1,0 +1,7 @@
+{
+  "acceptanceClear": true, "designSettled": true, "consequence": "medium",
+  "reversibility": "easy", "coordination": "single-pass", "existingPattern": true,
+  "verificationDefined": true, "unansweredQuestions": ["Verify producer module setup APIs and asset closure; prove two isolated Docker instances."],
+  "explicitFull": false, "reviewRequired": true, "securitySensitive": false,
+  "minimumMode": "lean", "rationale": "Bounded development tooling with explicit acceptance; source identity, verified assets and resource isolation need judgment and independent review. Inline-edit remains a separately owned optional dependency."
+}

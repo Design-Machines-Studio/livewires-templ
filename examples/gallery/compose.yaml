@@ -1,0 +1,32 @@
+services:
+  builder:
+    profiles: [build]
+    build:
+      context: ${GALLERY_RUN}/build/source
+      dockerfile: Dockerfile
+    image: ${GALLERY_PROJECT}-toolchain
+    working_dir: /app
+    volumes:
+      - ${GALLERY_RUN}/build/source:/app
+      - ${GALLERY_RUN}/build:/build
+      - ${GALLERY_RUN}/cache/modules:/go/pkg/mod
+      - ${GALLERY_RUN}/cache/go-build:/root/.cache/go-build
+    environment:
+      GALLERY_RECEIPT: ${GALLERY_RECEIPT}
+    command: [sh, -c, 'templ generate && go build -trimpath -ldflags "-X main.buildReceipt=$$GALLERY_RECEIPT" -o /build/gallery ./examples/gallery']
+  app:
+    image: ${GALLERY_PROJECT}-toolchain
+    entrypoint: [/build/gallery]
+    volumes:
+      - ${GALLERY_RUN}/build:/build:ro
+      - ${GALLERY_RUN}/assets:/assets:ro
+    ports:
+      - target: 8080
+        host_ip: 127.0.0.1
+        protocol: tcp
+    healthcheck:
+      test: [CMD, wget, -q, -O, /dev/null, 'http://127.0.0.1:8080/healthz']
+      interval: 1s
+      timeout: 2s
+      retries: 20
+    stop_grace_period: 5s
