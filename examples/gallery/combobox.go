@@ -7,7 +7,7 @@ func comboboxTimezoneOptions() []form.SelectOption {
 		{Value: "UTC", Label: "UTC"},
 		{Value: "Asia/Makassar", Label: "Makassar"},
 		{Value: "Asia/Manila", Label: "Manila"},
-		{Value: "Asia/Chatham", Label: "Chatham Islands"},
+		{Value: "Pacific/Chatham", Label: "Chatham Islands"},
 		{Value: "Europe/Paris", Label: "Paris"},
 		{Value: "America/Sao_Paulo", Label: "São Paulo"},
 		{Value: "America/New_York", Label: "New York"},

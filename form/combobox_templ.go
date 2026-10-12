@@ -536,7 +536,7 @@ func Combobox(props ComboboxProps) templ.Component {
 }
 
 // ComboboxSimple creates a local-search control using the ordinary field arguments.
-func ComboboxSimple(label, name, value string, options []SelectOption, required bool) templ.Component {
+func ComboboxSimple(label, name, placeholder, value string, options []SelectOption, required bool) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -558,7 +558,7 @@ func ComboboxSimple(label, name, value string, options []SelectOption, required 
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = ComboboxComponent(ComboboxProps{
-			Label: label, Name: name, Value: value, Options: options, Required: required,
+			Label: label, Name: name, Placeholder: placeholder, Value: value, Options: options, Required: required,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

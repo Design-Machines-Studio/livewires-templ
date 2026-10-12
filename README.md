@@ -368,8 +368,7 @@ curated list remain application-owned. This issue does not change Baseplate.
 Later adoption requires a merged and published Go module version containing
 the additive exported API, plus compatible published Live Wires assets and
 verified checksums. The new exported API requires a minor version under this
-repository's release policy. No tag, release or consumer rollout is authorized
-here.
+repository's release policy.
 
 ### Layout
 

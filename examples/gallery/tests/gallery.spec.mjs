@@ -201,8 +201,8 @@ test('combobox keeps native form values authoritative through typing, selection,
   expect(await page.evaluate(() => window.comboboxEvents)).toEqual({ input: 1, change: 1, commit: 1 });
   expect(await page.evaluate(() => [...new FormData(document.querySelector('#combobox-form'))])).toEqual([['interface_timezone', 'Asia/Makassar'], ['required_timezone', '']]);
 
-  await page.locator('#combobox-form button[type=reset]').click();
-  await expect(localInput).toHaveValue('Use organization default (UTC)');
+  await page.locator('#combobox-reset').click();
+  await expect(localInput).toHaveValue('Use organization default');
   expect(await localSelect.inputValue()).toBe('');
   await remoteInput.fill('Paris');
   await expect(page.locator('#remote-choice [role=option]')).toHaveText(['Paris']);
@@ -216,11 +216,11 @@ test('combobox keeps native form values authoritative through typing, selection,
   expect([...submitted.keys()].sort()).toEqual(['interface_timezone', 'required_timezone']);
   expect(submitted.get('interface_timezone')).toBe('');
   expect(submitted.get('required_timezone')).toBe('Europe/Paris');
-  await expect(page.locator('#demo-outcome')).toContainText('Native example submission');
+  await expect(page.locator('#demo-outcome')).toContainText('interface_timezone=""; required_timezone="Europe/Paris"');
 
   await localInput.fill('Paris');
   await localInput.press('Escape');
-  expect(await localInput.inputValue()).toBe('Use organization default (UTC)');
+  expect(await localInput.inputValue()).toBe('Use organization default');
   await localInput.fill('Makassar');
   await localInput.press('ArrowDown');
   await localInput.press('Enter');
@@ -229,8 +229,8 @@ test('combobox keeps native form values authoritative through typing, selection,
   await remoteInput.press('ArrowDown');
   await remoteInput.press('Enter');
   expect(await remoteSelect.inputValue()).toBe('Europe/Paris');
-  await page.locator('#combobox-form button[type=reset]').click();
-  await expect(localInput).toHaveValue('Use organization default (UTC)');
+  await page.locator('#combobox-reset').click();
+  await expect(localInput).toHaveValue('Use organization default');
   await expect(remoteInput).toHaveValue('Choose a timezone');
   expect(await localSelect.inputValue()).toBe('');
   expect(await remoteSelect.inputValue()).toBe('');
@@ -277,6 +277,11 @@ test('combobox required validation, fieldset disabling and external form ownersh
 test('combobox remote results reject stale replies, report failures, and retain selected values', async ({ page }) => {
   await page.goto('/examples/combobox');
   const input = page.locator('#remote-choice input');
+  const options = page.locator('#remote-choice [role=option]');
+  await page.locator('#remote-scenario').selectOption('normal');
+  await input.fill('Choose');
+  await expect(page.locator('#remote-choice [role=status]')).toHaveText('No results.');
+  expect(await options.count()).toBe(0);
   await page.locator('#remote-scenario').selectOption('out-of-order');
   await input.fill('pa');
   await page.waitForTimeout(300);

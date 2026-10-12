@@ -31,33 +31,33 @@ func comboboxExample() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<p>Timezone override is optional. Leave the empty value selected to use the organization default. This gallery uses public sample choices; applications supply their own options and remote search policy.</p><form id=\"combobox-form\" method=\"get\" action=\"/examples/combobox\" class=\"stack\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<p>Leave the empty local value selected to inherit the organization default. With JavaScript, typing filters choices without changing the selected value; without JavaScript, each field remains a native select. The public sample choices are local to this gallery; applications provide their own choices and remote search policy.</p><form id=\"combobox-form\" method=\"get\" action=\"/examples/combobox\" class=\"stack\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = form.ComboboxComponent(form.ComboboxProps{
-			ID: "local-zone", RootID: "local-choice", Name: "interface_timezone", Label: "Timezone override",
-			Placeholder: "Use organization default (UTC)", Options: comboboxTimezoneOptions(),
-			Hint:       "Search by timezone name or value. Typing does not submit a value.",
+			ID: "local-zone", RootID: "local-choice", Name: "interface_timezone", Label: "Local search — timezone override",
+			Placeholder: "Use organization default", Options: comboboxTimezoneOptions(),
+			Hint:       "Leave empty to inherit the organization timezone.",
 			InputAttrs: templ.Attributes{"data-testid": "local-select"},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"cluster\"><button class=\"button\" type=\"submit\">Submit choices</button> <button class=\"button button--ghost\" type=\"reset\">Reset choices</button></div></form><section class=\"stack\"><p>The required control below is associated with the form by its native <code>form</code> attribute. Choose a response mode to simulate application-owned remote results.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</form><section class=\"stack\"><p>Choose a response mode, then search the remote control. Its select is associated with the form by its native <code>form</code> attribute.</p><label for=\"remote-scenario\">Simulated remote response</label> <select id=\"remote-scenario\" aria-describedby=\"remote-scenario-help\"><option value=\"normal\">Normal response</option> <option value=\"delayed\">Delayed response</option> <option value=\"out-of-order\">Out-of-order responses</option> <option value=\"error\">Search error</option> <option value=\"empty\">No matches</option></select><p id=\"remote-scenario-help\" class=\"hint\">Type “pa”, then “par” quickly to see an earlier result arrive later. Responses use a local sample list; no service is called.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = form.ComboboxRemote(form.ComboboxProps{
-			ID: "remote-zone", RootID: "remote-choice", Name: "required_timezone", Label: "Required timezone",
+			ID: "remote-zone", RootID: "remote-choice", Name: "required_timezone", Label: "Remote search — meeting timezone",
 			Placeholder: "Choose a timezone", Options: comboboxTimezoneOptions(), Required: true,
-			Form: "combobox-form", Hint: "This field must be selected before the form can submit.",
+			Form:       "combobox-form",
 			InputAttrs: templ.Attributes{"data-testid": "remote-select"},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<label for=\"remote-scenario\">Remote response mode</label> <select id=\"remote-scenario\" aria-describedby=\"remote-scenario-help\"><option value=\"normal\">Normal response</option> <option value=\"delayed\">Delayed response</option> <option value=\"out-of-order\">Out-of-order responses (pa 900 ms, par 100 ms)</option> <option value=\"error\">Search error</option> <option value=\"empty\">No matches</option></select><p id=\"remote-scenario-help\" class=\"hint\">The remote example filters a local sample list and never calls a service.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</section><div class=\"cluster\"><button id=\"combobox-submit\" class=\"button\" type=\"submit\" form=\"combobox-form\">Submit choices</button> <button id=\"combobox-reset\" class=\"button button--ghost\" type=\"reset\" form=\"combobox-form\">Reset choices</button></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

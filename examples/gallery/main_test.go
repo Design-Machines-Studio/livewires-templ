@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestRoutesRenderCurrentComponentsAndNativeMoves(t *testing.T) {
@@ -67,5 +68,13 @@ func TestNativeScenarioControlsDoNotInventComponentOutcomes(t *testing.T) {
 	app.ServeHTTP(w, httptest.NewRequest("GET", "/examples/toast?scenario=failure&run=1", nil))
 	if !strings.Contains(w.Body.String(), "toast--error") {
 		t.Fatal("failure scenario did not render the error component variant")
+	}
+}
+
+func TestComboboxTimezoneSamplesAreValidLocations(t *testing.T) {
+	for _, option := range comboboxTimezoneOptions() {
+		if _, err := time.LoadLocation(option.Value); err != nil {
+			t.Errorf("timezone %q is not a valid location: %v", option.Value, err)
+		}
 	}
 }

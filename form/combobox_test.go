@@ -123,8 +123,8 @@ func TestComboboxSupportsRequiredEmptyPlaceholderAndConvenienceModes(t *testing.
 		t.Fatalf("required must remain on the native select, got %s", selectTag)
 	}
 
-	simple := testutil.RenderToString(t, ComboboxSimple("Timezone", "timezone", "UTC", []SelectOption{{Value: "UTC", Label: "UTC"}}, true))
-	if !strings.Contains(simple, `name="timezone"`) || !strings.Contains(simple, `required`) || strings.Contains(simple, `data-search`) {
+	simple := testutil.RenderToString(t, ComboboxSimple("Timezone", "timezone", "Choose a timezone", "UTC", []SelectOption{{Value: "UTC", Label: "UTC"}}, true))
+	if !strings.Contains(simple, `name="timezone"`) || !strings.Contains(simple, `required`) || !strings.Contains(simple, `<option value="">Choose a timezone</option>`) || strings.Contains(simple, `data-search`) {
 		t.Fatalf("expected simple local convenience wrapper, got %s", simple)
 	}
 }

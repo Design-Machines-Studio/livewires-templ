@@ -177,7 +177,7 @@ func routes(source sourceIdentity, files map[string][]byte, lock assetLock) http
 			message = "Native example submission. Fictional text is carried in the URL; nothing was saved."
 		}
 		if name == "combobox" && (r.URL.Query().Has("interface_timezone") || r.URL.Query().Has("required_timezone")) {
-			message = "Native example submission. Select values are carried in this URL; nothing was saved."
+			message = fmt.Sprintf("Native example submission. interface_timezone=%q; required_timezone=%q. These values came from this URL; nothing was saved.", r.URL.Query().Get("interface_timezone"), r.URL.Query().Get("required_timezone"))
 		}
 		if name == "sortable" && r.URL.Query().Has("itemId") {
 			order = moveOrder(order, r.URL.Query().Get("itemId"), r.URL.Query().Get("before"))

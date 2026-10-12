@@ -60,7 +60,7 @@ async function setup() {
         value: option.value,
         label: option.label,
         disabled: option.disabled,
-      }));
+      })).filter(option => option.value !== '');
       root.addEventListener('combobox-query', (event) => {
         const request = event.detail;
         const scenario = responseMode.value;

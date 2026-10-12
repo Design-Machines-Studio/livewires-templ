@@ -128,9 +128,9 @@ templ Combobox(props ComboboxProps) {
 }
 
 // ComboboxSimple creates a local-search control using the ordinary field arguments.
-templ ComboboxSimple(label, name, value string, options []SelectOption, required bool) {
+templ ComboboxSimple(label, name, placeholder, value string, options []SelectOption, required bool) {
 	@ComboboxComponent(ComboboxProps{
-		Label: label, Name: name, Value: value, Options: options, Required: required,
+		Label: label, Name: name, Placeholder: placeholder, Value: value, Options: options, Required: required,
 	})
 }
 
