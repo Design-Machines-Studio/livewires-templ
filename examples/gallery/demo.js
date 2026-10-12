@@ -50,6 +50,7 @@ async function setup() {
   if (name === 'combobox') {
     const { createCombobox } = await import('/assets/combobox.js');
     const responseMode = document.querySelector('#remote-scenario');
+    document.querySelector('#remote-scenario-control').hidden = false;
     for (const root of document.querySelectorAll('[data-combobox]')) {
       const remote = root.hasAttribute('data-search');
       const control = createCombobox({ root, mode: remote ? 'remote' : 'local' });

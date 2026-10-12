@@ -31,7 +31,7 @@ func comboboxExample() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<p>Leave the empty local value selected to inherit the organization default. With JavaScript, typing filters choices without changing the selected value; without JavaScript, each field remains a native select. The public sample choices are local to this gallery; applications provide their own choices and remote search policy.</p><form id=\"combobox-form\" method=\"get\" action=\"/examples/combobox\" class=\"stack\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<p>With JavaScript, typing filters choices without changing the selected value; without JavaScript, each field remains a native select. The public sample choices are local to this gallery; applications provide their own choices and remote search policy.</p><form id=\"combobox-form\" method=\"get\" action=\"/examples/combobox\" class=\"stack\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -44,7 +44,7 @@ func comboboxExample() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</form><section class=\"stack\"><p>Choose a response mode, then search the remote control. Its select is associated with the form by its native <code>form</code> attribute.</p><label for=\"remote-scenario\">Simulated remote response</label> <select id=\"remote-scenario\" aria-describedby=\"remote-scenario-help\"><option value=\"normal\">Normal response</option> <option value=\"delayed\">Delayed response</option> <option value=\"out-of-order\">Out-of-order responses</option> <option value=\"error\">Search error</option> <option value=\"empty\">No matches</option></select><p id=\"remote-scenario-help\" class=\"hint\">Type “pa”, then “par” quickly to see an earlier result arrive later. Responses use a local sample list; no service is called.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</form><section class=\"stack\"><p>The remote select below stays associated with the form above through its native <code>form</code> attribute.</p><div id=\"remote-scenario-control\" class=\"field\" hidden><label for=\"remote-scenario\">Simulated remote response</label> <select id=\"remote-scenario\" aria-describedby=\"remote-scenario-help\"><option value=\"normal\">Normal response</option> <option value=\"delayed\">Delayed response</option> <option value=\"out-of-order\">Out-of-order responses</option> <option value=\"error\">Search error</option> <option value=\"empty\">No matches</option></select><p id=\"remote-scenario-help\" class=\"hint\">In out-of-order mode, type “pa”, then “par” quickly. The late “pa” reply is discarded; “par” results stay visible. No service is called.</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

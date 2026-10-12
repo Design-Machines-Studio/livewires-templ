@@ -3,7 +3,7 @@ package main
 import "github.com/Design-Machines-Studio/livewires-templ/form"
 
 templ comboboxExample() {
-	<p>Leave the empty local value selected to inherit the organization default. With JavaScript, typing filters choices without changing the selected value; without JavaScript, each field remains a native select. The public sample choices are local to this gallery; applications provide their own choices and remote search policy.</p>
+	<p>With JavaScript, typing filters choices without changing the selected value; without JavaScript, each field remains a native select. The public sample choices are local to this gallery; applications provide their own choices and remote search policy.</p>
 	<form id="combobox-form" method="get" action="/examples/combobox" class="stack">
 		@form.ComboboxComponent(form.ComboboxProps{
 			ID: "local-zone", RootID: "local-choice", Name: "interface_timezone", Label: "Local search — timezone override",
@@ -13,16 +13,18 @@ templ comboboxExample() {
 		})
 	</form>
 	<section class="stack">
-		<p>Choose a response mode, then search the remote control. Its select is associated with the form by its native <code>form</code> attribute.</p>
-		<label for="remote-scenario">Simulated remote response</label>
-		<select id="remote-scenario" aria-describedby="remote-scenario-help">
-			<option value="normal">Normal response</option>
-			<option value="delayed">Delayed response</option>
-			<option value="out-of-order">Out-of-order responses</option>
-			<option value="error">Search error</option>
-			<option value="empty">No matches</option>
-		</select>
-		<p id="remote-scenario-help" class="hint">Type “pa”, then “par” quickly to see an earlier result arrive later. Responses use a local sample list; no service is called.</p>
+		<p>The remote select below stays associated with the form above through its native <code>form</code> attribute.</p>
+		<div id="remote-scenario-control" class="field" hidden>
+			<label for="remote-scenario">Simulated remote response</label>
+			<select id="remote-scenario" aria-describedby="remote-scenario-help">
+				<option value="normal">Normal response</option>
+				<option value="delayed">Delayed response</option>
+				<option value="out-of-order">Out-of-order responses</option>
+				<option value="error">Search error</option>
+				<option value="empty">No matches</option>
+			</select>
+			<p id="remote-scenario-help" class="hint">In out-of-order mode, type “pa”, then “par” quickly. The late “pa” reply is discarded; “par” results stay visible. No service is called.</p>
+		</div>
 		@form.ComboboxRemote(form.ComboboxProps{
 			ID: "remote-zone", RootID: "remote-choice", Name: "required_timezone", Label: "Remote search — meeting timezone",
 			Placeholder: "Choose a timezone", Options: comboboxTimezoneOptions(), Required: true,

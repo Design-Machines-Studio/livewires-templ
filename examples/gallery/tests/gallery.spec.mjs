@@ -171,6 +171,7 @@ test('inline edit retains draft/focus, rejects, recovers and ignores cancelled d
 test('combobox keeps native form values authoritative through typing, selection, reset and submission', async ({ page }) => {
   await page.goto('/examples/combobox');
   await expect(page.locator('body')).toHaveAttribute('data-demo-ready', 'true');
+  await expect(page.locator('#remote-scenario-control')).toBeVisible();
   const localInput = page.locator('#local-choice input');
   const remoteInput = page.locator('#remote-choice input');
   const localSelect = page.locator('#local-zone');
@@ -333,6 +334,7 @@ test('combobox local DOM updates preserve query and no-JavaScript fallback submi
     expect(await native.locator('[role=combobox]').count()).toBe(0);
     await expect(native.locator('#local-zone')).toBeVisible();
     await expect(native.locator('#remote-zone')).toBeVisible();
+    await expect(native.locator('#remote-scenario-control')).toBeHidden();
     await native.locator('#remote-zone').selectOption('Europe/Paris');
     await native.getByRole('button', { name: 'Submit choices' }).click();
     await native.waitForURL(/required_timezone=Europe%2FParis/);
