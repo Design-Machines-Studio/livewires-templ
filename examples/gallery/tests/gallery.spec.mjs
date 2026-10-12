@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { createHash } from 'node:crypto';
 import { writeFile } from 'node:fs/promises';
 
-const names = ['relative-time', 'copy', 'loading', 'toast', 'sortable', 'inline-edit'];
+const names = ['relative-time', 'copy', 'loading', 'toast', 'sortable', 'inline-edit', 'combobox'];
 for (const [device, viewport] of [['desktop', { width: 1440, height: 1000 }], ['mobile', { width: 390, height: 844 }]]) {
   for (const name of names) {
     test(`${name} ${device}: generated markup, verified assets and provenance`, async ({ page, request }, info) => {
@@ -166,4 +166,176 @@ test('inline edit retains draft/focus, rejects, recovers and ignores cancelled d
   await second.fill('Fictional second title');
   await second.press('Enter');
   await expect(page.locator('#title-b')).toHaveAttribute('data-inline-edit-state', 'confirmed');
+});
+
+test('combobox keeps native form values authoritative through typing, selection, reset and submission', async ({ page }) => {
+  await page.goto('/examples/combobox');
+  await expect(page.locator('body')).toHaveAttribute('data-demo-ready', 'true');
+  const localInput = page.locator('#local-choice input');
+  const remoteInput = page.locator('#remote-choice input');
+  const localSelect = page.locator('#local-zone');
+  const remoteSelect = page.locator('#remote-zone');
+  expect(await page.locator('[data-combobox]').count()).toBe(2);
+  expect(await page.locator('[role=combobox]').count()).toBe(2);
+  expect(await page.locator('select[name]').evaluateAll(nodes => nodes.map(node => node.name).sort())).toEqual(['interface_timezone', 'required_timezone']);
+  expect(await localInput.getAttribute('name')).toBeNull();
+  expect(await remoteInput.getAttribute('name')).toBeNull();
+  expect(await remoteSelect.getAttribute('form')).toBe('combobox-form');
+
+  const events = await page.evaluate(() => {
+    const select = document.querySelector('#local-zone');
+    window.comboboxEvents = { input: 0, change: 0, commit: 0 };
+    select.addEventListener('input', () => window.comboboxEvents.input++);
+    select.addEventListener('change', () => window.comboboxEvents.change++);
+    document.querySelector('#local-choice').addEventListener('combobox-change', () => window.comboboxEvents.commit++);
+    return [...new FormData(document.querySelector('#combobox-form'))];
+  });
+  expect(events).toEqual([['interface_timezone', ''], ['required_timezone', '']]);
+  await localInput.fill('Makassar');
+  expect(await localSelect.inputValue()).toBe('');
+  expect(await page.evaluate(() => [...new FormData(document.querySelector('#combobox-form'))])).toEqual(events);
+  expect(await page.evaluate(() => window.comboboxEvents)).toEqual({ input: 0, change: 0, commit: 0 });
+  await localInput.press('ArrowDown');
+  await localInput.press('Enter');
+  expect(await localSelect.inputValue()).toBe('Asia/Makassar');
+  expect(await page.evaluate(() => window.comboboxEvents)).toEqual({ input: 1, change: 1, commit: 1 });
+  expect(await page.evaluate(() => [...new FormData(document.querySelector('#combobox-form'))])).toEqual([['interface_timezone', 'Asia/Makassar'], ['required_timezone', '']]);
+
+  await page.locator('#combobox-form button[type=reset]').click();
+  await expect(localInput).toHaveValue('Use organization default (UTC)');
+  expect(await localSelect.inputValue()).toBe('');
+  await remoteInput.fill('Paris');
+  await expect(page.locator('#remote-choice [role=option]')).toHaveText(['Paris']);
+  await remoteInput.press('ArrowDown');
+  await remoteInput.press('Enter');
+  expect(await remoteSelect.inputValue()).toBe('Europe/Paris');
+
+  await page.getByRole('button', { name: 'Submit choices' }).click();
+  await page.waitForURL(/required_timezone=Europe%2FParis/);
+  const submitted = new URL(page.url()).searchParams;
+  expect([...submitted.keys()].sort()).toEqual(['interface_timezone', 'required_timezone']);
+  expect(submitted.get('interface_timezone')).toBe('');
+  expect(submitted.get('required_timezone')).toBe('Europe/Paris');
+  await expect(page.locator('#demo-outcome')).toContainText('Native example submission');
+
+  await localInput.fill('Paris');
+  await localInput.press('Escape');
+  expect(await localInput.inputValue()).toBe('Use organization default (UTC)');
+  await localInput.fill('Makassar');
+  await localInput.press('ArrowDown');
+  await localInput.press('Enter');
+  await remoteInput.fill('Paris');
+  await expect(page.locator('#remote-choice [role=option]')).toHaveText(['Paris']);
+  await remoteInput.press('ArrowDown');
+  await remoteInput.press('Enter');
+  expect(await remoteSelect.inputValue()).toBe('Europe/Paris');
+  await page.locator('#combobox-form button[type=reset]').click();
+  await expect(localInput).toHaveValue('Use organization default (UTC)');
+  await expect(remoteInput).toHaveValue('Choose a timezone');
+  expect(await localSelect.inputValue()).toBe('');
+  expect(await remoteSelect.inputValue()).toBe('');
+});
+
+test('combobox required validation, fieldset disabling and external form ownership stay native', async ({ page }) => {
+  await page.goto('/examples/combobox');
+  await page.getByRole('button', { name: 'Submit choices' }).click();
+  expect(await page.locator('#remote-zone').evaluate(select => select.validity.valueMissing)).toBe(true);
+  expect(await page.locator('#remote-choice input').evaluate(input => input === document.activeElement)).toBe(true);
+  expect(await page.locator('#remote-choice input').getAttribute('aria-invalid')).toBe('true');
+  await page.locator('#remote-scenario').selectOption('normal');
+  const input = page.locator('#remote-choice input');
+  await input.fill('Paris');
+  await expect(page.locator('#remote-choice [role=option]')).toHaveText(['Paris']);
+  await input.press('ArrowDown');
+  await input.press('Escape');
+  expect(await page.locator('#remote-zone').inputValue()).toBe('');
+  await input.fill('Paris');
+  await expect(page.locator('#remote-choice [role=option]')).toHaveText(['Paris']);
+  await input.press('ArrowDown');
+  await input.press('Enter');
+  expect(await page.locator('#remote-zone').evaluate(select => select.checkValidity())).toBe(true);
+
+  const fieldset = await page.evaluate(async () => {
+    const { createCombobox } = await import('/assets/combobox.js');
+    const form = document.createElement('form');
+    form.innerHTML = '<fieldset disabled><legend><div data-combobox><label for="legend-zone">Legend timezone</label><select id="legend-zone" name="legend" required><option value="UTC">UTC</option></select></div></legend><fieldset><div data-combobox><label for="nested-zone">Nested timezone</label><select id="nested-zone" name="nested"><option value="UTC">UTC</option></select></div></fieldset></fieldset>';
+    document.body.append(form);
+    const controls = [...form.querySelectorAll('[data-combobox]')].map(root => createCombobox({ root }));
+    await new Promise(resolve => setTimeout(resolve, 0));
+    const before = { values: [...new FormData(form)], disabled: [...form.querySelectorAll('input')].map(input => input.disabled) };
+    form.querySelector('fieldset').disabled = false;
+    await new Promise(resolve => setTimeout(resolve, 0));
+    const after = { values: [...new FormData(form)], disabled: [...form.querySelectorAll('input')].map(input => input.disabled) };
+    controls.forEach(control => control.dispose());
+    form.remove();
+    return { before, after };
+  });
+  expect(fieldset.before).toEqual({ values: [['legend', 'UTC']], disabled: [false, true] });
+  expect(fieldset.after).toEqual({ values: [['legend', 'UTC'], ['nested', 'UTC']], disabled: [false, false] });
+});
+
+test('combobox remote results reject stale replies, report failures, and retain selected values', async ({ page }) => {
+  await page.goto('/examples/combobox');
+  const input = page.locator('#remote-choice input');
+  await page.locator('#remote-scenario').selectOption('out-of-order');
+  await input.fill('pa');
+  await page.waitForTimeout(300);
+  await input.fill('par');
+  await expect(page.locator('#remote-choice [role=option]')).toHaveText(['Paris']);
+  await page.waitForTimeout(850);
+  await expect(page.locator('#remote-choice [role=option]')).toHaveText(['Paris']);
+
+  await page.locator('#remote-scenario').selectOption('error');
+  await input.fill('fail');
+  await expect(page.locator('#remote-choice [role=status]')).toContainText('Search failed');
+  await page.locator('#remote-scenario').selectOption('empty');
+  await input.fill('zz');
+  await expect(page.locator('#remote-choice [role=status]')).toHaveText('No results.');
+
+  await page.locator('#remote-scenario').selectOption('delayed');
+  await input.fill('Manila');
+  await expect(page.locator('#remote-choice [role=status]')).toHaveText('Searching…');
+  await expect(page.locator('#remote-choice [role=option]')).toHaveText(['Manila']);
+
+  await page.locator('#remote-scenario').selectOption('normal');
+  await input.fill('Makassar');
+  await page.locator('#remote-choice [role=option]').filter({ hasText: 'Makassar' }).click();
+  expect(await page.locator('#remote-zone').inputValue()).toBe('Asia/Makassar');
+  await input.fill('Paris');
+  await input.press('Escape');
+  await expect(input).toHaveValue('Makassar');
+  expect(await page.locator('#remote-zone').inputValue()).toBe('Asia/Makassar');
+});
+
+test('combobox local DOM updates preserve query and no-JavaScript fallback submits natively', async ({ page, browser }) => {
+  await page.goto('/examples/combobox');
+  const input = page.locator('#local-choice input');
+  await input.fill('sao');
+  await input.evaluate(element => element.setSelectionRange(1, 2));
+  await page.evaluate(() => {
+    document.querySelector('#local-zone').add(new Option('São Tomé', 'Africa/Sao_Tome'));
+    document.body.append(document.createElement('p'));
+  });
+  await expect(page.locator('#local-choice [role=option]')).toHaveCount(2);
+  expect(await input.inputValue()).toBe('sao');
+  expect(await input.evaluate(element => [element.selectionStart, element.selectionEnd])).toEqual([1, 2]);
+  expect(await input.evaluate(element => element === document.activeElement)).toBe(true);
+
+  const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
+  try {
+    const native = await context.newPage();
+    await native.goto('/examples/combobox');
+    expect(await native.locator('[role=combobox]').count()).toBe(0);
+    await expect(native.locator('#local-zone')).toBeVisible();
+    await expect(native.locator('#remote-zone')).toBeVisible();
+    await native.locator('#remote-zone').selectOption('Europe/Paris');
+    await native.getByRole('button', { name: 'Submit choices' }).click();
+    await native.waitForURL(/required_timezone=Europe%2FParis/);
+    const params = new URL(native.url()).searchParams;
+    expect(params.get('interface_timezone')).toBe('');
+    expect(params.get('required_timezone')).toBe('Europe/Paris');
+    expect([...params.keys()].sort()).toEqual(['interface_timezone', 'required_timezone']);
+  } finally {
+    await context.close();
+  }
 });

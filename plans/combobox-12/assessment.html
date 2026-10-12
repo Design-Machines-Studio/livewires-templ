@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="generator" content="depot pipeline">
+  <meta name="pipeline-artifact" content="assessment">
+  <title>Assessment: Combobox wrappers</title>
+  <style>
+  :root { color-scheme: light dark; --measure: 70rem; --pad: 1rem; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 1rem/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: Canvas; color: CanvasText; }
+  h1,h2,h3 { line-height: 1.2; } h1 { font-size: 1.875rem; } h2 { font-size: 1.375rem; margin-top: 2rem; }
+  a { color: LinkText; } code,pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  section { margin-block: 1.5rem; } small,.artifact-meta { color: GrayText; } .artifact-meta { font-size: .875rem; }
+  .skip-link { position: absolute; left: -9999px; top: 0; } .skip-link:focus { left: 0; padding: .5rem 1rem; z-index: 10; }
+  .artifact-main { max-width: 70rem; margin-inline: auto; padding: 1rem; }
+  .center { max-inline-size: var(--measure,70rem); margin-inline: auto; } .stack > * + * { margin-block-start: 1.5rem; }
+  </style>
+</head>
+<body class="scheme-subtle">
+  <a class="skip-link" href="#content">Skip to content</a>
+  <header><nav aria-label="Pipeline artifacts"><ul><li><a href="research.html">Research</a></li><li><a href="plan.html">Plan</a></li></ul></nav><p class="artifact-meta">assessment · generated 2026-10-12</p></header>
+  <main id="content" class="artifact-main center stack">
+    <h1>Assessment: Combobox wrappers</h1>
+    <section aria-labelledby="scope-intake">
+      <h2 id="scope-intake">Scope Intake</h2>
+      <p><strong>Desired outcome:</strong> expose Live Wires’ merged optional single-select combobox contract through CSS-free Templ wrappers and a maintained gallery example.</p>
+      <p><strong>Approved constraints:</strong> the user’s implementation request and acceptance list in this session; issue #12; exact trusted base <code>284684633bcc5e026155b62fe5a1c21541f49099</code>; producer merge <code>5db085d2918375811ee30562bc4229b414f314e4</code>. Native select owns submission and validation. Keep JavaScript and CSS external.</p>
+      <p><strong>Mechanism:</strong> add a Props component with root and native-select attribute seams plus convenience wrappers; render the producer’s stable root/select hooks and accessible hint/error wiring. Demonstrate local and application-simulated remote search in the maintained gallery.</p>
+      <p><strong>Future/conditional:</strong> Baseplate adoption is a handoff only. No member-search endpoint, migration, release, or consumer rollout.</p>
+    </section>
+    <section aria-labelledby="project-alignment">
+      <h2 id="project-alignment">Project Alignment</h2>
+      <ul>
+        <li><strong>Goal:</strong> provide reusable Go/Templ components that emit Live Wires markup without shipping CSS or JavaScript.</li>
+        <li><strong>Evidence:</strong> repository <code>CLAUDE.md</code>; issue #12; Live Wires producer docs/reference at <code>5db085d2918375811ee30562bc4229b414f314e4</code>; merged gallery PR #19 at base.</li>
+        <li><strong>Fit:</strong> wraps an existing framework control contract and demonstrates it using the already-maintained local gallery.</li>
+        <li><strong>Ownership:</strong> this repository owns component markup and the gallery adapter. Live Wires owns the optional assets. Baseplate owns its timezone field, validation and saved-value behavior.</li>
+        <li><strong>Non-goals:</strong> multi-select; a second state machine; bundled assets; production endpoint; Baseplate changes; release or merge.</li>
+        <li><strong>Coordination:</strong> producer PR #32 is merged; main contains gallery PR #19. The task branch is isolated. The old clean gallery worktree is preserved.</li>
+        <li><strong>Unknowns:</strong> none block implementation. Verify all asset hashes at the exact compatible producer revision and keep the API consistent with existing form patterns.</li>
+      </ul>
+    </section>
+    <section aria-labelledby="key-requirements">
+      <h2 id="key-requirements">Key Requirements</h2>
+      <ol>
+        <li>Provide additive Props and convenience APIs with explicit IDs, label, options, selected value, hint, server error, required, disabled and form association.</li>
+        <li>Preserve existing Select API and required-indicator behavior; avoid textarea-hint scope.</li>
+        <li>Put caller attributes on the actual native select through the canonical <code>InputAttrs</code> seam; preserve developer-controlled wrapper attributes.</li>
+        <li>Keep one native select as the only named successful control; the external enhanced search input has no name and never changes submitted values while typing.</li>
+        <li>Preserve empty optional defaults, required placeholder validation, selected labels/values absent from search results, and no-JavaScript native fallback.</li>
+        <li>Keep CSS/JS external and application-owned. Do not add search, authorization, validation, persistence or save behavior to this library.</li>
+        <li>Test escaping, IDs/instances, selected options, hint/error wiring, attributes, and compatibility.</li>
+        <li>Add a stable gallery route with local and simulated remote search, deterministic delay/error/out-of-order controls, and fallback; pin compatible assets by exact revision and verified hashes.</li>
+        <li>Run Docker-only generation/tests/vet, gallery verification, and source-bound desktop/mobile browser checks. Preserve evidence and state synthetic composition/DOM limits accurately.</li>
+        <li>Document the Baseplate Timezone override candidate and empty-string/non-curated-value semantics without changing Baseplate. Keep the PR unmerged and do not tag or release.</li>
+      </ol>
+    </section>
+    <section aria-labelledby="code-state">
+      <h2 id="code-state">Code State</h2>
+      <p>Form components live in <code>form/*.templ</code> with generated Go and render tests. Existing <code>Select</code> already has hint/error helpers, ID sanitization and required indicators; leave it untouched. The gallery on main has a Go route list, Templ page, application-owned <code>demo.js</code>, exact asset lock, Playwright suite and task-owned runner.</p>
+      <p>The existing root checkout is sparse and contains unrelated untracked <code>docs/</code> and image files; both remain untouched. New task worktree: <code>/home/ned/assembly/livewires-templ-worktrees/combobox-12</code>, branch <code>feat/combobox-12</code>, initial head <code>284684633bcc5e026155b62fe5a1c21541f49099</code>.</p>
+    </section>
+    <section aria-labelledby="ux-state">
+      <h2 id="ux-state">UX State</h2>
+      <p>The existing gallery baseline built from the exact clean task head and locked assets. <code>run.sh status</code> reports <code>http://127.0.0.1:32814</code>, source fingerprint <code>6b0e9a822044f89918bf7d2a2ffa246f06a9946e8133ea40784d87f0ae05eaef</code>. T3 opened the URL but its browser namespace returned <code>ERR_CONNECTION_REFUSED</code>; the gallery runbook supports host-local Playwright, which will provide formal browser evidence. No baseline image is retained because the new route does not exist at this head.</p>
+      <p>UX focus: clear labels, selected-value retention, visible required/error state, useful native fallback, and usable controls at desktop and mobile widths. Real IME and screen-reader testing remain separate from synthetic/browser DOM checks.</p>
+    </section>
+    <section aria-labelledby="test-personas">
+      <h2 id="test-personas">Test Personas</h2>
+      <p>A person choosing an optional timezone override and keeping the organization default; a person selecting a required value; and a person using the native fallback without JavaScript. No authenticated account or production persona is required.</p>
+    </section>
+    <section aria-labelledby="recent-lessons">
+      <h2 id="recent-lessons">Recent Lessons That May Apply</h2>
+      <ul><li>Preserve the exact generated Templ Go files in commits.</li><li>Keep developer attributes on the actual form control and never populate attribute maps from untrusted input.</li></ul>
+    </section>
+    <section aria-labelledby="baseline-screenshots"><h2 id="baseline-screenshots">Baseline Screenshots</h2><p>No target baseline screenshot: the requested combobox route is new. The existing page and all other examples will be checked with the maintained suite after the shared asset lock changes.</p></section>
+    <section aria-labelledby="key-findings">
+      <h2 id="key-findings">Key Findings</h2>
+      <ul><li>The producer contract is specific and already merged. No new behavior state machine is needed.</li><li>The library’s native markup must remain useful when optional enhancement assets fail or JavaScript is disabled.</li><li>All gallery assets are fetched and checked by the existing runner, so the lock must include checksums for the producer’s exact revision.</li></ul>
+    </section>
+    <section aria-labelledby="recommendations"><h2 id="recommendations">Recommendations</h2><p>Use Pipeline Lean: bounded research confirmed the upstream API; implement one additive form component and its tests, then add the dependent gallery route/assets and verify the full task scope. Run independent quick review and the applicable design/browser acceptance. Leave the PR draft and unmerged pending final-head CI, external feedback settlement and owner UI acceptance.</p></section>
+  </main>
+  <footer><p>Pipeline planning artifact for issue #12.</p></footer>
+  <script type="application/json" id="pipeline-data">
+  {"artifact":"assessment","slug":"combobox-12","keyRequirements":["Add CSS-free combobox Props and convenience wrappers with explicit IDs, field content, hints/errors, required/disabled/form support, and select-level attributes.","Preserve Select API and required indication; do not expand textarea hints.","Use the native select as the only named successful control and keep the native fallback useful.","Preserve optional empty-default semantics, required validation, and selected labels/values omitted from current search results.","Keep optional external CSS/JS and all search, authorization, validation and saving application-owned.","Test escaping, attribute placement, IDs, options, hints/errors and compatibility.","Add a stable gallery route with local and simulated remote search, deterministic response controls and fallback.","Update the asset lock to one exact compatible producer revision with verified checksums and test existing examples.","Run Docker generation/test/vet and source-bound desktop/mobile browser checks; preserve evidence and identify synthetic/DOM coverage limits.","Document the Baseplate Timezone override consumer candidate and preserve empty-string inheritance and saved non-curated values; make no Baseplate changes or release.","Commit and push the reviewed feature and keep its PR unmerged."] ,"testPersonas":["optional-default-user","required-selection-user","native-fallback-user"],"recentLessons":["Commit generated Templ Go files.","Use only trusted developer attributes in Attrs maps and place control attributes on the actual control."],"baselineScreenshots":[]}
+  </script>
+</body>
+</html>

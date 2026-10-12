@@ -191,6 +191,26 @@ for two lists, native arrows, explicit move confirmation and isolated serving.
 // Select
 @form.SelectSimple("Country", "country", "Choose...", options, false)
 
+// Optional searchable select with native fallback. Applications load and
+// initialize the optional Live Wires assets separately.
+@form.ComboboxComponent(form.ComboboxProps{
+    ID: "timezone", RootID: "timezone-choice",
+    Label: "Timezone override", Name: "interface_timezone",
+    Placeholder: "Use organization default",
+    Options: []form.SelectOption{
+        {Value: "Asia/Makassar", Label: "Makassar"},
+        {Value: "Europe/Paris", Label: "Paris"},
+    },
+    Hint: "Leave empty to inherit the organization timezone.",
+    InputAttrs: templ.Attributes{"data-testid": "timezone-select"},
+})
+
+// Remote mode only marks the wrapper for an application-owned adapter.
+@form.ComboboxRemote(form.ComboboxProps{
+    ID: "country", RootID: "country-choice", Label: "Country", Name: "country",
+    Options: countries,
+})
+
 // Checkbox
 @form.CheckboxSimple("agree", "I agree to the terms", false)
 
@@ -331,6 +351,25 @@ for two lists, native arrows, explicit move confirmation and isolated serving.
     },
 })
 ```
+
+`ComboboxProps.Attrs` lands on the `data-combobox` wrapper. `InputAttrs` lands
+on the native `<select>`. The optional producer creates a separate search input
+without a name, so typed query text never becomes a submitted value. Load the
+matching optional `combobox.css` and `combobox.js` in the application and
+initialize Live Wires' `createCombobox` API. The application owns remote
+queries, authorization, validation and saving.
+
+The evidenced future consumer candidate is Baseplate's account Timezone
+override field, `interface_timezone`, in
+[`internal/baseplate/account/pages/interface.templ`](https://github.com/Design-Machines-Studio/assembly-baseplate/blob/6accb8a27c746d1cbc3e19a734d8303b8e9191b0/internal/baseplate/account/pages/interface.templ)
+and [`internal/timezone/options.go`](https://github.com/Design-Machines-Studio/assembly-baseplate/blob/6accb8a27c746d1cbc3e19a734d8303b8e9191b0/internal/timezone/options.go).
+An empty value means “use organization default”; saved zones outside the
+curated list remain application-owned. This issue does not change Baseplate.
+Later adoption requires a merged and published Go module version containing
+the additive exported API, plus compatible published Live Wires assets and
+verified checksums. The new exported API requires a minor version under this
+repository's release policy. No tag, release or consumer rollout is authorized
+here.
 
 ### Layout
 

@@ -22,7 +22,8 @@ Startup acquires and verifies the locked assets, freezes the current worktree
 inputs, generates and builds in Docker, then publishes an unused Docker-assigned
 port on `127.0.0.1`. Read the actual `url` from status; no fixed port is reserved
 or taken over. The index is `/`; example URLs are `/examples/relative-time`,
-`/examples/copy`, `/examples/loading`, `/examples/toast` `/examples/sortable` and `/examples/inline-edit`.
+`/examples/copy`, `/examples/loading`, `/examples/toast`, `/examples/sortable`,
+`/examples/inline-edit` and `/examples/combobox`.
 
 The runner uses the host-selected user installation from Claude's
 `installed_plugins.json`, checks its plugin identity/version, and invokes the
@@ -97,7 +98,7 @@ Do not prune shared Docker resources or delete another worktree's state.
 ## Locked assets
 
 `assets.lock.json` records exact Live Wires revision
-`cf6ef2e4627336c09a84825e50d6c97a1b265aff`, source URLs, SHA-256 hashes, sizes
+`5db085d2918375811ee30562bc4229b414f314e4`, source URLs, SHA-256 hashes, sizes
 and license provenance. Required distribution files are fetched from that
 revision into the instance's external development cache, never from a mutable
 producer checkout, Vite server or floating CDN. No CSS or producer runtime is
@@ -127,3 +128,12 @@ Inline editing uses the actual wrappers merged in PR #18 at trusted main
 66cf4fbb61c585943eb388ee9e2b7dbac8d2ce1b. Its application adapter uses matching
 context/edit/request IDs, simulated confirmation/rejection/unknown results,
 and late-result cancellation. It does not modify the producer or save text.
+
+The combobox example uses the optional single-select assets from the exact
+producer revision in the lock. It shows an optional timezone override, a
+required select associated with the form from outside it, native reset and GET
+submission, and application-simulated local/remote search. The remote response
+control includes deterministic delay, out-of-order, error and empty-result
+modes. No search endpoint is called and nothing is saved. The example is based
+on Baseplate's `interface_timezone` field; an empty value means organization
+default, and Baseplate's saved non-curated values remain application-owned.
