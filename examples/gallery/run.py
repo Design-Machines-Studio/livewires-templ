@@ -89,7 +89,7 @@ def source():
     names = command(["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard"]).stdout.split("\0")
     # Freeze all build inputs, including generated Go and repository-owned JS.
     names = sorted(set(n for n in names if n and not n.startswith(("plans/", ".workflow-kernel/", ".gallery/"))
-                       and (n.endswith((".go", ".templ", ".js", ".json", ".yaml", ".py", ".sh", ".html"))
+                       and (n.endswith((".go", ".templ", ".js", ".mjs", ".json", ".yaml", ".py", ".sh", ".html"))
                             or n in ["go.mod", "go.sum", "Dockerfile"])))
     hashes = {n: sha((CHECKOUT / n).read_bytes()) for n in names if (CHECKOUT / n).is_file()}
     identity = dict(checkout=str(CHECKOUT), branch=command(["git", "branch", "--show-current"]).stdout.strip(),
