@@ -17,6 +17,7 @@ for (const [device, viewport] of [['desktop', { width: 1440, height: 1000 }], ['
       await expect(page.locator('h1')).toHaveText(name);
       await expect(page.locator('#source-build')).toHaveAttribute('data-source-head', health.source.commit);
       await expect(page.locator('#source-build')).toHaveAttribute('data-source-fingerprint', health.source.fingerprint);
+      await page.getByText('Build provenance', { exact: true }).click();
       for (const asset of health.assets.filter(a => a.serve)) {
         const response = await request.get(asset.serve);
         expect(response.ok()).toBeTruthy();
@@ -51,6 +52,9 @@ test('loading delay, unrelated editing, failure, unknown and recovery', async ({
   await page.selectOption('#scenario', 'delayed');
   await page.getByRole('button', { name: 'Run scenario' }).click();
   await expect(page.locator('[data-loading-content]')).toHaveAttribute('aria-busy', 'true');
+  await expect(page.getByRole('button', { name: 'Run scenario' })).toBeDisabled();
+  await page.locator('#scenario-form').evaluate(form => form.requestSubmit());
+  await expect(page.locator('#demo-outcome')).toHaveText('Simulated request pending.');
   await page.locator('#unrelated-input').fill('Still editable');
   await page.getByRole('button', { name: 'Update unrelated note' }).click();
   await expect(page.locator('[data-loading-content]')).toHaveAttribute('aria-busy', 'true');
@@ -70,6 +74,7 @@ test('toast renders new occurrences and dismisses through producer API', async (
   await page.selectOption('#scenario', 'failure');
   await page.getByRole('button', { name: 'Run scenario' }).click();
   await expect(page.locator('[data-toast-id="demo:outcome:1"]')).toContainText('Simulated failure');
+  await expect(page.locator('[data-toast-id="demo:outcome:1"]')).toHaveClass(/toast--error/);
 });
 test('sortable confirms, rejects, delays and recovers unknown without persistence', async ({ page }) => {
   await page.goto('/examples/sortable');
@@ -128,7 +133,7 @@ test('inline edit retains draft/focus, rejects, recovers and ignores cancelled d
   await input.fill('Fictional new title');
   await input.press('ArrowLeft');
   const caret = await input.evaluate(e => e.selectionStart);
-  await page.getByRole('button', { name: 'Update unrelated note' }).click();
+  await page.getByRole('button', { name: 'Simulate external update' }).click();
   await expect(input).toHaveValue('Fictional new title');
   expect(await input.evaluate(e => e.selectionStart)).toBe(caret);
   await page.selectOption('#scenario', 'failure');

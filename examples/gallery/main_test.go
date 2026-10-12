@@ -53,3 +53,19 @@ func TestEveryAssetMustMatchLock(t *testing.T) {
 		t.Fatal("missing assets accepted")
 	}
 }
+
+func TestNativeScenarioControlsDoNotInventComponentOutcomes(t *testing.T) {
+	app := routes(sourceIdentity{}, nil, assetLock{})
+	for _, name := range []string{"sortable", "inline-edit"} {
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, httptest.NewRequest("GET", "/examples/"+name+"?scenario=failure&run=1&order=paper,notes,index", nil))
+		if strings.Contains(w.Body.String(), "Simulated failure.") || strings.Contains(w.Body.String(), `name="run"`) {
+			t.Fatalf("%s invented a result or exposed an inert run control", name)
+		}
+	}
+	w := httptest.NewRecorder()
+	app.ServeHTTP(w, httptest.NewRequest("GET", "/examples/toast?scenario=failure&run=1", nil))
+	if !strings.Contains(w.Body.String(), "toast--error") {
+		t.Fatal("failure scenario did not render the error component variant")
+	}
+}

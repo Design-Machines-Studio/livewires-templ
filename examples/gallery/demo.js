@@ -27,6 +27,7 @@ async function setup() {
     controllers.push(toasts);
   }
   if (name === 'inline-edit') {
+    unrelated.textContent = 'Simulate external update';
     const { createInlineEditor } = await import('/assets/inline-edit.js');
     for (const root of document.querySelectorAll('[data-inline-edit]')) {
       const editor = createInlineEditor({ root });
@@ -43,17 +44,22 @@ async function setup() {
     }
     unrelated.addEventListener('click', () => {
       for (const editor of controllers) editor.updateConfirmed?.('Simulated external update');
+      outcome.textContent = 'Simulated external update applied. Drafts are kept.';
     }, { signal: lifecycle.signal });
   }
   const form = document.querySelector('#scenario-form');
+  if (form) form.hidden = false;
   let occurrence = 0;
+  let scenarioPending = false;
   form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
     if (name === 'sortable' || name === 'inline-edit') {
-      event.preventDefault();
-      outcome.textContent = 'Scenario selected. Use the component controls to run it.';
       return;
     }
-    event.preventDefault();
+    if (scenarioPending) return;
+    scenarioPending = true;
+    const runButton = form.querySelector('[name="run"]');
+    runButton.disabled = true;
     const token = loading?.begin({ signal: lifecycle.signal });
     outcome.textContent = 'Simulated request pending.';
     try {
@@ -75,6 +81,9 @@ async function setup() {
     } catch (error) {
       token?.finish(lifecycle.signal.aborted ? 'cancelled' : 'failed');
       if (!lifecycle.signal.aborted) outcome.textContent = 'Demo transport failed. Nothing was saved.';
+    } finally {
+      scenarioPending = false;
+      runButton.disabled = false;
     }
   }, { signal: lifecycle.signal });
   if (name === 'sortable') {

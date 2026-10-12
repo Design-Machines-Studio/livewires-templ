@@ -166,8 +166,12 @@ func routes(source sourceIdentity, files map[string][]byte, lock assetLock) http
 		}
 		order := validOrder(r.URL.Query().Get("order"))
 		message := ""
-		if r.URL.Query().Has("run") {
+		variant := "info"
+		if (name == "loading" || name == "toast") && r.URL.Query().Has("run") {
 			message = outcome(r.URL.Query().Get("scenario"))
+			if r.URL.Query().Get("scenario") == "failure" {
+				variant = "error"
+			}
 		}
 		if name == "inline-edit" && (r.URL.Query().Has("title-a") || r.URL.Query().Has("title-b")) {
 			message = "Native example submission. Fictional text is carried in the URL; nothing was saved."
@@ -176,9 +180,11 @@ func routes(source sourceIdentity, files map[string][]byte, lock assetLock) http
 			order = moveOrder(order, r.URL.Query().Get("itemId"), r.URL.Query().Get("before"))
 			message = "Native demo move. Order is carried in this URL; reload the base URL to reset."
 		}
-		templ.Handler(page(name, source, order, message)).ServeHTTP(w, r)
+		templ.Handler(page(name, source, order, message, variant)).ServeHTTP(w, r)
 	})
-	m.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) { templ.Handler(page("", source, nil, "")).ServeHTTP(w, r) })
+	m.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
+		templ.Handler(page("", source, nil, "", "info")).ServeHTTP(w, r)
+	})
 	return m
 }
 
