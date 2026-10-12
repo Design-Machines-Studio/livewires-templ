@@ -1,0 +1,133 @@
+package form
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// InlineEditCompactProps describes the native HTML for Live Wires' compact
+// inline-edit variant. IDs are application supplied and unique per instance.
+// CSRF is an application-rendered form field; persistence and policy stay in
+// the application.
+type InlineEditCompactProps struct {
+	ID            string
+	ContextID     string
+	Value         string
+	Label         string
+	Name          string
+	Action        string
+	Method        string
+	TriggerLabel  string
+	EditLabel     string
+	SaveLabel     string
+	CancelLabel   string
+	CancelHref    string
+	CancelLinkLabel string
+	Error         string
+	Status        string
+	Class         string
+	RowClass      string
+	FormClass     string
+	ActionsClass  string
+	Attrs         templ.Attributes
+	FormAttrs     templ.Attributes
+	InputAttrs    templ.Attributes
+	CSRF          templ.Component
+}
+
+// InlineEditDisclosureProps describes the native details/summary inline-edit
+// variant. IDs are application supplied and unique per instance.
+type InlineEditDisclosureProps struct {
+	ID            string
+	ContextID     string
+	Value         string
+	Label         string
+	Name          string
+	Action        string
+	Method        string
+	TriggerLabel  string
+	SaveLabel     string
+	CancelLabel   string
+	CancelHref    string
+	CancelLinkLabel string
+	Error         string
+	Status        string
+	Class         string
+	FormClass     string
+	ActionsClass  string
+	Attrs         templ.Attributes
+	FormAttrs     templ.Attributes
+	InputAttrs    templ.Attributes
+	CSRF          templ.Component
+}
+
+// InlineEditCompact renders the producer's compact value, edit link and
+// native form hooks. It adds no JavaScript behavior or persistence policy.
+templ InlineEditCompactComponent(props InlineEditCompactProps) {
+	<section id={ props.ID } data-inline-edit="compact" data-context-id={ props.ContextID } class={ lw.ClassNames(props.Class) } { props.Attrs... }>
+		<div class={ lw.ClassNames(props.RowClass) }>
+			<span data-inline-edit-value>{ props.Value }</span>
+			<a class="button button--small button--ghost button--accent" href={ "#" + props.ID + "-panel" } data-inline-edit-trigger aria-label={ props.EditLabel }>{ props.TriggerLabel }</a>
+			<div id={ props.ID + "-panel" } data-inline-edit-panel>
+				<form action={ props.Action } method={ props.Method } data-inline-edit-form class={ lw.ClassNames(props.FormClass) } { props.FormAttrs... }>
+					<label class="visually-hidden" for={ props.ID + "-input" }>{ props.Label }</label>
+					<input id={ props.ID + "-input" } name={ props.Name } type="text" value={ props.Value } data-inline-edit-input aria-describedby={ props.ID + "-error" } { props.InputAttrs... }/>
+					if props.CSRF != nil {
+						@props.CSRF
+					}
+					<div class={ lw.ClassNames(props.ActionsClass) }>
+						<button class="button button--small" type="submit" data-inline-edit-save>{ props.SaveLabel }</button>
+						<button class="button button--small button--ghost" type="button" data-inline-edit-cancel>{ props.CancelLabel }</button>
+						if props.CancelHref != "" {
+							if props.CancelLinkLabel != "" {
+								<a href={ props.CancelHref }>{ props.CancelLinkLabel }</a>
+							} else {
+								<a href={ props.CancelHref }>Return without saving</a>
+							}
+						}
+					</div>
+					<p id={ props.ID + "-error" } data-inline-edit-error role="alert">{ props.Error }</p>
+				</form>
+			</div>
+		</div>
+		<p data-inline-edit-status role="status" aria-live="polite" aria-atomic="true">{ props.Status }</p>
+	</section>
+}
+
+// InlineEditDisclosure renders the producer's native disclosure and form.
+templ InlineEditDisclosureComponent(props InlineEditDisclosureProps) {
+	<section id={ props.ID } data-inline-edit data-context-id={ props.ContextID } class={ lw.ClassNames(props.Class) } { props.Attrs... }>
+		<p data-inline-edit-value>{ props.Value }</p>
+		<details id={ props.ID + "-panel" } data-inline-edit-panel>
+			<summary data-inline-edit-trigger>{ props.TriggerLabel }</summary>
+			<form action={ props.Action } method={ props.Method } data-inline-edit-form class={ lw.ClassNames(props.FormClass) } { props.FormAttrs... }>
+				<label for={ props.ID + "-input" }>{ props.Label }</label>
+				<input id={ props.ID + "-input" } name={ props.Name } type="text" value={ props.Value } data-inline-edit-input aria-describedby={ props.ID + "-error" } { props.InputAttrs... }/>
+				if props.CSRF != nil {
+					@props.CSRF
+				}
+				<p id={ props.ID + "-error" } data-inline-edit-error role="alert">{ props.Error }</p>
+				<div class={ lw.ClassNames(props.ActionsClass) }>
+					<button class="button" type="submit" data-inline-edit-save>{ props.SaveLabel }</button>
+					<button class="button button--ghost" type="button" data-inline-edit-cancel>{ props.CancelLabel }</button>
+					if props.CancelHref != "" {
+						if props.CancelLinkLabel != "" {
+							<a href={ props.CancelHref }>{ props.CancelLinkLabel }</a>
+						} else {
+							<a href={ props.CancelHref }>Return without saving</a>
+						}
+					}
+				</div>
+			</form>
+		</details>
+		<p data-inline-edit-status role="status" aria-live="polite" aria-atomic="true">{ props.Status }</p>
+	</section>
+}
+
+// InlineEditCompact is the convenience component for compact inline editing.
+templ InlineEditCompact(props InlineEditCompactProps) {
+	@InlineEditCompactComponent(props)
+}
+
+// InlineEditDisclosure is the convenience component for disclosure editing.
+templ InlineEditDisclosure(props InlineEditDisclosureProps) {
+	@InlineEditDisclosureComponent(props)
+}
+
