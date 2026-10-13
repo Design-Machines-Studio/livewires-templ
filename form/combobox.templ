@@ -1,0 +1,150 @@
+package form
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// ComboboxProps configures a native select with optional Live Wires combobox hooks.
+type ComboboxProps struct {
+	ID         string           // Explicit ID for the native select; defaults to a safe ID derived from Name.
+	RootID     string           // Stable ID for the data-combobox wrapper; defaults to ID + "-combobox".
+	Name       string           // Submitted field name. Only the native select receives this name.
+	Label      string           // Visible label for the native select and enhanced search input.
+	Placeholder string          // Optional empty-value option. Required selects still reject this value.
+	Value      string           // Initial selected value; if absent from Options, it is retained as a selected native option.
+	SelectedLabel string        // Optional display label for Value when that value is absent from Options; defaults to Value.
+	Options    []SelectOption   // Native fallback options; the selected option is retained by the producer while searching.
+	Hint       string           // Supporting text associated with the native select.
+	Error      string           // Server validation error associated with the native select.
+	Required   bool             // Whether the native select must have a non-empty value.
+	Disabled   bool             // Whether the native select is disabled.
+	Form       string           // Optional ID of an associated form outside the wrapper.
+	SearchMode string           // "remote" marks the optional producer adapter mode; local is the default.
+	Class      string           // Additional classes on the wrapper.
+	Attrs      templ.Attributes // Developer-controlled attributes on the wrapper.
+	InputAttrs templ.Attributes // Developer-controlled attributes on the actual native <select>; do not duplicate generated attributes.
+}
+
+func comboboxControlID(props ComboboxProps) string {
+	if props.ID != "" {
+		return props.ID
+	}
+	return controlID(props.Name)
+}
+
+func comboboxRootID(props ComboboxProps) string {
+	if props.RootID != "" {
+		return props.RootID
+	}
+	return comboboxControlID(props) + "-combobox"
+}
+
+func comboboxOptionSelected(props ComboboxProps, option SelectOption) bool {
+	if props.Value != "" {
+		return option.Value == props.Value
+	}
+	return option.Selected
+}
+
+func comboboxSelectedLabel(props ComboboxProps) string {
+	if props.SelectedLabel != "" {
+		return props.SelectedLabel
+	}
+	return props.Value
+}
+
+func comboboxOptionsHaveValue(options []SelectOption, value string) bool {
+	for _, option := range options {
+		if option.Value == value {
+			return true
+		}
+	}
+	return false
+}
+
+func comboboxFirstEmptyOption(options []SelectOption) SelectOption {
+	for _, option := range options {
+		if option.Value == "" {
+			return option
+		}
+	}
+	return SelectOption{}
+}
+
+func comboboxRemoteProps(props ComboboxProps) ComboboxProps {
+	props.SearchMode = "remote"
+	return props
+}
+
+templ comboboxOptions(props ComboboxProps) {
+	if comboboxOptionsHaveValue(props.Options, "") {
+		@comboboxEmptyOption(comboboxFirstEmptyOption(props.Options), props)
+	} else if props.Placeholder != "" {
+		<option value="" selected?={props.Value == "" && len(props.Options) == 0}>{ props.Placeholder }</option>
+	}
+	for _, option := range props.Options {
+		if option.Value != "" {
+			<option value={ option.Value } selected?={ comboboxOptionSelected(props, option) }>{ option.Label }</option>
+		}
+	}
+	if props.Value != "" && !comboboxOptionsHaveValue(props.Options, props.Value) {
+		<option value={ props.Value } selected>{ comboboxSelectedLabel(props) }</option>
+	}
+}
+
+templ comboboxEmptyOption(option SelectOption, props ComboboxProps) {
+	<option value="" selected?={ comboboxOptionSelected(props, option) }>{ option.Label }</option>
+}
+
+// ComboboxComponent emits a useful native select fallback with stable producer hooks.
+// It does not load JavaScript, CSS, or own search and form state.
+templ ComboboxComponent(props ComboboxProps) {
+	<div id={ comboboxRootID(props) } class={ lw.ClassNames("field", props.Class) } data-combobox data-search?={ props.SearchMode == "remote" } { props.Attrs... }>
+		if props.Error != "" {
+			<label for={ comboboxControlID(props) } class="error">{ props.Label }@RequiredIndicator(props.Required)</label>
+		} else {
+			<label for={ comboboxControlID(props) }>{ props.Label }@RequiredIndicator(props.Required)</label>
+		}
+		<select
+			id={ comboboxControlID(props) }
+			name={ props.Name }
+			class={ lw.If(props.Error != "", "error") }
+			required?={ props.Required }
+			disabled?={ props.Disabled }
+			if props.Form != "" {
+				form={ props.Form }
+			}
+			if props.Required {
+				aria-required="true"
+			}
+			if props.Error != "" {
+				aria-invalid="true"
+			}
+			{ describedByControlAttrs(comboboxControlID(props), props.Hint, props.Error)... }
+			{ props.InputAttrs... }
+		>
+			@comboboxOptions(props)
+		</select>
+		if props.Hint != "" {
+			<p id={ comboboxControlID(props) + "-hint" } class="hint">{ props.Hint }</p>
+		}
+		if props.Error != "" {
+			<p id={ comboboxControlID(props) + "-error" } class="error" role="alert">{ props.Error }</p>
+		}
+	</div>
+}
+
+// Combobox is the convenience wrapper for an explicitly configured control.
+templ Combobox(props ComboboxProps) {
+	@ComboboxComponent(props)
+}
+
+// ComboboxSimple creates a local-search control using the ordinary field arguments.
+templ ComboboxSimple(label, name string, options []SelectOption, required bool) {
+	@ComboboxComponent(ComboboxProps{
+		Label: label, Name: name, Options: options, Required: required,
+	})
+}
+
+// ComboboxRemote marks a control for the caller's optional remote-query adapter.
+templ ComboboxRemote(props ComboboxProps) {
+	@ComboboxComponent(comboboxRemoteProps(props))
+}

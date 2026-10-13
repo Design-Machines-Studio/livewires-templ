@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "contract_id": "combobox-12",
+  "revision": 1,
+  "previous_contract_digest": null,
+  "requirements": [
+    {
+      "id": "REQ-component",
+      "source_ref": "issue-12",
+      "statement": "Implement the additive single-select Templ component and accessible form behavior accepted for issue 12."
+    },
+    {
+      "id": "REQ-gallery",
+      "source_ref": "issue-12",
+      "statement": "Demonstrate local and simulated remote search with native fallback in the maintained gallery."
+    },
+    {
+      "id": "REQ-manual",
+      "source_ref": "issue-12",
+      "statement": "Report synthetic composition and DOM accessibility separately from real IME and screen-reader checks."
+    },
+    {
+      "id": "REQ-owner",
+      "source_ref": "issue-12",
+      "statement": "Keep the PR draft and unmerged until final checks and owner UI acceptance pass."
+    }
+  ],
+  "prohibited_regressions": [
+    {
+      "id": "REG-select",
+      "source_ref": "issue-12",
+      "statement": "Keep existing Select behavior and required indicator unchanged."
+    },
+    {
+      "id": "REG-native",
+      "source_ref": "producer-contract",
+      "statement": "Do not submit a second query value or remove native select fallback."
+    },
+    {
+      "id": "REG-assets",
+      "source_ref": "issue-12",
+      "statement": "Do not copy JavaScript or CSS into the component package."
+    }
+  ],
+  "checks": [
+    {
+      "id": "CHK-generate",
+      "argv": [
+        "make",
+        "generate"
+      ],
+      "proves_requirement_ids": [
+        "REQ-component"
+      ],
+      "proves_regression_ids": [
+        "REG-assets"
+      ],
+      "baseline_expectation": "must_pass"
+    },
+    {
+      "id": "CHK-test",
+      "argv": [
+        "make",
+        "test"
+      ],
+      "proves_requirement_ids": [
+        "REQ-component"
+      ],
+      "proves_regression_ids": [
+        "REG-select",
+        "REG-native"
+      ],
+      "baseline_expectation": "must_pass"
+    },
+    {
+      "id": "CHK-vet",
+      "argv": [
+        "make",
+        "lint"
+      ],
+      "proves_requirement_ids": [
+        "REQ-component"
+      ],
+      "proves_regression_ids": [
+        "REG-assets"
+      ],
+      "baseline_expectation": "must_pass"
+    },
+    {
+      "id": "CHK-gallery",
+      "argv": [
+        "examples/gallery/run.sh",
+        "verify"
+      ],
+      "proves_requirement_ids": [
+        "REQ-gallery"
+      ],
+      "proves_regression_ids": [
+        "REG-native",
+        "REG-assets"
+      ],
+      "baseline_expectation": "must_pass"
+    },
+    {
+      "id": "CHK-browser",
+      "argv": [
+        "npm",
+        "test",
+        "--prefix",
+        "examples/gallery"
+      ],
+      "proves_requirement_ids": [
+        "REQ-gallery"
+      ],
+      "proves_regression_ids": [
+        "REG-native"
+      ],
+      "baseline_expectation": "must_pass"
+    }
+  ],
+  "persona_case_ids": [],
+  "browser_case_ids": [],
+  "verification_profile_id": null,
+  "verification_profile_digest": null,
+  "manual_requirements": [
+    {
+      "requirement_id": "REQ-manual",
+      "reason_code": "physical-testing-not-automated",
+      "evidence_ref": null
+    },
+    {
+      "requirement_id": "REQ-owner",
+      "reason_code": "owner-acceptance-after-final-head",
+      "evidence_ref": null
+    }
+  ],
+  "revision_justification": {
+    "reason_code": "initial_binding",
+    "summary": "Initial contract from the approved issue scope.",
+    "added_obligation_ids": [
+      "PROOF:CHK-browser:REG-native",
+      "PROOF:CHK-browser:REQ-gallery",
+      "PROOF:CHK-gallery:REG-assets",
+      "PROOF:CHK-gallery:REG-native",
+      "PROOF:CHK-gallery:REQ-gallery",
+      "PROOF:CHK-generate:REG-assets",
+      "PROOF:CHK-generate:REQ-component",
+      "PROOF:CHK-test:REG-native",
+      "PROOF:CHK-test:REG-select",
+      "PROOF:CHK-test:REQ-component",
+      "PROOF:CHK-vet:REG-assets",
+      "PROOF:CHK-vet:REQ-component",
+      "REG-assets",
+      "REG-native",
+      "REG-select",
+      "REQ-component",
+      "REQ-gallery",
+      "REQ-manual",
+      "REQ-owner"
+    ],
+    "retained_obligation_ids": [],
+    "removed_obligation_ids": []
+  }
+}

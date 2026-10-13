@@ -47,6 +47,44 @@ async function setup() {
       outcome.textContent = 'Simulated external update applied. Drafts are kept.';
     }, { signal: lifecycle.signal });
   }
+  if (name === 'combobox') {
+    const { createCombobox } = await import('/assets/combobox.js');
+    const responseMode = document.querySelector('#remote-scenario');
+    document.querySelector('#remote-scenario-control').hidden = false;
+    for (const root of document.querySelectorAll('[data-combobox]')) {
+      const remote = root.hasAttribute('data-search');
+      const control = createCombobox({ root, mode: remote ? 'remote' : 'local' });
+      controllers.push(control);
+      if (!remote) continue;
+
+      const choices = [...root.querySelectorAll('select option')].map(option => ({
+        value: option.value,
+        label: option.label,
+        disabled: option.disabled,
+      })).filter(option => option.value !== '');
+      root.addEventListener('combobox-query', (event) => {
+        const request = event.detail;
+        const scenario = responseMode.value;
+        const query = request.query.toLocaleLowerCase();
+        const delay = scenario === 'delayed' ? 650
+          : scenario === 'out-of-order' ? query === 'pa' ? 900 : query === 'par' ? 100 : 250
+            : 80;
+        later(() => {
+          if (lifecycle.signal.aborted) return;
+          if (scenario === 'error') {
+            control.applyResults({ ...request, items: [], error: 'Try again.' });
+            return;
+          }
+          if (scenario === 'empty') {
+            control.applyResults({ ...request, items: [] });
+            return;
+          }
+          const items = choices.filter(item => item.label.toLocaleLowerCase().includes(query) || item.value.toLocaleLowerCase().includes(query));
+          control.applyResults({ ...request, items });
+        }, delay);
+      }, { signal: lifecycle.signal });
+    }
+  }
   const form = document.querySelector('#scenario-form');
   if (form) form.hidden = false;
   let occurrence = 0;

@@ -191,6 +191,26 @@ for two lists, native arrows, explicit move confirmation and isolated serving.
 // Select
 @form.SelectSimple("Country", "country", "Choose...", options, false)
 
+// Optional searchable select with native fallback. Applications load and
+// initialize the optional Live Wires assets separately.
+@form.ComboboxComponent(form.ComboboxProps{
+    ID: "timezone", RootID: "timezone-choice",
+    Label: "Timezone override", Name: "interface_timezone",
+    Placeholder: "Use organization default",
+    Options: []form.SelectOption{
+        {Value: "Asia/Makassar", Label: "Makassar"},
+        {Value: "Europe/Paris", Label: "Paris"},
+    },
+    Hint: "Leave empty to inherit the organization timezone.",
+    InputAttrs: templ.Attributes{"data-testid": "timezone-select"},
+})
+
+// Remote mode only marks the wrapper for an application-owned adapter.
+@form.ComboboxRemote(form.ComboboxProps{
+    ID: "country", RootID: "country-choice", Label: "Country", Name: "country",
+    Options: countries,
+})
+
 // Checkbox
 @form.CheckboxSimple("agree", "I agree to the terms", false)
 
@@ -332,6 +352,29 @@ for two lists, native arrows, explicit move confirmation and isolated serving.
 })
 ```
 
+`ComboboxProps.Attrs` lands on the `data-combobox` wrapper. `InputAttrs` lands
+on the native `<select>`. The optional producer creates a separate search input
+without a name, so typed query text never becomes a submitted value. Load the
+matching optional `combobox.css` and `combobox.js` in the application and
+initialize Live Wires' `createCombobox` API. The application owns remote
+queries, authorization, validation and saving.
+
+If `Value` is not in `Options`, the component adds it as the selected native
+option so saved values remain submitted. Set `SelectedLabel` to provide a
+friendly label for that value; it defaults to the value itself.
+
+The evidenced future consumer candidate is Baseplate's account Timezone
+override field, `interface_timezone`, in
+[`internal/baseplate/account/pages/interface.templ`](https://github.com/Design-Machines-Studio/assembly-baseplate/blob/6accb8a27c746d1cbc3e19a734d8303b8e9191b0/internal/baseplate/account/pages/interface.templ)
+and [`internal/timezone/options.go`](https://github.com/Design-Machines-Studio/assembly-baseplate/blob/6accb8a27c746d1cbc3e19a734d8303b8e9191b0/internal/timezone/options.go).
+An empty value means “use organization default”; saved zones outside the
+curated list remain application-owned and can use `SelectedLabel` for display.
+This issue does not change Baseplate.
+Later adoption requires a merged and published Go module version containing
+the additive exported API, plus compatible published Live Wires assets and
+verified checksums. The new exported API requires a minor version under this
+repository's release policy.
+
 ### Layout
 
 ```go
@@ -365,21 +408,21 @@ lw.DateShort("2024-03-15")                        // "Mar 15, 2024"
 | Package | Purpose |
 | ----------- | ----------- |
 | `component` | UI components: button, badge, avatar, card, dialog, tabs, toast, etc. |
-| `form` | Form elements: field, select, checkbox, radio, switch, textarea, search, filter, date range, file upload |
+| `form` | Form elements: field, select, combobox, checkbox, radio, switch, textarea, search, filter, date range, file upload |
 | `layout` | HTML base skeleton, page section |
 | root | Class name utilities, text/date helpers |
 
 ## Attrs vs InputAttrs
 
-`Attrs` renders on the wrapper/label of wrapped form controls (Switch, Checkbox, FileUpload) — use it for wrapper hooks like `data-testid`. `InputAttrs` renders on the nested `<input>` **after** component-generated attributes — use it for `aria-label` and Datastar directives (`data-bind`, `data-on:*`, `data-indicator:*`, `data-attr:*`).
+`Attrs` renders on the wrapper/label of wrapped form controls (Switch, Checkbox, FileUpload) and on the Combobox wrapper — use it for wrapper hooks like `data-testid`. `InputAttrs` renders on the nested `<input>` for Switch, Checkbox, and FileUpload, and on the native `<select>` for Combobox, **after** component-generated attributes. Use it for developer-controlled hooks such as `aria-label` and Datastar directives (`data-bind`, `data-on:*`, `data-indicator:*`, `data-attr:*`).
 
-On a collision the component's own attribute wins (HTML first-occurrence), so never pass an attribute the component already emits — this includes `type`, `role`, `name`, `id`, `value`, `checked`, `disabled`, `accept`, `multiple`, `aria-invalid`, and `aria-describedby`. Treat that list as illustrative, not exhaustive: as a rule, never duplicate through `InputAttrs` any attribute the component renders itself, or the caller's copy is silently dropped. Neither map may come from untrusted input.
+On a collision the component's own attribute wins (HTML first-occurrence), so never pass an attribute the component already emits — this includes `type`, `role`, `name`, `id`, `value`, `checked`, `disabled`, `required`, `form`, `accept`, `multiple`, `aria-invalid`, and `aria-describedby`. Treat that list as illustrative, not exhaustive: as a rule, never duplicate through `InputAttrs` any attribute the component renders itself, or the caller's copy is silently dropped. Neither map may come from untrusted input.
 
 Non-wrapped components like `Button` spread their single `Attrs` onto their own element, so `Attrs` is already their element-level seam — there is no separate `InputAttrs` for them.
 
 ## Security
 
-Both the `Attrs` field (on every `Props` struct, spread onto the wrapper or own element) and the `InputAttrs` field (on `Switch`/`Checkbox`/`FileUpload`, spread onto the nested `<input>`) are inserted directly into HTML output. templ escapes attribute values but does not restrict attribute names. **Never populate `Attrs` or `InputAttrs` from untrusted user input** — they are for developer-controlled attributes like `data-*`, `aria-*`, and Datastar directives.
+Both the `Attrs` field (on every `Props` struct, spread onto the wrapper or own element) and the `InputAttrs` field (on Switch/Checkbox/FileUpload's nested `<input>` and Combobox's native `<select>`) are inserted directly into HTML output. templ escapes attribute values but does not restrict attribute names. **Never populate `Attrs` or `InputAttrs` from untrusted user input** — they are for developer-controlled attributes like `data-*`, `aria-*`, and Datastar directives.
 
 ## Design Pattern
 

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark"><meta name="generator" content="depot pipeline">
+  <meta name="pipeline-artifact" content="plan"><title>Plan: Combobox wrappers</title>
+  <style>
+  :root { color-scheme: light dark; --measure: 70rem; } * { box-sizing: border-box; }
+  body { margin: 0; font: 1rem/1.6 system-ui, sans-serif; background: Canvas; color: CanvasText; }
+  h1,h2 { line-height: 1.2; } h1 { font-size: 1.875rem; } h2 { font-size: 1.375rem; margin-top: 2rem; }
+  section { margin-block: 1.5rem; } code { font-family: ui-monospace, monospace; } table { border-collapse: collapse; }
+  th,td { border: 1px solid GrayText; padding: .375rem .5rem; text-align: left; vertical-align: top; }
+  .skip-link { position: absolute; left: -9999px; } .skip-link:focus { left: 0; padding: .5rem 1rem; }
+  .artifact-main { max-width: 70rem; margin-inline: auto; padding: 1rem; }
+  </style>
+</head>
+<body class="scheme-subtle">
+  <a class="skip-link" href="#content">Skip to content</a>
+  <header><nav aria-label="Pipeline artifacts"><ul><li><a href="assessment.html">Assessment</a></li><li><a href="research.html">Research</a></li></ul></nav><p>plan · generated 2026-10-12</p></header>
+  <main id="content" class="artifact-main">
+    <h1>Plan: Combobox wrappers</h1>
+    <section><h2>Overview</h2><p>Deliver issue #12 in one settled implementation pass on <code>feat/combobox-12</code>, based on <code>main</code> at <code>284684633bcc5e026155b62fe5a1c21541f49099</code>. The user’s prompt provides scope and execution approval. The merged producer contract is <code>5db085d2918375811ee30562bc4229b414f314e4</code>.</p><p><strong>Workflow:</strong> Lean feature; decision profile uncertainty low, consequence medium because it defines form submission/validation behavior, with easy reversibility. The change is a single repository and one branch. Final source review is quick and independent; a design consultant plus owner UI acceptance and affected-case rechecks cover the rendered example.</p><p><strong>Smallest usable implementation:</strong> additive server-rendered Templ wrappers and a local gallery adapter that uses the already-published single-select module. The component does not own enhancement, query, authorization, validation, or persistence state.</p></section>
+    <section><h2>Single-pass Execution Scope</h2>
+      <ol>
+        <li>Add <code>form.ComboboxProps</code>, full <code>ComboboxComponent</code>, and convenience wrappers. Emit root/select IDs, label, native options and selected value, hints/errors, required/disabled/form, root Class/Attrs, and <code>InputAttrs</code> on the native select. Keep the select as the only named control and use existing ID, required-indicator and description helpers without changing Select.</li>
+        <li>Add render tests for escaping, root/select attribute placement, explicit unique IDs, selected/default/empty options, form association, required/disabled, hints/errors and a regression check for ordinary Select behavior.</li>
+        <li>Update gallery route/page/application adapter and tests. Show a local searchable control and a simulated remote control with deterministic delay, error, empty and out-of-order controls; keep meaningful native fallback. Do not submit typed text or create a server endpoint.</li>
+        <li>Lock all required Live Wires assets to the exact compatible revision <code>5db085d2918375811ee30562bc4229b414f314e4</code>, compute/verify SHA-256 and size at source, and retain the license provenance. Run existing gallery tests after any asset changes.</li>
+        <li>Document Baseplate account Timezone override as the consumer candidate, preserving <code>interface_timezone=""</code> inheritance and saved zones outside the curated list. Do not edit Baseplate.</li>
+        <li>Generate inside Docker and commit generated Go. Run Docker-only tests and vet, gallery verify, then source-bound desktop/mobile Playwright checks with actual URL, head and asset lock. Prove submission/FormData, required/disabled/reset/form association, keyboard/Escape, stale/failed search, retained selection, two controls, DOM updates, no-JavaScript fallback, no duplicate names and no typing-time value change.</li>
+      </ol>
+      <p>Keep generated CSS/JS outside this package. No multi-select, production endpoint, Kanban, Baseplate migration, tag, release, merge or issue closure. Leave the PR draft until exact-head CI, feedback settlement and UI acceptance pass.</p>
+    </section>
+    <section><h2>Decisions &amp; Tradeoffs</h2><table><thead><tr><th>Decision</th><th>Reason</th><th>Alternative</th></tr></thead><tbody>
+      <tr><td>Native select remains authoritative.</td><td>Matches the merged producer contract for successful values, validation, reset, disabled fieldsets and external form association.</td><td>Hidden input/formdata shim is explicitly rejected because it duplicates behavior and breaks native guarantees.</td></tr>
+      <tr><td>Use <code>ID</code> for the select, <code>RootID</code> for the wrapper, and <code>InputAttrs</code> on the select.</td><td>Stable explicit producer hooks and the repository's canonical wrapped-control seam; root <code>Attrs</code> stays consistent with Props conventions.</td><td>One ID or one Attrs map would not reliably cover both DOM elements.</td></tr>
+      <tr><td>Pin the gallery to producer merge <code>5db085d2</code>.</td><td>Contains the docs, CSS, JS and reference behavior the example demonstrates; checksums can be verified at immutable URLs.</td><td>Keep old lock: it lacks the combobox assets. Pin mutable main: non-reproducible.</td></tr>
+      <tr><td>Simulate remote search in gallery code.</td><td>Shows the event/result contract without a backend or authorization policy.</td><td>Add a production search route: outside scope.</td></tr>
+    </tbody></table></section>
+    <section><h2>Requirements Coverage</h2><table><thead><tr><th>Approved requirement</th><th>Single-pass scope</th></tr></thead><tbody>
+      <tr><td>Public API, IDs, label/options/value/hint/error/required/disabled/form</td><td>Component and Templ tests</td></tr>
+      <tr><td>Actual select attribute seam, native authoritative form value, no duplicate value</td><td>Component and browser form proofs</td></tr>
+      <tr><td>Empty optional semantics, required validation, retained selected labels/values</td><td>Component tests and browser checks</td></tr>
+      <tr><td>Escaping, IDs, options, hint/error links and existing Select compatibility</td><td>Focused render tests and complete Go suite</td></tr>
+      <tr><td>Optional external assets and application-owned simulated search</td><td>Exact gallery asset lock and route adapter</td></tr>
+      <tr><td>Desktop/mobile gallery, native fallback and async edge cases</td><td>Gallery Playwright suite and evidence</td></tr>
+      <tr><td>Timezone consumer handoff, no rollout/release/merge</td><td>Gallery/docs handoff; draft PR only</td></tr>
+    </tbody></table></section>
+    <section><h2>Approval and Owner Controls</h2><p>Scope/execution authority: this user’s explicit implementation request and accepted criteria. No unresolved owner choice. Base: <code>main</code>; feature branch: <code>feat/combobox-12</code>; branch mode: create; expected feature head before creation: <code>null</code>; initial exact head: <code>284684633bcc5e026155b62fe5a1c21541f49099</code>. Execution role: <code>builder-fast</code> at <code>high</code>, as explicitly supplied for this bounded settled implementation. Final review: quick, because the code and contract are additive and settled; applicable design, browser, independent review, findings and remote verification remain mandatory. <code>noMergeOnCompletion=true</code>.</p></section>
+  </main>
+  <footer><p>Lean plan for issue #12. No prompts directory or manifest is generated by design.</p></footer>
+  <script type="application/json" id="pipeline-data">{"artifact":"plan","slug":"combobox-12","baseBranch":"main","featureBranch":"feat/combobox-12","branchMode":"create","expectedFeatureHead":null,"decisions":[{"id":"native-select","decision":"Keep the native select as the only submitted control and source of validation/reset/form association.","rationale":"Matches exact merged producer contract and preserves browser guarantees.","alternatives":["hidden input plus formdata shim (rejected)"]},{"id":"dual-element-seams","decision":"Use explicit select ID and wrapper RootID; root Attrs and InputAttrs target their real elements.","rationale":"Maintains stable IDs and follows the canonical wrapped-control attribute seam.","alternatives":["single ID/attribute map (ambiguous for two elements)"]},{"id":"gallery-assets","decision":"Pin compatible Live Wires assets at exact producer merge 5db085d2918375811ee30562bc4229b414f314e4 and verify hashes/sizes.","rationale":"This immutable revision includes the published combobox contract and assets.","alternatives":["old asset lock (missing component assets)","floating main URLs (not reproducible)"]},{"id":"simulated-remote","decision":"Simulate remote results in the gallery adapter only.","rationale":"Demonstrates application ownership without production API or credentials.","alternatives":["production endpoint (out of scope)"]}],"requirementsCoverage":[{"requirement":"Public API, IDs, label/options/value/hint/error/required/disabled/form","chunk":"single-pass scope"},{"requirement":"Actual select attribute seam, native authoritative form value and no duplicate value","chunk":"single-pass scope"},{"requirement":"Optional empty semantics, required validation and retained selected label/value","chunk":"single-pass scope"},{"requirement":"Escaping, IDs, option rendering, hint/error wiring and Select compatibility","chunk":"single-pass scope"},{"requirement":"External optional assets and app-owned search behavior","chunk":"single-pass scope"},{"requirement":"Gallery local/remote cases, fallback and async controls","chunk":"single-pass scope"},{"requirement":"Timezone consumer handoff and no rollout/release/merge","chunk":"single-pass scope"}]}</script>
+</body>
+</html>

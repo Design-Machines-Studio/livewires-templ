@@ -46,7 +46,7 @@ type assetLock struct {
 	Assets         []asset `json:"assets"`
 }
 
-var examples = []string{"relative-time", "copy", "loading", "toast", "sortable", "inline-edit"}
+var examples = []string{"relative-time", "copy", "loading", "toast", "sortable", "inline-edit", "combobox"}
 var itemNames = map[string]string{"notes": "Field notes", "paper": "On paper", "index": "An index"}
 
 func digest(b []byte) string { s := sha256.Sum256(b); return hex.EncodeToString(s[:]) }
@@ -175,6 +175,9 @@ func routes(source sourceIdentity, files map[string][]byte, lock assetLock) http
 		}
 		if name == "inline-edit" && (r.URL.Query().Has("title-a") || r.URL.Query().Has("title-b")) {
 			message = "Native example submission. Fictional text is carried in the URL; nothing was saved."
+		}
+		if name == "combobox" && (r.URL.Query().Has("interface_timezone") || r.URL.Query().Has("required_timezone")) {
+			message = fmt.Sprintf("Native example submission. interface_timezone=%q; required_timezone=%q. These values came from this URL; nothing was saved.", r.URL.Query().Get("interface_timezone"), r.URL.Query().Get("required_timezone"))
 		}
 		if name == "sortable" && r.URL.Query().Has("itemId") {
 			order = moveOrder(order, r.URL.Query().Get("itemId"), r.URL.Query().Get("before"))

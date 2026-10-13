@@ -24,6 +24,9 @@ templ page(name string, source sourceIdentity, order []string, message string, v
 			if name=="inline-edit" {
 				<link rel="stylesheet" href="/assets/inline-edit.css"/>
 			}
+			if name=="combobox" {
+				<link rel="stylesheet" href="/assets/combobox.css"/>
+			}
 			if name!="" {
 				<script type="module" src="/demo.js"></script>
 			}
@@ -58,6 +61,8 @@ templ page(name string, source sourceIdentity, order []string, message string, v
 							@sortableExample(order)
 						case "inline-edit":
 							@inlineExample()
+						case "combobox":
+							@comboboxExample()
 					}
 					if name=="loading" || name=="toast" || name=="sortable" || name=="inline-edit" {
 						<form method="get" action={ templ.URL("/examples/" + name) } id="scenario-form" hidden?={ name=="sortable" || name=="inline-edit" }>
