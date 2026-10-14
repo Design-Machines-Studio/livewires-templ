@@ -85,6 +85,30 @@ async function setup() {
       }, { signal: lifecycle.signal });
     }
   }
+  if (name === 'save-status') {
+    const schemeRoot = document.querySelector('[data-save-scheme]');
+    for (const controls of schemeRoot.querySelectorAll('[data-save-controls]')) controls.hidden = false;
+    for (const button of document.querySelectorAll('[data-save-scheme-class]')) {
+      button.addEventListener('click', () => {
+        schemeRoot.className = `stack ${button.dataset.saveSchemeClass}`;
+        for (const other of document.querySelectorAll('[data-save-scheme-class]')) {
+          other.setAttribute('aria-pressed', String(other === button));
+          other.classList.toggle('underline', other === button);
+        }
+      }, { signal: lifecycle.signal });
+    }
+    for (const button of document.querySelectorAll('[data-save-demo]')) {
+      button.addEventListener('click', () => {
+        const editor = document.querySelector(`[data-save-editor="${CSS.escape(button.dataset.saveDemo)}"]`);
+        const line = editor?.querySelector('[data-save-status]');
+        const support = line?.nextElementSibling;
+        if (!line || !support) return;
+        line.dataset.saveState = button.dataset.state;
+        line.textContent = button.dataset.label || 'Save not confirmed';
+        support.textContent = button.dataset.support || '';
+      }, { signal: lifecycle.signal });
+    }
+  }
   const form = document.querySelector('#scenario-form');
   if (form) form.hidden = false;
   let occurrence = 0;

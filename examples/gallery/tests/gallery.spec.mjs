@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { createHash } from 'node:crypto';
 import { writeFile } from 'node:fs/promises';
 
-const names = ['relative-time', 'copy', 'loading', 'toast', 'sortable', 'inline-edit', 'combobox'];
+const names = ['relative-time', 'copy', 'loading', 'toast', 'sortable', 'inline-edit', 'combobox', 'save-status'];
 for (const [device, viewport] of [['desktop', { width: 1440, height: 1000 }], ['mobile', { width: 390, height: 844 }]]) {
   for (const name of names) {
     test(`${name} ${device}: generated markup, verified assets and provenance`, async ({ page, request }, info) => {
@@ -37,6 +37,101 @@ test('relative time enhances valid date and retains invalid fallback', async ({ 
   await page.goto('/examples/relative-time');
   await expect(page.locator('[data-relative-time-output]').first()).toBeVisible();
   await expect(page.getByText('Unknown date; absolute fallback remains visible.')).toBeVisible();
+});
+
+for (const width of [390, 1440]) {
+test(`save status at ${width}px keeps one atomic region per editor and preserves focus and placement`, async ({ page }, info) => {
+  await page.setViewportSize({ width, height: 1000 });
+  await page.goto('/examples/save-status');
+  await expect(page.locator('body')).toHaveAttribute('data-demo-ready', 'true');
+  const regions = page.locator('[data-save-region]');
+  const first = page.locator('[data-save-region="proposal"]');
+  const line = first.locator('[data-save-status]');
+  expect(await page.locator('[role="status"]').count()).toBe(2);
+  expect(await regions.locator('[role="status"] [role="status"]').count()).toBe(0);
+  await expect(line).toHaveAttribute('data-save-state', 'ready');
+  await expect(line).toHaveText('Ready');
+  const before = await first.evaluate(node => {
+    const rect = node.getBoundingClientRect();
+    return { x: rect.x + scrollX, y: rect.y + scrollY };
+  });
+  await page.locator('#proposal-text').fill('A new text edit does not trigger a status announcement by itself.');
+  await expect(line).toHaveAttribute('data-save-state', 'ready');
+
+  await page.getByRole('button', { name: 'Edit', exact: true }).click();
+  await expect(line).toHaveAttribute('data-save-state', 'dirty');
+  await expect(line).toHaveText('Unsaved changes');
+  await expect(page.getByRole('button', { name: 'Edit', exact: true })).toBeFocused();
+  await page.getByRole('button', { name: 'Saving', exact: true }).click();
+  await expect(line).toHaveAttribute('data-save-state', 'saving');
+  await page.getByRole('button', { name: 'Confirm save', exact: true }).click();
+  await expect(line).toHaveAttribute('data-save-state', 'saved');
+  await expect(line).toHaveText('Draft saved');
+
+  await page.getByRole('button', { name: 'Start pending save', exact: true }).click();
+  await page.getByRole('button', { name: 'Edit while save is pending', exact: true }).click();
+  await expect(line).toHaveAttribute('data-save-state', 'dirty');
+  await expect(first).toContainText('A save is pending, and newer edits have arrived.');
+  await page.getByRole('button', { name: 'Older completion; newer edits remain', exact: true }).click();
+  await expect(line).toHaveAttribute('data-save-state', 'dirty');
+  await expect(first).toContainText('An older completion arrived while newer edits remain unsaved.');
+
+  await page.getByRole('button', { name: 'Failed save', exact: true }).click();
+  await expect(line).toHaveAttribute('data-save-state', 'failed');
+  await expect(line).toHaveText('Couldn’t save draft');
+  await page.getByRole('button', { name: 'Unknown outcome', exact: true }).click();
+  await expect(line).toHaveAttribute('data-save-state', 'unknown');
+  await expect(line).toHaveText('Save not confirmed');
+
+  await page.getByRole('button', { name: 'Confirm meeting note' }).click();
+  await expect(page.locator('#meeting-save-status [data-save-status]')).toHaveText('Draft saved');
+  await expect(line).toHaveText('Save not confirmed');
+  await page.getByRole('button', { name: 'Text saved; settings pending' }).click();
+  await expect(line).toHaveText('Text saved');
+  await expect(first).toContainText('Rules and collaborators still need saving.');
+  const after = await first.evaluate(node => {
+    const rect = node.getBoundingClientRect();
+    return { x: rect.x + scrollX, y: rect.y + scrollY };
+  });
+  expect(after.x).toBe(before.x);
+  expect(after.y).toBe(before.y);
+  await page.getByRole('button', { name: 'Long supporting text' }).click();
+  await expect(first).toContainText('longer rules, collaborators and other organization settings remain pending');
+  const longTextPosition = await first.evaluate(node => {
+    const rect = node.getBoundingClientRect();
+    return { x: rect.x + scrollX, y: rect.y + scrollY };
+  });
+  expect(longTextPosition).toEqual(before);
+  await expect(page.getByRole('button', { name: 'Long supporting text' })).toBeFocused();
+  expect(await page.locator('html').evaluate(e => e.scrollWidth <= innerWidth)).toBeTruthy();
+
+  await page.getByRole('button', { name: 'Dark', exact: true }).click();
+  await expect(page.locator('[data-save-scheme]')).toHaveClass(/scheme-dark/);
+  await expect(page.getByRole('button', { name: 'Dark', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  expect(await page.getByRole('button', { name: 'Dark', exact: true }).evaluate(node => getComputedStyle(node).textDecorationLine)).toContain('underline');
+  await page.getByRole('button', { name: 'Inherited', exact: true }).click();
+  await expect(page.locator('[data-save-scheme]')).toHaveClass(/scheme-default/);
+  await expect(page.getByRole('button', { name: 'Dark', exact: true })).toHaveAttribute('aria-pressed', 'false');
+  expect(await page.getByRole('button', { name: 'Dark', exact: true }).evaluate(node => getComputedStyle(node).textDecorationLine)).not.toContain('underline');
+  await writeFile(info.outputPath('save-status-placement.json'), JSON.stringify({ width, before, after, longTextPosition, focusedControl: 'Long supporting text (before scheme selection)', statusRegions: 2 }, null, 2));
+});
+}
+
+test('save status remains legible at zoom and forced colors', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/examples/save-status');
+  await page.emulateMedia({ colorScheme: 'light' });
+  const lightColor = await page.locator('#proposal-save-status [data-save-status]').evaluate(node => getComputedStyle(node).color);
+  await page.emulateMedia({ colorScheme: 'dark' });
+  const darkColor = await page.locator('#proposal-save-status [data-save-status]').evaluate(node => getComputedStyle(node).color);
+  expect(darkColor).not.toBe(lightColor);
+  await page.evaluate(() => { document.documentElement.style.zoom = '200%'; });
+  expect(await page.locator('html').evaluate(e => e.scrollWidth <= innerWidth)).toBeTruthy();
+  await page.emulateMedia({ forcedColors: 'active' });
+  expect(await page.evaluate(() => matchMedia('(forced-colors: active)').matches)).toBeTruthy();
+  const color = await page.locator('#proposal-save-status [data-save-status]').evaluate(node => getComputedStyle(node).color);
+  expect(color).toBeTruthy();
+  await expect(page.locator('#proposal-save-status [data-save-status]')).toBeVisible();
 });
 test('clipboard reports actual granted write and preserves selectable source', async ({ page, context }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
@@ -105,6 +200,10 @@ test('native fallback: content, URL-carried move and simulated response', async 
     await page.goto(process.env.GALLERY_URL + '/examples/' + name);
     await expect(page.locator('h1')).toHaveText(name);
   }
+  await expect(page.locator('[data-save-controls]')).toHaveCount(3);
+  for (const controls of await page.locator('[data-save-controls]').all()) await expect(controls).toBeHidden();
+  await expect(page.locator('#proposal-text')).toBeVisible();
+  await expect(page.locator('#proposal-save-status')).toContainText('Ready');
   await page.goto(process.env.GALLERY_URL + '/examples/sortable');
   await page.getByRole('button', { name: 'Move Field notes down', exact: true }).click();
   await expect(page.locator('[data-sortable-item]').first()).toHaveAttribute('data-item-id', 'paper');

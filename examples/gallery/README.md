@@ -23,7 +23,7 @@ inputs, generates and builds in Docker, then publishes an unused Docker-assigned
 port on `127.0.0.1`. Read the actual `url` from status; no fixed port is reserved
 or taken over. The index is `/`; example URLs are `/examples/relative-time`,
 `/examples/copy`, `/examples/loading`, `/examples/toast`, `/examples/sortable`,
-`/examples/inline-edit` and `/examples/combobox`.
+`/examples/inline-edit`, `/examples/combobox` and `/examples/save-status`.
 
 The runner uses the host-selected user installation from Claude's
 `installed_plugins.json`, checks its plugin identity/version, and invokes the
@@ -98,11 +98,14 @@ Do not prune shared Docker resources or delete another worktree's state.
 ## Locked assets
 
 `assets.lock.json` records exact Live Wires revision
-`5db085d2918375811ee30562bc4229b414f314e4`, source URLs, SHA-256 hashes, sizes
-and license provenance. Required distribution files are fetched from that
-revision into the instance's external development cache, never from a mutable
-producer checkout, Vite server or floating CDN. No CSS or producer runtime is
-committed here. The server verifies the files again before listening.
+`50ce9ecd2dc8d102cd22e7444051932c6b450b08`, source URLs, SHA-256 hashes, sizes
+and license provenance. Required files are fetched from that revision into the
+instance's external development cache, never from a mutable producer checkout,
+Vite server or floating CDN. The save-status example uses the producer's exact
+source stylesheet because it is not yet a separate distribution file. No CSS
+or producer runtime is committed here. The server verifies the files again
+before listening. Recheck all maintained examples whenever a shared asset
+changes.
 
 `run.sh assets` acquires/verifies without starting the server. A missing or
 unreachable source fails startup; no substitute or older cached revision is
