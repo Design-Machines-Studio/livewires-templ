@@ -112,20 +112,26 @@ templ page(name string, source sourceIdentity, order []string, message string, v
 
 templ saveStatusExample() {
 	<div class="stack" data-save-scheme>
-		<div class="cluster" aria-label="Color scheme simulation controls">
-			<button type="button" aria-pressed="true" data-save-scheme-class="scheme-default">Inherited</button>
+		<section class="stack" aria-labelledby="scheme-heading" data-save-controls hidden>
+			<h2 id="scheme-heading">Color scheme</h2>
+			<p>Inherited follows the browser’s color scheme. Light and dark set a local example scheme.</p>
+		<div class="cluster" role="group" aria-label="Color scheme simulation controls">
+			<button type="button" class="underline" aria-pressed="true" data-save-scheme-class="scheme-default">Inherited</button>
 			<button type="button" aria-pressed="false" data-save-scheme-class="light-mode">Light</button>
 			<button type="button" aria-pressed="false" data-save-scheme-class="scheme-dark">Dark</button>
 		</div>
+		</section>
 	<section class="stack" aria-labelledby="save-status-heading">
 		<h2 id="save-status-heading">Proposal text editor simulation</h2>
-		<label for="proposal-text">Proposal text</label>
-		<textarea id="proposal-text" rows="4">A draft paragraph shown for save-status placement.</textarea>
+		<div class="stack stack-compact">
+			<label for="proposal-text">Proposal text</label>
+			<textarea id="proposal-text" rows="4">A draft paragraph shown for save-status placement.</textarea>
+		</div>
 		<div class="cluster items-baseline" data-save-editor="proposal">
 			<button type="button">Done editing</button>
-			@component.SaveStatusComponent(component.SaveStatusProps{ID: "proposal-save-status", State: "ready", SupportingText: "No new save has been confirmed.", Attrs: templ.Attributes{"data-save-region": "proposal"}})
+			@component.SaveStatusComponent(component.SaveStatusProps{ID: "proposal-save-status", State: "ready", SupportingText: "No new save has been confirmed.", Attrs: templ.Attributes{"class": "flex-1", "data-save-region": "proposal"}})
 		</div>
-		<div class="cluster" aria-label="Proposal save presentation simulations">
+		<div class="cluster" role="group" aria-label="Proposal save presentation simulations" data-save-controls hidden>
 			<button type="button" data-save-demo="proposal" data-state="dirty" data-label="Unsaved changes" data-support="Your latest edit has not been confirmed. Simulation only.">Edit</button>
 			<button type="button" data-save-demo="proposal" data-state="saving" data-label="Saving…" data-support="The host has started a save. Simulation only.">Saving</button>
 			<button type="button" data-save-demo="proposal" data-state="saved" data-label="Draft saved" data-support="The host confirmed this draft. Simulation only.">Confirm save</button>
@@ -141,13 +147,15 @@ templ saveStatusExample() {
 	</section>
 	<section class="stack" aria-labelledby="second-save-heading">
 		<h2 id="second-save-heading">Second independent editor</h2>
-		<label for="second-editor-text">Meeting note</label>
-		<textarea id="second-editor-text" rows="3">A separate editor with its own status region.</textarea>
+		<div class="stack stack-compact">
+			<label for="second-editor-text">Meeting note</label>
+			<textarea id="second-editor-text" rows="3">A separate editor with its own status region.</textarea>
+		</div>
 		<div class="cluster items-baseline" data-save-editor="meeting">
 			<button type="button">Done editing</button>
-			@component.SaveStatusComponent(component.SaveStatusProps{ID: "meeting-save-status", State: "saving", SupportingText: "Its state is independent of the proposal editor.", Attrs: templ.Attributes{"data-save-region": "meeting"}})
+			@component.SaveStatusComponent(component.SaveStatusProps{ID: "meeting-save-status", State: "saving", SupportingText: "Its state is independent of the proposal editor.", Attrs: templ.Attributes{"class": "flex-1", "data-save-region": "meeting"}})
 		</div>
-		<div class="cluster" aria-label="Meeting note save presentation simulations">
+		<div class="cluster" role="group" aria-label="Meeting note save presentation simulations" data-save-controls hidden>
 			<button type="button" data-save-demo="meeting" data-state="saved" data-label="Draft saved" data-support="Only this editor is confirmed saved. Simulation only.">Confirm meeting note</button>
 			<button type="button" data-save-demo="meeting" data-state="dirty" data-label="Unsaved changes" data-support="Only this editor has unsaved changes. Simulation only.">Edit meeting note</button>
 		</div>

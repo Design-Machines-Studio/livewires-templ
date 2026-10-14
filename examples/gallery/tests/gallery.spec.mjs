@@ -39,8 +39,9 @@ test('relative time enhances valid date and retains invalid fallback', async ({ 
   await expect(page.getByText('Unknown date; absolute fallback remains visible.')).toBeVisible();
 });
 
-test('save status simulations keep one atomic region per editor and preserve focus and placement', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
+for (const width of [390, 1440]) {
+test(`save status at ${width}px keeps one atomic region per editor and preserves focus and placement`, async ({ page }, info) => {
+  await page.setViewportSize({ width, height: 1000 });
   await page.goto('/examples/save-status');
   await expect(page.locator('body')).toHaveAttribute('data-demo-ready', 'true');
   const regions = page.locator('[data-save-region]');
@@ -96,13 +97,25 @@ test('save status simulations keep one atomic region per editor and preserve foc
   expect(after.y).toBe(before.y);
   await page.getByRole('button', { name: 'Long supporting text' }).click();
   await expect(first).toContainText('longer rules, collaborators and other organization settings remain pending');
+  const longTextPosition = await first.evaluate(node => {
+    const rect = node.getBoundingClientRect();
+    return { x: rect.x + scrollX, y: rect.y + scrollY };
+  });
+  expect(longTextPosition).toEqual(before);
+  await expect(page.getByRole('button', { name: 'Long supporting text' })).toBeFocused();
   expect(await page.locator('html').evaluate(e => e.scrollWidth <= innerWidth)).toBeTruthy();
 
   await page.getByRole('button', { name: 'Dark', exact: true }).click();
   await expect(page.locator('[data-save-scheme]')).toHaveClass(/scheme-dark/);
+  await expect(page.getByRole('button', { name: 'Dark', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  expect(await page.getByRole('button', { name: 'Dark', exact: true }).evaluate(node => getComputedStyle(node).textDecorationLine)).toContain('underline');
   await page.getByRole('button', { name: 'Inherited', exact: true }).click();
   await expect(page.locator('[data-save-scheme]')).toHaveClass(/scheme-default/);
+  await expect(page.getByRole('button', { name: 'Dark', exact: true })).toHaveAttribute('aria-pressed', 'false');
+  expect(await page.getByRole('button', { name: 'Dark', exact: true }).evaluate(node => getComputedStyle(node).textDecorationLine)).not.toContain('underline');
+  await writeFile(info.outputPath('save-status-placement.json'), JSON.stringify({ width, before, after, longTextPosition, focusedControl: 'Long supporting text (before scheme selection)', statusRegions: 2 }, null, 2));
 });
+}
 
 test('save status remains legible at zoom and forced colors', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
@@ -187,6 +200,10 @@ test('native fallback: content, URL-carried move and simulated response', async 
     await page.goto(process.env.GALLERY_URL + '/examples/' + name);
     await expect(page.locator('h1')).toHaveText(name);
   }
+  await expect(page.locator('[data-save-controls]')).toHaveCount(3);
+  for (const controls of await page.locator('[data-save-controls]').all()) await expect(controls).toBeHidden();
+  await expect(page.locator('#proposal-text')).toBeVisible();
+  await expect(page.locator('#proposal-save-status')).toContainText('Ready');
   await page.goto(process.env.GALLERY_URL + '/examples/sortable');
   await page.getByRole('button', { name: 'Move Field notes down', exact: true }).click();
   await expect(page.locator('[data-sortable-item]').first()).toHaveAttribute('data-item-id', 'paper');

@@ -87,11 +87,13 @@ async function setup() {
   }
   if (name === 'save-status') {
     const schemeRoot = document.querySelector('[data-save-scheme]');
+    for (const controls of schemeRoot.querySelectorAll('[data-save-controls]')) controls.hidden = false;
     for (const button of document.querySelectorAll('[data-save-scheme-class]')) {
       button.addEventListener('click', () => {
         schemeRoot.className = `stack ${button.dataset.saveSchemeClass}`;
         for (const other of document.querySelectorAll('[data-save-scheme-class]')) {
           other.setAttribute('aria-pressed', String(other === button));
+          other.classList.toggle('underline', other === button);
         }
       }, { signal: lifecycle.signal });
     }
