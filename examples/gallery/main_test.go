@@ -13,7 +13,7 @@ import (
 
 func TestRoutesRenderCurrentComponentsAndNativeMoves(t *testing.T) {
 	app := routes(sourceIdentity{Commit: strings.Repeat("a", 40), AssetRevision: "producer"}, map[string][]byte{"/assets/main.css": []byte("verified css")}, assetLock{})
-	cases := map[string]string{"/": "Component gallery", "/examples/relative-time": "lw-relative-time", "/examples/copy": "data-copy-source", "/examples/loading": "data-loading-region", "/examples/toast": "data-toast-region", "/examples/inline-edit": "data-inline-edit", "/examples/sortable": "lw-sortable-list", "/examples/combobox": "data-combobox", "/examples/combobox?interface_timezone=&required_timezone=Europe%2FParis": "Native example submission", "/examples/sortable?order=notes,paper,index&itemId=notes&before=index": "value=\"paper,notes,index\"", "/examples/loading?run=1&scenario=failure": "Simulated failure", "/assets/main.css": "verified css"}
+	cases := map[string]string{"/": "Component gallery", "/examples/relative-time": "lw-relative-time", "/examples/copy": "data-copy-source", "/examples/loading": "data-loading-region", "/examples/toast": "data-toast-region", "/examples/inline-edit": "data-inline-edit", "/examples/sortable": "lw-sortable-list", "/examples/combobox": "data-combobox", "/examples/save-status": "proposal-save-status", "/examples/combobox?interface_timezone=&required_timezone=Europe%2FParis": "Native example submission", "/examples/sortable?order=notes,paper,index&itemId=notes&before=index": "value=\"paper,notes,index\"", "/examples/loading?run=1&scenario=failure": "Simulated failure", "/assets/main.css": "verified css"}
 	for path, want := range cases {
 		t.Run(path, func(t *testing.T) {
 			w := httptest.NewRecorder()
@@ -65,6 +65,11 @@ func TestNativeScenarioControlsDoNotInventComponentOutcomes(t *testing.T) {
 		}
 	}
 	w := httptest.NewRecorder()
+	app.ServeHTTP(w, httptest.NewRequest("GET", "/examples/save-status", nil))
+	if strings.Count(w.Body.String(), `role="status"`) != 2 || !strings.Contains(w.Body.String(), "Rules and collaborators still need saving") {
+		t.Fatal("save-status example must retain independent status regions and partial-scope text")
+	}
+	w = httptest.NewRecorder()
 	app.ServeHTTP(w, httptest.NewRequest("GET", "/examples/toast?scenario=failure&run=1", nil))
 	if !strings.Contains(w.Body.String(), "toast--error") {
 		t.Fatal("failure scenario did not render the error component variant")

@@ -1,0 +1,78 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// SaveStatusProps renders the host-supplied state and optional scope-aware text.
+type SaveStatusProps struct {
+	State          string           // ready, dirty, saving, saved, failed, or unknown
+	Label          string           // Optional visible label; ignored for unknown or invalid state
+	SupportingText string           // Short essential save feedback announced in the same status region
+	ID             string           // Stable ID for the persistent status region
+	Class          string           // Additional classes on the short save-status text
+	Attrs          templ.Attributes // Developer-controlled attributes on the status region
+}
+
+// SaveStatusComponent renders one persistent polite status region.
+templ SaveStatusComponent(props SaveStatusProps) {
+	<div
+		role="status"
+		aria-atomic="true"
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		{ props.Attrs... }
+	>
+		<p class={ lw.ClassNames("save-status", props.Class) } data-save-status data-save-state={ saveStatusState(props.State) }>
+			{ saveStatusLabel(props.State, props.Label) }
+		</p>
+		if props.SupportingText != "" {
+			<p>{ props.SupportingText }</p>
+		}
+	</div>
+}
+
+// SaveStatus renders the default label for a host-supplied state.
+templ SaveStatus(state string) {
+	@SaveStatusComponent(SaveStatusProps{State: state})
+}
+
+func saveStatusState(state string) string {
+	switch state {
+	case "ready", "dirty", "saving", "saved", "failed", "unknown":
+		return state
+	default:
+		return "unknown"
+	}
+}
+
+func saveStatusLabel(state string, label string) string {
+	switch saveStatusState(state) {
+	case "ready":
+		if label != "" {
+			return label
+		}
+		return "Ready"
+	case "dirty":
+		if label != "" {
+			return label
+		}
+		return "Unsaved changes"
+	case "saving":
+		if label != "" {
+			return label
+		}
+		return "Saving…"
+	case "saved":
+		if label != "" {
+			return label
+		}
+		return "Draft saved"
+	case "failed":
+		if label != "" {
+			return label
+		}
+		return "Couldn’t save draft"
+	default:
+		return "Save not confirmed"
+	}
+}

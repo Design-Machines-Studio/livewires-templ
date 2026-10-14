@@ -27,6 +27,9 @@ templ page(name string, source sourceIdentity, order []string, message string, v
 			if name=="combobox" {
 				<link rel="stylesheet" href="/assets/combobox.css"/>
 			}
+			if name=="save-status" {
+				<link rel="stylesheet" href="/assets/save-status.css"/>
+			}
 			if name!="" {
 				<script type="module" src="/demo.js"></script>
 			}
@@ -63,6 +66,8 @@ templ page(name string, source sourceIdentity, order []string, message string, v
 							@inlineExample()
 						case "combobox":
 							@comboboxExample()
+						case "save-status":
+							@saveStatusExample()
 					}
 					if name=="loading" || name=="toast" || name=="sortable" || name=="inline-edit" {
 						<form method="get" action={ templ.URL("/examples/" + name) } id="scenario-form" hidden?={ name=="sortable" || name=="inline-edit" }>
@@ -81,7 +86,9 @@ templ page(name string, source sourceIdentity, order []string, message string, v
 						<label for="unrelated-input">Unrelated input</label><input id="unrelated-input" value="Keep editing"/>
 						<a href={ templ.URL("/examples/" + name) }>Reload and recover</a>
 					}
-					<p id="demo-outcome" role="status">{ message }</p>
+					if name=="loading" || name=="toast" || name=="sortable" || name=="inline-edit" || name=="combobox" {
+						<p id="demo-outcome" role="status">{ message }</p>
+					}
 					<noscript>
 						<p>Native controls and visible content remain available.</p>
 						if name=="loading" || name=="toast" {
@@ -101,6 +108,55 @@ templ page(name string, source sourceIdentity, order []string, message string, v
 			</main>
 		</body>
 	</html>
+}
+
+templ saveStatusExample() {
+	<div class="stack" data-save-scheme>
+		<div class="cluster" aria-label="Color scheme simulation controls">
+			<button type="button" aria-pressed="true" data-save-scheme-class="scheme-default">Inherited</button>
+			<button type="button" aria-pressed="false" data-save-scheme-class="light-mode">Light</button>
+			<button type="button" aria-pressed="false" data-save-scheme-class="scheme-dark">Dark</button>
+		</div>
+	<section class="stack" aria-labelledby="save-status-heading">
+		<h2 id="save-status-heading">Proposal text editor simulation</h2>
+		<label for="proposal-text">Proposal text</label>
+		<textarea id="proposal-text" rows="4">A draft paragraph shown for save-status placement.</textarea>
+		<div class="cluster items-baseline" data-save-editor="proposal">
+			<button type="button">Done editing</button>
+			@component.SaveStatusComponent(component.SaveStatusProps{ID: "proposal-save-status", State: "ready", SupportingText: "No new save has been confirmed.", Attrs: templ.Attributes{"data-save-region": "proposal"}})
+		</div>
+		<div class="cluster" aria-label="Proposal save presentation simulations">
+			<button type="button" data-save-demo="proposal" data-state="dirty" data-label="Unsaved changes" data-support="Your latest edit has not been confirmed. Simulation only.">Edit</button>
+			<button type="button" data-save-demo="proposal" data-state="saving" data-label="Saving…" data-support="The host has started a save. Simulation only.">Saving</button>
+			<button type="button" data-save-demo="proposal" data-state="saved" data-label="Draft saved" data-support="The host confirmed this draft. Simulation only.">Confirm save</button>
+			<button type="button" data-save-demo="proposal" data-state="saving" data-label="Saving…" data-support="A save is pending. Simulation only.">Start pending save</button>
+			<button type="button" data-save-demo="proposal" data-state="dirty" data-label="Unsaved changes" data-support="A save is pending, and newer edits have arrived. Simulation only.">Edit while save is pending</button>
+			<button type="button" data-save-demo="proposal" data-state="dirty" data-label="Unsaved changes" data-support="An older completion arrived while newer edits remain unsaved. Simulation only.">Older completion; newer edits remain</button>
+			<button type="button" data-save-demo="proposal" data-state="failed" data-label="Couldn’t save draft" data-support="The host rejected this save. Use the separate recovery action. Simulation only.">Failed save</button>
+			<button type="button" data-save-demo="proposal" data-state="unknown" data-support="The host cannot confirm the outcome. Simulation only.">Unknown outcome</button>
+			<button type="button" data-save-demo="proposal" data-state="saved" data-label="Text saved" data-support="Rules and collaborators still need saving. Simulation only.">Text saved; settings pending</button>
+			<button type="button" data-save-demo="proposal" data-state="saved" data-label="Text saved" data-support="The text in this editor has been confirmed, while the longer rules, collaborators and other organization settings remain pending. Simulation only.">Long supporting text</button>
+			<button type="button" data-save-demo="proposal" data-state="ready" data-label="Ready" data-support="No new save has been confirmed.">Reset status</button>
+		</div>
+	</section>
+	<section class="stack" aria-labelledby="second-save-heading">
+		<h2 id="second-save-heading">Second independent editor</h2>
+		<label for="second-editor-text">Meeting note</label>
+		<textarea id="second-editor-text" rows="3">A separate editor with its own status region.</textarea>
+		<div class="cluster items-baseline" data-save-editor="meeting">
+			<button type="button">Done editing</button>
+			@component.SaveStatusComponent(component.SaveStatusProps{ID: "meeting-save-status", State: "saving", SupportingText: "Its state is independent of the proposal editor.", Attrs: templ.Attributes{"data-save-region": "meeting"}})
+		</div>
+		<div class="cluster" aria-label="Meeting note save presentation simulations">
+			<button type="button" data-save-demo="meeting" data-state="saved" data-label="Draft saved" data-support="Only this editor is confirmed saved. Simulation only.">Confirm meeting note</button>
+			<button type="button" data-save-demo="meeting" data-state="dirty" data-label="Unsaved changes" data-support="Only this editor has unsaved changes. Simulation only.">Edit meeting note</button>
+		</div>
+	</section>
+	<section class="stack" aria-labelledby="save-contract-heading">
+		<h2 id="save-contract-heading">One status region per editor</h2>
+		<p>The host supplies state and scope-aware text. Essential supporting feedback stays in that same atomic region. Publish, retry and Done editing controls stay outside it. These controls change presentation only; they do not save.</p>
+	</section>
+	</div>
 }
 
 templ sortableExample(order []string) {

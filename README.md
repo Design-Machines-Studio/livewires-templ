@@ -29,6 +29,22 @@ sortable CSS/JavaScript are peer assets; the library handles no persistence or
 authorization. See the [persistent Go/Templ/Datastar example and serving runbook](examples/sortable/README.md)
 for two lists, native arrows, explicit move confirmation and isolated serving.
 
+`SaveStatusComponent` renders one persistent `role="status"` region containing
+the short `.save-status` line and optional supporting text. The host supplies
+explicit state and any scope-aware label; unknown or invalid states render
+“Save not confirmed.” The component does not save, publish, or manage editor
+state. Keep actions and surrounding layout outside the region. See the
+[maintained save-status gallery example](examples/gallery/README.md).
+
+```go
+@component.SaveStatusComponent(component.SaveStatusProps{
+    ID:             "proposal-save-status",
+    State:          "saved",
+    Label:          "Text saved",
+    SupportingText: "Rules and collaborators still need saving.",
+})
+```
+
 ```go
 // Button
 @component.Button("Save", "accent")
