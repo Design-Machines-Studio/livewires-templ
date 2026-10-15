@@ -14,12 +14,15 @@ func TestExternalPackageImportsAndRendersPublicPageHeader(t *testing.T) {
 	for _, want := range []string{
 		`<header class="section section-snug">`,
 		`<h1>External fixture page <span id="fixture-member-count">(12)</span></h1>`,
-		`<p class="lead">Rendered through the published component package API.</p>`,
+		`<p class="lead">Shared network.</p>`,
 		`<a href="/members" class="button">View members</a>`,
 	} {
 		if !strings.Contains(output.String(), want) {
 			t.Errorf("external render missing %q in %s", want, output.String())
 		}
+	}
+	if strings.Count(output.String(), `class="lead"`) != 1 {
+		t.Fatalf("external network header must have one lead: %s", output.String())
 	}
 	if !strings.Contains(output.String(), `View members</a></div><div class="cluster cluster-between items-baseline">`) {
 		t.Fatalf("external footer must follow the action layout: %s", output.String())

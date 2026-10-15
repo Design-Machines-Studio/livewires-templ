@@ -122,7 +122,6 @@ func PageHeaderPage() templ.Component {
 		templ_7745c5c3_Err = component.PageHeaderComponent(component.PageHeaderProps{
 			Title:       "External fixture page",
 			TitleSuffix: memberCount(),
-			Lead:        "Rendered through the published component package API.",
 			Class:       "section section-snug",
 			LayoutClass: "cluster cluster-between items-end",
 			Actions:     actions(),
