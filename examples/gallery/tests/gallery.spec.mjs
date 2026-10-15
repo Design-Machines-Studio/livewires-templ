@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { createHash } from 'node:crypto';
 import { writeFile } from 'node:fs/promises';
 
-const names = ['relative-time', 'copy', 'loading', 'toast', 'sortable', 'inline-edit', 'combobox', 'save-status'];
+const names = ['relative-time', 'copy', 'loading', 'toast', 'sortable', 'inline-edit', 'combobox', 'save-status', 'page-header'];
 for (const [device, viewport] of [['desktop', { width: 1440, height: 1000 }], ['mobile', { width: 390, height: 844 }]]) {
   for (const name of names) {
     test(`${name} ${device}: generated markup, verified assets and provenance`, async ({ page, request }, info) => {
@@ -14,7 +14,11 @@ for (const [device, viewport] of [['desktop', { width: 1440, height: 1000 }], ['
       const health = await (await request.get('/healthz')).json();
       await page.goto('/examples/' + name);
       await expect(page.locator('body')).toHaveAttribute('data-demo-ready', 'true');
-      await expect(page.locator('h1')).toHaveText(name);
+      if (name === 'page-header') {
+        await expect(page.getByRole('heading', { level: 1, name: 'Title-only header' })).toBeVisible();
+      } else {
+        await expect(page.locator('h1')).toHaveText(name);
+      }
       await expect(page.locator('#source-build')).toHaveAttribute('data-source-head', health.source.commit);
       await expect(page.locator('#source-build')).toHaveAttribute('data-source-fingerprint', health.source.fingerprint);
       await page.getByText('Build provenance', { exact: true }).click();
@@ -38,6 +42,38 @@ test('relative time enhances valid date and retains invalid fallback', async ({ 
   await expect(page.locator('[data-relative-time-output]').first()).toBeVisible();
   await expect(page.getByText('Unknown date; absolute fallback remains visible.')).toBeVisible();
 });
+
+for (const [device, viewport] of [['desktop', { width: 1440, height: 1000 }], ['mobile', { width: 390, height: 844 }]]) {
+  test(`page header ${device}: content reflows and actions remain keyboard accessible`, async ({ page }) => {
+    await page.setViewportSize(viewport);
+    await page.goto('/examples/page-header');
+    await expect(page.getByRole('region', { name: 'Title-only header' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'Title-only header' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'A header with a lead' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'Member directory' })).toBeVisible();
+    const longHeading = page.getByRole('heading', { level: 1, name: 'Review the shared decisions and records for your cooperative before making changes' });
+    await expect(longHeading).toBeVisible();
+    await expect(page.getByText('Supplementary content remains owned by the consuming page.')).toBeVisible();
+    const wrapped = await longHeading.evaluate(node => node.getBoundingClientRect().height > parseFloat(getComputedStyle(node).fontSize) * 1.5);
+    expect(wrapped).toBeTruthy();
+    expect(await page.locator('html').evaluate(e => e.scrollWidth <= innerWidth)).toBeTruthy();
+
+    const action = page.getByRole('link', { name: 'Review members' });
+    const titleAndAction = await Promise.all([
+      page.getByRole('heading', { level: 1, name: 'Member directory' }).boundingBox(),
+      action.boundingBox(),
+    ]);
+    if (device === 'mobile') {
+      expect(titleAndAction[1].y).toBeGreaterThan(titleAndAction[0].y);
+    }
+    await page.locator('body').focus();
+    for (let i = 0; i < 8 && !(await action.evaluate(node => node === document.activeElement)); i++) {
+      await page.keyboard.press('Tab');
+    }
+    await expect(action).toBeFocused();
+    await expect(action).toHaveAttribute('href', '#header-action-result');
+  });
+}
 
 for (const width of [390, 1440]) {
 test(`save status at ${width}px keeps one atomic region per editor and preserves focus and placement`, async ({ page }, info) => {
@@ -198,7 +234,11 @@ test('native fallback: content, URL-carried move and simulated response', async 
   const page = await context.newPage();
   for (const name of names) {
     await page.goto(process.env.GALLERY_URL + '/examples/' + name);
-    await expect(page.locator('h1')).toHaveText(name);
+    if (name === 'page-header') {
+      await expect(page.getByRole('heading', { level: 1, name: 'Title-only header' })).toBeVisible();
+    } else {
+      await expect(page.locator('h1')).toHaveText(name);
+    }
   }
   await expect(page.locator('[data-save-controls]')).toHaveCount(3);
   for (const controls of await page.locator('[data-save-controls]').all()) await expect(controls).toBeHidden();

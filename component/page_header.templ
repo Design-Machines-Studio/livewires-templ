@@ -1,0 +1,65 @@
+package component
+
+// PageHeaderProps configures a semantic page heading and its optional content.
+type PageHeaderProps struct {
+	Title        string
+	Lead         string
+	LeadClass    string
+	HeadingAttrs templ.Attributes
+	Actions      templ.Component
+	Supplement   templ.Component
+	LayoutClass  string
+	ContentClass string
+	Class        string
+	Attrs        templ.Attributes
+}
+
+// PageHeaderComponent renders a page header with an H1, optional lead, actions,
+// and supplementary content. Consumers provide any layout classes they need.
+templ PageHeaderComponent(props PageHeaderProps) {
+	<header class={ props.Class } { props.Attrs... }>
+		if props.Actions != nil {
+			if props.LayoutClass != "" {
+				<div class={ props.LayoutClass }>
+					@PageHeaderActionContent(props)
+				</div>
+			} else {
+				@PageHeaderActionContent(props)
+			}
+		} else {
+			@PageHeaderText(props)
+		}
+	</header>
+}
+
+templ PageHeaderActionContent(props PageHeaderProps) {
+	if props.ContentClass != "" {
+		<div class={ props.ContentClass }>
+			@PageHeaderText(props)
+		</div>
+	} else {
+		<div>
+			@PageHeaderText(props)
+		</div>
+	}
+	@props.Actions
+}
+
+templ PageHeaderText(props PageHeaderProps) {
+	<h1 { props.HeadingAttrs... }>{ props.Title }</h1>
+	if props.Lead != "" {
+		if props.LeadClass == "" {
+			<p class="lead">{ props.Lead }</p>
+		} else {
+			<p class={ props.LeadClass }>{ props.Lead }</p>
+		}
+	}
+	if props.Supplement != nil {
+		@props.Supplement
+	}
+}
+
+// PageHeader renders a title-only page header.
+templ PageHeader(title string) {
+	@PageHeaderComponent(PageHeaderProps{Title: title})
+}

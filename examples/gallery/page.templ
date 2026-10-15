@@ -49,7 +49,9 @@ templ page(name string, source sourceIdentity, order []string, message string, v
 						}
 					</ul>
 				} else {
-					<h1>{ name }</h1>
+					if name != "page-header" {
+						<h1>{ name }</h1>
+					}
 					<p>Local demonstration. Outcomes are simulated; nothing is saved. Reload the example URL to reset.</p>
 					switch name {
 						case "relative-time", "copy", "loading", "toast":
@@ -68,6 +70,8 @@ templ page(name string, source sourceIdentity, order []string, message string, v
 							@comboboxExample()
 						case "save-status":
 							@saveStatusExample()
+						case "page-header":
+							@pageHeaderExample()
 					}
 					if name=="loading" || name=="toast" || name=="sortable" || name=="inline-edit" {
 						<form method="get" action={ templ.URL("/examples/" + name) } id="scenario-form" hidden?={ name=="sortable" || name=="inline-edit" }>
@@ -108,6 +112,52 @@ templ page(name string, source sourceIdentity, order []string, message string, v
 			</main>
 		</body>
 	</html>
+}
+
+templ pageHeaderActions() {
+	<a href="#header-action-result" class="button" data-example-action>Review members</a>
+}
+
+templ pageHeaderSupplement() {
+	<p class="text-sm">Supplementary content remains owned by the consuming page.</p>
+}
+
+templ pageHeaderExample() {
+	<section aria-labelledby="title-only-heading">
+		@component.PageHeaderComponent(component.PageHeaderProps{
+			Title: "Title-only header",
+			Class: "section section-snug",
+			HeadingAttrs: templ.Attributes{"id": "title-only-heading"},
+		})
+	</section>
+	<section aria-labelledby="lead-heading">
+		@component.PageHeaderComponent(component.PageHeaderProps{
+			Title: "A header with a lead",
+			Lead: "Use the lead for a short introduction that gives people useful context before they reach the page content.",
+			Class: "section section-snug",
+			HeadingAttrs: templ.Attributes{"id": "lead-heading"},
+		})
+	</section>
+	<section aria-labelledby="actions-heading">
+		@component.PageHeaderComponent(component.PageHeaderProps{
+			Title: "Member directory",
+			Class: "section section-snug",
+			HeadingAttrs: templ.Attributes{"id": "actions-heading"},
+			LayoutClass: "cluster cluster-between items-end",
+			ContentClass: "prose",
+			Actions: pageHeaderActions(),
+		})
+	</section>
+	<section aria-labelledby="long-heading">
+		@component.PageHeaderComponent(component.PageHeaderProps{
+			Title: "Review the shared decisions and records for your cooperative before making changes",
+			Lead: "This longer title shows how headings and supporting content reflow at narrower widths.",
+			Class: "section section-snug",
+			HeadingAttrs: templ.Attributes{"id": "long-heading"},
+			Supplement: pageHeaderSupplement(),
+		})
+	</section>
+	<p id="header-action-result">The action link keeps its normal keyboard behavior.</p>
 }
 
 templ saveStatusExample() {

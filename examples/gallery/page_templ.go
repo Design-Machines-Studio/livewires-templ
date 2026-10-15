@@ -165,20 +165,26 @@ func page(name string, source sourceIdentity, order []string, message string, va
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<h1>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
+			if name != "page-header" {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<h1>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var6 string
+				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 53, Col: 16}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</h1>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
 			}
-			var templ_7745c5c3_Var6 string
-			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(name)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 52, Col: 15}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</h1><p>Local demonstration. Outcomes are simulated; nothing is saved. Reload the example URL to reset.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, " <p>Local demonstration. Outcomes are simulated; nothing is saved. Reload the example URL to reset.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -233,226 +239,372 @@ func page(name string, source sourceIdentity, order []string, message string, va
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
+			case "page-header":
+				templ_7745c5c3_Err = pageHeaderExample().Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if name == "loading" || name == "toast" || name == "sortable" || name == "inline-edit" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<form method=\"get\" action=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<form method=\"get\" action=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var8 templ.SafeURL
 				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/examples/" + name))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 73, Col: 64}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 77, Col: 64}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "\" id=\"scenario-form\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "\" id=\"scenario-form\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				if name == "sortable" || name == "inline-edit" {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, " hidden")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, " hidden")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "><label for=\"scenario\">Response scenario</label> <select id=\"scenario\" name=\"scenario\"><option value=\"normal\">Normal</option><option value=\"delayed\">Delayed</option><option value=\"failure\">Failure</option><option value=\"unknown\">Unknown result</option></select> ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "><label for=\"scenario\">Response scenario</label> <select id=\"scenario\" name=\"scenario\"><option value=\"normal\">Normal</option><option value=\"delayed\">Delayed</option><option value=\"failure\">Failure</option><option value=\"unknown\">Unknown result</option></select> ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				if name == "loading" || name == "toast" {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<button name=\"run\" value=\"1\" type=\"submit\">Run scenario</button>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<button name=\"run\" value=\"1\" type=\"submit\">Run scenario</button>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				} else {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<p>Use the component controls to try the selected response.</p>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<p>Use the component controls to try the selected response.</p>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</form><button id=\"unrelated\" type=\"button\" hidden>Update unrelated note</button><p id=\"unrelated-note\">Unrelated note stays available.</p><label for=\"unrelated-input\">Unrelated input</label><input id=\"unrelated-input\" value=\"Keep editing\"> <a href=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</form><button id=\"unrelated\" type=\"button\" hidden>Update unrelated note</button><p id=\"unrelated-note\">Unrelated note stays available.</p><label for=\"unrelated-input\">Unrelated input</label><input id=\"unrelated-input\" value=\"Keep editing\"> <a href=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var9 templ.SafeURL
 				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/examples/" + name))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 87, Col: 46}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 91, Col: 46}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "\">Reload and recover</a>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "\">Reload and recover</a>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if name == "loading" || name == "toast" || name == "sortable" || name == "inline-edit" || name == "combobox" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<p id=\"demo-outcome\" role=\"status\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<p id=\"demo-outcome\" role=\"status\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var10 string
 				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(message)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 90, Col: 50}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 94, Col: 50}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</p>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</p>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, " <noscript><p>Native controls and visible content remain available.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, " <noscript><p>Native controls and visible content remain available.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if name == "loading" || name == "toast" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<p>Choose a scenario and submit to see its simulated outcome.</p>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<p>Choose a scenario and submit to see its simulated outcome.</p>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "</noscript>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "</noscript>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<footer class=\"stack text-sm\" id=\"source-build\" data-source-head=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<footer class=\"stack text-sm\" id=\"source-build\" data-source-head=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(source.Commit)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 99, Col: 84}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 103, Col: 84}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "\" data-source-fingerprint=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "\" data-source-fingerprint=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(source.Fingerprint)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 99, Col: 131}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 103, Col: 131}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "\" data-source-dirty=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "\" data-source-dirty=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(source.Dirty)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 99, Col: 166}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 103, Col: 166}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "\"><p>Source: <code>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "\"><p>Source: <code>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(source.Commit)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 100, Col: 37}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 104, Col: 37}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</code>. Branch: ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "</code>. Branch: ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(source.Branch)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 100, Col: 71}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 104, Col: 71}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, ".</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, ".</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if source.Dirty {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<p>Dirty build: the fingerprint identifies these uncommitted bytes.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<p>Dirty build: the fingerprint identifies these uncommitted bytes.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<p>Clean checkout build.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<p>Clean checkout build.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<details><summary>Build provenance</summary><p>Checkout: ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<details><summary>Build provenance</summary><p>Checkout: ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(source.Checkout)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 106, Col: 79}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 110, Col: 79}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</p><p>Fingerprint: ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</p><p>Fingerprint: ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var17 string
 		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(source.Fingerprint)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 106, Col: 121}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 110, Col: 121}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</p><p>Live Wires: ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</p><p>Live Wires: ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var18 string
 		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(source.AssetRevision)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 106, Col: 164}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 110, Col: 164}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</p></details></footer></main></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</p></details></footer></main></body></html>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func pageHeaderActions() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var19 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var19 == nil {
+			templ_7745c5c3_Var19 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<a href=\"#header-action-result\" class=\"button\" data-example-action>Review members</a>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func pageHeaderSupplement() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var20 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var20 == nil {
+			templ_7745c5c3_Var20 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<p class=\"text-sm\">Supplementary content remains owned by the consuming page.</p>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func pageHeaderExample() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var21 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var21 == nil {
+			templ_7745c5c3_Var21 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<section aria-labelledby=\"title-only-heading\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = component.PageHeaderComponent(component.PageHeaderProps{
+			Title:        "Title-only header",
+			Class:        "section section-snug",
+			HeadingAttrs: templ.Attributes{"id": "title-only-heading"},
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "</section><section aria-labelledby=\"lead-heading\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = component.PageHeaderComponent(component.PageHeaderProps{
+			Title:        "A header with a lead",
+			Lead:         "Use the lead for a short introduction that gives people useful context before they reach the page content.",
+			Class:        "section section-snug",
+			HeadingAttrs: templ.Attributes{"id": "lead-heading"},
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "</section><section aria-labelledby=\"actions-heading\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = component.PageHeaderComponent(component.PageHeaderProps{
+			Title:        "Member directory",
+			Class:        "section section-snug",
+			HeadingAttrs: templ.Attributes{"id": "actions-heading"},
+			LayoutClass:  "cluster cluster-between items-end",
+			ContentClass: "prose",
+			Actions:      pageHeaderActions(),
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "</section><section aria-labelledby=\"long-heading\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = component.PageHeaderComponent(component.PageHeaderProps{
+			Title:        "Review the shared decisions and records for your cooperative before making changes",
+			Lead:         "This longer title shows how headings and supporting content reflow at narrower widths.",
+			Class:        "section section-snug",
+			HeadingAttrs: templ.Attributes{"id": "long-heading"},
+			Supplement:   pageHeaderSupplement(),
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "</section><p id=\"header-action-result\">The action link keeps its normal keyboard behavior.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -476,12 +628,12 @@ func saveStatusExample() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var19 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var19 == nil {
-			templ_7745c5c3_Var19 = templ.NopComponent
+		templ_7745c5c3_Var22 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var22 == nil {
+			templ_7745c5c3_Var22 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<div class=\"stack\" data-save-scheme><div data-save-controls hidden><section class=\"stack\" aria-labelledby=\"scheme-heading\"><h2 id=\"scheme-heading\">Color scheme</h2><p>Inherited follows the browser’s color scheme. Light and dark set a local example scheme.</p><div class=\"cluster\" role=\"group\" aria-label=\"Color scheme simulation controls\"><button type=\"button\" class=\"underline\" aria-pressed=\"true\" data-save-scheme-class=\"scheme-default\">Inherited</button> <button type=\"button\" aria-pressed=\"false\" data-save-scheme-class=\"light-mode\">Light</button> <button type=\"button\" aria-pressed=\"false\" data-save-scheme-class=\"scheme-dark\">Dark</button></div></section></div><section class=\"stack\" aria-labelledby=\"save-status-heading\"><h2 id=\"save-status-heading\">Proposal text editor simulation</h2><div class=\"stack stack-compact\"><label for=\"proposal-text\">Proposal text</label> <textarea id=\"proposal-text\" rows=\"4\">A draft paragraph shown for save-status placement.</textarea></div><div class=\"cluster items-baseline\" data-save-editor=\"proposal\"><button type=\"button\">Done editing</button>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<div class=\"stack\" data-save-scheme><div data-save-controls hidden><section class=\"stack\" aria-labelledby=\"scheme-heading\"><h2 id=\"scheme-heading\">Color scheme</h2><p>Inherited follows the browser’s color scheme. Light and dark set a local example scheme.</p><div class=\"cluster\" role=\"group\" aria-label=\"Color scheme simulation controls\"><button type=\"button\" class=\"underline\" aria-pressed=\"true\" data-save-scheme-class=\"scheme-default\">Inherited</button> <button type=\"button\" aria-pressed=\"false\" data-save-scheme-class=\"light-mode\">Light</button> <button type=\"button\" aria-pressed=\"false\" data-save-scheme-class=\"scheme-dark\">Dark</button></div></section></div><section class=\"stack\" aria-labelledby=\"save-status-heading\"><h2 id=\"save-status-heading\">Proposal text editor simulation</h2><div class=\"stack stack-compact\"><label for=\"proposal-text\">Proposal text</label> <textarea id=\"proposal-text\" rows=\"4\">A draft paragraph shown for save-status placement.</textarea></div><div class=\"cluster items-baseline\" data-save-editor=\"proposal\"><button type=\"button\">Done editing</button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -489,7 +641,7 @@ func saveStatusExample() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "</div><div data-save-controls hidden><div class=\"cluster\" role=\"group\" aria-label=\"Proposal save presentation simulations\"><button type=\"button\" data-save-demo=\"proposal\" data-state=\"dirty\" data-label=\"Unsaved changes\" data-support=\"Your latest edit has not been confirmed. Simulation only.\">Edit</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"saving\" data-label=\"Saving…\" data-support=\"The host has started a save. Simulation only.\">Saving</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"saved\" data-label=\"Draft saved\" data-support=\"The host confirmed this draft. Simulation only.\">Confirm save</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"saving\" data-label=\"Saving…\" data-support=\"A save is pending. Simulation only.\">Start pending save</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"dirty\" data-label=\"Unsaved changes\" data-support=\"A save is pending, and newer edits have arrived. Simulation only.\">Edit while save is pending</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"dirty\" data-label=\"Unsaved changes\" data-support=\"An older completion arrived while newer edits remain unsaved. Simulation only.\">Older completion; newer edits remain</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"failed\" data-label=\"Couldn’t save draft\" data-support=\"The host rejected this save. Use the separate recovery action. Simulation only.\">Failed save</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"unknown\" data-support=\"The host cannot confirm the outcome. Simulation only.\">Unknown outcome</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"saved\" data-label=\"Text saved\" data-support=\"Rules and collaborators still need saving. Simulation only.\">Text saved; settings pending</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"saved\" data-label=\"Text saved\" data-support=\"The text in this editor has been confirmed, while the longer rules, collaborators and other organization settings remain pending. Simulation only.\">Long supporting text</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"ready\" data-label=\"Ready\" data-support=\"No new save has been confirmed.\">Reset status</button></div></div></section><section class=\"stack\" aria-labelledby=\"second-save-heading\"><h2 id=\"second-save-heading\">Second independent editor</h2><div class=\"stack stack-compact\"><label for=\"second-editor-text\">Meeting note</label> <textarea id=\"second-editor-text\" rows=\"3\">A separate editor with its own status region.</textarea></div><div class=\"cluster items-baseline\" data-save-editor=\"meeting\"><button type=\"button\">Done editing</button>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "</div><div data-save-controls hidden><div class=\"cluster\" role=\"group\" aria-label=\"Proposal save presentation simulations\"><button type=\"button\" data-save-demo=\"proposal\" data-state=\"dirty\" data-label=\"Unsaved changes\" data-support=\"Your latest edit has not been confirmed. Simulation only.\">Edit</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"saving\" data-label=\"Saving…\" data-support=\"The host has started a save. Simulation only.\">Saving</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"saved\" data-label=\"Draft saved\" data-support=\"The host confirmed this draft. Simulation only.\">Confirm save</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"saving\" data-label=\"Saving…\" data-support=\"A save is pending. Simulation only.\">Start pending save</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"dirty\" data-label=\"Unsaved changes\" data-support=\"A save is pending, and newer edits have arrived. Simulation only.\">Edit while save is pending</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"dirty\" data-label=\"Unsaved changes\" data-support=\"An older completion arrived while newer edits remain unsaved. Simulation only.\">Older completion; newer edits remain</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"failed\" data-label=\"Couldn’t save draft\" data-support=\"The host rejected this save. Use the separate recovery action. Simulation only.\">Failed save</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"unknown\" data-support=\"The host cannot confirm the outcome. Simulation only.\">Unknown outcome</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"saved\" data-label=\"Text saved\" data-support=\"Rules and collaborators still need saving. Simulation only.\">Text saved; settings pending</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"saved\" data-label=\"Text saved\" data-support=\"The text in this editor has been confirmed, while the longer rules, collaborators and other organization settings remain pending. Simulation only.\">Long supporting text</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"ready\" data-label=\"Ready\" data-support=\"No new save has been confirmed.\">Reset status</button></div></div></section><section class=\"stack\" aria-labelledby=\"second-save-heading\"><h2 id=\"second-save-heading\">Second independent editor</h2><div class=\"stack stack-compact\"><label for=\"second-editor-text\">Meeting note</label> <textarea id=\"second-editor-text\" rows=\"3\">A separate editor with its own status region.</textarea></div><div class=\"cluster items-baseline\" data-save-editor=\"meeting\"><button type=\"button\">Done editing</button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -497,7 +649,7 @@ func saveStatusExample() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "</div><div data-save-controls hidden><div class=\"cluster\" role=\"group\" aria-label=\"Meeting note save presentation simulations\"><button type=\"button\" data-save-demo=\"meeting\" data-state=\"saved\" data-label=\"Draft saved\" data-support=\"Only this editor is confirmed saved. Simulation only.\">Confirm meeting note</button> <button type=\"button\" data-save-demo=\"meeting\" data-state=\"dirty\" data-label=\"Unsaved changes\" data-support=\"Only this editor has unsaved changes. Simulation only.\">Edit meeting note</button></div></div></section><section class=\"stack\" aria-labelledby=\"save-contract-heading\"><h2 id=\"save-contract-heading\">One status region per editor</h2><p>The host supplies state and scope-aware text. Essential supporting feedback stays in that same atomic region. Publish, retry and Done editing controls stay outside it. These controls change presentation only; they do not save.</p></section></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "</div><div data-save-controls hidden><div class=\"cluster\" role=\"group\" aria-label=\"Meeting note save presentation simulations\"><button type=\"button\" data-save-demo=\"meeting\" data-state=\"saved\" data-label=\"Draft saved\" data-support=\"Only this editor is confirmed saved. Simulation only.\">Confirm meeting note</button> <button type=\"button\" data-save-demo=\"meeting\" data-state=\"dirty\" data-label=\"Unsaved changes\" data-support=\"Only this editor has unsaved changes. Simulation only.\">Edit meeting note</button></div></div></section><section class=\"stack\" aria-labelledby=\"save-contract-heading\"><h2 id=\"save-contract-heading\">One status region per editor</h2><p>The host supplies state and scope-aware text. Essential supporting feedback stays in that same atomic region. Publish, retry and Done editing controls stay outside it. These controls change presentation only; they do not save.</p></section></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -521,12 +673,12 @@ func sortableExample(order []string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var20 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var20 == nil {
-			templ_7745c5c3_Var20 = templ.NopComponent
+		templ_7745c5c3_Var23 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var23 == nil {
+			templ_7745c5c3_Var23 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Var21 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var24 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -538,12 +690,12 @@ func sortableExample(order []string) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<ol data-sortable-list>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "<ol data-sortable-list>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			for i, id := range order {
-				templ_7745c5c3_Var22 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+				templ_7745c5c3_Var25 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 					templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 					templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 					if !templ_7745c5c3_IsBuffer {
@@ -555,20 +707,20 @@ func sortableExample(order []string) templ.Component {
 						}()
 					}
 					ctx = templ.InitializeContext(ctx)
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<span data-sortable-content>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "<span data-sortable-content>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var23 string
-					templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(itemNames[id])
+					var templ_7745c5c3_Var26 string
+					templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(itemNames[id])
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 181, Col: 48}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 231, Col: 48}
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "</span> <span data-sortable-actions>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 62, "</span> <span data-sortable-actions>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -584,24 +736,24 @@ func sortableExample(order []string) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "</span>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "</span>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					return nil
 				})
-				templ_7745c5c3_Err = component.SortableItemComponent(component.SortableItemProps{ItemID: id, Label: itemNames[id]}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var22), templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = component.SortableItemComponent(component.SortableItemProps{ItemID: id, Label: itemNames[id]}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var25), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "</ol>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "</ol>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = component.SortableListComponent(component.SortableListProps{ID: "demo-sortable", Label: "Review reading order", Variant: "cards"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var21), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = component.SortableListComponent(component.SortableListProps{ID: "demo-sortable", Label: "Review reading order", Variant: "cards"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var24), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -625,25 +777,25 @@ func orderMetadata(order []string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var24 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var24 == nil {
-			templ_7745c5c3_Var24 = templ.NopComponent
+		templ_7745c5c3_Var27 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var27 == nil {
+			templ_7745c5c3_Var27 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<input type=\"hidden\" name=\"order\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 65, "<input type=\"hidden\" name=\"order\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var25 string
-		templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(strings.Join(order, ","))
+		var templ_7745c5c3_Var28 string
+		templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(strings.Join(order, ","))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 194, Col: 67}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 244, Col: 67}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -680,12 +832,12 @@ func inlineExample() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var26 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var26 == nil {
-			templ_7745c5c3_Var26 = templ.NopComponent
+		templ_7745c5c3_Var29 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var29 == nil {
+			templ_7745c5c3_Var29 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "<p>Use fictional text. Native submission carries text in the page URL. Enhanced confirmation is a simulation and resets on reload.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 67, "<p>Use fictional text. Native submission carries text in the page URL. Enhanced confirmation is a simulation and resets on reload.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -1,0 +1,18 @@
+package consumer
+
+import "github.com/Design-Machines-Studio/livewires-templ/component"
+
+templ actions() {
+	<a href="/members" class="button">View members</a>
+}
+
+// PageHeaderPage compiles as a separate module that can only import public packages.
+templ PageHeaderPage() {
+	@component.PageHeaderComponent(component.PageHeaderProps{
+		Title: "External fixture page",
+		Lead: "Rendered through the published component package API.",
+		Class: "section section-snug",
+		LayoutClass: "cluster cluster-between items-end",
+		Actions: actions(),
+	})
+}
