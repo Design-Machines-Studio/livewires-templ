@@ -122,6 +122,21 @@ templ pageHeaderSupplement() {
 	<p class="text-sm">Supplementary content remains owned by the consuming page.</p>
 }
 
+templ pageHeaderCount() {
+	<span id="members-count" class="text-muted text-base font-normal">(27)</span>
+}
+
+templ pageHeaderNetworkActions() {
+	<button type="button" class="button button--outline">Refresh network</button>
+}
+
+templ pageHeaderNetworkFooter() {
+	<div class="cluster cluster-between items-baseline" data-header-footer>
+		<p class="lead mb-0">The size and shape of the connected network.</p>
+		<p class="text-xs mb-0">Last synced: <time datetime="2026-10-15T04:00:00Z">October 15, 2026</time></p>
+	</div>
+}
+
 templ pageHeaderExample() {
 	<section aria-labelledby="title-only-heading">
 		@component.PageHeaderComponent(component.PageHeaderProps{
@@ -141,6 +156,7 @@ templ pageHeaderExample() {
 	<section aria-labelledby="actions-heading">
 		@component.PageHeaderComponent(component.PageHeaderProps{
 			Title: "Member directory",
+			TitleSuffix: pageHeaderCount(),
 			Class: "section section-snug",
 			HeadingAttrs: templ.Attributes{"id": "actions-heading"},
 			LayoutClass: "cluster cluster-between items-end",
@@ -155,6 +171,16 @@ templ pageHeaderExample() {
 			Class: "section section-snug",
 			HeadingAttrs: templ.Attributes{"id": "long-heading"},
 			Supplement: pageHeaderSupplement(),
+		})
+	</section>
+	<section aria-labelledby="network-heading">
+		@component.PageHeaderComponent(component.PageHeaderProps{
+			Title: "Network",
+			Class: "section section-snug stack stack-half",
+			HeadingAttrs: templ.Attributes{"id": "network-heading"},
+			LayoutClass: "cluster cluster-between items-baseline",
+			Actions: pageHeaderNetworkActions(),
+			Footer: pageHeaderNetworkFooter(),
 		})
 	</section>
 	<p id="header-action-result">The action link keeps its normal keyboard behavior.</p>

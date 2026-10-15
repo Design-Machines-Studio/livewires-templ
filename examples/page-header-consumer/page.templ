@@ -6,13 +6,23 @@ templ actions() {
 	<a href="/members" class="button">View members</a>
 }
 
+templ memberCount() {
+	<span id="fixture-member-count">(12)</span>
+}
+
+templ syncStatus() {
+	<div class="cluster cluster-between items-baseline"><p class="lead">Shared network.</p><p>Last synced: today</p></div>
+}
+
 // PageHeaderPage compiles as a separate module that can only import public packages.
 templ PageHeaderPage() {
 	@component.PageHeaderComponent(component.PageHeaderProps{
 		Title: "External fixture page",
+		TitleSuffix: memberCount(),
 		Lead: "Rendered through the published component package API.",
 		Class: "section section-snug",
 		LayoutClass: "cluster cluster-between items-end",
 		Actions: actions(),
+		Footer: syncStatus(),
 	})
 }

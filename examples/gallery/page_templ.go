@@ -529,7 +529,7 @@ func pageHeaderSupplement() templ.Component {
 	})
 }
 
-func pageHeaderExample() templ.Component {
+func pageHeaderCount() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -550,7 +550,94 @@ func pageHeaderExample() templ.Component {
 			templ_7745c5c3_Var21 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<section aria-labelledby=\"title-only-heading\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<span id=\"members-count\" class=\"text-muted text-base font-normal\">(27)</span>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func pageHeaderNetworkActions() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var22 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var22 == nil {
+			templ_7745c5c3_Var22 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<button type=\"button\" class=\"button button--outline\">Refresh network</button>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func pageHeaderNetworkFooter() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var23 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var23 == nil {
+			templ_7745c5c3_Var23 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<div class=\"cluster cluster-between items-baseline\" data-header-footer><p class=\"lead mb-0\">The size and shape of the connected network.</p><p class=\"text-xs mb-0\">Last synced: <time datetime=\"2026-10-15T04:00:00Z\">October 15, 2026</time></p></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func pageHeaderExample() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var24 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var24 == nil {
+			templ_7745c5c3_Var24 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<section aria-labelledby=\"title-only-heading\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -562,7 +649,7 @@ func pageHeaderExample() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "</section><section aria-labelledby=\"lead-heading\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "</section><section aria-labelledby=\"lead-heading\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -575,12 +662,13 @@ func pageHeaderExample() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "</section><section aria-labelledby=\"actions-heading\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "</section><section aria-labelledby=\"actions-heading\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = component.PageHeaderComponent(component.PageHeaderProps{
 			Title:        "Member directory",
+			TitleSuffix:  pageHeaderCount(),
 			Class:        "section section-snug",
 			HeadingAttrs: templ.Attributes{"id": "actions-heading"},
 			LayoutClass:  "cluster cluster-between items-end",
@@ -590,7 +678,7 @@ func pageHeaderExample() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "</section><section aria-labelledby=\"long-heading\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "</section><section aria-labelledby=\"long-heading\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -604,7 +692,22 @@ func pageHeaderExample() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "</section><p id=\"header-action-result\">The action link keeps its normal keyboard behavior.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "</section><section aria-labelledby=\"network-heading\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = component.PageHeaderComponent(component.PageHeaderProps{
+			Title:        "Network",
+			Class:        "section section-snug stack stack-half",
+			HeadingAttrs: templ.Attributes{"id": "network-heading"},
+			LayoutClass:  "cluster cluster-between items-baseline",
+			Actions:      pageHeaderNetworkActions(),
+			Footer:       pageHeaderNetworkFooter(),
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "</section><p id=\"header-action-result\">The action link keeps its normal keyboard behavior.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -628,12 +731,12 @@ func saveStatusExample() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var22 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var22 == nil {
-			templ_7745c5c3_Var22 = templ.NopComponent
+		templ_7745c5c3_Var25 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var25 == nil {
+			templ_7745c5c3_Var25 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<div class=\"stack\" data-save-scheme><div data-save-controls hidden><section class=\"stack\" aria-labelledby=\"scheme-heading\"><h2 id=\"scheme-heading\">Color scheme</h2><p>Inherited follows the browser’s color scheme. Light and dark set a local example scheme.</p><div class=\"cluster\" role=\"group\" aria-label=\"Color scheme simulation controls\"><button type=\"button\" class=\"underline\" aria-pressed=\"true\" data-save-scheme-class=\"scheme-default\">Inherited</button> <button type=\"button\" aria-pressed=\"false\" data-save-scheme-class=\"light-mode\">Light</button> <button type=\"button\" aria-pressed=\"false\" data-save-scheme-class=\"scheme-dark\">Dark</button></div></section></div><section class=\"stack\" aria-labelledby=\"save-status-heading\"><h2 id=\"save-status-heading\">Proposal text editor simulation</h2><div class=\"stack stack-compact\"><label for=\"proposal-text\">Proposal text</label> <textarea id=\"proposal-text\" rows=\"4\">A draft paragraph shown for save-status placement.</textarea></div><div class=\"cluster items-baseline\" data-save-editor=\"proposal\"><button type=\"button\">Done editing</button>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "<div class=\"stack\" data-save-scheme><div data-save-controls hidden><section class=\"stack\" aria-labelledby=\"scheme-heading\"><h2 id=\"scheme-heading\">Color scheme</h2><p>Inherited follows the browser’s color scheme. Light and dark set a local example scheme.</p><div class=\"cluster\" role=\"group\" aria-label=\"Color scheme simulation controls\"><button type=\"button\" class=\"underline\" aria-pressed=\"true\" data-save-scheme-class=\"scheme-default\">Inherited</button> <button type=\"button\" aria-pressed=\"false\" data-save-scheme-class=\"light-mode\">Light</button> <button type=\"button\" aria-pressed=\"false\" data-save-scheme-class=\"scheme-dark\">Dark</button></div></section></div><section class=\"stack\" aria-labelledby=\"save-status-heading\"><h2 id=\"save-status-heading\">Proposal text editor simulation</h2><div class=\"stack stack-compact\"><label for=\"proposal-text\">Proposal text</label> <textarea id=\"proposal-text\" rows=\"4\">A draft paragraph shown for save-status placement.</textarea></div><div class=\"cluster items-baseline\" data-save-editor=\"proposal\"><button type=\"button\">Done editing</button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -641,7 +744,7 @@ func saveStatusExample() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "</div><div data-save-controls hidden><div class=\"cluster\" role=\"group\" aria-label=\"Proposal save presentation simulations\"><button type=\"button\" data-save-demo=\"proposal\" data-state=\"dirty\" data-label=\"Unsaved changes\" data-support=\"Your latest edit has not been confirmed. Simulation only.\">Edit</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"saving\" data-label=\"Saving…\" data-support=\"The host has started a save. Simulation only.\">Saving</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"saved\" data-label=\"Draft saved\" data-support=\"The host confirmed this draft. Simulation only.\">Confirm save</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"saving\" data-label=\"Saving…\" data-support=\"A save is pending. Simulation only.\">Start pending save</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"dirty\" data-label=\"Unsaved changes\" data-support=\"A save is pending, and newer edits have arrived. Simulation only.\">Edit while save is pending</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"dirty\" data-label=\"Unsaved changes\" data-support=\"An older completion arrived while newer edits remain unsaved. Simulation only.\">Older completion; newer edits remain</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"failed\" data-label=\"Couldn’t save draft\" data-support=\"The host rejected this save. Use the separate recovery action. Simulation only.\">Failed save</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"unknown\" data-support=\"The host cannot confirm the outcome. Simulation only.\">Unknown outcome</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"saved\" data-label=\"Text saved\" data-support=\"Rules and collaborators still need saving. Simulation only.\">Text saved; settings pending</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"saved\" data-label=\"Text saved\" data-support=\"The text in this editor has been confirmed, while the longer rules, collaborators and other organization settings remain pending. Simulation only.\">Long supporting text</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"ready\" data-label=\"Ready\" data-support=\"No new save has been confirmed.\">Reset status</button></div></div></section><section class=\"stack\" aria-labelledby=\"second-save-heading\"><h2 id=\"second-save-heading\">Second independent editor</h2><div class=\"stack stack-compact\"><label for=\"second-editor-text\">Meeting note</label> <textarea id=\"second-editor-text\" rows=\"3\">A separate editor with its own status region.</textarea></div><div class=\"cluster items-baseline\" data-save-editor=\"meeting\"><button type=\"button\">Done editing</button>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 62, "</div><div data-save-controls hidden><div class=\"cluster\" role=\"group\" aria-label=\"Proposal save presentation simulations\"><button type=\"button\" data-save-demo=\"proposal\" data-state=\"dirty\" data-label=\"Unsaved changes\" data-support=\"Your latest edit has not been confirmed. Simulation only.\">Edit</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"saving\" data-label=\"Saving…\" data-support=\"The host has started a save. Simulation only.\">Saving</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"saved\" data-label=\"Draft saved\" data-support=\"The host confirmed this draft. Simulation only.\">Confirm save</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"saving\" data-label=\"Saving…\" data-support=\"A save is pending. Simulation only.\">Start pending save</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"dirty\" data-label=\"Unsaved changes\" data-support=\"A save is pending, and newer edits have arrived. Simulation only.\">Edit while save is pending</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"dirty\" data-label=\"Unsaved changes\" data-support=\"An older completion arrived while newer edits remain unsaved. Simulation only.\">Older completion; newer edits remain</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"failed\" data-label=\"Couldn’t save draft\" data-support=\"The host rejected this save. Use the separate recovery action. Simulation only.\">Failed save</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"unknown\" data-support=\"The host cannot confirm the outcome. Simulation only.\">Unknown outcome</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"saved\" data-label=\"Text saved\" data-support=\"Rules and collaborators still need saving. Simulation only.\">Text saved; settings pending</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"saved\" data-label=\"Text saved\" data-support=\"The text in this editor has been confirmed, while the longer rules, collaborators and other organization settings remain pending. Simulation only.\">Long supporting text</button> <button type=\"button\" data-save-demo=\"proposal\" data-state=\"ready\" data-label=\"Ready\" data-support=\"No new save has been confirmed.\">Reset status</button></div></div></section><section class=\"stack\" aria-labelledby=\"second-save-heading\"><h2 id=\"second-save-heading\">Second independent editor</h2><div class=\"stack stack-compact\"><label for=\"second-editor-text\">Meeting note</label> <textarea id=\"second-editor-text\" rows=\"3\">A separate editor with its own status region.</textarea></div><div class=\"cluster items-baseline\" data-save-editor=\"meeting\"><button type=\"button\">Done editing</button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -649,7 +752,7 @@ func saveStatusExample() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "</div><div data-save-controls hidden><div class=\"cluster\" role=\"group\" aria-label=\"Meeting note save presentation simulations\"><button type=\"button\" data-save-demo=\"meeting\" data-state=\"saved\" data-label=\"Draft saved\" data-support=\"Only this editor is confirmed saved. Simulation only.\">Confirm meeting note</button> <button type=\"button\" data-save-demo=\"meeting\" data-state=\"dirty\" data-label=\"Unsaved changes\" data-support=\"Only this editor has unsaved changes. Simulation only.\">Edit meeting note</button></div></div></section><section class=\"stack\" aria-labelledby=\"save-contract-heading\"><h2 id=\"save-contract-heading\">One status region per editor</h2><p>The host supplies state and scope-aware text. Essential supporting feedback stays in that same atomic region. Publish, retry and Done editing controls stay outside it. These controls change presentation only; they do not save.</p></section></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "</div><div data-save-controls hidden><div class=\"cluster\" role=\"group\" aria-label=\"Meeting note save presentation simulations\"><button type=\"button\" data-save-demo=\"meeting\" data-state=\"saved\" data-label=\"Draft saved\" data-support=\"Only this editor is confirmed saved. Simulation only.\">Confirm meeting note</button> <button type=\"button\" data-save-demo=\"meeting\" data-state=\"dirty\" data-label=\"Unsaved changes\" data-support=\"Only this editor has unsaved changes. Simulation only.\">Edit meeting note</button></div></div></section><section class=\"stack\" aria-labelledby=\"save-contract-heading\"><h2 id=\"save-contract-heading\">One status region per editor</h2><p>The host supplies state and scope-aware text. Essential supporting feedback stays in that same atomic region. Publish, retry and Done editing controls stay outside it. These controls change presentation only; they do not save.</p></section></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -673,12 +776,12 @@ func sortableExample(order []string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var23 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var23 == nil {
-			templ_7745c5c3_Var23 = templ.NopComponent
+		templ_7745c5c3_Var26 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var26 == nil {
+			templ_7745c5c3_Var26 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Var24 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var27 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -690,12 +793,12 @@ func sortableExample(order []string) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "<ol data-sortable-list>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "<ol data-sortable-list>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			for i, id := range order {
-				templ_7745c5c3_Var25 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+				templ_7745c5c3_Var28 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 					templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 					templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 					if !templ_7745c5c3_IsBuffer {
@@ -707,20 +810,20 @@ func sortableExample(order []string) templ.Component {
 						}()
 					}
 					ctx = templ.InitializeContext(ctx)
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "<span data-sortable-content>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 65, "<span data-sortable-content>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var26 string
-					templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(itemNames[id])
+					var templ_7745c5c3_Var29 string
+					templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(itemNames[id])
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 231, Col: 48}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 257, Col: 48}
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 62, "</span> <span data-sortable-actions>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, "</span> <span data-sortable-actions>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -736,24 +839,24 @@ func sortableExample(order []string) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "</span>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 67, "</span>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					return nil
 				})
-				templ_7745c5c3_Err = component.SortableItemComponent(component.SortableItemProps{ItemID: id, Label: itemNames[id]}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var25), templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = component.SortableItemComponent(component.SortableItemProps{ItemID: id, Label: itemNames[id]}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var28), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "</ol>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 68, "</ol>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = component.SortableListComponent(component.SortableListProps{ID: "demo-sortable", Label: "Review reading order", Variant: "cards"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var24), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = component.SortableListComponent(component.SortableListProps{ID: "demo-sortable", Label: "Review reading order", Variant: "cards"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var27), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -777,25 +880,25 @@ func orderMetadata(order []string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var27 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var27 == nil {
-			templ_7745c5c3_Var27 = templ.NopComponent
+		templ_7745c5c3_Var30 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var30 == nil {
+			templ_7745c5c3_Var30 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 65, "<input type=\"hidden\" name=\"order\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 69, "<input type=\"hidden\" name=\"order\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var28 string
-		templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(strings.Join(order, ","))
+		var templ_7745c5c3_Var31 string
+		templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(strings.Join(order, ","))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 244, Col: 67}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/page.templ`, Line: 270, Col: 67}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 70, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -832,12 +935,12 @@ func inlineExample() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var29 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var29 == nil {
-			templ_7745c5c3_Var29 = templ.NopComponent
+		templ_7745c5c3_Var32 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var32 == nil {
+			templ_7745c5c3_Var32 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 67, "<p>Use fictional text. Native submission carries text in the page URL. Enhanced confirmation is a simulation and resets on reload.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 71, "<p>Use fictional text. Native submission carries text in the page URL. Enhanced confirmation is a simulation and resets on reload.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

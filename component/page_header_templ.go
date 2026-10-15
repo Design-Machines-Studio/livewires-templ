@@ -10,16 +10,25 @@ import templruntime "github.com/a-h/templ/runtime"
 
 // PageHeaderProps configures a semantic page heading and its optional content.
 type PageHeaderProps struct {
-	Title        string
-	Lead         string
-	LeadClass    string
+	Title string
+	// TitleSuffix adds caller-owned inline content, such as a live member count,
+	// after Title inside the H1. The component inserts a separating space.
+	TitleSuffix templ.Component
+	Lead        string
+	LeadClass   string
+	// HeadingAttrs is developer-controlled only; never use untrusted attribute names.
 	HeadingAttrs templ.Attributes
 	Actions      templ.Component
-	Supplement   templ.Component
+	// Supplement stays with the title and lead, including in an action layout.
+	Supplement templ.Component
+	// Footer renders after the action layout as a direct header child. It can
+	// contain a separate lead/status row; the caller owns its markup and layout.
+	Footer       templ.Component
 	LayoutClass  string
 	ContentClass string
 	Class        string
-	Attrs        templ.Attributes
+	// Attrs is developer-controlled only; never use untrusted attribute names.
+	Attrs templ.Attributes
 }
 
 // PageHeaderComponent renders a page header with an H1, optional lead, actions,
@@ -115,6 +124,12 @@ func PageHeaderComponent(props PageHeaderProps) templ.Component {
 			}
 		} else {
 			templ_7745c5c3_Err = PageHeaderText(props).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		if props.Footer != nil {
+			templ_7745c5c3_Err = props.Footer.Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -237,9 +252,13 @@ func PageHeaderText(props PageHeaderProps) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(props.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/page_header.templ`, Line: 49, Col: 44}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/page_header.templ`, Line: 61, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = pageHeaderTitleSuffix(props.TitleSuffix).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -256,7 +275,7 @@ func PageHeaderText(props PageHeaderProps) templ.Component {
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(props.Lead)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/page_header.templ`, Line: 52, Col: 31}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/page_header.templ`, Line: 64, Col: 31}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -292,7 +311,7 @@ func PageHeaderText(props PageHeaderProps) templ.Component {
 				var templ_7745c5c3_Var14 string
 				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(props.Lead)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/page_header.templ`, Line: 54, Col: 44}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/page_header.templ`, Line: 66, Col: 44}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
@@ -306,6 +325,46 @@ func PageHeaderText(props PageHeaderProps) templ.Component {
 		}
 		if props.Supplement != nil {
 			templ_7745c5c3_Err = props.Supplement.Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		return nil
+	})
+}
+
+func pageHeaderTitleSuffix(suffix templ.Component) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var15 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var15 == nil {
+			templ_7745c5c3_Var15 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		if suffix != nil {
+			var templ_7745c5c3_Var16 string
+			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(" ")
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/page_header.templ`, Line: 76, Col: 7}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = suffix.Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -331,9 +390,9 @@ func PageHeader(title string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var15 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var15 == nil {
-			templ_7745c5c3_Var15 = templ.NopComponent
+		templ_7745c5c3_Var17 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var17 == nil {
+			templ_7745c5c3_Var17 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = PageHeaderComponent(PageHeaderProps{Title: title}).Render(ctx, templ_7745c5c3_Buffer)

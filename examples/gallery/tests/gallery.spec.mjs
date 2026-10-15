@@ -50,7 +50,12 @@ for (const [device, viewport] of [['desktop', { width: 1440, height: 1000 }], ['
     await expect(page.getByRole('region', { name: 'Title-only header' })).toBeVisible();
     await expect(page.getByRole('heading', { level: 1, name: 'Title-only header' })).toBeVisible();
     await expect(page.getByRole('heading', { level: 1, name: 'A header with a lead' })).toBeVisible();
-    await expect(page.getByRole('heading', { level: 1, name: 'Member directory' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'Member directory (27)' })).toBeVisible();
+    await expect(page.locator('#actions-heading #members-count')).toHaveText('(27)');
+    const network = page.getByRole('region', { name: 'Network', exact: true });
+    await expect(network.locator('header > [data-header-footer]')).toContainText('Last synced:');
+    const networkRows = await network.locator('header > div').evaluateAll(rows => rows.map(row => row.getBoundingClientRect().toJSON()));
+    expect(networkRows[1].top).toBeGreaterThanOrEqual(networkRows[0].bottom);
     const longHeading = page.getByRole('heading', { level: 1, name: 'Review the shared decisions and records for your cooperative before making changes' });
     await expect(longHeading).toBeVisible();
     await expect(page.getByText('Supplementary content remains owned by the consuming page.')).toBeVisible();
@@ -60,7 +65,7 @@ for (const [device, viewport] of [['desktop', { width: 1440, height: 1000 }], ['
 
     const action = page.getByRole('link', { name: 'Review members' });
     const titleAndAction = await Promise.all([
-      page.getByRole('heading', { level: 1, name: 'Member directory' }).boundingBox(),
+      page.getByRole('heading', { level: 1, name: 'Member directory (27)' }).boundingBox(),
       action.boundingBox(),
     ]);
     if (device === 'mobile') {
@@ -240,6 +245,7 @@ test('native fallback: content, URL-carried move and simulated response', async 
       await expect(page.locator('h1')).toHaveText(name);
     }
   }
+  await page.goto(process.env.GALLERY_URL + '/examples/save-status');
   await expect(page.locator('[data-save-controls]')).toHaveCount(3);
   for (const controls of await page.locator('[data-save-controls]').all()) await expect(controls).toBeHidden();
   await expect(page.locator('#proposal-text')).toBeVisible();
