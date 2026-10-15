@@ -23,7 +23,8 @@ inputs, generates and builds in Docker, then publishes an unused Docker-assigned
 port on `127.0.0.1`. Read the actual `url` from status; no fixed port is reserved
 or taken over. The index is `/`; example URLs are `/examples/relative-time`,
 `/examples/copy`, `/examples/loading`, `/examples/toast`, `/examples/sortable`,
-`/examples/inline-edit`, `/examples/combobox` and `/examples/save-status`.
+`/examples/inline-edit`, `/examples/combobox`, `/examples/save-status` and
+`/examples/page-header`.
 
 The runner uses the host-selected user installation from Claude's
 `installed_plugins.json`, checks its plugin identity/version, and invokes the

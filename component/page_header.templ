@@ -1,0 +1,83 @@
+package component
+
+// PageHeaderProps configures a semantic page heading and its optional content.
+type PageHeaderProps struct {
+	Title        string
+	// TitleSuffix adds caller-owned inline content, such as a live member count,
+	// after Title inside the H1. The component inserts a separating space.
+	TitleSuffix  templ.Component
+	Lead         string
+	LeadClass    string
+	// HeadingAttrs is developer-controlled only; never use untrusted attribute names.
+	HeadingAttrs templ.Attributes
+	Actions      templ.Component
+	// Supplement stays with the title and lead, including in an action layout.
+	Supplement   templ.Component
+	// Footer renders after the action layout as a direct header child. It can
+	// contain a separate lead/status row; the caller owns its markup and layout.
+	Footer       templ.Component
+	LayoutClass  string
+	ContentClass string
+	Class        string
+	// Attrs is developer-controlled only; never use untrusted attribute names.
+	Attrs        templ.Attributes
+}
+
+// PageHeaderComponent renders a page header with an H1, optional lead, actions,
+// and supplementary content. Consumers provide any layout classes they need.
+templ PageHeaderComponent(props PageHeaderProps) {
+	<header class={ props.Class } { props.Attrs... }>
+		if props.Actions != nil {
+			if props.LayoutClass != "" {
+				<div class={ props.LayoutClass }>
+					@pageHeaderActionContent(props)
+				</div>
+			} else {
+				@pageHeaderActionContent(props)
+			}
+		} else {
+			@pageHeaderText(props)
+		}
+		if props.Footer != nil {
+			@props.Footer
+		}
+	</header>
+}
+
+templ pageHeaderActionContent(props PageHeaderProps) {
+	if props.ContentClass != "" {
+		<div class={ props.ContentClass }>
+			@pageHeaderText(props)
+		</div>
+	} else {
+		<div>
+			@pageHeaderText(props)
+		</div>
+	}
+	@props.Actions
+}
+
+templ pageHeaderText(props PageHeaderProps) {
+	<h1 { props.HeadingAttrs... }>{ props.Title }@pageHeaderTitleSuffix(props.TitleSuffix)</h1>
+	if props.Lead != "" {
+		if props.LeadClass == "" {
+			<p class="lead">{ props.Lead }</p>
+		} else {
+			<p class={ props.LeadClass }>{ props.Lead }</p>
+		}
+	}
+	if props.Supplement != nil {
+		@props.Supplement
+	}
+}
+
+templ pageHeaderTitleSuffix(suffix templ.Component) {
+	if suffix != nil {
+		{ " " }@suffix
+	}
+}
+
+// PageHeader renders a title-only page header.
+templ PageHeader(title string) {
+	@PageHeaderComponent(PageHeaderProps{Title: title})
+}
