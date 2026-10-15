@@ -30,13 +30,13 @@ templ PageHeaderComponent(props PageHeaderProps) {
 		if props.Actions != nil {
 			if props.LayoutClass != "" {
 				<div class={ props.LayoutClass }>
-					@PageHeaderActionContent(props)
+					@pageHeaderActionContent(props)
 				</div>
 			} else {
-				@PageHeaderActionContent(props)
+				@pageHeaderActionContent(props)
 			}
 		} else {
-			@PageHeaderText(props)
+			@pageHeaderText(props)
 		}
 		if props.Footer != nil {
 			@props.Footer
@@ -44,20 +44,20 @@ templ PageHeaderComponent(props PageHeaderProps) {
 	</header>
 }
 
-templ PageHeaderActionContent(props PageHeaderProps) {
+templ pageHeaderActionContent(props PageHeaderProps) {
 	if props.ContentClass != "" {
 		<div class={ props.ContentClass }>
-			@PageHeaderText(props)
+			@pageHeaderText(props)
 		</div>
 	} else {
 		<div>
-			@PageHeaderText(props)
+			@pageHeaderText(props)
 		</div>
 	}
 	@props.Actions
 }
 
-templ PageHeaderText(props PageHeaderProps) {
+templ pageHeaderText(props PageHeaderProps) {
 	<h1 { props.HeadingAttrs... }>{ props.Title }@pageHeaderTitleSuffix(props.TitleSuffix)</h1>
 	if props.Lead != "" {
 		if props.LeadClass == "" {

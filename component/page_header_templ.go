@@ -108,7 +108,7 @@ func PageHeaderComponent(props PageHeaderProps) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = PageHeaderActionContent(props).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = pageHeaderActionContent(props).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -117,13 +117,13 @@ func PageHeaderComponent(props PageHeaderProps) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = PageHeaderActionContent(props).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = pageHeaderActionContent(props).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
 		} else {
-			templ_7745c5c3_Err = PageHeaderText(props).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = pageHeaderText(props).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -142,7 +142,7 @@ func PageHeaderComponent(props PageHeaderProps) templ.Component {
 	})
 }
 
-func PageHeaderActionContent(props PageHeaderProps) templ.Component {
+func pageHeaderActionContent(props PageHeaderProps) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -186,7 +186,7 @@ func PageHeaderActionContent(props PageHeaderProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = PageHeaderText(props).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = pageHeaderText(props).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -199,7 +199,7 @@ func PageHeaderActionContent(props PageHeaderProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = PageHeaderText(props).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = pageHeaderText(props).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -216,7 +216,7 @@ func PageHeaderActionContent(props PageHeaderProps) templ.Component {
 	})
 }
 
-func PageHeaderText(props PageHeaderProps) templ.Component {
+func pageHeaderText(props PageHeaderProps) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {

@@ -44,7 +44,7 @@ test('relative time enhances valid date and retains invalid fallback', async ({ 
 });
 
 for (const [device, viewport] of [['desktop', { width: 1440, height: 1000 }], ['mobile', { width: 390, height: 844 }]]) {
-  test(`page header ${device}: content reflows and actions remain keyboard accessible`, async ({ page }) => {
+  test(`page header ${device}: content reflows and actions remain keyboard accessible`, async ({ page }, info) => {
     await page.setViewportSize(viewport);
     await page.goto('/examples/page-header');
     await expect(page.getByRole('region', { name: 'Title-only header' })).toBeVisible();
@@ -77,6 +77,19 @@ for (const [device, viewport] of [['desktop', { width: 1440, height: 1000 }], ['
     }
     await expect(action).toBeFocused();
     await expect(action).toHaveAttribute('href', '#header-action-result');
+    const focusStyle = await action.evaluate(node => {
+      const style = getComputedStyle(node);
+      return { focusVisible: node.matches(':focus-visible'), outlineStyle: style.outlineStyle, outlineWidth: style.outlineWidth, outlineColor: style.outlineColor, boxShadow: style.boxShadow, color: style.color, background: style.backgroundColor };
+    });
+    expect(focusStyle.focusVisible).toBeTruthy();
+    expect(focusStyle.outlineStyle !== 'none' || focusStyle.boxShadow !== 'none').toBeTruthy();
+    await writeFile(info.outputPath('header-accessibility.json'), JSON.stringify({
+      viewport, focusStyle, accessibility: await page.locator('main').ariaSnapshot(),
+      headers: await page.locator('main header').evaluateAll(headers => headers.map(header => ({
+        classes: header.className, rect: header.getBoundingClientRect().toJSON(),
+        children: [...header.children].map(node => ({ tag: node.tagName, classes: node.className, display: getComputedStyle(node).display, wrap: getComputedStyle(node).flexWrap, gap: getComputedStyle(node).gap, rect: node.getBoundingClientRect().toJSON() })),
+      }))),
+    }, null, 2));
   });
 }
 
