@@ -412,7 +412,20 @@ func commentRichContent() templ.Component {
 			templ_7745c5c3_Var15 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<p>The crew shared the revised schedule:</p><ul><li>Replace the cracked tread.</li><li>Photograph the finished repair for the maintenance record.</li></ul><figure><img src=\"/assets/comment-image.jpg\" alt=\"A sample portrait used to check intrinsic media sizing\"><figcaption>The image stays within the comment body.</figcaption></figure><p>Keep the <a href=\"#proposal-comment-42\">proposal comment</a> with the maintenance record.</p><pre tabindex=\"0\" aria-label=\"Repair code example\"><code>repair.status = \"complete\" repair.reviewed_by = \"the next shift\"</code></pre>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<p>The crew shared the revised schedule:</p><ul><li>Replace the cracked tread.</li><li>Photograph the finished repair for the maintenance record.</li></ul><figure><img src=\"/assets/comment-image.jpg\" alt=\"A sample portrait used to check intrinsic media sizing\"><figcaption>The image stays within the comment body.</figcaption></figure><p>Keep the <a href=\"#proposal-comment-42\">proposal comment</a> with the maintenance record.</p><pre tabindex=\"0\" aria-label=\"Repair code example\"><code>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var16 string
+		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs("repair.status = \"complete\"\nrepair.reviewed_by = \"the next shift\"")
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/comments.templ`, Line: 115, Col: 131}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</code></pre>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
