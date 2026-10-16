@@ -104,10 +104,11 @@ for (const width of [1280, 375, 320]) {
     // locked CSS and map the exact producer image to its locked local bytes.
     const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width, height: 1000 } });
     const image = await (await request.get('/assets/comment-image.jpg')).body();
+    const css = await (await request.get('/assets/main.css')).text();
     await context.route('**/img/guide/ludd-avatar.jpg', route => route.fulfill({ body: image, contentType: 'image/jpeg' }));
     const reference = await context.newPage();
     await reference.goto('/assets/comments-reference.html');
-    await reference.addStyleTag({ url: new URL('/assets/main.css', reference.url()).href });
+    await reference.addStyleTag({ content: css });
     const target = await context.newPage();
     await target.goto('/examples/comments');
     const results = [];
