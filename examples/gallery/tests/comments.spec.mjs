@@ -108,7 +108,12 @@ for (const width of [1280, 375, 320]) {
     await context.route('**/img/guide/ludd-avatar.jpg', route => route.fulfill({ body: image, contentType: 'image/jpeg' }));
     const reference = await context.newPage();
     await reference.goto('/assets/comments-reference.html');
-    await reference.addStyleTag({ content: css });
+    // Avoid addStyleTag's load-event Promise: events cannot run with JS disabled.
+    await reference.evaluate(css => {
+      const style = document.createElement('style');
+      style.textContent = css;
+      document.head.append(style);
+    }, css);
     const target = await context.newPage();
     await target.goto('/examples/comments');
     const results = [];
