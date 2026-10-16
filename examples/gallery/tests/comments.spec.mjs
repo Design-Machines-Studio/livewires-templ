@@ -96,3 +96,41 @@ test('comments: no-JavaScript rendering and 200% CSS zoom reflow', async ({ brow
   await writeFile(info.outputPath('zoom-scope.json'), JSON.stringify({ cssZoom: '200%', reflowViewport: 640, nativeBrowserZoomTested: false, screenReaderTested: false }, null, 2));
   await zoomContext.close();
 });
+
+for (const width of [1280, 375, 320]) {
+  test(`comments ${width}px: locked producer reference and component preserve the shared structure`, async ({ browser, request }, info) => {
+    // Render the immutable producer document, not a hand-copied approximation.
+    // Its site-wide JS/includes are outside this comparison. Add only the same
+    // locked CSS and map the exact producer image to its locked local bytes.
+    const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width, height: 1000 } });
+    const image = await (await request.get('/assets/comment-image.jpg')).body();
+    await context.route('**/img/guide/ludd-avatar.jpg', route => route.fulfill({ body: image, contentType: 'image/jpeg' }));
+    const reference = await context.newPage();
+    await reference.goto('/assets/comments-reference.html');
+    await reference.addStyleTag({ url: new URL('/assets/main.css', reference.url()).href });
+    const target = await context.newPage();
+    await target.goto('/examples/comments');
+    const results = [];
+    for (const id of ['proposal-comment-42', 'post-815']) {
+      const inspect = node => ({
+        tag: node.tagName,
+        hooks: [...node.querySelectorAll('[class]')].map(n => ({ tag: n.tagName, hooks: [...n.classList].filter(c => c === 'author' || c.startsWith('comment-')) })).filter(n => n.hooks.length),
+        display: getComputedStyle(node).display,
+        gap: getComputedStyle(node).gap,
+        direction: getComputedStyle(node).flexDirection,
+        text: node.querySelector('.comment-body').textContent.trim(),
+        time: node.querySelector('time').dateTime,
+        linkedTime: !!node.querySelector('a.comment-permalink > time.comment-timestamp'),
+        namedAvatar: node.querySelector('.comment-avatar').getAttribute('aria-label'),
+      });
+      const source = await reference.locator('#' + id).evaluate(inspect);
+      const actual = await target.locator('#' + id).evaluate(inspect);
+      expect(actual).toEqual(source);
+      await reference.locator('#' + id).screenshot({ path: info.outputPath(`${id}-reference-${width}.png`) });
+      await target.locator('#' + id).screenshot({ path: info.outputPath(`${id}-component-${width}.png`) });
+      results.push({ id, source, actual });
+    }
+    await writeFile(info.outputPath('parity.json'), JSON.stringify({ width, producerCommit: '35c81f71e863db5479d56b513fd35217bb56efc7', referenceRoute: '/assets/comments-reference.html', targetRoute: '/examples/comments', adaptations: ['Producer site JS/includes disabled; same locked CSS injected; producer avatar URL mapped to identical locked image bytes.'], results }, null, 2));
+    await context.close();
+  });
+}

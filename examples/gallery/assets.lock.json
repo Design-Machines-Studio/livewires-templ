@@ -141,6 +141,16 @@
       "notice": "LICENSE-MIT",
       "size": 158991,
       "sha256": "95d67b0d08cc3e550a625bfd45bb1877e59a99f90679fb04d4ef02052f2521a5"
+    },
+    {
+      "file": "comments-reference.html",
+      "url": "https://raw.githubusercontent.com/Design-Machines-Studio/livewires/35c81f71e863db5479d56b513fd35217bb56efc7/public/reference/components/comments.html",
+      "sha256": "1c1dbe8c2564fc35871e395d0abf365fcc4123cc224ccd96b39a6d714c39fda6",
+      "size": 12707,
+      "serve": "/assets/comments-reference.html",
+      "revision": "35c81f71e863db5479d56b513fd35217bb56efc7",
+      "license": "MIT",
+      "notice": "LICENSE-MIT"
     }
   ]
 }
