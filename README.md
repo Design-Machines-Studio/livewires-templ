@@ -479,3 +479,5 @@ Consumers must provide readable contrast for Live Wires `text-muted`.
 Serve the generated components locally with `examples/gallery/run.sh start`.
 See the [gallery runbook](examples/gallery/README.md) for pinned assets, Playwright,
 source receipts and isolated rebuild/stop commands.
+
+For rich proposal comments and Chat replies, use the additive [shared comment article API](docs/comments.md). Existing `Comment` and `CommentComponent` behavior stays compatible.

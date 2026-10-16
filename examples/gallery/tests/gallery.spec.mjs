@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { createHash } from 'node:crypto';
 import { writeFile } from 'node:fs/promises';
 
-const names = ['relative-time', 'copy', 'loading', 'toast', 'sortable', 'inline-edit', 'combobox', 'save-status', 'page-header'];
+const names = ['relative-time', 'copy', 'loading', 'toast', 'sortable', 'inline-edit', 'combobox', 'save-status', 'page-header', 'comments'];
 for (const [device, viewport] of [['desktop', { width: 1440, height: 1000 }], ['mobile', { width: 390, height: 844 }]]) {
   for (const name of names) {
     test(`${name} ${device}: generated markup, verified assets and provenance`, async ({ page, request }, info) => {

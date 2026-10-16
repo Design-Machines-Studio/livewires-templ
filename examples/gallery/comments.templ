@@ -1,0 +1,121 @@
+package main
+
+import "github.com/Design-Machines-Studio/livewires-templ/component"
+
+templ commentsExample() {
+	<p>Ordinary proposal comments and Chat replies use the same shared article. These examples have no editing, moderation or arrival announcements.</p>
+	<section aria-labelledby="proposal-comments-heading">
+		<h2 id="proposal-comments-heading">Proposal discussion</h2>
+		@component.CommentArticleComponent(component.CommentArticleProps{
+			ID: "proposal-comment-42", Author: commentAuthor("Jane Doe", "#jane-profile"),
+			Avatar: commentAvatar(), AvatarHref: "#jane-profile", AvatarLabel: "Jane Doe's profile",
+			DateTime: "2026-03-15T09:30:00-07:00", Timestamp: "Mar 15 at 9:30",
+			Class: "text-sm text-fg border-t pt-075 pb-2", BodyClass: "text-base mt-075", TimestampClass: "text-muted text-xs",
+		}) {
+			<p>I support the proposal. The repair schedule gives the crew a clear first step, and the budget keeps the work inside the amount we agreed to spend.</p>
+		}
+		@component.CommentArticleComponent(component.CommentArticleProps{
+			ID: "proposal-comment-43", Author: commentAuthor("Morgan Lee", ""),
+			DateTime: "2026-03-15", Timestamp: "Mar 15",
+			Class: "text-sm text-fg border-t pt-075 pb-2", BodyClass: "text-base mt-075", TimestampClass: "text-muted text-xs",
+		}) {
+			<p>No profile link or avatar is needed to read this comment.</p>
+		}
+		@component.CommentArticleComponent(component.CommentArticleProps{
+			ID: "comment-unlinked-avatar", Author: commentAuthor("Robin Patel", ""), Avatar: commentAvatar(),
+			DateTime: "2026-03-15", Timestamp: "Mar 15",
+			Class: "text-sm text-fg border-t pt-075 pb-2", BodyClass: "text-base mt-075", TimestampClass: "text-muted text-xs",
+		}) {
+			<p>The unlinked avatar is decorative. The visible name identifies the person.</p>
+		}
+	</section>
+	<section aria-labelledby="chat-replies-heading">
+		<h2 id="chat-replies-heading">Chat replies</h2>
+		@component.CommentArticleComponent(component.CommentArticleProps{
+			ID: "post-815", Author: commentAuthor("Sam Rivera", "#sam-profile"),
+			Avatar: commentAvatar(), AvatarHref: "#sam-profile", AvatarLabel: "Sam Rivera's profile",
+			DateTime: "2026-03-15T10:05:00-07:00", Timestamp: "Mar 15 at 10:05",
+			Permalink: "#post-815", PermalinkLabel: "Mar 15 at 10:05, link to message 815",
+			Class: "text-sm text-fg border-t pt-075 pb-2", BodyClass: "text-base mt-075", TimestampClass: "text-muted text-xs",
+		}) {
+			<p>I can take the first shift on Tuesday. I’ll post the supply list here before the end of the day.</p>
+		}
+		@component.CommentArticleComponent(component.CommentArticleProps{
+			ID: "chat-reply-816", Author: commentAuthor("Riley Chen", "#riley-profile"),
+			Avatar: commentAvatar(), AvatarHref: "#riley-profile", AvatarLabel: "Riley Chen's profile",
+			DateTime: "2026-03-15T11:15:00-07:00", Timestamp: "Mar 15 at 11:15",
+			Permalink: "#chat-reply-816", PermalinkLabel: "Mar 15 at 11:15, link to message 816",
+			Content: commentRichContent(), Edited: commentEdited(), Footer: commentActions(),
+			Class: "text-sm text-fg border-t pt-075 pb-2", BodyClass: "text-base mt-075", TimestampClass: "text-muted text-xs", EditedClass: "text-xs text-muted",
+		})
+		@component.CommentArticleComponent(component.CommentArticleProps{
+			ID: "comment-long-values", Author: commentAuthor("Avery MacAllister-Sandoval, member of the north workshop crew", "#avery-profile"),
+			DateTime: "2026-09-30T23:48:00Z", Timestamp: "September 30, 2026 at 11:48 PM UTC",
+			Permalink: "#comment-long-values",
+			Class:     "text-sm text-fg border-t pt-075 pb-2", BodyClass: "text-base mt-075", TimestampClass: "text-muted text-xs",
+		}) {
+			<p><a href="https://example.test/a/very/long/path/that/keeps/going/so/the/link/can-wrap-without-pushing-the-page-out-of-view">https://example.test/a/very/long/path/that/keeps/going/so/the/link/can-wrap-without-pushing-the-page-out-of-view</a></p>
+			<p>Inline code: <code>proposal_response_history_entry_identifier_2026_09_30</code>.</p>
+			<pre tabindex="0" aria-label="Long code example"><code>decision_reference = "recorded-after-the-meeting-and-linked-from-the-minutes-with-an-intentionally-long-unbroken-value"</code></pre>
+		}
+	</section>
+	<section class="section scheme-dark" aria-labelledby="inherited-comments-heading">
+		<h2 id="inherited-comments-heading">Inherited dark scheme</h2>
+		@component.CommentArticleComponent(component.CommentArticleProps{
+			ID: "comment-inherited-scheme", Author: commentAuthor("Taylor Green", ""),
+			DateTime: "2026-03-19", Timestamp: "Mar 19", TimestampClass: "text-xs",
+		}) {
+			<p>The comment inherits this enclosing scheme without adding a background or text color.</p>
+		}
+	</section>
+	<section aria-labelledby="plain-comments-heading">
+		<h2 id="plain-comments-heading">Escaped text convenience</h2>
+		@component.CommentArticle("Lee & Morgan", "Text like <script> stays text.", "2026-03-20", "20 March")
+	</section>
+	<section aria-labelledby="comment-profiles-heading">
+		<h2 id="comment-profiles-heading">Example profile destinations</h2>
+		<p id="jane-profile">Jane Doe’s example profile.</p>
+		<p id="sam-profile">Sam Rivera’s example profile.</p>
+		<p id="riley-profile">Riley Chen’s example profile.</p>
+		<p id="avery-profile">Avery MacAllister-Sandoval’s example profile.</p>
+	</section>
+}
+
+templ commentAuthor(name string, href string) {
+	if href != "" {
+		<a class="author font-bold text-fg underline" href={ templ.URL(href) }>{ name }</a>
+	} else {
+		<span class="author">{ name }</span>
+	}
+}
+
+templ commentAvatar() {
+	<img class="avatar avatar--lg avatar--square" src="/assets/comment-image.jpg" alt=""/>
+}
+
+templ commentEdited() {
+	Edited <time datetime="2026-03-15T11:22:00-07:00">Mar 15 at 11:22</time>
+}
+
+templ commentActions() {
+	<ul class="comment-actions" aria-label="Comment actions">
+		<li><a class="button button--small" href="#post-815">Reply to Sam</a></li>
+		<li><a class="button button--small" href="#comment-long-values">Open linked comment</a></li>
+	</ul>
+}
+
+templ commentRichContent() {
+	<p>The crew shared the revised schedule:</p>
+	<ul><li>Replace the cracked tread.</li><li>Photograph the finished repair for the maintenance record.</li></ul>
+	<figure>
+		<img src="/assets/comment-image.jpg" alt="A sample portrait used to check intrinsic media sizing"/>
+		<figcaption>The image stays within the comment body.</figcaption>
+	</figure>
+	<p>Keep the <a href="#proposal-comment-42">proposal comment</a> with the maintenance record.</p>
+	<pre tabindex="0" aria-label="Repair code example">
+		<code>
+			repair.status = "complete"
+			repair.reviewed_by = "the next shift"
+		</code>
+	</pre>
+}
