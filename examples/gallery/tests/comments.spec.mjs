@@ -8,7 +8,7 @@ for (const width of [1440, 1280, 640, 375, 320]) {
       await page.emulateMedia({ colorScheme: scheme });
       await page.goto('/examples/comments');
       await expect(page.locator('.comment--layout')).toHaveCount(8);
-      await expect(page.locator('.comment-avatar img')).toHaveCount(4);
+      await expect(page.locator('.comment-avatar img')).toHaveCount(5);
       const checks = await page.evaluate(() => {
         const comments = [...document.querySelectorAll('.comment--layout')];
         const anchored = comments.filter(c => c.id);
@@ -69,6 +69,8 @@ test('comments: keyboard follows author, permalink and separate footer actions',
     await page.keyboard.press('Tab');
   }
   expect(order.map(x => x.class)).toEqual(['comment-avatar', 'author font-bold text-fg underline', 'comment-permalink text-muted text-xs', '', '', 'button button--small']);
+  expect(order[5].tag).toBe('BUTTON');
+  expect(order[5].text).toBe('Reply');
   // Rich body link and focusable code precede the footer in reading/tab order.
   await expect(reply.getByRole('link', { name: 'Open linked comment' })).toBeFocused();
   await page.keyboard.press('Enter');
@@ -82,8 +84,9 @@ test('comments: no-JavaScript rendering and 200% CSS zoom reflow', async ({ brow
   await page.goto('/examples/comments');
   await expect(page.locator('#post-815 time')).toHaveText('Mar 15 at 10:05');
   await expect(page.locator('#chat-reply-816 .comment-body li')).toHaveCount(2);
-  await page.getByRole('link', { name: 'Reply to Sam' }).click();
-  await expect(page).toHaveURL(/#post-815$/);
+  await expect(page.getByRole('button', { name: 'Reply', exact: true })).toBeVisible();
+  await page.getByRole('link', { name: 'Open linked comment' }).click();
+  await expect(page).toHaveURL(/#comment-long-values$/);
   await page.screenshot({ path: info.outputPath('comments-no-js.png'), fullPage: true });
   await context.close();
 
@@ -117,9 +120,11 @@ for (const width of [1280, 375, 320]) {
     const target = await context.newPage();
     await target.goto('/examples/comments');
     const results = [];
-    for (const id of ['proposal-comment-42', 'post-815']) {
+    for (const id of ['proposal-comment-42', 'post-815', 'comment-unlinked-avatar', 'chat-reply-816', 'comment-long-values', 'comment-inherited-scheme']) {
       const inspect = node => ({
         tag: node.tagName,
+        class: node.className,
+        bodyClass: node.querySelector('.comment-body').className,
         hooks: [...node.querySelectorAll('[class]')].map(n => ({ tag: n.tagName, hooks: [...n.classList].filter(c => c === 'author' || c.startsWith('comment-')) })).filter(n => n.hooks.length),
         display: getComputedStyle(node).display,
         gap: getComputedStyle(node).gap,
@@ -127,16 +132,22 @@ for (const width of [1280, 375, 320]) {
         text: node.querySelector('.comment-body').textContent.trim(),
         time: node.querySelector('time').dateTime,
         linkedTime: !!node.querySelector('a.comment-permalink > time.comment-timestamp'),
-        namedAvatar: node.querySelector('.comment-avatar').getAttribute('aria-label'),
+        namedAvatar: node.querySelector('.comment-avatar')?.getAttribute('aria-label') ?? null,
       });
       const source = await reference.locator('#' + id).evaluate(inspect);
       const actual = await target.locator('#' + id).evaluate(inspect);
+      // Additional fixtures intentionally vary body copy/links and add longer
+      // stress content or keyboard-focusable code; their contract stays exact.
+      if (!['proposal-comment-42', 'post-815'].includes(id)) {
+        delete source.text;
+        delete actual.text;
+      }
       expect(actual).toEqual(source);
       await reference.locator('#' + id).screenshot({ path: info.outputPath(`${id}-reference-${width}.png`) });
       await target.locator('#' + id).screenshot({ path: info.outputPath(`${id}-component-${width}.png`) });
       results.push({ id, source, actual });
     }
-    await writeFile(info.outputPath('parity.json'), JSON.stringify({ width, producerCommit: '35c81f71e863db5479d56b513fd35217bb56efc7', referenceRoute: '/assets/comments-reference.html', targetRoute: '/examples/comments', adaptations: ['Producer site JS/includes disabled; same locked CSS injected; producer avatar URL mapped to identical locked image bytes.'], results }, null, 2));
+    await writeFile(info.outputPath('parity.json'), JSON.stringify({ width, producerCommit: '35c81f71e863db5479d56b513fd35217bb56efc7', referenceRoute: '/assets/comments-reference.html', targetRoute: '/examples/comments', adaptations: ['Producer site JS/includes disabled; same locked CSS injected; producer avatar URL mapped to identical locked image bytes.', 'Additional fixtures vary body copy/links and add longer stress content/focusable code; compare their shared structure and presentation, not literal body text.'], results }, null, 2));
     await context.close();
   });
 }

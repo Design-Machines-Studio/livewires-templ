@@ -50,8 +50,9 @@ templ commentsExample() {
 		})
 		@component.CommentArticleComponent(component.CommentArticleProps{
 			ID: "comment-long-values", Author: commentAuthor("Avery MacAllister-Sandoval, member of the north workshop crew", "#avery-profile"),
+			Avatar: commentAvatar(), AvatarHref: "#avery-profile", AvatarLabel: "Avery MacAllister-Sandoval's profile",
 			DateTime: "2026-09-30T23:48:00Z", Timestamp: "September 30, 2026 at 11:48 PM UTC",
-			Permalink: "#comment-long-values",
+			Permalink: "#comment-long-values", PermalinkLabel: "September 30, 2026 at 11:48 PM UTC, link to comment",
 			Class:     "text-sm text-fg border-t pt-075 pb-2", BodyClass: "text-base mt-075", TimestampClass: "text-muted text-xs",
 		}) {
 			<p><a href="https://example.test/a/very/long/path/that/keeps/going/so/the/link/can-wrap-without-pushing-the-page-out-of-view">https://example.test/a/very/long/path/that/keeps/going/so/the/link/can-wrap-without-pushing-the-page-out-of-view</a></p>
@@ -64,6 +65,7 @@ templ commentsExample() {
 		@component.CommentArticleComponent(component.CommentArticleProps{
 			ID: "comment-inherited-scheme", Author: commentAuthor("Taylor Green", ""),
 			DateTime: "2026-03-19", Timestamp: "Mar 19", TimestampClass: "text-xs",
+			Class: "text-sm text-fg border-t pt-075 pb-2", BodyClass: "text-base mt-075",
 		}) {
 			<p>The comment inherits this enclosing scheme without adding a background or text color.</p>
 		}
@@ -99,7 +101,7 @@ templ commentEdited() {
 
 templ commentActions() {
 	<ul class="comment-actions" aria-label="Comment actions">
-		<li><a class="button button--small" href="#post-815">Reply to Sam</a></li>
+		<li><button class="button button--small" type="button">Reply</button></li>
 		<li><a class="button button--small" href="#comment-long-values">Open linked comment</a></li>
 	</ul>
 }

@@ -177,9 +177,10 @@ func commentsExample() templ.Component {
 		})
 		templ_7745c5c3_Err = component.CommentArticleComponent(component.CommentArticleProps{
 			ID: "comment-long-values", Author: commentAuthor("Avery MacAllister-Sandoval, member of the north workshop crew", "#avery-profile"),
+			Avatar: commentAvatar(), AvatarHref: "#avery-profile", AvatarLabel: "Avery MacAllister-Sandoval's profile",
 			DateTime: "2026-09-30T23:48:00Z", Timestamp: "September 30, 2026 at 11:48 PM UTC",
-			Permalink: "#comment-long-values",
-			Class:     "text-sm text-fg border-t pt-075 pb-2", BodyClass: "text-base mt-075", TimestampClass: "text-muted text-xs",
+			Permalink: "#comment-long-values", PermalinkLabel: "September 30, 2026 at 11:48 PM UTC, link to comment",
+			Class: "text-sm text-fg border-t pt-075 pb-2", BodyClass: "text-base mt-075", TimestampClass: "text-muted text-xs",
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -209,6 +210,7 @@ func commentsExample() templ.Component {
 		templ_7745c5c3_Err = component.CommentArticleComponent(component.CommentArticleProps{
 			ID: "comment-inherited-scheme", Author: commentAuthor("Taylor Green", ""),
 			DateTime: "2026-03-19", Timestamp: "Mar 19", TimestampClass: "text-xs",
+			Class: "text-sm text-fg border-t pt-075 pb-2", BodyClass: "text-base mt-075",
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -258,7 +260,7 @@ func commentAuthor(name string, href string) templ.Component {
 			var templ_7745c5c3_Var9 templ.SafeURL
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(href))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/comments.templ`, Line: 86, Col: 70}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/comments.templ`, Line: 88, Col: 70}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -271,7 +273,7 @@ func commentAuthor(name string, href string) templ.Component {
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/comments.templ`, Line: 86, Col: 79}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/comments.templ`, Line: 88, Col: 79}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -289,7 +291,7 @@ func commentAuthor(name string, href string) templ.Component {
 			var templ_7745c5c3_Var11 string
 			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/comments.templ`, Line: 88, Col: 29}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/comments.templ`, Line: 90, Col: 29}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {
@@ -383,7 +385,7 @@ func commentActions() templ.Component {
 			templ_7745c5c3_Var14 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<ul class=\"comment-actions\" aria-label=\"Comment actions\"><li><a class=\"button button--small\" href=\"#post-815\">Reply to Sam</a></li><li><a class=\"button button--small\" href=\"#comment-long-values\">Open linked comment</a></li></ul>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<ul class=\"comment-actions\" aria-label=\"Comment actions\"><li><button class=\"button button--small\" type=\"button\">Reply</button></li><li><a class=\"button button--small\" href=\"#comment-long-values\">Open linked comment</a></li></ul>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -419,7 +421,7 @@ func commentRichContent() templ.Component {
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs("repair.status = \"complete\"\nrepair.reviewed_by = \"the next shift\"")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/comments.templ`, Line: 115, Col: 131}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/comments.templ`, Line: 117, Col: 131}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
