@@ -28,15 +28,17 @@ type LoaderOverlayProps struct {
 	Label string // Accessible status, visually hidden; defaults to Loading
 	Mixed bool
 	Class string
-	Attrs templ.Attributes // Host-owned visibility and stable IDs; reserve class and ARIA
+	Attrs templ.Attributes // Inner visual surface: host-owned visibility and stable IDs; reserve class
 }
 
 // LoaderOverlayComponent renders only Driver Line centered over the viewport.
 // The application owns visibility, busy/inert content and request lifecycle.
 templ LoaderOverlayComponent(props LoaderOverlayProps) {
-	<div class={ lw.ClassNames("loader-overlay", props.Class) } role="status" aria-atomic="true" { props.Attrs... }>
-		@LoaderIconComponent(LoaderIconProps{Variant: "line", Mixed: props.Mixed})
-		<span class="visually-hidden">{ hardwareLoaderLabel(props.Label) }</span>
+	<div role="status" aria-atomic="true">
+		<div class={ lw.ClassNames("loader-overlay", props.Class) } { props.Attrs... }>
+			@LoaderIconComponent(LoaderIconProps{Variant: "line", Mixed: props.Mixed})
+			<span class="visually-hidden" tabindex="-1">{ hardwareLoaderLabel(props.Label) }</span>
+		</div>
 	</div>
 }
 

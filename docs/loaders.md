@@ -1,6 +1,6 @@
 # Hardware loaders
 
-Requires Live Wires CSS containing `src/css/6_components/loader.css`. Canonical SVG paths and semantics match `public/reference/components/loaders.html` in the companion CSS change. No JavaScript is required for the visual.
+Requires Live Wires **v2.24.0** (`3042ffe56c36b8e51e4e8a98f500b1aa04a43fd3`) CSS containing `src/css/6_components/loader.css`. Canonical SVG paths and semantics match `public/reference/components/loaders.html` in the companion CSS change. No JavaScript is required for the visual.
 
 ```go
 // Standalone status (a single live region with readable text).
@@ -48,3 +48,5 @@ Driver Line never belongs in a button or inline save status. `ButtonProps.Indica
 ```
 
 `.loader-overlay` covers the viewport, uses the inherited background color at 80% opacity and centers the fully opaque Driver Line. Mount at the page root outside transformed/busy/inert ancestors. The host owns visibility and, for blocking operations, background interaction/inert state. `.loader-panel` fills a sized container with a six-line minimum height. Both honor hidden; use text utilities on Class to change hardware scale. Neither component traps focus, schedules work, or infers completion.
+
+The overlay keeps its outer status region mounted. `Attrs` and `Class` apply to the inner visual surface, so `hidden` never hides the outer live region. Its hidden label has `tabindex="-1"` for application-owned focus. For blocking operations, focus that label, preserve prior focus and inert states, and restore only state the application changed when closing. Keep the wrapper outside busy/inert subtrees.

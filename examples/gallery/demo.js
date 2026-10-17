@@ -12,6 +12,37 @@ if (unrelated) {
 }
 
 async function setup() {
+  if (name === 'loaders') {
+    const overlay = document.querySelector('[data-gallery-overlay]');
+    const status = overlay.parentElement;
+    // Keep the status wrapper outside the inert content, as in the producer reference.
+    document.body.append(status);
+    const changed = new Set();
+    let previous;
+    let timer;
+    const close = () => {
+      clearTimeout(timer);
+      overlay.hidden = true;
+      for (const node of changed) node.inert = false;
+      changed.clear();
+      if (previous?.isConnected) previous.focus();
+      previous = null;
+    };
+    document.querySelector('[data-preview-overlay]').addEventListener('click', () => {
+      if (!overlay.hidden) return;
+      previous = document.activeElement;
+      overlay.hidden = false;
+      overlay.querySelector('.visually-hidden').focus();
+      for (const node of document.body.children) {
+        if (node !== status && !node.inert) { node.inert = true; changed.add(node); }
+      }
+      timer = setTimeout(close, 2000);
+    }, { signal: lifecycle.signal });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && !overlay.hidden) { event.preventDefault(); close(); }
+    }, { signal: lifecycle.signal });
+    controllers.push({ destroy: close });
+  }
   let loading;
   let toasts;
   if (name === 'relative-time') await import('/assets/relative-time.js');

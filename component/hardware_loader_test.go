@@ -149,3 +149,18 @@ func TestDriverLineSurfaceReferenceParity(t *testing.T) {
 		Attrs: templ.Attributes{"hidden": true, "data-loader-overlay": true},
 	}))
 }
+
+func TestOverlayKeepsStatusOutsideHiddenSurface(t *testing.T) {
+	output := testutil.RenderToString(t, LoaderOverlayComponent(LoaderOverlayProps{Attrs: templ.Attributes{"hidden": true}}))
+	nodes := testutil.ParseFragment(t, output)
+	status := testutil.FindElement(nodes, "div")
+	if role, _ := testutil.AttrVal(status, "role"); role != "status" {
+		t.Fatal("outer status missing")
+	}
+	if _, hidden := testutil.AttrVal(status, "hidden"); hidden {
+		t.Fatal("status must stay mounted outside hidden visual")
+	}
+	if !strings.Contains(output, `class="loader-overlay" hidden`) || !strings.Contains(output, `tabindex="-1"`) {
+		t.Fatal("visual visibility and label focus hooks required")
+	}
+}

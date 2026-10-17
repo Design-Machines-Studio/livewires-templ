@@ -24,7 +24,7 @@ port on `127.0.0.1`. Read the actual `url` from status; no fixed port is reserve
 or taken over. The index is `/`; example URLs are `/examples/relative-time`,
 `/examples/copy`, `/examples/loading`, `/examples/toast`, `/examples/sortable`,
 `/examples/inline-edit`, `/examples/combobox`, `/examples/save-status` and
-`/examples/page-header` and `/examples/comments`.
+`/examples/page-header` and `/examples/comments`, `/examples/loaders`.
 
 The runner uses the host-selected user installation from Claude's
 `installed_plugins.json`, checks its plugin identity/version, and invokes the
@@ -99,7 +99,7 @@ Do not prune shared Docker resources or delete another worktree's state.
 ## Locked assets
 
 `assets.lock.json` records exact Live Wires revision
-`35c81f71e863db5479d56b513fd35217bb56efc7`, source URLs, SHA-256 hashes, sizes
+`3042ffe56c36b8e51e4e8a98f500b1aa04a43fd3`, source URLs, SHA-256 hashes, sizes
 and license provenance. Required files are fetched from that revision into the
 instance's external development cache, never from a mutable producer checkout,
 Vite server or floating CDN. The save-status example uses the producer's exact
@@ -142,4 +142,6 @@ modes. No search endpoint is called and nothing is saved. The example is based
 on Baseplate's `interface_timezone` field; an empty value means organization
 default, and Baseplate's saved non-curated values remain application-owned.
 
-The comments example uses the shared article API for ordinary proposal comments and Chat replies. Its pinned Live Wires v2.23.0 CSS includes the shared comment contract. It covers linked/unlinked authors and avatars, semantic time/permalinks, rich content, edited metadata, footer actions and multiple unique anchors. Comments browser checks add 320px/375px, desktop, 640px reflow, 200% CSS zoom, light/dark/inherited schemes, keyboard order and no-JavaScript links. These are not actual screen-reader or native browser zoom results. See [the API contract](../../docs/comments.md).
+The comments example uses the shared article API for ordinary proposal comments and Chat replies. Its pinned Live Wires v2.24.0 CSS includes the shared comment contract. It covers linked/unlinked authors and avatars, semantic time/permalinks, rich content, edited metadata, footer actions and multiple unique anchors. Comments browser checks add 320px/375px, desktop, 640px reflow, 200% CSS zoom, light/dark/inherited schemes, keyboard order and no-JavaScript links. These are not actual screen-reader or native browser zoom results. See [the API contract](../../docs/comments.md).
+
+The loaders example uses Live Wires v2.24.0 and demonstrates Ratchet, Driver Line (Phillips and mixed), Torque progress, busy buttons, saving and optional loading-region indicators. The overlay preview keeps the outer status wrapper mounted, focuses its hidden label, makes background content inert and restores focus on Escape or timeout. It stays hidden without JavaScript. Production applications own these policies and request state.

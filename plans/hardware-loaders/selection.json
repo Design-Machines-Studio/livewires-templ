@@ -1,0 +1,15 @@
+{
+  "acceptanceClear": true,
+  "designSettled": true,
+  "consequence": "low",
+  "reversibility": "easy",
+  "coordination": "single-pass",
+  "existingPattern": true,
+  "verificationDefined": true,
+  "unansweredQuestions": [],
+  "explicitFull": false,
+  "reviewRequired": true,
+  "securitySensitive": false,
+  "minimumMode": "lean",
+  "rationale": "Complete the existing loader port against settled v2.24.0 references, repair overlay parity and add maintained gallery verification."
+}
