@@ -92,8 +92,7 @@ Choose a variant after formatting. There is no digit counting, truncation,
 scaling or automatic fit loop.
 
 `ValueAttrs` and `ValueClass` affect only the numeric dd. Status and Detail do
-not receive them. Set developer-owned CSS hooks there, on the frame, or on an
-ancestor:
+not receive them. Set developer-owned CSS hooks there:
 
 ```go
 ValueAttrs: templ.Attributes{
@@ -101,7 +100,10 @@ ValueAttrs: templ.Attributes{
 },
 ```
 
-Unset hooks inherit the producer defaults. Width means glyph width, separate
+Prefer `ValueAttrs`. The hooks are inherited custom properties, and the
+producer's `.font-metric` utility reads them, so a hook set on the frame or an
+ancestor also resizes every `font-metric` value inside it, including a StatCard
+value without a `ValueSize`. Unset hooks inherit the producer defaults. Width means glyph width, separate
 from dashboard columns. The producer maps hooks to standard `font-size`,
 `font-weight` and `font-stretch`; supported registered variable-font axes use
 the font's declared range. Static fonts remain readable without a width axis.
@@ -150,8 +152,10 @@ includes and scripts outside the comparison.
 | --- | --- | --- |
 | Baseplate `DashboardWidgetBody` | WidgetComponent, Footer link slot | Placement, account links, registry, grants and editor |
 | Baseplate `WidgetMessage` | WidgetMessageComponent with a caller icon component | Icon library and dynamic announcement policy |
+| Linked notification rows | Caller-written `ul > li.widget-message` with the same icon/content/detail classes | Links, times and list markup |
 | Governance proposal widget header/body/footer and summary values | WidgetComponent and WidgetMetrics/WidgetMetricItem | DTOs, labels, deadlines, permissions and links |
 | Atlas dashboard named sections and compact definitions | WidgetComponent and standalone/grouped metrics | Chart/map lifecycle, sharing, denominators, full data tables |
+| Health facts (version strings, status indicators, linked details) | Caller-written `div.widget-metric > dt + dd` inside WidgetMetrics; plain `dd` without `font-metric` | Version text, StatusIndicator and links |
 | Existing StatCard | Existing StatCard API, now with value-only font-metric | Existing card layout and formatting |
 
 This work does not migrate consumers. Adoption remains Baseplate #1159 through
