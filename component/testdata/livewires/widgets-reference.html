@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Widgets – Live Wires reference</title>
+  <script type="module" src="/dist/main.js"></script>
+  <html-include src="/_includes/head.html"></html-include>
+</head>
+<body class="scheme-default">
+  <html-include src="/_includes/header.html"></html-include>
+  <main id="main" class="section stack">
+    <header class="stack stack-compact">
+      <h1>Widgets</h1>
+      <p>Shared content anatomy extracted from Baseplate, Governance and Atlas. The surrounding page owns placement and schemes.</p>
+      <p><a href="/manual/components/widgets.html">Markup and CSS contract</a> · <a href="#library-patterns">Library compositions</a> · <a href="#media">YouTube examples</a> · <a href="#stress">Typography stress fixtures</a></p>
+    </header>
+
+    <section aria-labelledby="source-examples" class="stack">
+      <h2 id="source-examples">Source-derived examples</h2>
+      <p>Original product labels; demonstration values, not live product data. Narrow and wide hosts use the same semantic widget markup.</p>
+      <div class="grid" style="--min-column-width: 18rem;">
+        <div class="scheme-subtle" style="inline-size: min(100%, 18rem);">
+          <section class="widget" aria-labelledby="membership-heading" data-example="metric">
+            <header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="membership-heading">Membership at a glance</h3></div></header>
+            <div class="widget-content">
+              <dl class="widget-metrics">
+                <div class="widget-metric"><dt>Active</dt><dd class="widget-metric-value widget-metric-value--short font-metric tnum">42</dd></div>
+                <div class="widget-metric"><dt>Probationary</dt><dd class="widget-metric-value widget-metric-value--short font-metric tnum">0</dd></div>
+                <div class="widget-metric"><dt>Joined in the last 30 days</dt><dd class="widget-metric-value widget-metric-value--short font-metric tnum">3</dd></div>
+              </dl>
+            </div>
+            <footer class="widget-footer"><a class="more" href="#source-notes">Member directory</a></footer>
+          </section>
+        </div>
+        <div class="scheme-dark">
+          <section class="widget" aria-labelledby="governance-heading" data-example="metric-wide">
+            <header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="governance-heading">Governance at a glance</h3></div></header>
+            <div class="widget-content">
+              <p class="text-muted">Decisions recorded in 2026</p>
+              <dl class="widget-metrics">
+                <div class="widget-metric"><dt>Visible drafts</dt><dd class="widget-metric-value widget-metric-value--short font-metric tnum">35</dd></div>
+                <div class="widget-metric"><dt>Open for input</dt><dd class="widget-metric-value widget-metric-value--short font-metric tnum">6</dd></div>
+                <div class="widget-metric"><dt>Decisions</dt><dd class="widget-metric-value widget-metric-value--short font-metric tnum">0</dd></div>
+              </dl>
+            </div>
+            <footer class="widget-footer"><a class="more" href="#source-notes">View proposals</a></footer>
+          </section>
+        </div>
+      </div>
+
+      <div class="grid" style="--min-column-width: 18rem;">
+        <div class="scheme-subtle" style="inline-size: min(100%, 18rem);">
+          <section class="widget" aria-labelledby="list-heading" data-example="list">
+            <header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="list-heading">Needs my input</h3><p class="widget-description">Demonstration proposal titles; the caller supplies deadlines and permissions.</p></div><a class="widget-action button" href="#source-notes">View proposals</a></header>
+            <div class="widget-content">
+              <ul class="list-none m-0 divide-y">
+                <li class="py-1 stack stack-half"><time class="text-xs" datetime="2026-10-20">Respond by 20 October</time><h4 class="text-base"><a href="#source-notes">Review the community workshop's equipment sharing agreement</a></h4></li>
+                <li class="py-1 stack stack-half"><time class="text-xs" datetime="2026-10-21">Respond by 21 October</time><h4 class="text-base"><a href="#source-notes">Confirm next month's meeting schedule</a></h4></li>
+              </ul>
+            </div>
+            <footer class="widget-footer"><a class="more" href="#source-notes">View proposals</a></footer>
+          </section>
+        </div>
+        <div class="scheme-dark">
+          <section class="widget" aria-labelledby="list-wide-heading" data-example="list-wide">
+            <header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="list-wide-heading">Recent decisions</h3></div></header>
+            <div class="widget-content"><ol class="timeline"><li data-status="success"><time class="date" datetime="2026-10-10">10 October 2026</time><div class="content"><h4 class="text-base"><a href="#source-notes">Workshop agreement</a></h4><p>Demonstration decision recorded.</p></div></li><li><time class="date" datetime="2026-10-09">9 October 2026</time><div class="content"><h4 class="text-base">Meeting schedule</h4><p>Demonstration decision recorded.</p></div></li></ol></div>
+            <footer class="widget-footer"><a class="more" href="#source-notes">View decision log</a></footer>
+          </section>
+        </div>
+      </div>
+
+      <div class="grid" style="--min-column-width: 18rem;">
+        <div class="scheme-subtle" style="inline-size: min(100%, 18rem);">
+          <section class="widget widget--plain-header" aria-labelledby="empty-heading" data-example="empty">
+            <header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="empty-heading">Unread notifications</h3></div></header>
+            <div class="widget-content"><div class="widget-message"><span class="widget-message-icon" aria-hidden="true">✓</span><div class="widget-message-content"><p>You're all caught up.</p></div></div></div>
+            <footer class="widget-footer"><a class="more" href="#source-notes">All notifications</a></footer>
+          </section>
+        </div>
+        <div class="scheme-dark">
+          <section class="widget" aria-labelledby="unavailable-heading" data-example="unavailable">
+            <header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="unavailable-heading">Open proposals</h3></div></header>
+            <div class="widget-content"><div class="widget-message"><div class="widget-message-content"><p>Governance information is unavailable right now.</p><p class="widget-message-detail">Try again later or open the full page.</p></div></div></div>
+            <footer class="widget-footer"><a class="more" href="#source-notes">View all proposals</a></footer>
+          </section>
+        </div>
+      </div>
+
+      <div class="grid" style="--min-column-width: 18rem;">
+        <div class="scheme-subtle" style="inline-size: min(100%, 18rem);">
+          <section class="widget" aria-labelledby="chart-heading" data-example="chart">
+            <header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="chart-heading">Network over time</h3><p class="widget-description">Demonstration organizations counted by recorded network join date.</p></div></header>
+            <div class="widget-content">
+              <figure><svg viewBox="0 0 300 130" role="img" aria-labelledby="chart-title chart-desc"><title id="chart-title">Network over time</title><desc id="chart-desc">July: 18 organizations. August: 21. September: 24. The same observations appear in the table.</desc><path d="M30 100H280" fill="none" stroke="currentColor"/><polyline points="30,90 150,60 270,30" fill="none" stroke="currentColor" stroke-width="3"/><g fill="currentColor"><circle cx="30" cy="90" r="4"/><circle cx="150" cy="60" r="4"/><circle cx="270" cy="30" r="4"/></g></svg><figcaption class="text-muted">Static illustration; no chart runtime.</figcaption></figure>
+              <details class="disclosure"><summary>View chart data</summary><table class="widget-table tnum"><caption>Demonstration network observations</caption><thead><tr><th scope="col">Month</th><th scope="col" class="numeric">Organizations</th></tr></thead><tbody><tr><th scope="row">July</th><td class="numeric">18</td></tr><tr><th scope="row">August</th><td class="numeric">21</td></tr><tr><th scope="row">September</th><td class="numeric">24</td></tr></tbody></table></details>
+            </div>
+            <footer class="widget-footer"><a class="more" href="#source-notes">View network</a></footer>
+          </section>
+        </div>
+        <div class="scheme-dark">
+          <section class="widget" aria-labelledby="chart-wide-heading" data-example="chart-wide">
+            <header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="chart-wide-heading">People over time</h3></div></header>
+            <div class="widget-content"><div class="widget-message"><div class="widget-message-content"><p>Membership history unavailable.</p><p class="widget-message-detail">The table remains the caller's fallback when chart assets are unavailable.</p></div></div><details class="disclosure" open><summary>View chart data</summary><div class="overflow-x-auto" tabindex="0" role="region" aria-labelledby="membership-data-caption"><table class="widget-table tnum" style="min-inline-size: 28rem;"><caption id="membership-data-caption">Demonstration membership positions by calendar month</caption><thead><tr><th scope="col">Month</th><th scope="col" class="numeric">Reported positions</th><th scope="col" class="numeric">Reporting organizations</th><th scope="col">Observation</th></tr></thead><tbody><tr><th scope="row">July</th><td class="numeric">42</td><td class="numeric">3</td><td>Month-end</td></tr><tr><th scope="row">August</th><td class="numeric">46</td><td class="numeric">4</td><td>Month-end</td></tr><tr><th scope="row">October</th><td class="numeric">48</td><td class="numeric">4</td><td>Latest actual (provisional)</td></tr></tbody></table></div><p class="text-muted">Positions are not deduplicated people. The current-month observation is provisional.</p></details></div>
+            <footer class="widget-footer"><a class="more" href="#source-notes">View network</a></footer>
+          </section>
+        </div>
+      </div>
+
+      <div class="grid" style="--min-column-width: 18rem;">
+        <div class="scheme-subtle" style="inline-size: min(100%, 18rem);">
+          <section class="widget" aria-labelledby="mixed-heading" data-example="mixed">
+            <header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="mixed-heading">Assembly health</h3></div></header>
+            <div class="widget-content"><p><span class="status-indicator status-indicator--success">Running</span></p><p>Demonstration backup progress: 65%.</p><div class="progress-bar" style="--progress-fill: var(--color-fg); --progress-height: var(--line-025);" role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100" aria-label="Backup progress"><div class="fill" style="width: 65%;"></div></div><ol class="timeline"><li data-status="success"><time class="date" datetime="2026-10-10">10 October</time><div class="content"><h4 class="text-base">Demonstration update installed</h4></div></li></ol></div>
+            <footer class="widget-footer"><a class="more" href="#source-notes">Configure Assembly</a></footer>
+          </section>
+        </div>
+        <div class="scheme-dark">
+          <section class="widget" aria-labelledby="mixed-wide-heading" data-example="mixed-wide">
+            <header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="mixed-wide-heading">Connected organizations</h3></div></header>
+            <div class="widget-content"><dl class="widget-metric"><dt>connected organizations</dt><dd class="widget-metric-value widget-metric-value--short font-metric tnum">2</dd></dl><ul class="list-none"><li class="py-05">Demonstration workshop</li><li class="py-05">Demonstration press</li></ul></div>
+            <footer class="widget-footer"><a class="more" href="#source-notes">View connections</a></footer>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section id="library-patterns" aria-labelledby="library-patterns-heading" class="stack">
+      <h2 id="library-patterns-heading">Additional library compositions</h2>
+      <p>The final comparison inspected 34 widgets on the Design Machines board and library. These examples cover the remaining compositions with demonstration data; <a href="/manual/components/widgets.html#library-coverage">the coverage table maps every observed widget</a>.</p>
+<div class="grid" style="--min-column-width: 18rem;">
+        <div class="scheme-subtle" style="inline-size: min(100%, 18rem);"><section class="widget" aria-labelledby="completion-heading" data-example="completion">
+          <header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="completion-heading">Profile completion</h3><p class="widget-description">Only incomplete details and their next actions are shown.</p></div></header>
+          <div class="widget-content"><div class="progress-bar" style="--progress-height: var(--line-025); --progress-fill: var(--color-fg);" role="progressbar" aria-label="Profile completion" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"><div class="fill" style="width: 80%;"></div></div><p><strong>4 of 5 complete</strong></p><ul class="list-none stack stack-compact"><li><p><span class="status-indicator status-indicator--small status-indicator--warning">Biography not added</span></p><p><a href="#source-notes">Write a short bio</a></p></li></ul></div>
+        </section></div>
+        <div class="scheme-dark"><section class="widget" aria-labelledby="completion-wide-heading" data-example="completion-wide">
+          <header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="completion-wide-heading">Profile completion</h3><p class="widget-description">Only incomplete details and their next actions are shown.</p></div></header>
+          <div class="widget-content"><div class="progress-bar" style="--progress-height: var(--line-025); --progress-fill: var(--color-fg);" role="progressbar" aria-label="Profile completion" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"><div class="fill" style="width: 40%;"></div></div><p><strong>2 of 5 complete</strong></p><ul class="list-none stack stack-compact"><li><p><span class="status-indicator status-indicator--small status-indicator--warning">Preferred name not added</span></p><p><a href="#source-notes">Add a preferred name</a></p></li><li><p><span class="status-indicator status-indicator--small status-indicator--warning">Job title not added</span></p><p><a href="#source-notes">Add a job title</a></p></li><li><p><span class="status-indicator status-indicator--small status-indicator--warning">Biography not added</span></p><p><a href="#source-notes">Write a short bio</a></p></li></ul></div>
+        </section></div>
+</div>
+<div class="grid" style="--min-column-width: 18rem;">
+        <div class="scheme-subtle" style="inline-size: min(100%, 18rem);"><section class="widget" aria-labelledby="facts-heading" data-example="facts">
+          <header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="facts-heading">Assembly</h3><p class="widget-description">Ordinary version strings retain ordinary typography.</p></div></header>
+          <div class="widget-content"><table class="widget-table"><caption>Demonstration runtime information</caption><thead><tr><th scope="col">Fact</th><th scope="col">Value</th></tr></thead><tbody><tr><th scope="row">Assembly version</th><td>v1.0.0-demo</td></tr><tr><th scope="row">Build status</th><td><span class="status-indicator status-indicator--small status-indicator--success">Running</span></td></tr><tr><th scope="row">Update channel</th><td>Demonstration</td></tr></tbody></table></div>
+        </section></div>
+        <div class="scheme-dark"><section class="widget" aria-labelledby="facts-wide-heading" data-example="facts-wide">
+          <header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="facts-wide-heading">Backups</h3></div></header>
+          <div class="widget-content"><table class="widget-table"><caption>Demonstration backup status summary</caption><thead><tr><th scope="col">Backup destination</th><th scope="col">Status</th></tr></thead><tbody><tr><th scope="row">Local</th><td><span class="status-indicator status-indicator--small status-indicator--success">Up to date</span></td></tr><tr><th scope="row">Scheduled</th><td><span class="status-indicator status-indicator--small status-indicator--warning">No recent backup</span></td></tr><tr><th scope="row">Off-site</th><td><span class="status-indicator status-indicator--small status-indicator--error">Cannot verify</span></td></tr></tbody></table></div><footer class="widget-footer"><a class="more" href="#source-notes">Manage backups</a></footer>
+        </section></div>
+</div>
+<div class="grid" style="--min-column-width: 18rem;">
+        <div class="scheme-subtle" style="inline-size: min(100%, 18rem);"><section class="widget" aria-labelledby="requirements-heading" data-example="requirements">
+          <header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="requirements-heading">Membership requirements</h3></div></header>
+          <div class="widget-content"><dl class="widget-metric"><dt>active requirements</dt><dd class="widget-metric-value widget-metric-value--short font-metric tnum">4</dd></dl><table class="widget-table tnum"><caption>Demonstration active requirements by type</caption><thead><tr><th scope="col">Type</th><th scope="col" class="numeric">Requirements</th></tr></thead><tbody><tr><th scope="row">Legal</th><td class="numeric">1</td></tr><tr><th scope="row">Organization rules</th><td class="numeric">2</td></tr><tr><th scope="row">Measurable rules</th><td class="numeric">1</td></tr></tbody></table></div><footer class="widget-footer"><a class="more" href="#source-notes">Manage membership requirements</a></footer>
+        </section></div>
+        <div class="scheme-dark"><section class="widget" aria-labelledby="requirements-wide-heading" data-example="requirements-wide">
+          <header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="requirements-wide-heading">Circles</h3></div></header>
+          <div class="widget-content"><dl class="widget-metric"><dt>circles</dt><dd class="widget-metric-value widget-metric-value--short font-metric tnum">4</dd></dl><table class="widget-table tnum"><caption>Demonstration circles by kind</caption><thead><tr><th scope="col">Kind</th><th scope="col" class="numeric">Circles</th></tr></thead><tbody><tr><th scope="row">Custom</th><td class="numeric">1</td></tr><tr><th scope="row">System</th><td class="numeric">3</td></tr></tbody></table></div><footer class="widget-footer"><a class="more" href="#source-notes">Manage circles</a></footer>
+        </section></div>
+</div>
+<div class="grid" style="--min-column-width: 18rem;">
+        <div class="scheme-subtle" style="inline-size: min(100%, 18rem);"><section class="widget" aria-labelledby="breakdown-heading" data-example="breakdown">
+          <header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="breakdown-heading">Sectors</h3></div></header>
+          <div class="widget-content"><ul class="list-none stack stack-compact" aria-label="Demonstration organizations by category"><li><div class="cluster cluster-between"><span class="min-w-0">Services</span><span class="tnum">12</span></div><div class="progress-bar" style="--progress-height: var(--line-025); --progress-fill: var(--color-fg);" aria-hidden="true"><div class="fill" style="width: 100%;"></div></div></li><li><div class="cluster cluster-between"><span class="min-w-0">Education</span><span class="tnum">7</span></div><div class="progress-bar" style="--progress-height: var(--line-025); --progress-fill: var(--color-fg);" aria-hidden="true"><div class="fill" style="width: 58.33%;"></div></div></li><li><div class="cluster cluster-between"><span class="min-w-0">Culture</span><span class="tnum">3</span></div><div class="progress-bar" style="--progress-height: var(--line-025); --progress-fill: var(--color-fg);" aria-hidden="true"><div class="fill" style="width: 25%;"></div></div></li></ul><p class="text-muted">Bar lengths compare each count with the largest category. These are decorative static bars, not a progress task or chart runtime.</p><details class="disclosure"><summary>View chart data</summary><table class="widget-table tnum"><caption>All demonstration categories</caption><thead><tr><th scope="col">Category</th><th scope="col" class="numeric">Organizations</th></tr></thead><tbody><tr><th scope="row">Services</th><td class="numeric">12</td></tr><tr><th scope="row">Education</th><td class="numeric">7</td></tr><tr><th scope="row">Culture</th><td class="numeric">3</td></tr></tbody></table></details></div><footer class="widget-footer"><a class="more" href="#source-notes">View all sectors</a></footer>
+        </section></div>
+        <div class="scheme-dark"><section class="widget" aria-labelledby="breakdown-wide-heading" data-example="breakdown-wide">
+          <header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="breakdown-wide-heading">Organization types</h3></div></header>
+          <div class="widget-content"><ul class="list-none stack stack-compact" aria-label="Demonstration organizations by category"><li><div class="cluster cluster-between"><span class="min-w-0">Worker co-operative</span><span class="tnum">12</span></div><div class="progress-bar" style="--progress-height: var(--line-025); --progress-fill: var(--color-fg);" aria-hidden="true"><div class="fill" style="width: 100%;"></div></div></li><li><div class="cluster cluster-between"><span class="min-w-0">Community co-operative with a longer descriptive label</span><span class="tnum">7</span></div><div class="progress-bar" style="--progress-height: var(--line-025); --progress-fill: var(--color-fg);" aria-hidden="true"><div class="fill" style="width: 58.33%;"></div></div></li><li><div class="cluster cluster-between"><span class="min-w-0">Member association</span><span class="tnum">3</span></div><div class="progress-bar" style="--progress-height: var(--line-025); --progress-fill: var(--color-fg);" aria-hidden="true"><div class="fill" style="width: 25%;"></div></div></li></ul><p class="text-muted">Bar lengths compare each count with the largest category. These are decorative static bars, not a progress task or chart runtime.</p><details class="disclosure"><summary>View chart data</summary><table class="widget-table tnum"><caption>All demonstration categories</caption><thead><tr><th scope="col">Category</th><th scope="col" class="numeric">Organizations</th></tr></thead><tbody><tr><th scope="row">Worker co-operative</th><td class="numeric">12</td></tr><tr><th scope="row">Community co-operative with a longer descriptive label</th><td class="numeric">7</td></tr><tr><th scope="row">Member association</th><td class="numeric">3</td></tr></tbody></table></details></div><footer class="widget-footer"><a class="more" href="#source-notes">View all organization types</a></footer>
+        </section></div>
+</div>
+<div class="grid" style="--min-column-width: 18rem;">
+        <div class="scheme-subtle" style="inline-size: min(100%, 18rem);"><section class="widget" aria-labelledby="map-heading" data-example="map">
+          <header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="map-heading">Network map</h3></div></header>
+          <div class="widget-content"><div class="widget-message"><div class="widget-message-content"><p>No locations set.</p><p class="widget-message-detail">An empty map is not a zero-valued metric.</p></div></div></div><footer class="widget-footer"><a class="more" href="#source-notes">View network</a></footer>
+        </section></div>
+        <div class="scheme-dark"><section class="widget" aria-labelledby="map-wide-heading" data-example="map-wide">
+          <header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="map-wide-heading">Network map</h3></div></header>
+          <div class="widget-content"><p class="text-muted">This reference omits the map renderer. City data remains available, including locations not mapped.</p><details class="disclosure" open><summary>View city data</summary><div class="overflow-x-auto" tabindex="0" role="region" aria-labelledby="city-data-caption"><table class="widget-table tnum" style="min-inline-size: 28rem;"><caption id="city-data-caption">Demonstration network cities, including locations not mapped</caption><thead><tr><th scope="col">City</th><th scope="col">Country</th><th scope="col" class="numeric">Organizations</th><th scope="col" class="numeric">Not mapped</th></tr></thead><tbody><tr><th scope="row">Vancouver</th><td>Canada</td><td class="numeric">4</td><td class="numeric">0</td></tr><tr><th scope="row">Example city with a long name</th><td>Unavailable</td><td class="numeric">2</td><td class="numeric">2</td></tr></tbody></table></div></details></div><footer class="widget-footer"><a class="more" href="#source-notes">View network</a></footer>
+        </section></div>
+</div>
+<div class="grid" style="--min-column-width: 18rem;">
+<div class="scheme-subtle" style="inline-size: min(100%, 18rem);"><section class="widget" aria-labelledby="activity-heading" data-example="activity"><header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="activity-heading">Organization activity</h3></div></header><div class="widget-content"><ol class="timeline"><li data-status="success"><time class="date" datetime="2026-10-10">10 October</time><div class="content"><h4 class="text-base"><a href="#source-notes">A proposal is open for input</a></h4><p class="text-muted">Demonstration organization event</p></div></li><li><time class="date" datetime="2026-10-09">9 October</time><div class="content"><h4 class="text-base">A connection was established</h4><p class="text-muted">Demonstration federation event</p></div></li></ol></div><footer class="widget-footer"><a class="more" href="#source-notes">All activity</a></footer></section></div>
+<div class="scheme-dark"><section class="widget" aria-labelledby="notification-list-heading" data-example="notification-list"><header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="notification-list-heading">Unread notifications</h3></div></header><div class="widget-content"><ul class="list-none stack stack-compact"><li class="widget-message"><span class="widget-message-icon" aria-hidden="true">●</span><div class="widget-message-content"><p><a href="#source-notes">A proposal is open for your input</a></p><p class="widget-message-detail"><time datetime="2026-10-10">10 October</time></p></div></li><li class="widget-message"><span class="widget-message-icon" aria-hidden="true">●</span><div class="widget-message-content"><p><a href="#source-notes">A new connection request</a></p><p class="widget-message-detail"><time datetime="2026-10-09">9 October</time></p></div></li></ul></div><footer class="widget-footer"><a class="more" href="#source-notes">All notifications</a></footer></section></div>
+</div>
+<div class="grid" style="--min-column-width: 18rem;">
+<div class="scheme-subtle" style="inline-size: min(100%, 18rem);"><section class="widget" aria-labelledby="sharing-heading" data-example="sharing"><header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="sharing-heading">People in the network*</h3></div></header><div class="widget-content"><dl class="widget-metric"><dt>People in the network</dt><dd class="widget-metric-status">Unavailable</dd><dd class="widget-metric-detail">Membership totals depend on the organizations sharing their data.</dd></dl><p class="text-muted">*The owning module supplies admission and sharing-policy details.</p></div><footer class="widget-footer"><a class="more" href="#source-notes">View network</a></footer></section></div>
+<div class="scheme-dark"><section class="widget" aria-labelledby="average-heading" data-example="average"><header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="average-heading">Average organization size</h3></div></header><div class="widget-content"><dl class="widget-metric"><dt>Average organization size</dt><dd class="widget-metric-value font-metric tnum">5.6</dd><dd class="widget-metric-detail">Demonstration average across 4 organizations with shared member counts.</dd></dl></div><footer class="widget-footer"><a class="more" href="#source-notes">View overview</a></footer></section></div>
+</div>
+<div class="grid" style="--min-column-width: 18rem;">
+<div class="scheme-subtle" style="inline-size: min(100%, 18rem);"><section class="widget" aria-labelledby="health-facts-heading" data-example="health-facts"><header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="health-facts-heading">Assembly health</h3></div></header><div class="widget-content"><dl class="widget-metrics"><div class="widget-metric"><dt>Version</dt><dd>v1.0.0-demo</dd><dd class="widget-metric-detail"><a href="#source-notes">Assembly details</a></dd></div><div class="widget-metric"><dt>Updates</dt><dd><span class="status-indicator status-indicator--small status-indicator--success">Up to date</span></dd><dd class="widget-metric-detail"><a href="#source-notes">Review updates</a></dd></div><div class="widget-metric"><dt>Backups</dt><dd><span class="status-indicator status-indicator--small status-indicator--warning">No recent backup</span></dd><dd class="widget-metric-detail"><a href="#source-notes">Manage backups</a></dd></div><div class="widget-metric"><dt>Email delivery</dt><dd><span class="status-indicator status-indicator--small status-indicator--warning">Using environment defaults</span></dd><dd class="widget-metric-detail"><a href="#source-notes">Email settings</a></dd></div></dl></div><footer class="widget-footer"><a class="more" href="#source-notes">Configure Assembly</a></footer></section></div>
+<div class="scheme-dark"><section class="widget" aria-labelledby="identity-list-heading" data-example="identity-list"><header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="identity-list-heading">Linked organizations</h3></div></header><div class="widget-content"><p class="text-muted">Demonstration memberships; identity media remains owner-rendered content.</p><ul class="list-none stack stack-compact" aria-label="Organization memberships"><li class="cluster cluster-compact"><a href="#source-notes">Demonstration workshop</a></li><li class="cluster cluster-compact"><a href="#source-notes">Demonstration association with a longer name</a></li></ul></div><footer class="widget-footer"><a class="more" href="#source-notes">Manage</a></footer></section></div>
+</div>
+<div class="grid" style="--min-column-width: 18rem;">
+  <div class="scheme-subtle" style="inline-size: min(100%, 18rem);"><section class="widget" aria-labelledby="places-heading" data-example="places"><header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="places-heading">Places in the network</h3></div></header><div class="widget-content"><ul class="list-none stack stack-compact" aria-label="Demonstration organizations by place"><li class="cluster cluster-between"><span class="min-w-0">Vancouver, Canada</span><span class="tnum">4</span></li><li class="cluster cluster-between"><span class="min-w-0">Example city with a longer name, country unavailable</span><span class="tnum">2</span></li></ul><p class="text-muted">Showing 2 of 3 demonstration places.</p></div><footer class="widget-footer"><a class="more" href="#source-notes">View all places</a></footer></section></div>
+  <div class="scheme-dark"><section class="widget" aria-labelledby="joined-heading" data-example="joined"><header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="joined-heading">Recently joined</h3></div></header><div class="widget-content"><ul class="list-none stack stack-compact"><li><p><a href="#source-notes">Demonstration workshop</a></p><p class="text-muted"><time datetime="2026-10-10">10 October 2026</time></p></li><li><p><a href="#source-notes">Demonstration association with a longer name</a></p><p class="text-muted"><time datetime="2026-10-09">9 October 2026</time></p></li></ul></div><footer class="widget-footer"><a class="more" href="#source-notes">View network</a></footer></section></div>
+</div>
+    </section>
+
+    <section id="media" aria-labelledby="media-heading" class="stack">
+      <h2 id="media-heading">Video widgets</h2>
+      <p>Caller-supplied video output uses the existing responsive embed. Configuration and flip controls belong to the application.</p>
+      <div class="grid" style="--min-column-width: 18rem;">
+        <div class="scheme-subtle" style="inline-size: min(100%, 18rem);">
+          <section class="widget" aria-labelledby="video-heading" data-example="video">
+            <header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="video-heading">YouTube video</h3><p class="widget-description">YouTube's embedded-player demonstration; playback starts when you choose.</p></div></header>
+            <div class="widget-content">
+              <div class="embed" style="min-block-size: 200px;">
+                <iframe class="block border-0" src="https://www.youtube.com/embed/M7lc1UVf-VE?autoplay=0" title="YouTube embedded-player demonstration (narrow widget)" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="encrypted-media; picture-in-picture" allowfullscreen style="min-block-size: 200px;"></iframe>
+              </div>
+              <p class="text-muted">If the player is unavailable, use the direct video link below.</p>
+            </div>
+            <footer class="widget-footer"><a class="more" href="https://www.youtube.com/watch?v=M7lc1UVf-VE">Watch on YouTube</a></footer>
+          </section>
+        </div>
+        <div class="scheme-dark">
+          <section class="widget" aria-labelledby="video-wide-heading" data-example="video-wide">
+            <header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="video-wide-heading">YouTube video</h3><p class="widget-description">YouTube's embedded-player demonstration; playback starts when you choose.</p></div></header>
+            <div class="widget-content">
+              <div class="embed" style="min-block-size: 200px;">
+                <iframe class="block border-0" src="https://www.youtube.com/embed/M7lc1UVf-VE?autoplay=0" title="YouTube embedded-player demonstration (wide widget)" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="encrypted-media; picture-in-picture" allowfullscreen style="min-block-size: 200px;"></iframe>
+              </div>
+              <p class="text-muted">If the player is unavailable, use the direct video link below.</p>
+            </div>
+            <footer class="widget-footer"><a class="more" href="https://www.youtube.com/watch?v=M7lc1UVf-VE">Watch on YouTube</a></footer>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section id="stress" aria-labelledby="stress-heading" class="stack">
+      <h2 id="stress-heading">Typography stress fixtures</h2>
+      <p>Formatted demonstration strings. Currency, locale and units belong to the caller. Width adjusts glyphs only when the selected font supports it; it never changes widget columns.</p>
+      <div class="grid" style="--min-column-width: 18rem;">
+        <section class="widget scheme-subtle" aria-labelledby="default-values-heading" data-example="stress-default">
+          <header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="default-values-heading">Short, default and long values</h3></div></header>
+          <div class="widget-content"><dl class="widget-metrics">
+            <div class="widget-metric"><dt>Long currency amount</dt><dd class="widget-metric-value widget-metric-value--long font-metric tnum" style="--font-metric-width: 75%;">Rp 9.876.543.210.987,65</dd><dd class="widget-metric-detail">Caller-formatted Indonesian rupiah</dd></div>
+            <div class="widget-metric"><dt>Percentage</dt><dd class="widget-metric-value font-metric tnum">99.95%</dd></div>
+            <div class="widget-metric"><dt>Count</dt><dd class="widget-metric-value widget-metric-value--long font-metric tnum" style="--font-metric-width: 75%;">1,234,567,890</dd></div>
+            <div class="widget-metric"><dt>Negative amount</dt><dd class="widget-metric-value widget-metric-value--long font-metric tnum" style="--font-metric-width: 75%;">−$1,234,567.89</dd></div>
+            <div class="widget-metric"><dt>Zero</dt><dd class="widget-metric-value widget-metric-value--short font-metric tnum">0</dd><dd class="widget-metric-detail">A known numeric value</dd></div>
+          </dl></div>
+        </section>
+        <section class="widget scheme-dark" aria-labelledby="custom-values-heading" data-example="stress-custom" style="--font-metric-size: var(--text-xl); --font-metric-width: 75%;">
+          <header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="custom-values-heading">Value-only overrides</h3><p class="widget-description">Size, weight and glyph width do not affect this description.</p></div></header>
+          <div class="widget-content"><dl class="widget-metrics">
+            <div class="widget-metric"><dt>Long currency amount</dt><dd class="widget-metric-value widget-metric-value--long font-metric tnum" style="--widget-metric-size: var(--text-lg); --widget-metric-weight: 650;">€ 9.876.543.210.987,65</dd></div>
+            <div class="widget-metric"><dt>Percentage</dt><dd class="widget-metric-value font-metric tnum" style="--widget-metric-weight: 650; line-height: var(--line-height-xl); letter-spacing: var(--tracking-xl);">−12.50%</dd></div>
+            <div class="widget-metric"><dt>Count</dt><dd class="widget-metric-value widget-metric-value--long font-metric tnum" style="--widget-metric-size: var(--text-lg); --widget-metric-weight: 650;">1,234,567,890</dd></div>
+            <div class="widget-metric"><dt>Zero</dt><dd class="widget-metric-value widget-metric-value--short font-metric tnum" style="--widget-metric-size: var(--text-4xl); --widget-metric-weight: 650;">0</dd></div>
+          </dl></div>
+        </section>
+        <section class="widget scheme-subtle" aria-labelledby="missing-values-heading" data-example="states">
+          <header class="widget-header"><div class="widget-heading"><h3 class="widget-title" id="missing-values-heading">States retain ordinary typography</h3></div></header>
+          <div class="widget-content"><dl class="widget-metrics">
+            <div class="widget-metric"><dt>Missing</dt><dd class="widget-metric-status">No member counts recorded.</dd></div>
+            <div class="widget-metric"><dt>Unavailable</dt><dd class="widget-metric-status">Member counts unavailable.</dd></div>
+            <div class="widget-metric"><dt>Denied</dt><dd class="widget-metric-status">You do not have access to this value.</dd><dd class="widget-metric-detail">Demonstration permission copy; callers own their actual message.</dd></div>
+            <div class="widget-metric"><dt>Reported count</dt><dd class="widget-metric-value widget-metric-value--short font-metric tnum">0</dd></div>
+          </dl></div>
+        </section>
+      </div>
+    </section>
+
+    <section id="source-notes" class="prose">
+      <h2>Ownership and source comparisons</h2>
+      <p>Baseplate owns placement, permissions, formatting, saved overrides and editor draft/Save behavior. Templ emits semantic slots without baked layout utilities. These references add no chart runtime, widget registry or persistence.</p>
+      <p>See <a href="/manual/components/widgets.html">the contract</a> and <a href="https://github.com/Design-Machines-Studio/livewires/issues/23">issue #23</a> for pinned producer sources and verification boundaries.</p>
+    </section>
+  </main>
+  <html-include src="/_includes/footer.html"></html-include>
+</body>
+</html>

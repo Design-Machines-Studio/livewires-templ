@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<!--
+  Pipeline planning artifact. Self-contained HTML carrying a JSON data island.
+  Assembled by a pipeline agent from base.html + sections/<kind>.html + widgets/*.
+  Required slots (validate-composition.sh validate_html_templates checks these),
+  written here WITHOUT braces so mechanical string-replace does not hit this note:
+    TITLE  ARTIFACT_KIND  GENERATED_AT  HOST_CSS_HREF
+    SIBLING_NAV  BODY  WIDGET_SCRIPTS  DATA_ISLAND
+  The HOST_CSS_HREF slot is replaced with the output of detect-host-css.sh --
+  either a complete <link rel="stylesheet"> tag, or (on FALLBACK) an inline
+  <style> block holding baseline.css.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="generator" content="depot pipeline">
+  <meta name="pipeline-artifact" content="plan">
+  <title>Widgets 13</title>
+  <style>/*
+  baseline.css -- host-agnostic fallback. Inlined into base.html {{HOST_CSS_HREF}}
+  as a <style> block when detect-host-css.sh returns FALLBACK (no host CSS found).
+  Deliberately minimal: readable typography, sane measure, light/dark via
+  color-scheme. Host stylesheets, when present, replace this entirely.
+
+  Defines minimal versions of the Live Wires primitives the artifact markup uses
+  (.center, .stack, .grid) so a FALLBACK artifact still lays out correctly. When
+  a host stylesheet is linked it provides the real primitives and these never
+  apply (host CSS loads after / wins).
+*/
+:root {
+  color-scheme: light dark;
+  --measure: 70rem;
+  --pad: 1rem;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font: 1rem/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: Canvas;
+  color: CanvasText;
+}
+h1, h2, h3 { line-height: 1.2; }
+h1 { font-size: 1.875rem; }
+h2 { font-size: 1.375rem; margin-top: 2rem; }
+h3 { font-size: 1.125rem; }
+a { color: LinkText; }
+code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+pre { overflow-x: auto; padding: 0.75rem; border: 1px solid GrayText; border-radius: 4px; }
+table { border-collapse: collapse; }
+th, td { border: 1px solid GrayText; padding: 0.375rem 0.5rem; }
+section { margin-block: 1.5rem; }
+small { color: GrayText; }
+.artifact-meta { color: GrayText; font-size: 0.875rem; }
+button { font: inherit; padding: 0.375rem 0.75rem; cursor: pointer; }
+img { max-width: 100%; height: auto; }
+
+/* Minimal Live Wires primitive fallbacks (host CSS supplies the real ones). */
+.center { max-inline-size: var(--measure, 70rem); margin-inline: auto; }
+.stack > * + * { margin-block-start: 1.5rem; }
+.grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-min, 16rem), 1fr));
+}
+figure { margin: 0; }
+</style>
+  <style>
+    /* Minimal host-agnostic chrome. Host CSS above owns typography/color;
+       this only adds layout affordances the host stylesheet won't provide. */
+    .skip-link { position: absolute; left: -9999px; top: 0; }
+    .skip-link:focus { left: 0; padding: 0.5rem 1rem; z-index: 10; }
+    .artifact-main { max-width: 70rem; margin-inline: auto; padding: 1rem; }
+    .artifact-header nav ul { display: flex; flex-wrap: wrap; gap: 0.75rem; list-style: none; padding: 0; }
+    .widget--edit table { border-collapse: collapse; width: 100%; }
+    .widget--edit th, .widget--edit td { border: 1px solid currentColor; padding: 0.375rem 0.5rem; text-align: left; vertical-align: top; }
+    .widget--edit td[contenteditable]:focus { outline: 2px solid Highlight; }
+    .widget__copy { margin: 0.5rem 0; }
+    @media (prefers-color-scheme: dark) {
+      /* Fallback only -- applies when host CSS does not define a dark scheme. */
+      html:not([data-theme]) { background: #14161a; color: #e6e7e9; }
+    }
+    @media print {
+      nav, .widget--edit .widget__copy { display: none; }
+      .artifact-main { max-width: none; }
+    }
+  </style>
+</head>
+<body class="scheme-subtle">
+  <a class="skip-link" href="#content">Skip to content</a>
+  <header class="artifact-header">
+    <nav aria-label="Pipeline artifacts">
+      
+    </nav>
+    <p class="artifact-meta"><span class="artifact-kind">plan</span> &middot; generated 2026-10-17</p>
+  </header>
+  <main id="content" class="artifact-main center stack">
+    <h1>Widgets #13</h1><h2>Project alignment</h2><p>Extract the published shared presentation so Baseplate and Fixtures can adopt one public component API. Placement, permissions, data, editor state and persistence stay with their owners.</p><p>Base: bfc09a97db1da706484b3e03f8e2c858ca3adf4b. Scope and execution authority: the explicit user implementation request. Worktree and branch created clean from fetched main. No open PR or widgets branch existed; canonical checkout remains detached and occupied.</p><h2>Single-pass Execution Scope</h2><ol><li>Exact semantic frame/header/content/footer with caller slots, IDs and heading levels; unnamed compositions use div.</li><li>Standalone/grouped definition lists, escaped complete formatted strings, zero versus status; value-only hooks and variants.</li><li>Quiet message with caller icon, optional detail, no live role.</li><li>Only existing StatCard value adds font-metric; Card and EmptyState unchanged.</li><li>Maintained gallery covers narrow/wide inherited schemes, long copy, metric variants and independent hooks, list/timeline/progress/chart tables.</li><li>Docker generation/tests/vet/freshness; Playwright desktop/narrow/zoom/keyboard/no-JS/parity/fallback proof; honest native zoom/screen-reader/font gaps.</li><li>Source-bound independent review and preservation, verified push and reviewed draft PR, no merge/release/adoption.</li></ol><h2>Decisions</h2><p>Use WidgetProps with optional complete Header composition, Action and Footer slots. Generated headings name sections only with explicit HeadingID. Custom headings use caller naming attributes. Keep the numeric value as caller text with ValueAttrs; use Status to bypass numeric classes. Separate standalone and grouped entry wrappers preserve valid dl semantics. No extra body/header API or typography configuration system.</p><h2>Ownership and dependencies</h2><p>Live Wires PR31 is merged and an ancestor of published v2.24.0, retained in the current gallery lock. Baseplate1160 is closed;1161 and downstream1159/1201, Governance114, Atlas60 and Jig42 remain their owners. No active GitHub PR or agent-board widgets/gallery collision was found. Project1 was read, not changed.</p><h2>Verification</h2><p>Docker templ generate, go test and go vet; gallery start/status/verify/rebuild/stop and restart for acceptance. Playwright Chromium source-bound captures. Compare exact producer HTML with the same locked CSS. No existing authenticated consumer is needed. Native screen-reader/browser zoom and unavailable variable-font proof remain explicitly unclaimed.</p>
+  </main>
+  <footer class="artifact-footer">
+    <p>Pipeline planning artifact. Edit decision tables inline, then use the Copy button to round-trip changes back into the data island.</p>
+  </footer>
+  <script type="application/json" id="pipeline-data">{"artifact": "plan", "feature": "widgets-13", "workflowClass": "feature", "decisionProfile": {"uncertainty": "medium", "consequence": "medium"}, "renderedSurface": "required", "renderedSurfaceRationale": "Public Templ output and maintained gallery, with explicit browser parity acceptance.", "baseBranch": "main", "featureBranch": "feat/widgets-13", "branchMode": "create", "expectedFeatureHead": null, "noMergeOnCompletion": true, "finalReviewMode": "quick", "finalReviewRationale": "Bounded additive API; no sensitive paths. Pattern, simplicity, UI standards and host Go verification apply.", "executorRole": "builder-deep", "executorCapabilities": ["read-repository", "write-repository", "tool-use"], "executorEffort": "high", "baseCommit": "bfc09a97db1da706484b3e03f8e2c858ca3adf4b", "prototypeReference": {"repository": "Design-Machines-Studio/livewires", "commit": "3042ffe56c36b8e51e4e8a98f500b1aa04a43fd3", "authority": "Explicit user producer authority and issue 13"}, "requirementsCoverage": [{"requirement": "Exact semantic frame/header/content/footer with caller slots, IDs and heading levels; unnamed compositions use div.", "scope": "single-pass scope"}, {"requirement": "Standalone/grouped definition lists, escaped complete formatted strings, zero versus status; value-only hooks and variants.", "scope": "single-pass scope"}, {"requirement": "Quiet message with caller icon, optional detail, no live role.", "scope": "single-pass scope"}, {"requirement": "Only existing StatCard value adds font-metric; Card and EmptyState unchanged.", "scope": "single-pass scope"}, {"requirement": "Maintained gallery covers narrow/wide inherited schemes, long copy, metric variants and independent hooks, list/timeline/progress/chart tables.", "scope": "single-pass scope"}, {"requirement": "Docker generation/tests/vet/freshness; Playwright desktop/narrow/zoom/keyboard/no-JS/parity/fallback proof; honest native zoom/screen-reader/font gaps.", "scope": "single-pass scope"}, {"requirement": "Source-bound independent review and preservation, verified push and reviewed draft PR, no merge/release/adoption.", "scope": "single-pass scope"}]}</script>
+  
+</body>
+</html>

@@ -147,3 +147,13 @@ The comments example uses the shared article API for ordinary proposal comments 
 The loaders example uses Live Wires v2.24.0 and demonstrates Ratchet, Driver Line (Phillips and mixed), Torque progress, busy buttons, saving and optional loading-region indicators. The overlay preview keeps the outer status wrapper mounted, focuses its hidden label, makes background content inert and restores focus on Escape or timeout. It stays hidden without JavaScript. Production applications own these policies and request state.
 
 The `/examples/loading` request simulation now uses Driver Line inside LoadingRegion. Choose Delayed to see the centered hardware appear after the controller delay and disappear when the request settles; the separate status announcement and unrelated editing remain intact.
+
+The `/examples/widgets` example renders the public frame, standalone/grouped
+metrics and quiet messages using the unchanged v2.24.0 lock. It includes long
+headings/actions, optional slots, zero and denied/unavailable observations,
+short/default/long metric values, independent value typography, inherited
+schemes, lists, Timeline, StatusIndicator, thin ProgressBar and complete chart
+fallback tables. See [the API and consumer mapping](../../docs/widgets.md).
+Widgets Playwright checks use the exact producer HTML retained in
+`component/testdata/livewires/widgets-reference.html`; the comparison injects
+the same locked CSS and disables producer site scripts/includes.

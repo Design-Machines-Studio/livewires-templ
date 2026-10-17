@@ -317,7 +317,7 @@ func statCardInner(props StatCardProps) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var13 = []any{lw.ClassNames("value", lw.SizeClass(props.ValueSize))}
+		var templ_7745c5c3_Var13 = []any{lw.ClassNames("value font-metric", lw.SizeClass(props.ValueSize))}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var13...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -342,7 +342,7 @@ func statCardInner(props StatCardProps) templ.Component {
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(props.Value)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/stat_card.templ`, Line: 76, Col: 82}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/stat_card.templ`, Line: 76, Col: 94}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {

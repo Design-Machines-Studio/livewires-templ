@@ -22,7 +22,7 @@ func TestStatCardChildClasses(t *testing.T) {
 	if !strings.Contains(html, `class="title"`) {
 		t.Error("expected title class on label")
 	}
-	if !strings.Contains(html, `class="value"`) {
+	if !strings.Contains(html, `class="value font-metric"`) {
 		t.Error("expected value class on value")
 	}
 	if !strings.Contains(html, `class="description"`) {

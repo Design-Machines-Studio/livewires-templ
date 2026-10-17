@@ -1,0 +1,80 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// WidgetMetricProps accepts complete caller-formatted text. Status takes
+// precedence over Value; an empty Value is also rendered without numeric styling.
+// Use an explicit Status for missing, denied or unavailable observations.
+type WidgetMetricProps struct {
+	Label      string
+	Value      string
+	Status     string
+	Detail     string
+	Variant    string // short, long, or empty (default); selected after formatting
+	ValueClass string
+	// ValueAttrs applies only to numeric dd values. Developer-controlled style
+	// can set --widget-metric-size, --widget-metric-weight, --widget-metric-width.
+	ValueAttrs templ.Attributes
+	Class      string
+	Attrs      templ.Attributes
+}
+
+// WidgetMetricsProps configures a definition list of WidgetMetricItemComponent
+// children. Do not put standalone WidgetMetricComponent lists inside it.
+type WidgetMetricsProps struct {
+	Class string
+	Attrs templ.Attributes
+}
+
+// WidgetMetricComponent renders a standalone dl with direct dt/dd children.
+templ WidgetMetricComponent(props WidgetMetricProps) {
+	<dl class={ lw.ClassNames("widget-metric", props.Class) } { props.Attrs... }>
+		@widgetMetricDefinitions(props)
+	</dl>
+}
+
+// WidgetMetricItemComponent renders one dt/dd group inside WidgetMetricsComponent.
+templ WidgetMetricItemComponent(props WidgetMetricProps) {
+	<div class={ lw.ClassNames("widget-metric", props.Class) } { props.Attrs... }>
+		@widgetMetricDefinitions(props)
+	</div>
+}
+
+func widgetMetricVariant(variant string) string {
+	if variant == "short" || variant == "long" {
+		return "widget-metric-value--" + variant
+	}
+	return ""
+}
+
+templ widgetMetricDefinitions(props WidgetMetricProps) {
+	<dt>{ props.Label }</dt>
+	if props.Status != "" || props.Value == "" {
+		<dd class="widget-metric-status">{ props.Status }</dd>
+	} else {
+		<dd class={ lw.ClassNames("widget-metric-value", widgetMetricVariant(props.Variant), "font-metric tnum", props.ValueClass) } { props.ValueAttrs... }>{ props.Value }</dd>
+	}
+	if props.Detail != "" {
+		<dd class="widget-metric-detail">{ props.Detail }</dd>
+	}
+}
+
+templ WidgetMetricsComponent(props WidgetMetricsProps) {
+	<dl class={ lw.ClassNames("widget-metrics", props.Class) } { props.Attrs... }>{ children... }</dl>
+}
+
+// WidgetMetric renders a standalone numeric definition list.
+templ WidgetMetric(label, value string) {
+	@WidgetMetricComponent(WidgetMetricProps{Label: label, Value: value})
+}
+
+// WidgetMetricItem renders a numeric group for use inside WidgetMetrics.
+templ WidgetMetricItem(label, value string) {
+	@WidgetMetricItemComponent(WidgetMetricProps{Label: label, Value: value})
+}
+
+templ WidgetMetrics(class string) {
+	@WidgetMetricsComponent(WidgetMetricsProps{Class: class}) {
+		{ children... }
+	}
+}

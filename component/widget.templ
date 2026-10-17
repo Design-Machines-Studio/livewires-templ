@@ -1,0 +1,129 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+import "strings"
+
+// WidgetProps configures the shared frame. Callers own unique IDs, heading
+// hierarchy, actions, schemes and data. No IDs are generated.
+type WidgetProps struct {
+	ID           string
+	Title        string
+	HeadingID    string
+	HeadingLevel string // h1–h6; empty or invalid uses h2
+	Description  string
+	// Header replaces the built-in heading, description and action composition.
+	// Supply its accessible name through Attrs when using a custom header.
+	Header       templ.Component
+	// Action owns its markup, including the widget-action class on its root.
+	Action       templ.Component
+	Footer       templ.Component
+	PlainHeader  bool
+	HeadingAttrs templ.Attributes
+	ContentAttrs templ.Attributes
+	FooterAttrs  templ.Attributes
+	Class        string
+	Attrs        templ.Attributes
+}
+
+// widgetNamed uses a section only when it has an explicit accessible name.
+// Attribute maps are developer-controlled; callers own external label targets.
+func widgetNamed(props WidgetProps) bool {
+	if widgetHeadingNamesFrame(props) {
+		return true
+	}
+	for _, key := range []string{"aria-label", "aria-labelledby"} {
+		if value, ok := props.Attrs[key].(string); ok && strings.TrimSpace(value) != "" {
+			return true
+		}
+	}
+	return false
+}
+
+func widgetHeadingNamesFrame(props WidgetProps) bool {
+	return props.Header == nil && strings.TrimSpace(props.Title) != "" && strings.TrimSpace(props.HeadingID) != ""
+}
+
+// WidgetComponent renders a named section or a non-landmark div, with optional
+// header/footer and a widget-content children slot. Attributes belong only to
+// developers; do not duplicate generated class, id or aria-labelledby attributes.
+templ WidgetComponent(props WidgetProps) {
+	if widgetNamed(props) {
+		<section
+			class={ lw.ClassNames("widget", lw.If(props.PlainHeader, "widget--plain-header"), props.Class) }
+			if props.ID != "" {
+				id={ props.ID }
+			}
+			if widgetHeadingNamesFrame(props) {
+				aria-labelledby={ props.HeadingID }
+			}
+			{ props.Attrs... }
+		>
+			@widgetContents(props) {
+				{ children... }
+			}
+		</section>
+	} else {
+		<div class={ lw.ClassNames("widget", lw.If(props.PlainHeader, "widget--plain-header"), props.Class) }
+			if props.ID != "" {
+				id={ props.ID }
+			}
+			{ props.Attrs... }
+		>
+			@widgetContents(props) {
+				{ children... }
+			}
+		</div>
+	}
+}
+
+templ widgetContents(props WidgetProps) {
+	if props.Header != nil || props.Title != "" || props.Description != "" || props.Action != nil {
+		<header class="widget-header">
+			if props.Header != nil {
+				@props.Header
+			} else {
+				if props.Title != "" || props.Description != "" {
+					<div class="widget-heading">
+						if props.Title != "" {
+							@widgetHeading(props)
+						}
+						if props.Description != "" {
+							<p class="widget-description">{ props.Description }</p>
+						}
+					</div>
+				}
+				if props.Action != nil {
+					@props.Action
+				}
+			}
+		</header>
+	}
+	<div class="widget-content" { props.ContentAttrs... }>{ children... }</div>
+	if props.Footer != nil {
+		<footer class="widget-footer" { props.FooterAttrs... }>@props.Footer</footer>
+	}
+}
+
+templ widgetHeading(props WidgetProps) {
+	switch props.HeadingLevel {
+		case "h1":
+			<h1 class="widget-title" if props.HeadingID != "" { id={ props.HeadingID } } { props.HeadingAttrs... }>{ props.Title }</h1>
+		case "h3":
+			<h3 class="widget-title" if props.HeadingID != "" { id={ props.HeadingID } } { props.HeadingAttrs... }>{ props.Title }</h3>
+		case "h4":
+			<h4 class="widget-title" if props.HeadingID != "" { id={ props.HeadingID } } { props.HeadingAttrs... }>{ props.Title }</h4>
+		case "h5":
+			<h5 class="widget-title" if props.HeadingID != "" { id={ props.HeadingID } } { props.HeadingAttrs... }>{ props.Title }</h5>
+		case "h6":
+			<h6 class="widget-title" if props.HeadingID != "" { id={ props.HeadingID } } { props.HeadingAttrs... }>{ props.Title }</h6>
+		default:
+			<h2 class="widget-title" if props.HeadingID != "" { id={ props.HeadingID } } { props.HeadingAttrs... }>{ props.Title }</h2>
+	}
+}
+
+// Widget renders a frame with a named h2 and children.
+templ Widget(title, headingID string) {
+	@WidgetComponent(WidgetProps{Title: title, HeadingID: headingID}) {
+		{ children... }
+	}
+}
