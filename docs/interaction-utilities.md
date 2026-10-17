@@ -145,7 +145,7 @@ them. Consumers must verify their own served bytes.
 | Copy | `f73b8a26d9c449ede4069edfe13eb50c2876a732` | `copy-button.js`, SHA-256 `06fac73364cd2fb1721fbd6ccfbdb204f1208e184dd8140b34badb5f7815b903` |
 | Loading | `98b890dc804813b0b36b9a484bf49e3bdc7f196b` | `loading.js`, SHA-256 `5de053802835444b6a782d8a5a58e0c33a9aa9fa1490c5dad819340a23a253f6` |
 | Toast region | `6e0ff82c222c644fdda687a46bcd24816b7f7dc1` | `toast-region.js`, SHA-256 `d3c0bb52a15dffcd7964bc8335ad6a431022662fdfc4e524e00a33d2093facca` |
-| Live Wires CSS (example only) | `6e0ff82c222c644fdda687a46bcd24816b7f7dc1` | `main.css`, SHA-256 `45f8ef695178ced30487c5fb1352bbb546273cffc0a04caadc54249d43eac34c` |
+| Live Wires CSS (example only, v2.24.0 hardware loaders) | `3042ffe56c36b8e51e4e8a98f500b1aa04a43fd3` | `main.css`, SHA-256 `82c643f6cd2fab40b11fe6fb3e6bfcc2fb0d454c4f6617f11d325f1ce5fbcbcb` |
 
 The pinned URLs used by the example are the corresponding
 `https://raw.githubusercontent.com/Design-Machines-Studio/livewires/<commit>/public/dist/<file>` paths.
@@ -160,3 +160,5 @@ compared in a browser.
 
 Load each module only where its behavior is used. Do not duplicate these
 modules' JavaScript state machines or vendor CSS in this library.
+
+The maintained loading example uses `Indicator: component.LoaderIcon("line")` and `IndicatorClass: "loader-panel"`. The controller still owns delay, visibility, busy state and its separate status announcement. Omitting Indicator retains the skeleton fallback.

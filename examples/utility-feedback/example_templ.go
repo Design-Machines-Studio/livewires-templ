@@ -70,7 +70,7 @@ func Example(name string) templ.Component {
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = component.LoadingRegionComponent(component.LoadingRegionProps{ID: "editor-save", Label: "Editor save"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = component.LoadingRegionComponent(component.LoadingRegionProps{ID: "editor-save", Label: "Editor save", Indicator: component.LoaderIcon("line"), IndicatorClass: "loader-panel"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

@@ -12,11 +12,13 @@ import lw "github.com/Design-Machines-Studio/livewires-templ"
 
 // ButtonProps holds configuration for a button component.
 type ButtonProps struct {
-	Variant  string           // CSS modifier (e.g., "accent", "small", "large")
-	Type     string           // HTML type attribute (default: "button")
-	Disabled bool             // Whether button is disabled
-	Class    string           // Additional CSS classes from consumer
-	Attrs    templ.Attributes // Catch-all: data-on-click, data-signals, aria-*, etc.
+	Busy      bool             // Host-owned pending state; does not automatically disable the button
+	Indicator *LoaderIconProps // Ratchet or torque while Busy; nil/line uses ratchet
+	Variant   string           // CSS modifier (e.g., "accent", "small", "large")
+	Type      string           // HTML type attribute (default: "button")
+	Disabled  bool             // Whether button is disabled
+	Class     string           // Additional CSS classes from consumer
+	Attrs     templ.Attributes // Catch-all: data-on-click, data-signals, aria-*, etc.
 }
 
 // buttonType returns the button type, defaulting to "button".
@@ -61,7 +63,7 @@ func ButtonComponent(props ButtonProps) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(buttonType(props.Type))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/button.templ`, Line: 25, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/button.templ`, Line: 27, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -90,19 +92,31 @@ func ButtonComponent(props ButtonProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
+		if props.Busy {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, " aria-busy=\"true\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
 		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, props.Attrs)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, ">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, ">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
+		}
+		if props.Busy {
+			templ_7745c5c3_Err = LoaderIconComponent(buttonLoaderIcon(props.Indicator)).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
 		templ_7745c5c3_Err = templ_7745c5c3_Var1.Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</button>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -147,7 +161,7 @@ func Button(label string, variant string) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/button.templ`, Line: 37, Col: 9}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/button.templ`, Line: 45, Col: 9}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -190,20 +204,20 @@ func ButtonLink(href string, label string, variant string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<a href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<a href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var10 templ.SafeURL
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinURLErrs(href)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/button.templ`, Line: 44, Col: 13}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/button.templ`, Line: 52, Col: 13}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -216,20 +230,20 @@ func ButtonLink(href string, label string, variant string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/button.templ`, Line: 47, Col: 9}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/button.templ`, Line: 55, Col: 9}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</a>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</a>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -274,7 +288,7 @@ func SubmitButton(label string, variant string) templ.Component {
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/button.templ`, Line: 54, Col: 9}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/button.templ`, Line: 62, Col: 9}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
@@ -288,6 +302,18 @@ func SubmitButton(label string, variant string) templ.Component {
 		}
 		return nil
 	})
+}
+
+// Driver Line belongs to standalone loading surfaces, never to an action button.
+func buttonLoaderIcon(indicator *LoaderIconProps) LoaderIconProps {
+	if indicator == nil {
+		return LoaderIconProps{Variant: "ratchet"}
+	}
+	props := *indicator
+	if props.Variant != "torque" {
+		props.Variant = "ratchet"
+	}
+	return props
 }
 
 var _ = templruntime.GeneratedTemplate

@@ -11,7 +11,7 @@ templ Example(name string) {
 		case "copy":
 			@component.CopyComponent(component.CopyProps{ID: "share-address", Label: "Share address", Value: "https://example.test/meeting", ButtonLabel: "Copy address"})
 		case "loading":
-			@component.LoadingRegionComponent(component.LoadingRegionProps{ID: "editor-save", Label: "Editor save"}) {
+			@component.LoadingRegionComponent(component.LoadingRegionProps{ID: "editor-save", Label: "Editor save", Indicator: component.LoaderIcon("line"), IndicatorClass: "loader-panel"}) {
 				<p>Editor content remains available while an operation is pending.</p>
 			}
 		case "toast":

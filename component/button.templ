@@ -4,11 +4,13 @@ import lw "github.com/Design-Machines-Studio/livewires-templ"
 
 // ButtonProps holds configuration for a button component.
 type ButtonProps struct {
-	Variant  string           // CSS modifier (e.g., "accent", "small", "large")
-	Type     string           // HTML type attribute (default: "button")
-	Disabled bool             // Whether button is disabled
-	Class    string           // Additional CSS classes from consumer
-	Attrs    templ.Attributes // Catch-all: data-on-click, data-signals, aria-*, etc.
+	Busy      bool             // Host-owned pending state; does not automatically disable the button
+	Indicator *LoaderIconProps // Ratchet or torque while Busy; nil/line uses ratchet
+	Variant   string           // CSS modifier (e.g., "accent", "small", "large")
+	Type      string           // HTML type attribute (default: "button")
+	Disabled  bool             // Whether button is disabled
+	Class     string           // Additional CSS classes from consumer
+	Attrs     templ.Attributes // Catch-all: data-on-click, data-signals, aria-*, etc.
 }
 
 // buttonType returns the button type, defaulting to "button".
@@ -25,8 +27,14 @@ templ ButtonComponent(props ButtonProps) {
 		type={ buttonType(props.Type) }
 		class={ lw.ClassNames("button", lw.VariantClass("button", props.Variant), props.Class) }
 		disabled?={ props.Disabled }
+		if props.Busy {
+			aria-busy="true"
+		}
 		{ props.Attrs... }
 	>
+		if props.Busy {
+			@LoaderIconComponent(buttonLoaderIcon(props.Indicator))
+		}
 		{ children... }
 	</button>
 }
@@ -53,4 +61,16 @@ templ SubmitButton(label string, variant string) {
 	@ButtonComponent(ButtonProps{Variant: variant, Type: "submit"}) {
 		{ label }
 	}
+}
+
+// Driver Line belongs to standalone loading surfaces, never to an action button.
+func buttonLoaderIcon(indicator *LoaderIconProps) LoaderIconProps {
+	if indicator == nil {
+		return LoaderIconProps{Variant: "ratchet"}
+	}
+	props := *indicator
+	if props.Variant != "torque" {
+		props.Variant = "ratchet"
+	}
+	return props
 }

@@ -1,0 +1,44 @@
+package main
+
+import "github.com/Design-Machines-Studio/livewires-templ/component"
+
+templ loadersExample() {
+	<p>Hardware loaders inherit text color and size. These examples do not send requests or save anything.</p>
+	<section class="stack">
+		<h2>Ratchet</h2>
+		@component.Loader("Loading proposals", "ratchet")
+		@component.ButtonComponent(component.ButtonProps{Busy: true, Disabled: true, Variant: "accent"}) { Saving }
+		@component.ButtonComponent(component.ButtonProps{Busy: true, Disabled: true, Indicator: &component.LoaderIconProps{Variant: "torque", Progress: 0.4}}) { Exporting 40% }
+	</section>
+	<section class="stack">
+		<h2>Driver Line</h2>
+		@component.LoaderPanel("Syncing members")
+		@component.LoaderPanelComponent(component.LoaderPanelProps{Label: "Preparing files", Mixed: true})
+	</section>
+	<section class="stack">
+		<h2>Measured progress</h2>
+		for _, progress := range []float64{0, 0.4, 1} {
+			@component.LoaderComponent(component.LoaderProps{Label: "Export progress", Variant: "torque", Progress: progress})
+		}
+	</section>
+	<section class="stack scheme-dark">
+		<h2>Inherited color and scale</h2>
+		@component.LoaderComponent(component.LoaderProps{Label: "Loading content", Variant: "ratchet", Class: "text-3xl"})
+		@component.LoaderPanelComponent(component.LoaderPanelProps{Label: "Syncing", Mixed: true, Class: "text-3xl"})
+	</section>
+	<section class="stack">
+		<h2>Existing components</h2>
+		@component.SaveStatusComponent(component.SaveStatusProps{State: "saving", Indicator: component.LoaderIcon("ratchet")})
+		@component.SaveStatusComponent(component.SaveStatusProps{State: "saved", Indicator: component.LoaderIcon("ratchet")})
+		@component.LoadingRegionComponent(component.LoadingRegionProps{ID: "hardware-region", Label: "Example content", Indicator: component.LoaderIcon("line"), IndicatorClass: "loader-panel"}) {
+			<p>Content remains available until the application starts a request.</p>
+		}
+		@component.Loader("Legacy skeleton", "")
+	</section>
+	<section class="stack">
+		<h2>Page overlay</h2>
+		<p>The preview closes after two seconds or Escape and restores focus. Without JavaScript it stays hidden.</p>
+		<button type="button" data-preview-overlay>Preview page overlay</button>
+	</section>
+	@component.LoaderOverlayComponent(component.LoaderOverlayProps{Label: "Loading page", Mixed: true, Attrs: templ.Attributes{"hidden": true, "data-gallery-overlay": true}})
+}
