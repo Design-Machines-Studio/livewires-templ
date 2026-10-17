@@ -201,6 +201,10 @@ test('loading delay, unrelated editing, failure, unknown and recovery', async ({
   await page.selectOption('#scenario', 'delayed');
   await page.getByRole('button', { name: 'Run scenario' }).click();
   await expect(page.locator('[data-loading-content]')).toHaveAttribute('aria-busy', 'true');
+  const indicator = page.locator('[data-loading-indicator]');
+  await expect(indicator).toHaveClass('loader-panel');
+  await expect(indicator.locator('.loader--line')).toBeVisible();
+  await expect(page.locator('[data-loading-region] [role=status]')).toHaveCount(1);
   await expect(page.getByRole('button', { name: 'Run scenario' })).toBeDisabled();
   await page.locator('#scenario-form').evaluate(form => form.requestSubmit());
   await expect(page.locator('#demo-outcome')).toHaveText('Simulated request pending.');
@@ -208,6 +212,7 @@ test('loading delay, unrelated editing, failure, unknown and recovery', async ({
   await page.getByRole('button', { name: 'Update unrelated note' }).click();
   await expect(page.locator('[data-loading-content]')).toHaveAttribute('aria-busy', 'true');
   await expect(page.locator('#demo-outcome')).toContainText('Simulated success');
+  await expect(indicator).toBeHidden();
   for (const scenario of ['failure', 'unknown', 'normal']) {
     await page.selectOption('#scenario', scenario);
     await page.getByRole('button', { name: 'Run scenario' }).click();
