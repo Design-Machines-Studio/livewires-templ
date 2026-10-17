@@ -1,0 +1,15 @@
+{
+  "acceptanceClear": true,
+  "designSettled": true,
+  "consequence": "medium",
+  "reversibility": "easy",
+  "coordination": "single-pass",
+  "existingPattern": true,
+  "verificationDefined": true,
+  "unansweredQuestions": [],
+  "explicitFull": false,
+  "reviewRequired": true,
+  "securitySensitive": false,
+  "minimumMode": "lean",
+  "rationale": "Settled producer contract; bounded public API and definition-list/accessibility judgment need one independent review."
+}

@@ -1,0 +1,131 @@
+package main
+
+import "github.com/Design-Machines-Studio/livewires-templ/component"
+
+templ widgetsExample() {
+	<p>Shared presentation from Live Wires v2.24.0. Values are demonstration strings. Placement, data, permissions and saved typography belong to the consuming application.</p>
+	<section class="stack" aria-labelledby="source-examples">
+	<h2 id="source-examples">Source-derived examples</h2>
+	<div class="grid" style="--min-column-width: 18rem;">
+		<div class="scheme-subtle" style="inline-size: min(100%, 18rem);" data-widget-host="narrow">
+			@component.WidgetComponent(component.WidgetProps{ID: "membership", Title: "Membership at a glance", HeadingID: "membership-heading", HeadingLevel: "h3", Footer: widgetDirectory()}) {
+				@component.WidgetMetrics("") {
+					@component.WidgetMetricItemComponent(component.WidgetMetricProps{Label: "Active", Value: "42", Variant: "short"})
+					@component.WidgetMetricItemComponent(component.WidgetMetricProps{Label: "Probationary", Value: "0", Variant: "short"})
+					@component.WidgetMetricItemComponent(component.WidgetMetricProps{Label: "Joined in the last 30 days", Value: "3", Variant: "short"})
+				}
+			}
+		</div>
+		<div class="scheme-dark" data-widget-host="wide">
+			@component.WidgetComponent(component.WidgetProps{Title: "Governance at a glance", HeadingID: "governance-heading", HeadingLevel: "h3", Footer: widgetProposals()}) {
+				<p class="text-muted">Decisions recorded in 2026</p>
+				@component.WidgetMetrics("") {
+					@component.WidgetMetricItemComponent(component.WidgetMetricProps{Label: "Visible drafts", Value: "35", Variant: "short"})
+					@component.WidgetMetricItemComponent(component.WidgetMetricProps{Label: "Open for input", Value: "6", Variant: "short"})
+					@component.WidgetMetricItemComponent(component.WidgetMetricProps{Label: "Decisions", Value: "0", Variant: "short"})
+				}
+			}
+		</div>
+	</div>
+	</section>
+	<div class="grid" style="--min-column-width: 18rem;">
+		@component.WidgetComponent(component.WidgetProps{Title: "Needs my input: review the community workshop’s equipment sharing agreement and next month’s meeting schedule", HeadingID: "list-heading", Description: "Demonstration proposal titles; the caller supplies deadlines and permissions.", Action: widgetLongAction()}) {
+			<ul class="list-none m-0 divide-y">
+				<li class="py-1"><time datetime="2026-10-20">Respond by 20 October</time><h3 class="text-base"><a href="#widget-notes">Review the community workshop's equipment sharing agreement</a></h3></li>
+				<li class="py-1"><time datetime="2026-10-21">Respond by 21 October</time><h3 class="text-base"><a href="#widget-notes">Confirm next month's meeting schedule</a></h3></li>
+			</ul>
+		}
+		@component.WidgetComponent(component.WidgetProps{Title: "Recent decisions", HeadingID: "timeline-heading"}) {
+			@component.Timeline("") {
+				@component.TimelineItem(component.TimelineItemProps{Date: "10 October 2026", Title: "Workshop agreement", Content: "Demonstration decision recorded.", Status: "success", TitleHref: "#widget-notes"})
+				@component.TimelineItem(component.TimelineItemProps{Date: "9 October 2026", Title: "Meeting schedule", Content: "Demonstration decision recorded."})
+			}
+		}
+	</div>
+	<div class="grid" style="--min-column-width: 18rem;">
+		@component.WidgetComponent(component.WidgetProps{Title: "Unread notifications", HeadingID: "empty-heading", PlainHeader: true, Footer: widgetNotifications()}) {
+			@component.WidgetMessageComponent(component.WidgetMessageProps{Message: "You're all caught up.", Icon: widgetCheck()})
+		}
+		<div class="scheme-dark">
+			@component.WidgetComponent(component.WidgetProps{Title: "Open proposals", HeadingID: "unavailable-heading", Footer: widgetProposals()}) {
+				@component.WidgetMessageComponent(component.WidgetMessageProps{Message: "Governance information is unavailable right now.", Detail: "Try again later or open the full page."})
+			}
+		</div>
+	</div>
+	<div class="grid" style="--min-column-width: 18rem;">
+		@component.WidgetComponent(component.WidgetProps{Title: "Metric variations", HeadingID: "variants-heading"}) {
+			@component.WidgetMetrics("") {
+				@component.WidgetMetricItem("Count", "12,345")
+				@component.WidgetMetricItemComponent(component.WidgetMetricProps{Label: "Change", Value: "−12.5%", Variant: "short"})
+				@component.WidgetMetricItemComponent(component.WidgetMetricProps{Label: "Balance", Value: "€ 9.876.543.210.987,65", Variant: "long"})
+				@component.WidgetMetricItemComponent(component.WidgetMetricProps{Label: "Not reported", Status: "Unavailable"})
+				@component.WidgetMetricItemComponent(component.WidgetMetricProps{Label: "Private membership", Status: "Permission denied", Detail: "Only shared observations are shown."})
+			}
+		}
+		<div class="scheme-accent">
+			@component.WidgetComponent(component.WidgetProps{Title: "Independent typography A", HeadingID: "custom-a-heading", ID: "custom-a"}) {
+				@component.WidgetMetricComponent(component.WidgetMetricProps{Label: "Confirmed balance", Value: "$ 0.00", Variant: "short", ValueAttrs: templ.Attributes{"style": "--widget-metric-size: 2rem; --widget-metric-weight: 650; --widget-metric-width: 80%;", "data-value": "a"}})
+			}
+		</div>
+		@component.WidgetComponent(component.WidgetProps{Title: "Independent typography B", HeadingID: "custom-b-heading", ID: "custom-b"}) {
+			@component.WidgetMetricComponent(component.WidgetMetricProps{Label: "Adjustment", Value: "−Rp 1.234.567.890,50", Variant: "long", ValueAttrs: templ.Attributes{"style": "--widget-metric-size: 1.25rem; --widget-metric-weight: 500; --widget-metric-width: 120%;", "data-value": "b"}})
+		}
+	</div>
+	<div class="grid" style="--min-column-width: 18rem;">
+		@component.WidgetComponent(component.WidgetProps{Title: "Profile completion", HeadingID: "progress-heading"}) {
+			@component.StatusIndicator("In progress", "warning")
+			@component.ProgressBarComponent(component.ProgressBarProps{Progress: 67, Label: "Profile completion", Attrs: templ.Attributes{"style": "--progress-height: var(--line-025);"}})
+			<p>Add your role and contact details to complete your profile.</p>
+		}
+		@component.WidgetComponent(component.WidgetProps{Title: "People over time", HeadingID: "table-heading", Description: "The complete table remains available when chart assets are unavailable."}) {
+			@component.WidgetMessage("Membership history unavailable.")
+			<details class="disclosure" open>
+				<summary>View chart data</summary>
+				<div class="overflow-x-auto" tabindex="0" role="region" aria-labelledby="membership-data-caption" data-table-scroll>
+					<table class="widget-table tnum" style="min-inline-size: 28rem;">
+						<caption id="membership-data-caption">Demonstration membership positions by calendar month</caption>
+						<thead><tr><th scope="col">Month</th><th scope="col" class="numeric">Reported positions</th><th scope="col" class="numeric">Reporting organizations</th><th scope="col">Observation</th></tr></thead>
+						<tbody>
+							<tr><th scope="row">July</th><td class="numeric">42</td><td class="numeric">18</td><td>Reported</td></tr>
+							<tr><th scope="row">August</th><td class="numeric">47</td><td class="numeric">21</td><td>Reported</td></tr>
+							<tr><th scope="row">September</th><td class="numeric">51</td><td class="numeric">24</td><td>Provisional</td></tr>
+						</tbody>
+					</table>
+				</div>
+			</details>
+		}
+	</div>
+	@component.WidgetComponent(component.WidgetProps{Title: "Network over time", HeadingID: "chart-heading", Description: "Demonstration organizations counted by recorded network join date."}) {
+		<figure><svg viewBox="0 0 300 130" role="img" aria-labelledby="chart-title chart-desc"><title id="chart-title">Network over time</title><desc id="chart-desc">July: 18 organizations. August: 21. September: 24. The same observations appear in the table.</desc><path d="M30 100H280" fill="none" stroke="currentColor"></path><polyline points="30,90 150,60 270,30" fill="none" stroke="currentColor" stroke-width="3"></polyline><g fill="currentColor"><circle cx="30" cy="90" r="4"></circle><circle cx="150" cy="60" r="4"></circle><circle cx="270" cy="30" r="4"></circle></g></svg><figcaption class="text-muted">Organizations in the network rose from 18 in July to 24 in September.</figcaption></figure>
+		<details class="disclosure"><summary>View network observations</summary><table class="widget-table tnum"><caption>Demonstration network observations</caption><thead><tr><th scope="col">Month</th><th scope="col" class="numeric">Organizations</th></tr></thead><tbody><tr><th scope="row">July</th><td class="numeric">18</td></tr><tr><th scope="row">August</th><td class="numeric">21</td></tr><tr><th scope="row">September</th><td class="numeric">24</td></tr></tbody></table></details>
+	}
+	@component.WidgetComponent(component.WidgetProps{Header: widgetCustomHeading(), Attrs: templ.Attributes{"aria-labelledby": "custom-heading"}}) {
+		<p>A caller-composed header; no built-in title or action is required.</p>
+	}
+	@component.WidgetComponent(component.WidgetProps{ID: "body-only"}) {
+		@component.WidgetMessage("A headingless, non-landmark body. No fabricated count or extra surface.")
+	}
+	@component.WidgetComponent(component.WidgetProps{ID: "named-body-only", Attrs: templ.Attributes{"aria-label": "Network summary"}}) {
+		@component.WidgetMetric("Organizations in the network", "24")
+	}
+	<p id="widget-notes">Every observation above is demonstration data. Global metric fonts and persisted per-widget settings remain Baseplate-owned.</p>
+}
+
+templ widgetDirectory() {
+	<a class="more" href="#widget-notes">Member directory</a>
+}
+templ widgetProposals() {
+	<a class="more" href="#widget-notes">View proposals</a>
+}
+templ widgetNotifications() {
+	<a class="more" href="#widget-notes">All notifications</a>
+}
+templ widgetLongAction() {
+	<a class="widget-action button" href="#widget-notes">Review all proposals awaiting your input and the upcoming response deadlines</a>
+}
+templ widgetCheck() {
+	<span>✓</span>
+}
+templ widgetCustomHeading() {
+	<div class="widget-heading"><h2 class="widget-title" id="custom-heading">Caller-composed header</h2></div>
+}

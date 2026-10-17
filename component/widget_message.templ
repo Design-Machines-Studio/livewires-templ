@@ -1,0 +1,31 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// WidgetMessageProps configures a quiet inline message. Icon is decorative;
+// callers provide meaningful text in Message. Announcements are caller policy.
+type WidgetMessageProps struct {
+	Message string
+	Detail  string
+	Icon    templ.Component
+	Class   string
+	Attrs   templ.Attributes
+}
+
+templ WidgetMessageComponent(props WidgetMessageProps) {
+	<div class={ lw.ClassNames("widget-message", props.Class) } { props.Attrs... }>
+		if props.Icon != nil {
+			<span class="widget-message-icon" aria-hidden="true">@props.Icon</span>
+		}
+		<div class="widget-message-content">
+			<p>{ props.Message }</p>
+			if props.Detail != "" {
+				<p class="widget-message-detail">{ props.Detail }</p>
+			}
+		</div>
+	</div>
+}
+
+templ WidgetMessage(message string) {
+	@WidgetMessageComponent(WidgetMessageProps{Message: message})
+}

@@ -73,7 +73,7 @@ templ statCardInner(props StatCardProps) {
 			@statCardLabel(props)
 		}
 	</dt>
-	<dd class={ lw.ClassNames("value", lw.SizeClass(props.ValueSize)) }>{ props.Value }</dd>
+	<dd class={ lw.ClassNames("value font-metric", lw.SizeClass(props.ValueSize)) }>{ props.Value }</dd>
 	if props.Detail != "" {
 		<dd class="description">{ props.Detail }</dd>
 	}
