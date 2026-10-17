@@ -480,4 +480,4 @@ Serve the generated components locally with `examples/gallery/run.sh start`.
 See the [gallery runbook](examples/gallery/README.md) for pinned assets, Playwright,
 source receipts and isolated rebuild/stop commands.
 
-Hardware loaders support Ratchet, Driver Line, and Torque in standalone status/progress, busy buttons, LoadingRegion and SaveStatus. See [loader composition and props](docs/loaders.md).
+Hardware loaders support Ratchet and Torque in standalone status/progress, busy buttons, LoadingRegion and SaveStatus. Driver Line stays standalone, centered in LoaderPanel or LoaderOverlay. See [loader composition and props](docs/loaders.md).
