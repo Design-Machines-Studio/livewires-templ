@@ -39,3 +39,100 @@ templ CommentComponent(props CommentProps) {
 templ Comment(author string, body string, date string, badge string) {
 	@CommentComponent(CommentProps{Author: author, Body: body, Date: date, Badge: badge})
 }
+
+// CommentArticleProps configures the opt-in Live Wires shared comment contract.
+// CommentProps and CommentComponent retain their legacy output and date policy.
+type CommentArticleProps struct {
+	ID             string
+	Author         templ.Component // Inline author composition, including its .author hook/profile link.
+	Avatar         templ.Component // Decorative avatar content: images must use alt=""; hide initials from AT.
+	AvatarHref     string          // Optional profile URL; linked only when AvatarLabel is also nonempty.
+	AvatarLabel    string          // Accessible name of the avatar link, e.g. "Jane Doe's profile".
+	DateTime       string          // Machine-readable HTML datetime, supplied by the caller.
+	Timestamp      string          // Visible text, rendered verbatim without date formatting.
+	Permalink      string          // Optional timestamp destination; no route/anchor is inferred.
+	PermalinkLabel string          // Optional full accessible name; start with the visible Timestamp text.
+	Content        templ.Component // Rich body. When non-nil, takes precedence over children.
+	Edited         templ.Component // Optional inline metadata, including any caller-owned semantic time.
+	Footer         templ.Component // Optional footer, including caller-owned .comment-actions links/buttons.
+	BodyClass      string          // Caller presentation, e.g. "text-base mt-075".
+	TimestampClass string          // Applied to the time, or its permalink when linked.
+	EditedClass    string
+	Class          string
+	Attrs          templ.Attributes // Developer-controlled only; never use untrusted attribute names.
+}
+
+// CommentArticleComponent renders a shared comment without layout utilities.
+// Caller slots must supply valid markup: Author/Edited are inline, Avatar is
+// decorative, and action controls belong in Footer, outside profile/time links.
+// It never parses HTML, formats dates, infers routes or announces arrivals.
+templ CommentArticleComponent(props CommentArticleProps) {
+	<article
+		class={ lw.ClassNames("comment comment--layout", props.Class) }
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		{ props.Attrs... }
+	>
+		if props.Avatar != nil {
+			if props.AvatarHref != "" && props.AvatarLabel != "" {
+				<a class="comment-avatar" href={ templ.URL(props.AvatarHref) } aria-label={ props.AvatarLabel }>
+					@props.Avatar
+				</a>
+			} else {
+				<span class="comment-avatar" aria-hidden="true">@props.Avatar
+</span>
+			}
+		}
+		<div class="comment-content">
+			<header class="comment-meta">
+				if props.Author != nil {
+					<span class="comment-author">@props.Author
+</span>
+				}
+				if props.Timestamp != "" {
+					if props.Permalink != "" {
+						<a
+							class={ lw.ClassNames("comment-permalink", props.TimestampClass) }
+							href={ templ.URL(props.Permalink) }
+							if props.PermalinkLabel != "" {
+								aria-label={ props.PermalinkLabel }
+							}
+						>
+							<time class="comment-timestamp" datetime={ props.DateTime }>{ props.Timestamp }</time>
+						</a>
+					} else {
+						<time class={ lw.ClassNames("comment-timestamp", props.TimestampClass) } datetime={ props.DateTime }>{ props.Timestamp }</time>
+					}
+				}
+			</header>
+			<div class={ lw.ClassNames("comment-body prose", props.BodyClass) }>
+				if props.Content != nil {
+					@props.Content
+				} else {
+					{ children... }
+				}
+			</div>
+			if props.Edited != nil {
+				<p class={ lw.ClassNames("comment-edited", props.EditedClass) }>@props.Edited
+</p>
+			}
+			if props.Footer != nil {
+				<footer class="comment-footer">@props.Footer
+</footer>
+			}
+		</div>
+	</article>
+}
+
+// CommentArticle renders escaped plain author/body text using the shared article
+// structure. Unlike Comment, its timestamp is caller-formatted and not DateShort.
+templ CommentArticle(author string, body string, dateTime string, timestamp string) {
+	@CommentArticleComponent(CommentArticleProps{Author: commentArticleAuthor(author), DateTime: dateTime, Timestamp: timestamp}) {
+		<p>{ body }</p>
+	}
+}
+
+templ commentArticleAuthor(author string) {
+	<span class="author">{ author }</span>
+}

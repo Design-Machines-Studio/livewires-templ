@@ -1,0 +1,15 @@
+{
+  "acceptanceClear": true,
+  "designSettled": true,
+  "consequence": "medium",
+  "reversibility": "easy",
+  "coordination": "single-pass",
+  "existingPattern": true,
+  "verificationDefined": true,
+  "unansweredQuestions": [],
+  "explicitFull": false,
+  "reviewRequired": true,
+  "securitySensitive": false,
+  "minimumMode": "lean",
+  "rationale": "The producer settles the DOM/CSS design. Additive public composition and legacy compatibility require bounded API judgment, Docker render tests and independent review; no ordered cross-repository implementation is needed."
+}
