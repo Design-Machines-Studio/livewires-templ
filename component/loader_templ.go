@@ -77,9 +77,9 @@ func LoaderComponent(props LoaderProps) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var4 string
-				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(hardwareLoaderNumber(hardwareLoaderProgress(props.Progress) * 100))
+				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(hardwareLoaderPercentage(props.Progress))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/loader.templ`, Line: 27, Col: 86}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/loader.templ`, Line: 27, Col: 60}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -167,9 +167,9 @@ func LoaderComponent(props LoaderProps) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var9 string
-				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(hardwareLoaderNumber(hardwareLoaderProgress(props.Progress)*100) + "%")
+				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(hardwareLoaderPercentage(props.Progress) + "%")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/loader.templ`, Line: 42, Col: 84}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/loader.templ`, Line: 42, Col: 58}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {

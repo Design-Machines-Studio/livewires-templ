@@ -34,6 +34,11 @@ func hardwareLoaderProgress(progress float64) float64 {
 
 func hardwareLoaderNumber(value float64) string { return strconv.FormatFloat(value, 'f', -1, 64) }
 
+// hardwareLoaderPercentage bounds display precision without changing SVG progress.
+func hardwareLoaderPercentage(progress float64) string {
+	return hardwareLoaderNumber(math.Round(hardwareLoaderProgress(progress)*10000) / 100)
+}
+
 func hardwareLoaderState(state string) string {
 	switch state {
 	case "complete", "reset":

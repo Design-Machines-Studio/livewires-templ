@@ -24,7 +24,7 @@ templ LoaderComponent(props LoaderProps) {
 				aria-label={ hardwareLoaderLabel(props.Label) }
 				aria-valuemin="0"
 				aria-valuemax="100"
-				aria-valuenow={ hardwareLoaderNumber(hardwareLoaderProgress(props.Progress) * 100) }
+				aria-valuenow={ hardwareLoaderPercentage(props.Progress) }
 			} else {
 				role="status"
 				aria-atomic="true"
@@ -39,7 +39,7 @@ templ LoaderComponent(props LoaderProps) {
 			<span>{ hardwareLoaderLabel(props.Label) }</span>
 			if props.Variant == "torque" {
 				{ " " }
-				<span>{ hardwareLoaderNumber(hardwareLoaderProgress(props.Progress) * 100) + "%" }</span>
+				<span>{ hardwareLoaderPercentage(props.Progress) + "%" }</span>
 			}
 		</div>
 	} else {

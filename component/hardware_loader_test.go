@@ -49,11 +49,12 @@ func TestHardwareProgressClampAndSemantics(t *testing.T) {
 		progress, percent string
 	}{
 		{-1, "0", "0"}, {0.4, "0.4", "40"}, {2, "1", "100"},
+		{0.29, "0.29", "29"}, {0.12345678, "0.12345678", "12.35"},
 		{math.NaN(), "0", "0"}, {math.Inf(1), "1", "100"}, {math.Inf(-1), "0", "0"},
 	}
 	for _, tc := range tests {
 		output := testutil.RenderToString(t, LoaderComponent(LoaderProps{Label: "Exporting", Variant: "torque", Progress: tc.value}))
-		for _, want := range []string{`role="progressbar"`, `aria-label="Exporting"`, `aria-valuenow="` + tc.percent + `"`, `--p: ` + tc.progress} {
+		for _, want := range []string{`role="progressbar"`, `aria-label="Exporting"`, `aria-valuenow="` + tc.percent + `"`, `--p: ` + tc.progress, `>` + tc.percent + `%<`} {
 			if !strings.Contains(output, want) {
 				t.Fatalf("missing %s: %s", want, output)
 			}
