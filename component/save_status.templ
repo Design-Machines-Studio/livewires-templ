@@ -4,6 +4,7 @@ import lw "github.com/Design-Machines-Studio/livewires-templ"
 
 // SaveStatusProps renders the host-supplied state and optional scope-aware text.
 type SaveStatusProps struct {
+	Indicator      templ.Component  // Optional decorative indicator, emitted only while saving
 	State          string           // ready, dirty, saving, saved, failed, or unknown
 	Label          string           // Optional visible label; ignored for unknown or invalid state
 	SupportingText string           // Short essential save feedback announced in the same status region
@@ -23,7 +24,12 @@ templ SaveStatusComponent(props SaveStatusProps) {
 		{ props.Attrs... }
 	>
 		<p class={ lw.ClassNames("save-status", props.Class) } data-save-status data-save-state={ saveStatusState(props.State) }>
-			{ saveStatusLabel(props.State, props.Label) }
+			if saveStatusState(props.State) == "saving" && props.Indicator != nil {
+				@props.Indicator
+				<span data-save-label>{ saveStatusLabel(props.State, props.Label) }</span>
+			} else {
+				{ saveStatusLabel(props.State, props.Label) }
+			}
 		</p>
 		if props.SupportingText != "" {
 			<p>{ props.SupportingText }</p>

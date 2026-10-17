@@ -4,25 +4,64 @@ import lw "github.com/Design-Machines-Studio/livewires-templ"
 
 // LoaderProps holds configuration for a loader component.
 type LoaderProps struct {
-	Label   string           // Accessible label for screen readers (e.g., "Loading members")
-	Variant string           // CSS modifier for loading animation style
-	Class   string           // Additional CSS classes from consumer
-	Attrs   templ.Attributes // Catch-all: data-*, aria-*, etc.
+	Progress float64          // Measured progress for torque (0–1)
+	Mixed    bool             // Mixed hardware for line
+	State    string           // Torque presentation: pending, complete or reset
+	Label    string           // Accessible label for screen readers (e.g., "Loading members")
+	Variant  string           // CSS modifier for loading animation style
+	Class    string           // Additional CSS classes from consumer
+	Attrs    templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
 
 // LoaderComponent renders a loading indicator with full Props control.
 templ LoaderComponent(props LoaderProps) {
-	<div
-		class={ lw.ClassNames("loading", lw.VariantClass("loading", props.Variant), props.Class) }
-		role="status"
-		if props.Label != "" {
-			aria-label={ props.Label }
-		}
-		{ props.Attrs... }
-	>
-		<div class="skeleton skeleton--text"></div>
-		<div class="skeleton skeleton--text"></div>
-	</div>
+	if props.Variant == "line" {
+		@LoaderPanelComponent(LoaderPanelProps{Label: props.Label, Mixed: props.Mixed, Class: props.Class, Attrs: props.Attrs})
+	} else if props.Variant == "ratchet" || props.Variant == "torque" {
+		<div
+			if props.Variant == "torque" {
+				role="progressbar"
+				aria-label={ hardwareLoaderLabel(props.Label) }
+				aria-valuemin="0"
+				aria-valuemax="100"
+				aria-valuenow={ hardwareLoaderNumber(hardwareLoaderProgress(props.Progress) * 100) }
+			} else {
+				role="status"
+				aria-atomic="true"
+			}
+			if props.Class != "" {
+				class={ props.Class }
+			}
+			{ props.Attrs... }
+		>
+			@LoaderIconComponent(LoaderIconProps{Variant: props.Variant, Mixed: props.Mixed, Progress: props.Progress, State: props.State})
+			{ " " }
+			<span>{ hardwareLoaderLabel(props.Label) }</span>
+			if props.Variant == "torque" {
+				{ " " }
+				<span>{ hardwareLoaderNumber(hardwareLoaderProgress(props.Progress) * 100) + "%" }</span>
+			}
+		</div>
+	} else {
+		<div
+			class={ lw.ClassNames("loading", lw.VariantClass("loading", props.Variant), props.Class) }
+			role="status"
+			if props.Label != "" {
+				aria-label={ props.Label }
+			}
+			{ props.Attrs... }
+		>
+			<div class="skeleton skeleton--text"></div>
+			<div class="skeleton skeleton--text"></div>
+		</div>
+	}
+}
+
+func hardwareLoaderLabel(label string) string {
+	if label != "" {
+		return label
+	}
+	return "Loading"
 }
 
 // Loader renders a loading indicator (convenience wrapper).
@@ -32,10 +71,12 @@ templ Loader(label string, variant string) {
 
 // LoadingRegionProps configures a local loading operation's stable ownership boundary.
 type LoadingRegionProps struct {
-	ID    string           // Stable ID for the operation root
-	Label string           // Accessible name for this operation region
-	Class string           // Additional CSS classes from consumer
-	Attrs templ.Attributes // Developer-controlled data-*, aria-* and Datastar attributes
+	Indicator      templ.Component  // Optional decorative indicator; nil keeps the skeleton fallback
+	IndicatorClass string           // Optional indicator wrapper classes; use loader-panel for Driver Line
+	ID             string           // Stable ID for the operation root
+	Label          string           // Accessible name for this operation region
+	Class          string           // Additional CSS classes from consumer
+	Attrs          templ.Attributes // Developer-controlled data-*, aria-* and Datastar attributes
 }
 
 // LoadingRegionComponent keeps the busy content separate from its announcement.
@@ -56,10 +97,23 @@ templ LoadingRegionComponent(props LoadingRegionProps) {
 	>
 		<div data-loading-content aria-busy="false">
 			{ children... }
-			<div class="loading" data-loading-indicator hidden aria-hidden="true">
-				<div class="skeleton skeleton--text"></div>
-				<div class="skeleton skeleton--text"></div>
-			</div>
+			if props.Indicator != nil {
+				<span
+					if props.IndicatorClass != "" {
+						class={ props.IndicatorClass }
+					}
+					data-loading-indicator
+					hidden
+					aria-hidden="true"
+				>
+					@props.Indicator
+				</span>
+			} else {
+				<div class="loading" data-loading-indicator hidden aria-hidden="true">
+					<div class="skeleton skeleton--text"></div>
+					<div class="skeleton skeleton--text"></div>
+				</div>
+			}
 		</div>
 		<p data-loading-status role="status" aria-live="polite" aria-atomic="true"></p>
 	</section>

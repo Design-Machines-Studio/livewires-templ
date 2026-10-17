@@ -1,0 +1,96 @@
+package component
+
+import (
+	lw "github.com/Design-Machines-Studio/livewires-templ"
+	"math"
+	"strconv"
+)
+
+// LoaderIconProps configures decorative hardware. The host owns accessible text.
+type LoaderIconProps struct {
+	Variant  string  // ratchet (default), line, or torque
+	Mixed    bool    // Mixed Phillips, slot and Robertson heads for line
+	Progress float64 // Measured torque progress, clamped to 0–1; NaN becomes 0
+	State    string  // pending (default), complete, or reset; presentation only
+	Class    string
+	Attrs    templ.Attributes // Developer-controlled SVG attributes; reserve class, style, viewBox, ARIA and data-state
+}
+
+func hardwareLoaderVariant(variant string) string {
+	switch variant {
+	case "line", "torque":
+		return variant
+	default:
+		return "ratchet"
+	}
+}
+
+func hardwareLoaderProgress(progress float64) float64 {
+	if math.IsNaN(progress) {
+		return 0
+	}
+	return math.Max(0, math.Min(1, progress))
+}
+
+func hardwareLoaderNumber(value float64) string { return strconv.FormatFloat(value, 'f', -1, 64) }
+
+func hardwareLoaderState(state string) string {
+	switch state {
+	case "complete", "reset":
+		return state
+	default:
+		return "pending"
+	}
+}
+
+func hardwareLoaderViewBox(variant string) string {
+	switch hardwareLoaderVariant(variant) {
+	case "line":
+		return "-230 -230 1960 460"
+	case "torque":
+		return "-240 -240 480 480"
+	default:
+		return "-230 -230 460 460"
+	}
+}
+
+// LoaderIconComponent can be nested in a button or existing status region without adding live roles.
+templ LoaderIconComponent(props LoaderIconProps) {
+	<svg
+		class={ lw.ClassNames("loader", lw.VariantClass("loader", hardwareLoaderVariant(props.Variant)), props.Class) }
+		viewBox={ hardwareLoaderViewBox(props.Variant) }
+		if hardwareLoaderVariant(props.Variant) == "torque" {
+			style={ "--p: " + hardwareLoaderNumber(hardwareLoaderProgress(props.Progress)) }
+			data-state={ hardwareLoaderState(props.State) }
+		}
+		aria-hidden="true"
+		focusable="false"
+		{ props.Attrs... }
+	>
+		switch hardwareLoaderVariant(props.Variant) {
+			case "line":
+				if props.Mixed {
+					<g transform="translate(0 0)"><path class="head" style="--i: 0" fill-rule="evenodd" d="M210 0A210 210 0 1 0 -210 0A210 210 0 1 0 210 0ZM-21 -126L21 -126L21 -21L126 -21L126 21L21 21L21 126L-21 126L-21 21L-126 21L-126 -21L-21 -21Z"></path></g>
+					<g transform="translate(500 0)"><path class="head" style="--i: 1; --deg: 180deg" d="M-208.95 -21A210 210 0 0 1 208.95 -21ZM208.95 21A210 210 0 0 1 -208.95 21Z"></path></g>
+					<g transform="translate(1000 0)"><path class="head" style="--i: 2" fill-rule="evenodd" d="M210 0A210 210 0 1 0 -210 0A210 210 0 1 0 210 0ZM-76 -88H76Q88 -88 88 -76V76Q88 88 76 88H-76Q-88 88 -88 76V-76Q-88 -88 -76 -88Z"></path></g>
+					<g transform="translate(1500 0)"><path class="head" style="--i: 3" fill-rule="evenodd" d="M210 0A210 210 0 1 0 -210 0A210 210 0 1 0 210 0ZM-21 -126L21 -126L21 -21L126 -21L126 21L21 21L21 126L-21 126L-21 21L-126 21L-126 -21L-21 -21Z"></path></g>
+				} else {
+					<g transform="translate(0 0)"><path class="head" style="--i: 0" fill-rule="evenodd" d="M210 0A210 210 0 1 0 -210 0A210 210 0 1 0 210 0ZM-21 -126L21 -126L21 -21L126 -21L126 21L21 21L21 126L-21 126L-21 21L-126 21L-126 -21L-21 -21Z"></path></g>
+					<g transform="translate(500 0)"><path class="head" style="--i: 1" fill-rule="evenodd" d="M210 0A210 210 0 1 0 -210 0A210 210 0 1 0 210 0ZM-21 -126L21 -126L21 -21L126 -21L126 21L21 21L21 126L-21 126L-21 21L-126 21L-126 -21L-21 -21Z"></path></g>
+					<g transform="translate(1000 0)"><path class="head" style="--i: 2" fill-rule="evenodd" d="M210 0A210 210 0 1 0 -210 0A210 210 0 1 0 210 0ZM-21 -126L21 -126L21 -21L126 -21L126 21L21 21L21 126L-21 126L-21 21L-126 21L-126 -21L-21 -21Z"></path></g>
+					<g transform="translate(1500 0)"><path class="head" style="--i: 3" fill-rule="evenodd" d="M210 0A210 210 0 1 0 -210 0A210 210 0 1 0 210 0ZM-21 -126L21 -126L21 -21L126 -21L126 21L21 21L21 126L-21 126L-21 21L-126 21L-126 -21L-21 -21Z"></path></g>
+				}
+			case "torque":
+				<path class="track" fill-rule="evenodd" d="M210 0A210 210 0 1 0 -210 0A210 210 0 1 0 210 0ZM115 0A115 115 0 1 0 -115 0A115 115 0 1 0 115 0Z"></path>
+				<circle class="fill" r="162.5" stroke-width="95" transform="rotate(-90)"></circle>
+				<path class="head" fill-rule="evenodd" d="M98 0A98 98 0 1 0 -98 0A98 98 0 1 0 98 0ZM-9.8 -58.8L9.8 -58.8L9.8 -9.8L58.8 -9.8L58.8 9.8L9.8 9.8L9.8 58.8L-9.8 58.8L-9.8 9.8L-58.8 9.8L-58.8 -9.8L-9.8 -9.8Z"></path>
+			default:
+				<path class="head" fill-rule="evenodd" d="M210 0A210 210 0 1 0 -210 0A210 210 0 1 0 210 0ZM-21 -126L21 -126L21 -21L126 -21L126 21L21 21L21 126L-21 126L-21 21L-126 21L-126 -21L-21 -21Z"></path>
+		}
+	</svg>
+}
+
+// LoaderIcon renders decorative ratchet, line or torque hardware (zero progress).
+templ LoaderIcon(variant string) {
+	@LoaderIconComponent(LoaderIconProps{Variant: variant})
+}
