@@ -11,3 +11,5 @@ Verification: Docker templ generation, go test ./..., go vet ./... passed. Galle
 Preview: /home/ned/assembly/livewires-templ-worktrees/hardware-loaders; examples/gallery/run.sh start|status|rebuild|verify|stop. Task-owned Docker-assigned port; use status for current URL. External gallery run /home/ned/.local/state/design-machines/depot/runs/gallery-gallery-0ef7bda81acb4edd839d89d43cd1d58c-91p85pmd. Evidence: examples/gallery/test-results and /tmp/templ-loaders-review-20261017.
 
 Actual screen-reader and native browser zoom testing unverified. Designer acceptance pending. Hook activation unavailable: injected owner pointer has no accompanying native hook input; no session input fabricated. Formal producer/readiness validation pending; PR remains draft.
+
+Review repair: pattern lane found gallery destroy/dispose mismatch; changed to dispose. Simplicity lane independently verified the repair with a Node VM check. Focused browser recheck: 6/6 passed, including new pagehide cleanup, on fingerprint 59aa25d2d535ba6b9f53e16e75d0fff06d8d54d58bff9a65776b11ca0271de66. Full suite evidence remains valid for unaffected cases.

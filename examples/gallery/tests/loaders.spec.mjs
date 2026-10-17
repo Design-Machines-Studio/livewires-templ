@@ -48,3 +48,17 @@ test('loader native output needs no JavaScript', async ({ browser }) => {
   await expect(page.locator('[role=progressbar]').nth(1)).toContainText('40%');
   await context.close();
 });
+
+
+test('loader overlay cleans up on pagehide', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto('/examples/loaders');
+  await expect(page.locator('body')).toHaveAttribute('data-demo-ready', 'true');
+  await page.getByRole('button', { name: 'Preview page overlay' }).click();
+  await expect(page.locator('[data-gallery-overlay]')).toBeVisible();
+  await page.evaluate(() => window.dispatchEvent(new PageTransitionEvent('pagehide')));
+  await expect(page.locator('[data-gallery-overlay]')).toBeHidden();
+  await expect(page.locator('main')).not.toHaveAttribute('inert');
+  expect(errors).toEqual([]);
+});

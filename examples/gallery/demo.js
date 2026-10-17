@@ -41,7 +41,7 @@ async function setup() {
     document.addEventListener('keydown', event => {
       if (event.key === 'Escape' && !overlay.hidden) { event.preventDefault(); close(); }
     }, { signal: lifecycle.signal });
-    controllers.push({ destroy: close });
+    controllers.push({ dispose: close });
   }
   let loading;
   let toasts;
