@@ -126,7 +126,7 @@ property on the card through `Attrs`:
 
 - **People.** `CardPeople` shows the first three `CardPerson{Name, Src}` as
   `avatar--sm` in an `aria-hidden` avatar group. Images use an empty `alt`.
-  Without `Src` the avatar shows an initial and carries no accessible name.
+  Without `Src` the avatar shows an `aria-hidden` initial and carries no accessible name.
   `Extra` (`+2`, `+ All`) is `aria-hidden`. `Label` ("5 members") is visually
   hidden and carries the count. The caller supplies both strings.
 - **Count.** `CardCount` renders the value and a visually hidden label with a

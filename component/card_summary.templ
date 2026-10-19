@@ -113,15 +113,15 @@ type CardPerson struct {
 	Src  string // Image URL; empty shows the initial
 }
 
-// cardAvatar renders a decorative avatar: an empty alt on images, a bare
-// initial otherwise. It carries no accessible name; callers give the person's
-// name or the people count as visually hidden text next to it.
+// cardAvatar renders a decorative avatar: an empty alt on images, an
+// aria-hidden initial otherwise. It carries no accessible name; callers give
+// the person's name or the people count as visually hidden text next to it.
 templ cardAvatar(person CardPerson, size string) {
 	<span class={ lw.ClassNames("avatar", lw.VariantClass("avatar", size)) }>
 		if person.Src != "" {
 			<img src={ templ.SafeURL(person.Src) } alt=""/>
 		} else {
-			<span class="initials">{ avatarInitials(person.Name, size) }</span>
+			<span class="initials" aria-hidden="true">{ avatarInitials(person.Name, size) }</span>
 		}
 	</span>
 }
@@ -194,7 +194,7 @@ type CardCountProps struct {
 
 // CardCountComponent renders span > [icon] + value + visually hidden label.
 templ CardCountComponent(props CardCountProps) {
-	<span class={ props.Class } { props.Attrs... }>
+	@cardSpan(props.Class, props.Attrs) {
 		if props.Icon != nil {
 			@props.Icon
 		}
@@ -202,7 +202,20 @@ templ CardCountComponent(props CardCountProps) {
 		if props.Label != "" {
 			<span class="visually-hidden">{ " " + props.Label }</span>
 		}
-	</span>
+	}
+}
+
+// cardSpan renders a span whose class attribute is omitted when empty.
+templ cardSpan(class string, attrs templ.Attributes) {
+	if class != "" {
+		<span class={ class } { attrs... }>
+			{ children... }
+		</span>
+	} else {
+		<span { attrs... }>
+			{ children... }
+		</span>
+	}
 }
 
 // CardCount renders a footer count with a visually hidden label.

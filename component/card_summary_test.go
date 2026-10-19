@@ -337,8 +337,8 @@ func TestCardPeopleDecorativeAvatars(t *testing.T) {
 	if !strings.Contains(out, `<img src="/a.jpg" alt="">`) {
 		t.Errorf("image avatar must use empty alt: %s", out)
 	}
-	if !strings.Contains(out, `<span class="initials">B</span>`) {
-		t.Errorf("initials avatar should show a single initial: %s", out)
+	if !strings.Contains(out, `<span class="initials" aria-hidden="true">B</span>`) {
+		t.Errorf("initials avatar should show a single hidden initial: %s", out)
 	}
 	if !strings.Contains(out, `<span aria-hidden="true">+2</span>`) || !strings.Contains(out, `<span class="visually-hidden">5 members</span>`) {
 		t.Errorf("overflow must be hidden and count visually hidden: %s", out)
@@ -374,6 +374,9 @@ func TestCardCountVisuallyHiddenText(t *testing.T) {
 		t.Errorf("value and hidden label: %s", out)
 	}
 	sameHTML(t, render(t, CardCount("3", "", "x")), `<span class="x"><span>3</span></span>`)
+	if got := render(t, CardCount("3", "", "")); strings.Contains(got, "class=") || !strings.HasPrefix(got, "<span") {
+		t.Errorf("empty Class must omit the class attribute: %s", got)
+	}
 }
 
 func TestCardDateTimeElement(t *testing.T) {
@@ -395,8 +398,8 @@ func TestCardAuthorKeepsFullNameAndHidesAvatar(t *testing.T) {
 	want := `<span class="avatar"><img src="/w.jpg" alt=""></span><div class="min-w-0" data-a="1"><span class="block truncate"><span class="visually-hidden">By </span>` + name + `</span><i>date</i></div>`
 	sameHTML(t, out, want)
 	initials := render(t, CardAuthor("Ada Okafor", "", ""))
-	if !strings.Contains(initials, `<span class="avatar"><span class="initials">AO</span></span>`) || strings.Contains(initials, "aria-label") {
-		t.Errorf("initials avatar must be decorative: %s", initials)
+	if !strings.Contains(initials, `<span class="avatar"><span class="initials" aria-hidden="true">AO</span></span>`) || strings.Contains(initials, "aria-label") || strings.Contains(initials, "role=") {
+		t.Errorf("initials avatar must be hidden from assistive technology: %s", initials)
 	}
 	custom := render(t, CardAuthorComponent(CardAuthorProps{Name: "Ada", HiddenPrefix: "Par"}))
 	if !strings.Contains(custom, `<span class="visually-hidden">Par </span>Ada`) {
