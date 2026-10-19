@@ -59,10 +59,10 @@ templ CardSummaryComponent(props CardSummaryProps) {
 }
 
 // CardSummary renders a summary card with a linked heading and description.
-// headerClass carries the caller's header layout, "stack" in the producer
-// markup. Pass a CardFooter as a child.
-templ CardSummary(title, href, description, scheme, headerClass string) {
-	@CardSummaryComponent(CardSummaryProps{Title: title, Href: href, Description: description, Scheme: scheme, HeaderClass: headerClass}) {
+// The producer markup passes scheme "subtle", class "rounded" and headerClass
+// "stack"; the caller owns all three. Pass a CardFooter as a child.
+templ CardSummary(title, href, description, scheme, class, headerClass string) {
+	@CardSummaryComponent(CardSummaryProps{Title: title, Href: href, Description: description, Scheme: scheme, Class: class, HeaderClass: headerClass}) {
 		{ children... }
 	}
 }

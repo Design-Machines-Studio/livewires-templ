@@ -312,8 +312,8 @@ func TestCardSummaryBakesNoLayoutPrimitives(t *testing.T) {
 }
 
 func TestCardSummaryWrapper(t *testing.T) {
-	out := render(t, withChildren(CardSummary("T", "/x", "d", "subtle", "stack"), staticHTML("<footer>f</footer>")))
-	if !strings.Contains(out, `<li class="card card--summary scheme-subtle">`) || !strings.Contains(out, `<div class="header box stack">`) || !strings.Contains(out, `<footer>f</footer></li>`) {
+	out := render(t, withChildren(CardSummary("T", "/x", "d", "subtle", "rounded", "stack"), staticHTML("<footer>f</footer>")))
+	if !strings.Contains(out, `<li class="card card--summary scheme-subtle rounded">`) || !strings.Contains(out, `<div class="header box stack">`) || !strings.Contains(out, `<footer>f</footer></li>`) {
 		t.Errorf("unexpected wrapper output: %s", out)
 	}
 }

@@ -24,7 +24,7 @@ follows the header.
 | `CardFooterComponent` / `CardFooter(class)` | `footer.footer.box` with children | `Class`, `Attrs` |
 | `CardFrameComponent` / `CardFrame(scheme)` | bare `div.card` with children (no `box`) | `CardProps`: `Scheme`, `Class`, `Attrs` |
 | `CardHeaderComponent` | `div.header.box` with a heading | `Title`, `HeadingLevel`, `Class`, `Attrs` |
-| `CardSummaryComponent` / `CardSummary(title, href, description, scheme, headerClass)` | `li.card.card--summary`: header, then children | see below |
+| `CardSummaryComponent` / `CardSummary(title, href, description, scheme, class, headerClass)` | `li.card.card--summary`: header, then children | see below |
 | `CardPeopleComponent` / `CardPeople(people, extra, label, class)` | up to three decorative avatars, `+N`, hidden label | `People`, `Extra`, `Label`, `Class`, `Attrs` |
 | `CardCountComponent` / `CardCount(value, label, class)` | icon, value, hidden label | `Value`, `Label`, `Icon`, `Class`, `Attrs` |
 | `CardDateComponent` / `CardDate(datetime, label, class)` | `<time datetime>` with optional prefix, hidden label and icon | `Datetime`, `Label`, `Prefix`, `HiddenLabel`, `Icon`, `Class`, `Attrs` |

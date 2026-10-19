@@ -222,9 +222,9 @@ func CardSummaryComponent(props CardSummaryProps) templ.Component {
 }
 
 // CardSummary renders a summary card with a linked heading and description.
-// headerClass carries the caller's header layout, "stack" in the producer
-// markup. Pass a CardFooter as a child.
-func CardSummary(title, href, description, scheme, headerClass string) templ.Component {
+// The producer markup passes scheme "subtle", class "rounded" and headerClass
+// "stack"; the caller owns all three. Pass a CardFooter as a child.
+func CardSummary(title, href, description, scheme, class, headerClass string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -263,7 +263,7 @@ func CardSummary(title, href, description, scheme, headerClass string) templ.Com
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = CardSummaryComponent(CardSummaryProps{Title: title, Href: href, Description: description, Scheme: scheme, HeaderClass: headerClass}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = CardSummaryComponent(CardSummaryProps{Title: title, Href: href, Description: description, Scheme: scheme, Class: class, HeaderClass: headerClass}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
