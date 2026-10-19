@@ -1,0 +1,195 @@
+package main
+
+import "github.com/Design-Machines-Studio/livewires-templ/component"
+
+// The component package emits no layout classes. The gallery supplies the
+// canonical Live Wires utilities for each footer, as consuming applications do.
+const (
+	footerBetween        = "cluster cluster-between items-center text-sm"
+	footerAuthor         = "cluster cluster-compact cluster-nowrap items-center text-sm"
+	footerAuthorMembers  = "cluster cluster-between cluster-nowrap items-center text-sm"
+	peopleCluster        = "cluster cluster-compact items-center"
+	authorCluster        = "cluster cluster-compact cluster-nowrap items-center min-w-0"
+	headingRow           = "cluster cluster-between cluster-nowrap items-start"
+	countClass           = "inline-flex items-center gap-025"
+	countUnreadClass     = "inline-flex items-center gap-025 font-bold"
+	memberCountClass     = "inline-flex items-center gap-025 flex-shrink-0"
+	clockDateClass       = "flex items-center gap-025"
+	avatarSource         = "/assets/comment-image.jpg"
+	longHeading          = "Festival submissions 2027: shortlist, deadlines, fees and the long tail of paperwork that nobody wants to own until a deadline is two weeks away"
+	longDescription      = "Where we track which festivals get which films, what each submission costs, who owns the paperwork, and which deadlines are hard. Fee waivers, screener links and rights questions live here too. If a deadline is inside two weeks, mention it in the title. Anything that needs a decision goes through a proposal first."
+	patronageHeading     = "Revise the patronage formula for project-based work"
+	patronageDescription = "Weights hours on client projects and internal work the same way, and phases the change in over two allocation years."
+	fourDayHeading       = "Adopt a four-day week for the production team"
+	fourDayDescription   = "Moves the production team to four eight-hour days from January, with a review at the spring general meeting."
+)
+
+var threePeople = []component.CardPerson{{Name: "Ada Okafor", Src: avatarSource}, {Name: "Mateus Rodrigues", Src: avatarSource}, {Name: "Wiremu Te Rangi-Hēnare-Whitehead", Src: avatarSource}}
+var twoPeople = threePeople[:2]
+var initialPeople = []component.CardPerson{{Name: "Ada Okafor"}, {Name: "Mateus Rodrigues"}, {Name: "Wiremu Te Rangi-Hēnare-Whitehead"}}
+
+// Phosphor Bold icons, supplied by the caller because the component package
+// ships no icon set.
+templ chatsIcon() {
+	<svg class="icon flex-none" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M216,76H188V48a20,20,0,0,0-20-20H40A20,20,0,0,0,20,48V176a12,12,0,0,0,19.54,9.33l28.46-23V184a20,20,0,0,0,20,20h92.17l36.29,29.33A12,12,0,0,0,236,224V96A20,20,0,0,0,216,76ZM44,150.87V52H164v80H71.58A12,12,0,0,0,64,134.67Zm168,48-20-16.2a12,12,0,0,0-7.54-2.67H92V156h76a20,20,0,0,0,20-20V100h24Z"></path></svg>
+}
+
+templ usersThreeIcon() {
+	<svg class="icon flex-none" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M164.38,181.1a52,52,0,1,0-72.76,0,75.89,75.89,0,0,0-30,28.89,12,12,0,0,0,20.78,12,53,53,0,0,1,91.22,0,12,12,0,1,0,20.78-12A75.89,75.89,0,0,0,164.38,181.1ZM100,144a28,28,0,1,1,28,28A28,28,0,0,1,100,144Zm147.21,9.59a12,12,0,0,1-16.81-2.39c-8.33-11.09-19.85-19.59-29.33-21.64a12,12,0,0,1-1.82-22.91,20,20,0,1,0-24.78-28.3,12,12,0,1,1-21-11.6,44,44,0,1,1,73.28,48.35,92.18,92.18,0,0,1,22.85,21.69A12,12,0,0,1,247.21,153.59Zm-192.28-24c-9.48,2.05-21,10.55-29.33,21.65A12,12,0,0,1,6.41,136.79,92.37,92.37,0,0,1,29.26,115.1a44,44,0,1,1,73.28-48.35,12,12,0,1,1-21,11.6,20,20,0,1,0-24.78,28.3,12,12,0,0,1-1.82,22.91Z"></path></svg>
+}
+
+templ clockIcon() {
+	<svg class="icon flex-none" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M128,20A108,108,0,1,0,236,128,108.12,108.12,0,0,0,128,20Zm0,192a84,84,0,1,1,84-84A84.09,84.09,0,0,1,128,212Zm68-84a12,12,0,0,1-12,12H128a12,12,0,0,1-12-12V72a12,12,0,0,1,24,0v44h44A12,12,0,0,1,196,128Z"></path></svg>
+}
+
+// summaryMembersFooter is the people-and-count footer.
+templ summaryMembersFooter(people []component.CardPerson, extra, hiddenLabel string, count component.CardCountProps) {
+	@component.CardFooter(footerBetween) {
+		@component.CardPeople(people, extra, hiddenLabel, peopleCluster)
+		@component.CardCountComponent(count)
+	}
+}
+
+// summaryAuthorFooter is the author footer with a sentence date.
+templ summaryAuthorFooter(name, datetime, label string) {
+	@component.CardFooter(footerAuthor) {
+		@component.CardAuthorComponent(component.CardAuthorProps{Name: name, Src: avatarSource, Class: "min-w-0"}) {
+			@component.CardDateComponent(component.CardDateProps{Datetime: datetime, Label: label, Prefix: "Edited", Class: "block"})
+		}
+	}
+}
+
+// summaryAuthorMembersFooter is the author-and-members footer with a clock date.
+templ summaryAuthorMembersFooter(name, datetime, label, members string) {
+	@component.CardFooter(footerAuthorMembers) {
+		<div class={ authorCluster }>
+			@component.CardAuthorComponent(component.CardAuthorProps{Name: name, Src: avatarSource, Class: "min-w-0 text-sm"}) {
+				@component.CardDateComponent(component.CardDateProps{Datetime: datetime, Label: label, HiddenLabel: "Last updated", Icon: clockIcon(), Class: clockDateClass})
+			}
+		</div>
+		@component.CardCountComponent(component.CardCountProps{Value: members, HiddenLabel: "members", Icon: usersThreeIcon(), Class: memberCountClass})
+	}
+}
+
+templ cardsExample() {
+	<p>Card footer region and summary cards from Live Wires v2.26.0. Names, counts, dates and copy are placeholder data. The component package supplies no layout or icon set: this page passes the cluster classes and Phosphor Bold icons, and Live Wires owns the heading and description line limits.</p>
+	<section class="stack" aria-labelledby="existing-cards">
+		<h2 id="existing-cards">Existing cards, unchanged</h2>
+		<div class="grid" style="--min-column-width: 16rem;" data-cards="existing">
+			@component.CardComponent(component.CardProps{Scheme: "subtle", Class: "rounded"}) {
+				<p>Basic card with the subtle scheme.</p>
+			}
+			@component.CardComponent(component.CardProps{Href: "#cards-link", Scheme: "subtle", Class: "rounded"}) {
+				<p>Link card. The whole card is one anchor.</p>
+			}
+			@component.CardWithMedia(component.CardProps{Scheme: "subtle", Class: "rounded"}, component.AvatarImage(avatarSource, "Placeholder portrait", "xl")) {
+				<p>Media card with a figure and content.</p>
+			}
+			@component.CardWithHeader(component.CardProps{Title: "Header card", Scheme: "subtle", Class: "rounded"}) {
+				<p>Header card with no footer. The header keeps its rule.</p>
+			}
+		</div>
+	</section>
+	<section class="stack" aria-labelledby="footer-cards">
+		<h2 id="footer-cards">Any card can have a footer</h2>
+		<div class="grid" style="--min-column-width: 16rem;" data-cards="footer">
+			@component.CardFrameComponent(component.CardFrameProps{Scheme: "subtle", Class: "rounded"}) {
+				<div class="box">
+					<p>Bare card with a body and a footer. The footer is ruled off from the body.</p>
+				</div>
+				@component.CardFooter("text-sm") {
+					<span>Footer text</span>
+				}
+			}
+			@component.CardFrameComponent(component.CardFrameProps{Scheme: "subtle", Class: "rounded", Attrs: templ.Attributes{"data-case": "header-body-footer"}}) {
+				@component.CardHeaderComponent(component.CardHeaderProps{Title: "Header, body and footer"})
+				<div class="box">
+					<p>The header keeps its rule because a body follows it.</p>
+				</div>
+				@component.CardFooter(footerBetween) {
+					<span>Footer</span>
+					<span class="text-xs text-muted">Placeholder</span>
+				}
+			}
+			@component.CardFrameComponent(component.CardFrameProps{Scheme: "subtle", Class: "rounded", Attrs: templ.Attributes{"data-case": "header-footer"}}) {
+				@component.CardHeaderComponent(component.CardHeaderProps{Title: "Header directly followed by footer"})
+				@component.CardFooter(footerBetween) {
+					<span>Footer</span>
+					<span class="text-xs text-muted">Its rule replaces the header's</span>
+				}
+			}
+		</div>
+	</section>
+	<section class="stack" aria-labelledby="summary-members">
+		<h2 id="summary-members">Summary cards: people and counts</h2>
+		<p>Equal-height rows with aligned footers. The third card has no description.</p>
+		<ul class="grid list-none" data-cards="members">
+			@component.CardSummaryComponent(component.CardSummaryProps{Title: "Board room", Href: "#board-room", Description: "Board and officer preparation between meetings. Decisions still go through proposals.", Scheme: "subtle", Class: "rounded", HeaderClass: "stack"}) {
+				@summaryMembersFooter(threePeople, "+2", "5 members", component.CardCountProps{Value: "4", HiddenLabel: "conversations, 1 unread", Icon: chatsIcon(), Class: countUnreadClass})
+			}
+			@component.CardSummaryComponent(component.CardSummaryProps{Title: longHeading, Href: "#festival-submissions", Description: longDescription, Scheme: "subtle", Class: "rounded", HeaderClass: "stack"}) {
+				@summaryMembersFooter(threePeople, "+1", "4 members", component.CardCountProps{Value: "12", HiddenLabel: "conversations", Icon: chatsIcon(), Class: countClass})
+			}
+			@component.CardSummaryComponent(component.CardSummaryProps{Title: "Studio commons", Href: "#studio-commons", Scheme: "subtle", Class: "rounded", HeaderClass: "stack"}) {
+				@summaryMembersFooter(threePeople, "+ All", "All members", component.CardCountProps{Value: "9", HiddenLabel: "conversations", Icon: chatsIcon(), Class: countClass})
+			}
+			@component.CardSummaryComponent(component.CardSummaryProps{Title: patronageHeading, Href: "#patronage", Description: patronageDescription, Scheme: "subtle", Class: "rounded", HeaderClass: "stack"}) {
+				@component.CardFooter(footerBetween) {
+					@component.CardPeople(twoPeople, "", "2 collaborators", peopleCluster)
+					@component.CardDateComponent(component.CardDateProps{Datetime: "2026-10-17", Label: "2 days ago", Prefix: "Edited"})
+				}
+			}
+		</ul>
+	</section>
+	<section class="stack" aria-labelledby="summary-author">
+		<h2 id="summary-author">Summary cards: author and sentence date</h2>
+		<p>Long names stop at one line with an ellipsis. The full name stays in the page.</p>
+		<ul class="grid list-none" data-cards="author">
+			@component.CardSummaryComponent(component.CardSummaryProps{Title: patronageHeading, Href: "#patronage-author", Description: patronageDescription, Scheme: "subtle", Class: "rounded", HeaderClass: "stack"}) {
+				@summaryAuthorFooter("Ada Okafor", "2026-10-17", "2 days ago")
+			}
+			@component.CardSummaryComponent(component.CardSummaryProps{Title: fourDayHeading, Href: "#four-day-author", Description: fourDayDescription, Scheme: "subtle", Class: "rounded", HeaderClass: "stack"}) {
+				@summaryAuthorFooter("Mateus Rodrigues", "2026-10-18", "yesterday")
+			}
+			@component.CardSummaryComponent(component.CardSummaryProps{Title: "Set a member loan rate", Href: "#loan-rate-author", Scheme: "subtle", Class: "rounded", HeaderClass: "stack"}) {
+				@summaryAuthorFooter("Wiremu Te Rangi-Hēnare-Whitehead", "2026-09-28", "3 weeks ago")
+			}
+		</ul>
+	</section>
+	<section class="stack" aria-labelledby="summary-author-members">
+		<h2 id="summary-author-members">Summary cards: author, members, badge and clock date</h2>
+		<p>A New or Updated badge follows the heading. Cards without a badge keep the same heading row so rows stay aligned.</p>
+		<ul class="grid list-none" data-cards="author-members">
+			@component.CardSummaryComponent(component.CardSummaryProps{Title: patronageHeading, Href: "#patronage-new", Description: patronageDescription, Badge: "New", Scheme: "subtle", Class: "rounded", HeaderClass: "stack", HeadingRowClass: headingRow}) {
+				@summaryAuthorMembersFooter("Ada Okafor", "2026-10-17", "Oct 17", "5")
+			}
+			@component.CardSummaryComponent(component.CardSummaryProps{Title: fourDayHeading, Href: "#four-day-updated", Description: fourDayDescription, Badge: "Updated", Scheme: "subtle", Class: "rounded", HeaderClass: "stack", HeadingRowClass: headingRow}) {
+				@summaryAuthorMembersFooter("Wiremu Te Rangi-Hēnare-Whitehead", "2026-10-18", "Yesterday", "12")
+			}
+			@component.CardSummaryComponent(component.CardSummaryProps{Title: "Set a member loan rate", Href: "#loan-rate", Scheme: "subtle", Class: "rounded", HeaderClass: "stack", HeadingRowClass: headingRow}) {
+				@summaryAuthorMembersFooter("Mateus Rodrigues", "2026-09-28", "Sep 28", "3")
+			}
+		</ul>
+	</section>
+	<section class="stack" aria-labelledby="summary-limits">
+		<h2 id="summary-limits">Line limits</h2>
+		<p>Headings stop after 3 lines and descriptions after 4, set by Live Wires through <code>--card-heading-lines</code> and <code>--card-description-lines</code>. The component has no line-limit prop. The second card sets the properties through <code>Attrs</code> style to stop after 2 lines.</p>
+		<ul class="grid list-none" data-cards="limits">
+			@component.CardSummaryComponent(component.CardSummaryProps{Title: longHeading, Href: "#limits-default", Description: longDescription, Scheme: "subtle", Class: "rounded", HeaderClass: "stack"}) {
+				@summaryMembersFooter(threePeople, "+4", "7 members", component.CardCountProps{Value: "31", HiddenLabel: "conversations", Icon: chatsIcon(), Class: countClass})
+			}
+			@component.CardSummaryComponent(component.CardSummaryProps{Title: longHeading, Href: "#limits-custom", Description: longDescription, Scheme: "subtle", Class: "rounded", HeaderClass: "stack", Attrs: templ.Attributes{"style": "--card-heading-lines: 2; --card-description-lines: 2;"}}) {
+				@summaryMembersFooter(threePeople, "+4", "7 members", component.CardCountProps{Value: "31", HiddenLabel: "conversations", Icon: chatsIcon(), Class: countClass})
+			}
+		</ul>
+	</section>
+	<section class="stack" aria-labelledby="summary-initials">
+		<h2 id="summary-initials">Initial avatars on a subtle summary card</h2>
+		<p>Producer caveat: initial avatars blend into <code>--color-subtle</code> backgrounds and can disappear. Use image avatars on <code>scheme-subtle</code> summary cards, as the other examples do. This card shows the caveat. The visually hidden count still names the people.</p>
+		<ul class="grid list-none" data-cards="initials">
+			@component.CardSummaryComponent(component.CardSummaryProps{Title: "Initials on subtle", Href: "#initials", Description: "Placeholder card that uses initial avatars.", Scheme: "subtle", Class: "rounded", HeaderClass: "stack"}) {
+				@summaryMembersFooter(initialPeople, "+2", "5 members", component.CardCountProps{Value: "4", HiddenLabel: "conversations", Icon: chatsIcon(), Class: countClass})
+			}
+		</ul>
+	</section>
+}

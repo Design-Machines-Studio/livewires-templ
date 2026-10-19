@@ -156,8 +156,10 @@ is the default, and truncate `Detail` instead. Truncated text is hidden from sig
 users who zoom or have low vision, and `title` is only a mouse hint, so never rely on
 truncation for text people must read to choose the right person.
 
-The gallery demonstrates these combinations using Live Wires v2.25.0, pinned
-to producer commit `aad7e3843898745a2f29833393b20896a204b90e`. Use a version that
+The gallery demonstrates these combinations authored against Live Wires v2.25.0
+(`aad7e3843898745a2f29833393b20896a204b90e`) and now served from the gallery lock at
+v2.26.0 (`d4c197b29b1675bf6cada14d051b7a8e1425fe2f`), which leaves the People Picker CSS
+unchanged. Use a version that
 contains the People Picker component stylesheet. No CSS or production browser
 controller ships from this Go package.
 

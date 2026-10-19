@@ -76,11 +76,84 @@ templ CardWithHeader(props CardProps) {
 		class={ lw.ClassNames("card", lw.SchemeClass(props.Scheme), props.Class) }
 		{ props.Attrs... }
 	>
-		<div class="header box">
-			@heading(lw.DefaultStr(props.HeadingLevel, "h3"), props.Title, "")
-		</div>
+		@CardHeaderComponent(CardHeaderProps{Title: props.Title, HeadingLevel: props.HeadingLevel})
 		<div class="box">
 			{ children... }
 		</div>
 	</div>
+}
+
+// CardHeaderProps holds configuration for a card header region.
+type CardHeaderProps struct {
+	Title        string           // Heading text
+	HeadingLevel string           // Heading tag: "h3" (default), "h2", "h4", etc.
+	Class        string           // Additional CSS classes from consumer
+	Attrs        templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// CardHeaderComponent renders a div.header.box with a heading. Place it inside
+// CardFrameComponent. Live Wires rules the header off from what follows it,
+// except when a CardFooter follows it directly (the footer's rule replaces it).
+templ CardHeaderComponent(props CardHeaderProps) {
+	<div
+		class={ lw.ClassNames("header box", props.Class) }
+		{ props.Attrs... }
+	>
+		@heading(lw.DefaultStr(props.HeadingLevel, "h3"), props.Title, "")
+	</div>
+}
+
+// CardHeader renders a card header region with a heading at the default level.
+templ CardHeader(title string) {
+	@CardHeaderComponent(CardHeaderProps{Title: title})
+}
+
+// CardFrameProps holds configuration for a bare card frame.
+type CardFrameProps struct {
+	Scheme string           // Color scheme: "subtle", "dark", "accent", etc.
+	Class  string           // Additional CSS classes from consumer
+	Attrs  templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// CardFrameComponent renders a bare .card without the box padding, for cards
+// built from separate regions: CardHeaderComponent, a body, CardFooter.
+templ CardFrameComponent(props CardFrameProps) {
+	<div
+		class={ lw.ClassNames("card", lw.SchemeClass(props.Scheme), props.Class) }
+		{ props.Attrs... }
+	>
+		{ children... }
+	</div>
+}
+
+// CardFrame renders a bare .card with children.
+templ CardFrame(scheme string) {
+	@CardFrameComponent(CardFrameProps{Scheme: scheme}) {
+		{ children... }
+	}
+}
+
+// CardFooterProps holds configuration for a card footer region.
+type CardFooterProps struct {
+	Class string           // Layout and type classes from the consumer, e.g. "cluster cluster-between items-center text-sm"
+	Attrs templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// CardFooterComponent renders footer.footer.box inside any card. Live Wires
+// rules it off from what comes before it. The footer carries no layout: the
+// caller supplies cluster classes through Class.
+templ CardFooterComponent(props CardFooterProps) {
+	<footer
+		class={ lw.ClassNames("footer box", props.Class) }
+		{ props.Attrs... }
+	>
+		{ children... }
+	</footer>
+}
+
+// CardFooter renders a card footer with the given layout classes.
+templ CardFooter(class string) {
+	@CardFooterComponent(CardFooterProps{Class: class}) {
+		{ children... }
+	}
 }
