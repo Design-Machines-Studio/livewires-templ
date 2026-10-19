@@ -114,7 +114,7 @@ test('people picker keeps overlapping circles, direct selection, exclusions and 
   await officers.click();
   await expect(officers).toHaveAttribute('aria-pressed', 'true');
   await expect(ed).toBeChecked();
-  await expect(status).toHaveText('Officers circle selected.');
+  await expect(status).toHaveText('Officers circle selected. 4 people selected.');
   await expect(officers).toBeFocused();
   await board.click();
   await expect(board).toHaveAttribute('aria-pressed', 'false');
@@ -122,13 +122,20 @@ test('people picker keeps overlapping circles, direct selection, exclusions and 
   await expect(ada).toBeChecked();
   await expect(cy).not.toBeChecked();
   await expect(ed).toBeChecked();
+  await expect(status).toHaveText('Board circle removed. 3 people selected.');
+  // Detail lines follow the simulated state instead of going stale.
+  await expect(form.locator('#space-bo-detail')).toHaveText('Not selected');
+  await expect(form.locator('#space-ada-detail')).toHaveText('Organizer, Officers');
+  await expect(form.locator('#space-di-detail')).toHaveText('Super admin');
 
   await form.locator('label[for="space-ada"] .avatar').click();
   await expect(ada).not.toBeChecked();
   await expect(ada).toBeEnabled();
+  await expect(form.locator('#space-ada-detail')).toHaveText('Removed');
   await form.locator('label[for="space-ada"] .people-picker-name').click();
   await expect(ada).toBeChecked();
   await expect(ada).toBeEnabled();
+  await expect(form.locator('#space-ada-detail')).toHaveText('Organizer, Officers');
   await ada.focus();
   await page.keyboard.press('Space');
   await expect(ada).not.toBeChecked();
@@ -147,7 +154,8 @@ test('people picker keeps overlapping circles, direct selection, exclusions and 
     await expect(organizer).not.toBeChecked();
     await expect(organizer).toBeDisabled();
   }
-  await expect(status).toHaveText('Selections cleared. Locked people remain selected.');
+  await expect(status).toHaveText('Selections cleared. Locked people remain selected. 1 person selected.');
+  await expect(form.locator('#space-ada-detail')).toHaveText('Not selected');
   await expect(clear).toBeFocused();
 
   const other = page.locator('form[data-demo-picker="plain-space"]');
@@ -178,34 +186,56 @@ test('people picker keeps selection and role inputs native when JavaScript is di
   await context.close();
 });
 
-test('people picker exposes trailing labels, long accessible names, narrow wrapping, forced colors and RTL', async ({ page }) => {
+test('people picker truncates and wraps long names in narrow containers, with forced colors and RTL', async ({ page }) => {
   await page.setViewportSize({ width: 1024, height: 1000 });
   await page.goto('/examples/people-picker');
-  const narrow = page.locator('form[data-demo-picker="narrow-truncate"]');
-  const input = narrow.locator('#narrow-long');
+  const fullName = 'Maximiliana Featherstonehaugh-Abernathy';
+  const truncated = page.locator('[data-demo-narrow="truncated"]');
+  const wrapped = page.locator('[data-demo-narrow="wrapped"]');
+
+  // The toggle is gone: truncation is only the caller's NameClass and DetailClass.
+  await expect(page.locator('[data-demo-truncate]')).toHaveCount(0);
+  await expect(page.getByText('Truncate long text')).toHaveCount(0);
+
+  // Truncated: ellipsis, one line, a title with the full text, and the full name in the DOM and hidden label.
+  const input = truncated.locator('#narrow-long');
   const labelID = await input.getAttribute('aria-labelledby');
-  await expect(page.locator(`#${labelID}`)).toHaveText('Select Maximiliana Featherstonehaugh-Abernathy');
-  await expect(narrow.locator('.people-picker-name > .block.truncate')).toContainText('Maximiliana Featherstonehaugh-Abernathy');
-  await expect(narrow.locator('.people-picker-trailing')).toHaveAttribute('data-th', 'Organizer');
-  await expect(narrow.locator('thead th').last()).toHaveText('Organizer');
-  const narrowBox = narrow.locator('xpath=..');
-  expect(await narrowBox.evaluate(node => getComputedStyle(node).maxWidth)).not.toBe('none');
-  // Narrow means a constrained card, not a collapsed one: the name must not wrap one character per line.
-  expect((await narrowBox.boundingBox()).width).toBeGreaterThanOrEqual(240);
-  const wrapBox = page.locator('#narrow-wrap').locator('xpath=ancestor::div[contains(@class,"max-w-xs")]');
-  expect((await wrapBox.boundingBox()).width).toBeGreaterThanOrEqual(240);
-  expect((await page.locator('label[for="narrow-wrap"] .people-picker-name').boundingBox()).height).toBeLessThan(120);
+  await expect(page.locator(`#${labelID}`)).toHaveText(`Select ${fullName}`);
+  const nameSpan = truncated.locator('.people-picker-name > span.block.truncate');
+  await expect(nameSpan).toHaveText(fullName);
+  await expect(nameSpan).toHaveAttribute('title', fullName);
+  const nameStyle = await nameSpan.evaluate(node => { const style = getComputedStyle(node); return { overflow: style.overflow, textOverflow: style.textOverflow, whiteSpace: style.whiteSpace, clipped: node.scrollWidth > node.clientWidth }; });
+  expect(nameStyle).toMatchObject({ textOverflow: 'ellipsis', whiteSpace: 'nowrap', clipped: true });
+  const detailSpan = truncated.locator('.people-picker-detail.truncate');
+  await expect(detailSpan).toHaveAttribute('title', 'Organizer, Festival submissions working group');
+  expect(await detailSpan.evaluate(node => getComputedStyle(node).textOverflow)).toBe('ellipsis');
+  await expect(truncated.locator('.people-picker-trailing')).toHaveAttribute('data-th', 'Organizer');
+  await expect(truncated.locator('thead th').last()).toHaveText('Organizer');
+
+  // Wrapped: no truncation classes, the name takes more than one line.
+  await expect(wrapped.locator('.truncate')).toHaveCount(0);
+  const wrapName = wrapped.locator('.people-picker-name');
+  await expect(wrapName).toHaveText(fullName);
+  const wrapMetrics = await wrapName.evaluate(node => ({ height: node.getBoundingClientRect().height, line: parseFloat(getComputedStyle(node).lineHeight) }));
+  expect(wrapMetrics.height).toBeGreaterThan(wrapMetrics.line * 1.5);
+  expect(wrapMetrics.height).toBeLessThan(120);
+
+  // Narrow means a constrained card, not a collapsed one: nothing wraps one character per line.
+  for (const box of [truncated, wrapped]) {
+    expect(await box.evaluate(node => getComputedStyle(node).maxWidth)).not.toBe('none');
+    expect((await box.boundingBox()).width).toBeGreaterThanOrEqual(240);
+  }
   expect(await page.locator('html').evaluate(node => node.scrollWidth <= innerWidth + 1)).toBe(true);
 
   await page.emulateMedia({ forcedColors: 'active' });
   expect(await page.evaluate(() => matchMedia('(forced-colors: active)').matches)).toBe(true);
-  const checkboxWrapper = narrow.locator('label.checkbox:has(#narrow-long)');
+  const checkboxWrapper = truncated.locator('label.checkbox:has(#narrow-long)');
   await expect(checkboxWrapper).toBeVisible();
   const hit = await checkboxWrapper.boundingBox();
   expect(hit.width).toBeGreaterThanOrEqual(24);
   expect(hit.height).toBeGreaterThanOrEqual(24);
   await page.locator('html').evaluate(node => { node.dir = 'rtl'; });
-  await expect(narrow.locator('legend')).toBeVisible();
+  await expect(truncated.locator('legend')).toBeVisible();
   expect(await page.locator('html').evaluate(node => node.scrollWidth <= innerWidth + 1)).toBe(true);
   await page.screenshot({ path: test.info().outputPath('people-picker-forced-colors-rtl.png'), fullPage: true });
 });

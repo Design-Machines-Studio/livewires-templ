@@ -210,7 +210,18 @@ func peoplePickerRole(id string, name string, value string) templ.Component {
 	})
 }
 
-func peoplePickerGroupButton(value string, label string, pressed bool) templ.Component {
+// peoplePickerGroupAttrs builds the native submit-button attributes for a circle. A non-empty explanationID
+// marks the circle unavailable and links it to its visible explanation.
+func peoplePickerGroupAttrs(value string, pressed bool, explanationID string) templ.Attributes {
+	attrs := templ.Attributes{"name": "group_action", "value": value, "formnovalidate": true, "aria-pressed": pressedValue(pressed), "data-demo-group": value}
+	if explanationID != "" {
+		attrs["aria-describedby"] = explanationID
+		attrs["data-demo-unavailable"] = true
+	}
+	return attrs
+}
+
+func peoplePickerGroupButton(value string, label string, pressed bool, explanationID string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -246,7 +257,7 @@ func peoplePickerGroupButton(value string, label string, pressed bool) templ.Com
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/people_picker.templ`, Line: 33, Col: 13}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/people_picker.templ`, Line: 41, Col: 13}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
@@ -256,10 +267,7 @@ func peoplePickerGroupButton(value string, label string, pressed bool) templ.Com
 		})
 		templ_7745c5c3_Err = component.ButtonComponent(component.ButtonProps{
 			Type: "submit", Variant: "small", Disabled: true,
-			Attrs: templ.Attributes{
-				"name": "group_action", "value": value, "formnovalidate": true,
-				"aria-pressed": pressedValue(pressed), "data-demo-group": value,
-			},
+			Attrs: peoplePickerGroupAttrs(value, pressed, explanationID),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var13), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -268,7 +276,7 @@ func peoplePickerGroupButton(value string, label string, pressed bool) templ.Com
 	})
 }
 
-func peoplePickerDisabledGroupButton(value string, label string, explanationID string) templ.Component {
+func peoplePickerClearButton() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -301,61 +309,6 @@ func peoplePickerDisabledGroupButton(value string, label string, explanationID s
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			var templ_7745c5c3_Var17 string
-			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(label)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/people_picker.templ`, Line: 40, Col: 13}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			return nil
-		})
-		templ_7745c5c3_Err = component.ButtonComponent(component.ButtonProps{
-			Type: "submit", Variant: "small", Disabled: true,
-			Attrs: templ.Attributes{"name": "group_action", "value": value, "formnovalidate": true, "aria-pressed": "false", "aria-describedby": explanationID, "data-demo-group": value, "data-demo-unavailable": true},
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var16), templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		return nil
-	})
-}
-
-func peoplePickerClearButton() templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
-				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var18 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var18 == nil {
-			templ_7745c5c3_Var18 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Var19 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-			if !templ_7745c5c3_IsBuffer {
-				defer func() {
-					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-					if templ_7745c5c3_Err == nil {
-						templ_7745c5c3_Err = templ_7745c5c3_BufErr
-					}
-				}()
-			}
-			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "Clear selection ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -366,7 +319,7 @@ func peoplePickerClearButton() templ.Component {
 			Type: "submit", Variant: "small", Disabled: true,
 			Class: "button--ghost",
 			Attrs: templ.Attributes{"name": "picker_action", "value": "clear", "formnovalidate": true, "data-demo-clear": true},
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var19), templ_7745c5c3_Buffer)
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var16), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -390,13 +343,13 @@ func peoplePickerSpaceRows(withDetails bool, prefix string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var20 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var20 == nil {
-			templ_7745c5c3_Var20 = templ.NopComponent
+		templ_7745c5c3_Var17 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var17 == nil {
+			templ_7745c5c3_Var17 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = form.PeoplePickerRow(form.PeoplePickerRowProps{
-			ID: prefix + "-ada", InputName: "member_ids", Value: "ada", Name: "Ada Okafor",
+			ID: prefix + "-ada", Name: "member_ids", Value: "ada", PersonName: "Ada Okafor",
 			Detail: lw.If(withDetails, "Organizer, Board"), AvatarSrc: "/assets/comment-image.jpg", ShowAvatar: true,
 			Checked: true, TrailingLabel: "Organizer", Trailing: peoplePickerOrganizer("ada", "Ada Okafor", true, false),
 			IdentityClass: "flex gap-05 min-w-0",
@@ -406,7 +359,7 @@ func peoplePickerSpaceRows(withDetails bool, prefix string) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = form.PeoplePickerRow(form.PeoplePickerRowProps{
-			ID: prefix + "-bo", InputName: "member_ids", Value: "bo", Name: "Bo Lindqvist",
+			ID: prefix + "-bo", Name: "member_ids", Value: "bo", PersonName: "Bo Lindqvist",
 			Detail: lw.If(withDetails, "Board"), ShowAvatar: true, Checked: true,
 			TrailingLabel: "Organizer", Trailing: peoplePickerOrganizer("bo", "Bo Lindqvist", false, false),
 			IdentityClass: "flex gap-05 min-w-0",
@@ -416,7 +369,7 @@ func peoplePickerSpaceRows(withDetails bool, prefix string) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = form.PeoplePickerRow(form.PeoplePickerRowProps{
-			ID: prefix + "-cy", InputName: "member_ids", Value: "cy", Name: "Cy Moreno",
+			ID: prefix + "-cy", Name: "member_ids", Value: "cy", PersonName: "Cy Moreno",
 			Detail: lw.If(withDetails, "Removed"), ShowAvatar: true, Checked: false,
 			TrailingLabel: "Organizer", Trailing: peoplePickerOrganizer("cy", "Cy Moreno", false, true),
 			IdentityClass: "flex gap-05 min-w-0",
@@ -426,7 +379,7 @@ func peoplePickerSpaceRows(withDetails bool, prefix string) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = form.PeoplePickerRow(form.PeoplePickerRowProps{
-			ID: prefix + "-di", InputName: "member_ids", Value: "di", Name: "Di Ng",
+			ID: prefix + "-di", Name: "member_ids", Value: "di", PersonName: "Di Ng",
 			Detail: lw.If(withDetails, "Super admin"), ShowAvatar: true, Checked: true, Disabled: true,
 			TrailingLabel: "Organizer", Trailing: peoplePickerOrganizer("di", "Di Ng", false, true),
 			IdentityClass: "flex gap-05 min-w-0",
@@ -436,8 +389,8 @@ func peoplePickerSpaceRows(withDetails bool, prefix string) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = form.PeoplePickerRow(form.PeoplePickerRowProps{
-			ID: prefix + "-ed", InputName: "member_ids", Value: "ed", Name: "Ed Sato",
-			Detail: lw.If(withDetails, ""), ShowAvatar: true, Checked: false,
+			ID: prefix + "-ed", Name: "member_ids", Value: "ed", PersonName: "Ed Sato",
+			ShowAvatar: true, Checked: false,
 			TrailingLabel: "Organizer", Trailing: peoplePickerOrganizer("ed", "Ed Sato", false, true),
 			IdentityClass: "flex gap-05 min-w-0",
 			Attrs:         templ.Attributes{"data-demo-person": "ed", "data-demo-circles": "all,officers", "data-demo-direct": "false"},
@@ -465,9 +418,9 @@ func peoplePickerHeader(trailing string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var21 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var21 == nil {
-			templ_7745c5c3_Var21 = templ.NopComponent
+		templ_7745c5c3_Var18 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var18 == nil {
+			templ_7745c5c3_Var18 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<thead><tr><th scope=\"col\"><span class=\"visually-hidden\">Select</span></th><th scope=\"col\">Member</th>")
@@ -479,12 +432,12 @@ func peoplePickerHeader(trailing string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var22 string
-			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(trailing)
+			var templ_7745c5c3_Var19 string
+			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(trailing)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/people_picker.templ`, Line: 94, Col: 29}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `examples/gallery/people_picker.templ`, Line: 95, Col: 29}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -517,16 +470,16 @@ func peoplePickerExample() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var23 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var23 == nil {
-			templ_7745c5c3_Var23 = templ.NopComponent
+		templ_7745c5c3_Var20 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var20 == nil {
+			templ_7745c5c3_Var20 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<section class=\"stack\"><h2>Space members, overlapping circles and organizers</h2><p>Board and Officers overlap. Ada also has a direct selection. Removing one circle keeps the other circle and direct selection; unchecking a person adds an exclusion. Di is locked and remains selected when cleared.</p><div class=\"box scheme-subtle\"><form method=\"get\" action=\"/examples/people-picker\" data-demo-picker=\"space\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<section class=\"stack\"><h2>Space members with circles and organizers</h2><p>Board and Officers overlap, and Ada is also selected directly. Removing one circle keeps people who belong to the other circle or were selected directly. Removing someone excludes them from the selected circles. Di Ng is required and stays selected when you clear the others.</p><div class=\"box scheme-subtle\"><form method=\"get\" action=\"/examples/people-picker\" data-demo-picker=\"space\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var24 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var21 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -538,7 +491,7 @@ func peoplePickerExample() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Var25 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_Var22 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 				if !templ_7745c5c3_IsBuffer {
@@ -550,7 +503,7 @@ func peoplePickerExample() templ.Component {
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = peoplePickerGroupButton("all", "All", false).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = peoplePickerGroupButton("all", "All", false, "").Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -558,7 +511,7 @@ func peoplePickerExample() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = peoplePickerGroupButton("board", "Board", true).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = peoplePickerGroupButton("board", "Board", true, "").Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -566,7 +519,7 @@ func peoplePickerExample() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = peoplePickerGroupButton("officers", "Officers", false).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = peoplePickerGroupButton("officers", "Officers", false, "").Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -574,13 +527,13 @@ func peoplePickerExample() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = peoplePickerDisabledGroupButton("members", "Members", "space-members-unavailable").Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = peoplePickerGroupButton("members", "Members", false, "space-members-unavailable").Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = form.PeoplePickerGroups(form.PeoplePickerGroupsProps{Class: "cluster gap-025", Attrs: templ.Attributes{"role": "group", "aria-label": "Circles", "data-demo-groups": true}}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var25), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = form.PeoplePickerGroups(form.PeoplePickerGroupsProps{Class: "cluster gap-025", Attrs: templ.Attributes{"role": "group", "aria-label": "Circles", "data-demo-groups": true}}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var22), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -588,7 +541,7 @@ func peoplePickerExample() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var26 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_Var23 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 				if !templ_7745c5c3_IsBuffer {
@@ -618,7 +571,7 @@ func peoplePickerExample() templ.Component {
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = form.PeoplePickerTable(form.PeoplePickerTableProps{}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var26), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = form.PeoplePickerTable(form.PeoplePickerTableProps{}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var23), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -634,7 +587,7 @@ func peoplePickerExample() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var27 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_Var24 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 				if !templ_7745c5c3_IsBuffer {
@@ -652,21 +605,21 @@ func peoplePickerExample() templ.Component {
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = form.PeoplePickerActions(form.PeoplePickerActionsProps{Class: "cluster cluster-compact"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var27), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = form.PeoplePickerActions(form.PeoplePickerActionsProps{Class: "cluster cluster-compact"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var24), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = form.PeoplePicker(form.PeoplePickerProps{Legend: "Members"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var24), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = form.PeoplePicker(form.PeoplePickerProps{Legend: "Members"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var21), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</form></div></section><section class=\"stack\"><h2>Same groups and controls without details</h2><div class=\"box scheme-subtle\"><form method=\"get\" action=\"/examples/people-picker\" data-demo-picker=\"plain-space\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</form></div></section><section class=\"stack\"><h2>Members without detail text</h2><p>Keep the circle toggles and organizer switches, with just a name and avatar in each row.</p><div class=\"box scheme-subtle\"><form method=\"get\" action=\"/examples/people-picker\" data-demo-picker=\"plain-space\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var28 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var25 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -678,7 +631,7 @@ func peoplePickerExample() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Var29 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_Var26 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 				if !templ_7745c5c3_IsBuffer {
@@ -690,7 +643,7 @@ func peoplePickerExample() templ.Component {
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = peoplePickerGroupButton("all", "All", false).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = peoplePickerGroupButton("all", "All", false, "").Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -698,7 +651,7 @@ func peoplePickerExample() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = peoplePickerGroupButton("board", "Board", true).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = peoplePickerGroupButton("board", "Board", true, "").Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -706,21 +659,29 @@ func peoplePickerExample() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = peoplePickerGroupButton("officers", "Officers", false).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = peoplePickerGroupButton("officers", "Officers", false, "").Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, " ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = peoplePickerGroupButton("members", "Members", false, "plain-space-members-unavailable").Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = form.PeoplePickerGroups(form.PeoplePickerGroupsProps{Class: "cluster gap-025", Attrs: templ.Attributes{"role": "group", "aria-label": "Circles", "data-demo-groups": true}}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var29), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = form.PeoplePickerGroups(form.PeoplePickerGroupsProps{Class: "cluster gap-025", Attrs: templ.Attributes{"role": "group", "aria-label": "Circles", "data-demo-groups": true}}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var26), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, " <p class=\"people-picker-description\" id=\"plain-space-members-unavailable\">The Members circle is unavailable because it has too many people to list here.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var30 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_Var27 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 				if !templ_7745c5c3_IsBuffer {
@@ -736,7 +697,7 @@ func peoplePickerExample() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, " <tbody>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, " <tbody>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -744,21 +705,13 @@ func peoplePickerExample() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</tbody>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</tbody>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = form.PeoplePickerTable(form.PeoplePickerTableProps{}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var30), templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, " ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = form.PeoplePickerStatus(form.PeoplePickerStatusProps{Class: "text-sm text-muted", Attrs: templ.Attributes{"data-demo-status": true}}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = form.PeoplePickerTable(form.PeoplePickerTableProps{}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var27), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -766,7 +719,15 @@ func peoplePickerExample() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var31 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_Err = form.PeoplePickerStatus(form.PeoplePickerStatusProps{Class: "text-sm text-muted", Attrs: templ.Attributes{"data-demo-status": true}}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Var28 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 				if !templ_7745c5c3_IsBuffer {
@@ -784,21 +745,21 @@ func peoplePickerExample() templ.Component {
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = form.PeoplePickerActions(form.PeoplePickerActionsProps{Class: "cluster cluster-compact"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var31), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = form.PeoplePickerActions(form.PeoplePickerActionsProps{Class: "cluster cluster-compact"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var28), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = form.PeoplePicker(form.PeoplePickerProps{Legend: "Members"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var28), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = form.PeoplePicker(form.PeoplePickerProps{Legend: "Members"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var25), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "</form></div></section><section class=\"stack\"><h2>Draft collaborators</h2><div class=\"box scheme-subtle\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "</form></div></section><section class=\"stack\"><h2>Collaborators, without groups or a trailing column</h2><div class=\"box scheme-subtle\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var32 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var29 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -810,7 +771,7 @@ func peoplePickerExample() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Var33 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_Var30 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 				if !templ_7745c5c3_IsBuffer {
@@ -826,39 +787,39 @@ func peoplePickerExample() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, " <tbody>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, " <tbody>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = form.PeoplePickerRow(form.PeoplePickerRowProps{ID: "draft-ada", InputName: "collaborator_ids", Value: "ada", Name: "Ada Okafor", Checked: true, IdentityClass: "flex gap-05 min-w-0"}).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = form.PeoplePickerRow(form.PeoplePickerRowProps{ID: "draft-ada", Name: "collaborator_ids", Value: "ada", PersonName: "Ada Okafor", Checked: true, IdentityClass: "flex gap-05 min-w-0"}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = form.PeoplePickerRow(form.PeoplePickerRowProps{ID: "draft-bo", InputName: "collaborator_ids", Value: "bo", Name: "Bo Lindqvist", IdentityClass: "flex gap-05 min-w-0"}).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = form.PeoplePickerRow(form.PeoplePickerRowProps{ID: "draft-bo", Name: "collaborator_ids", Value: "bo", PersonName: "Bo Lindqvist", IdentityClass: "flex gap-05 min-w-0"}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</tbody>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</tbody>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = form.PeoplePickerTable(form.PeoplePickerTableProps{}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var33), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = form.PeoplePickerTable(form.PeoplePickerTableProps{}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var30), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = form.PeoplePicker(form.PeoplePickerProps{Legend: "Draft collaborators", Description: "Collaborators can read, discuss and edit this draft."}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var32), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = form.PeoplePicker(form.PeoplePickerProps{Legend: "Draft collaborators", Description: "Collaborators can read, discuss and edit this draft."}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var29), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</div></section><section class=\"stack\"><h2>Caller-owned role fields</h2><div class=\"box scheme-subtle\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</div></section><section class=\"stack\"><h2>A role field in the trailing column</h2><div class=\"box scheme-subtle\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var34 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var31 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -870,7 +831,7 @@ func peoplePickerExample() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Var35 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_Var32 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 				if !templ_7745c5c3_IsBuffer {
@@ -886,35 +847,35 @@ func peoplePickerExample() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, " <tbody>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, " <tbody>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = form.PeoplePickerRow(form.PeoplePickerRowProps{ID: "circle-ada", InputName: "member_ids", Value: "ada", Name: "Ada Okafor", Checked: true, TrailingLabel: "Role in this circle", Trailing: peoplePickerRole("ada", "Ada Okafor", "Chair"), IdentityClass: "flex gap-05 min-w-0"}).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = form.PeoplePickerRow(form.PeoplePickerRowProps{ID: "circle-ada", Name: "member_ids", Value: "ada", PersonName: "Ada Okafor", Checked: true, TrailingLabel: "Role in this circle", Trailing: peoplePickerRole("ada", "Ada Okafor", "Chair"), IdentityClass: "flex gap-05 min-w-0"}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "</tbody>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "</tbody>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = form.PeoplePickerTable(form.PeoplePickerTableProps{}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var35), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = form.PeoplePickerTable(form.PeoplePickerTableProps{}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var32), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = form.PeoplePicker(form.PeoplePickerProps{Legend: "Circle members"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var34), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = form.PeoplePicker(form.PeoplePickerProps{Legend: "Circle members"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var31), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "</div></section><section class=\"stack\"><h2>Long names in narrow containers</h2><p>Toggle truncation to compare clipped display text and wrapping. The full name stays in the DOM and selection label.</p><div class=\"stack\"><div class=\"box scheme-subtle max-w-xs\"><form method=\"get\" action=\"/examples/people-picker\" data-demo-picker=\"narrow-truncate\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "</div></section><section class=\"stack\"><h2>Long values in a narrow container</h2><p>The caller chooses truncation with <code>NameClass</code> and <code>DetailClass</code>. Either way the full name stays in the page and in the checkbox label.</p><h3>Truncated</h3><div class=\"box scheme-subtle max-w-xs\" data-demo-narrow=\"truncated\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var36 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var33 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -926,45 +887,7 @@ func peoplePickerExample() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<label class=\"checkbox\"><input type=\"checkbox\" data-demo-truncate checked disabled>Truncate long text</label>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Var37 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-				if !templ_7745c5c3_IsBuffer {
-					defer func() {
-						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-						if templ_7745c5c3_Err == nil {
-							templ_7745c5c3_Err = templ_7745c5c3_BufErr
-						}
-					}()
-				}
-				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = peoplePickerGroupButton("festival", "Festival submissions working group", true).Render(ctx, templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, " ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = peoplePickerGroupButton("board", "Board", false).Render(ctx, templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				return nil
-			})
-			templ_7745c5c3_Err = form.PeoplePickerGroups(form.PeoplePickerGroupsProps{Class: "cluster gap-025", Attrs: templ.Attributes{"role": "group", "aria-label": "Circles", "data-demo-groups": true}}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var37), templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, " ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Var38 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_Var34 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 				if !templ_7745c5c3_IsBuffer {
@@ -980,43 +903,35 @@ func peoplePickerExample() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, " <tbody>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, " <tbody>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = form.PeoplePickerRow(form.PeoplePickerRowProps{ID: "narrow-long", InputName: "member_ids", Value: "long", Name: "Maximiliana Featherstonehaugh-Abernathy", Detail: "Organizer, Festival submissions working group", ShowAvatar: true, Checked: true, NameClass: "block truncate", DetailClass: "truncate", TrailingLabel: "Organizer", Trailing: peoplePickerOrganizer("long", "Maximiliana Featherstonehaugh-Abernathy", true, false), IdentityClass: "flex gap-05 min-w-0"}).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = form.PeoplePickerRow(form.PeoplePickerRowProps{ID: "narrow-long", Name: "member_ids", Value: "long", PersonName: "Maximiliana Featherstonehaugh-Abernathy", Detail: "Organizer, Festival submissions working group", ShowAvatar: true, Checked: true, NameClass: "block truncate", DetailClass: "truncate", TrailingLabel: "Organizer", Trailing: peoplePickerOrganizer("long", "Maximiliana Featherstonehaugh-Abernathy", true, false), IdentityClass: "flex gap-05 min-w-0"}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</tbody>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</tbody>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = form.PeoplePickerTable(form.PeoplePickerTableProps{}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var38), templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, " ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = form.PeoplePickerStatus(form.PeoplePickerStatusProps{Class: "text-sm text-muted", Attrs: templ.Attributes{"data-demo-status": true}}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = form.PeoplePickerTable(form.PeoplePickerTableProps{}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var34), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = form.PeoplePicker(form.PeoplePickerProps{Legend: "Members"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var36), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = form.PeoplePicker(form.PeoplePickerProps{Legend: "Members"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var33), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "</form></div><div class=\"box scheme-subtle max-w-xs\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</div><h3>Wrapped</h3><div class=\"box scheme-subtle max-w-xs\" data-demo-narrow=\"wrapped\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var39 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var35 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -1028,7 +943,7 @@ func peoplePickerExample() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Var40 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_Var36 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 				if !templ_7745c5c3_IsBuffer {
@@ -1044,31 +959,31 @@ func peoplePickerExample() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, " <tbody>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, " <tbody>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = form.PeoplePickerRow(form.PeoplePickerRowProps{ID: "narrow-wrap", InputName: "member_ids", Value: "wrap", Name: "Maximiliana Featherstonehaugh-Abernathy", TrailingLabel: "Role", Trailing: peoplePickerRole("wrap", "Maximiliana Featherstonehaugh-Abernathy", "Observer"), IdentityClass: "flex gap-05 min-w-0"}).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = form.PeoplePickerRow(form.PeoplePickerRowProps{ID: "narrow-wrap", Name: "member_ids", Value: "wrap", PersonName: "Maximiliana Featherstonehaugh-Abernathy", TrailingLabel: "Role", Trailing: peoplePickerRole("wrap", "Maximiliana Featherstonehaugh-Abernathy", "Observer"), IdentityClass: "flex gap-05 min-w-0"}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "</tbody>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</tbody>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = form.PeoplePickerTable(form.PeoplePickerTableProps{}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var40), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = form.PeoplePickerTable(form.PeoplePickerTableProps{}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var36), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = form.PeoplePicker(form.PeoplePickerProps{Legend: "Members"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var39), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = form.PeoplePicker(form.PeoplePickerProps{Legend: "Members"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var35), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "</div></div></section><section class=\"stack\"><h2>No people to choose</h2><div class=\"box scheme-subtle\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "</div><noscript><p>Circle toggles and Clear selection need JavaScript in these examples. Individual checkboxes, switches and role fields still work.</p></noscript></section><section class=\"stack\"><h2>No people to choose</h2><div class=\"box scheme-subtle\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1076,7 +991,7 @@ func peoplePickerExample() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "</div></section><p>These examples keep all changes in this page only. Circle and Clear actions are simulated locally; nothing is saved. Your application owns membership data, effective selection, exclusions, roles, permissions, requests, and persistence. Disabled controls are omitted from native form submission, so the server must preserve and validate locked state authoritatively.</p><noscript><p>Circle and Clear actions need JavaScript and remain disabled without it. Native checkboxes, organizer switches and role fields still work.</p></noscript>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "</div></section><p>Your application owns membership data, effective selection, exclusions, roles, permissions, requests and persistence. Disabled controls are omitted from native form submission, so the server must preserve and validate locked state authoritatively.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

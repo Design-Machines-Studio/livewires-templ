@@ -62,8 +62,8 @@ func TestPeoplePickerReferenceCollaboratorsWithoutGroupsOrTrailingColumn(t *test
 	assertPeoplePickerMatchesReference(t, 2, peoplePickerWithChildren(
 		PeoplePicker(PeoplePickerProps{Legend: "Draft collaborators", Description: "Collaborators can read, discuss and edit this draft."}),
 		peoplePickerReferenceTable("",
-			PeoplePickerRow(PeoplePickerRowProps{ID: "draft-ada", InputName: "collaborator_ids", Value: "ada", Name: "Ada Okafor", Checked: true, IdentityClass: "flex gap-05 min-w-0"}),
-			PeoplePickerRow(PeoplePickerRowProps{ID: "draft-bo", InputName: "collaborator_ids", Value: "bo", Name: "Bo Lindqvist", IdentityClass: "flex gap-05 min-w-0"}),
+			PeoplePickerRow(PeoplePickerRowProps{ID: "draft-ada", Name: "collaborator_ids", Value: "ada", PersonName: "Ada Okafor", Checked: true, IdentityClass: "flex gap-05 min-w-0"}),
+			PeoplePickerRow(PeoplePickerRowProps{ID: "draft-bo", Name: "collaborator_ids", Value: "bo", PersonName: "Bo Lindqvist", IdentityClass: "flex gap-05 min-w-0"}),
 		),
 	))
 }
@@ -73,7 +73,7 @@ func TestPeoplePickerReferenceRoleFieldInTrailingColumn(t *testing.T) {
 	assertPeoplePickerMatchesReference(t, 3, peoplePickerWithChildren(
 		PeoplePicker(PeoplePickerProps{Legend: "Circle members"}),
 		peoplePickerReferenceTable(`<th scope="col">Role in this circle</th>`,
-			PeoplePickerRow(PeoplePickerRowProps{ID: "circle-ada", InputName: "member_ids", Value: "ada", Name: "Ada Okafor", Checked: true, IdentityClass: "flex gap-05 min-w-0", TrailingLabel: "Role in this circle", Trailing: role}),
+			PeoplePickerRow(PeoplePickerRowProps{ID: "circle-ada", Name: "member_ids", Value: "ada", PersonName: "Ada Okafor", Checked: true, IdentityClass: "flex gap-05 min-w-0", TrailingLabel: "Role in this circle", Trailing: role}),
 		),
 	))
 }
@@ -114,10 +114,10 @@ func peoplePickerOrganizerSwitch(id, name string, checked, disabled bool) templ.
 // there is no detail, so that row is intentionally not compared.
 func TestPeoplePickerReferenceRowsWithDetailsAvatarsAndOrganizers(t *testing.T) {
 	rows := []PeoplePickerRowProps{
-		{ID: "space-ada", InputName: "member_ids", Value: "ada", Name: "Ada Okafor", Detail: "Organizer, Board", AvatarSrc: "/img/guide/ludd-avatar.jpg", Checked: true, Trailing: peoplePickerOrganizerSwitch("ada", "Ada Okafor", true, false)},
-		{ID: "space-bo", InputName: "member_ids", Value: "bo", Name: "Bo Lindqvist", Detail: "Board", Checked: true, Trailing: peoplePickerOrganizerSwitch("bo", "Bo Lindqvist", false, false)},
-		{ID: "space-cy", InputName: "member_ids", Value: "cy", Name: "Cy Moreno", Detail: "Removed", Trailing: peoplePickerOrganizerSwitch("cy", "Cy Moreno", false, true)},
-		{ID: "space-di", InputName: "member_ids", Value: "di", Name: "Di Ng", Detail: "Super admin", Checked: true, Disabled: true, Trailing: peoplePickerOrganizerSwitch("di", "Di Ng", false, true)},
+		{ID: "space-ada", Name: "member_ids", Value: "ada", PersonName: "Ada Okafor", Detail: "Organizer, Board", AvatarSrc: "/img/guide/ludd-avatar.jpg", Checked: true, Trailing: peoplePickerOrganizerSwitch("ada", "Ada Okafor", true, false)},
+		{ID: "space-bo", Name: "member_ids", Value: "bo", PersonName: "Bo Lindqvist", Detail: "Board", Checked: true, Trailing: peoplePickerOrganizerSwitch("bo", "Bo Lindqvist", false, false)},
+		{ID: "space-cy", Name: "member_ids", Value: "cy", PersonName: "Cy Moreno", Detail: "Removed", Trailing: peoplePickerOrganizerSwitch("cy", "Cy Moreno", false, true)},
+		{ID: "space-di", Name: "member_ids", Value: "di", PersonName: "Di Ng", Detail: "Super admin", Checked: true, Disabled: true, Trailing: peoplePickerOrganizerSwitch("di", "Di Ng", false, true)},
 	}
 	want := peoplePickerReferenceNodes(t, 0, "tr", "")
 	if len(want) < len(rows)+2 {
@@ -126,7 +126,7 @@ func TestPeoplePickerReferenceRowsWithDetailsAvatarsAndOrganizers(t *testing.T) 
 	for i, row := range rows {
 		row.ShowAvatar, row.TrailingLabel, row.IdentityClass = true, "Organizer", "flex gap-05 min-w-0"
 		got := strings.ReplaceAll(testutil.CanonicalHTML(t, testutil.RenderToString(t, templ.Join(peoplePickerStaticHTML("<table><tbody>"), PeoplePickerRow(row), peoplePickerStaticHTML("</tbody></table>")))), "-selection-label", "-label")
-		if exp := testutil.CanonicalHTML(t, "<table><tbody>"+want[i+1]+"</tbody></table>"); got != testutil.CanonicalHTML(t, "<table><tbody>"+want[i+1]+"</tbody></table>") {
+		if exp := testutil.CanonicalHTML(t, "<table><tbody>"+want[i+1]+"</tbody></table>"); got != exp {
 			t.Errorf("%s differs from the published row\ngot:\n%s\nwant:\n%s", row.ID, got, exp)
 		}
 	}
@@ -156,5 +156,25 @@ func TestPeoplePickerReferenceGroupsStatusAndActions(t *testing.T) {
 		if got, exp := testutil.CanonicalHTML(t, testutil.RenderToString(t, slot.got)), testutil.CanonicalHTML(t, want[0]); got != exp {
 			t.Errorf("%s differs from the published reference\ngot:\n%s\nwant:\n%s", slot.name, got, exp)
 		}
+	}
+}
+
+// The producer's truncated spans also carry its demo hook data-demo-truncate-text. That attribute belongs to
+// the producer's manual script, not to the shared markup, so it is the one normalized difference.
+func TestPeoplePickerReferenceTruncatedRow(t *testing.T) {
+	want := peoplePickerReferenceNodes(t, 4, "tr", "")
+	if len(want) != 2 {
+		t.Fatalf("reference narrow picker has %d rows, want header and one body row", len(want))
+	}
+	const name = "Maximiliana Featherstonehaugh-Abernathy"
+	row := PeoplePickerRowProps{
+		ID: "narrow-long", Name: "member_ids", Value: "long", PersonName: name, Detail: "Organizer, Festival submissions working group",
+		ShowAvatar: true, Checked: true, NameClass: "block truncate", DetailClass: "truncate", TrailingLabel: "Organizer",
+		IdentityClass: "flex gap-05 min-w-0", Trailing: peoplePickerOrganizerSwitch("long", name, true, false),
+	}
+	got := strings.ReplaceAll(testutil.CanonicalHTML(t, testutil.RenderToString(t, templ.Join(peoplePickerStaticHTML("<table><tbody>"), PeoplePickerRow(row), peoplePickerStaticHTML("</tbody></table>")))), "-selection-label", "-label")
+	exp := testutil.CanonicalHTML(t, "<table><tbody>"+strings.ReplaceAll(want[1], " data-demo-truncate-text=\"\"", "")+"</tbody></table>")
+	if got != exp {
+		t.Errorf("truncated row differs from the published reference\ngot:\n%s\nwant:\n%s", got, exp)
 	}
 }

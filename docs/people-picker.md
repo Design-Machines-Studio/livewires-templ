@@ -10,7 +10,6 @@ save changes.
 | Component | Purpose |
 | --- | --- |
 | `PeoplePicker` | Fieldset, legend, optional description, and content slot |
-| `PeoplePickerFieldset` | Same fieldset from just a legend string, for pickers that need no description or attributes |
 | `PeoplePickerGroups` | Optional group-control slot |
 | `PeoplePickerTable` | Lined table used for member-selection rows |
 | `PeoplePickerRow` | Selection checkbox, identity label, optional detail/avatar, and optional trailing cell |
@@ -22,15 +21,18 @@ Props components expose `Class` and developer-controlled `Attrs` fields. The
 group, table, and action slots accept children. `PeoplePickerRowProps.Trailing`
 accepts a caller-owned `templ.Component`, such as a switch or role field.
 
-The row `ID` is required in use and must be unique in the whole document. The
+The row `ID` is required in use, must be unique in the whole document, and must be a
+valid id token with no whitespace, because `aria-labelledby` and `aria-describedby`
+split on spaces. The
 same stable ID links the selection input to the identity label; the component
 adds `-selection-label` and, when detail text exists, `-detail` for the label
 and description references. Do not derive IDs from list positions. Use distinct
 IDs for each picker instance.
 
-`InputName`, `Value`, `Checked`, and `Disabled` map to native input attributes.
+`Name`, `Value`, `Checked`, and `Disabled` map to native input attributes. `Name` is the
+submitted field name, as on `form.Checkbox`. `PersonName` is the person's display name.
 `InputAttrs` are developer-controlled attributes on the selection input.
-Generated `id`, `name`, `value`, `checked`, `disabled`, `aria-labelledby`, and
+Generated `type`, `id`, `name`, `value`, `checked`, `disabled`, `aria-labelledby`, and
 optional `aria-describedby` attributes come first; do not repeat them in
 `InputAttrs`. The row `Attrs` map lands on `<tr>`. Other `Attrs` maps land on
 their documented wrapper elements. Attribute maps must never contain untrusted
@@ -64,13 +66,22 @@ Keep unrelated role controls outside the selection label. When group buttons
 are toggles, set `aria-pressed` to the strings `"true"` or `"false"`. A bare
 boolean attribute renders as an empty value, and `false` omits it.
 
+Browsers submit a form from Enter in a text field using the first submit button in
+source order. When the form starts with group or Clear buttons, a role field's Enter
+key triggers that button, not Save. Put the primary Save submit button first in
+source order and place it visually with CSS, or keep role fields out of forms whose
+first submit button is a group action. Another option is to give the form a hidden
+default submit button first. Name each group and Clear button so the server can
+tell them apart.
+
 ```templ
 <form method="post" action="/spaces/update-members">
-	@form.PeoplePicker(form.PeoplePickerProps{Legend: "Members", Description: "Choose people for this space."}) {
+	@form.PeoplePicker(form.PeoplePickerProps{Legend: "Members"}) {
 		@form.PeoplePickerGroups(form.PeoplePickerGroupsProps{Class: "cluster gap-025", Attrs: templ.Attributes{"role": "group", "aria-label": "Circles"}}) {
-			<button class="button button--small" type="submit" name="group_action" value="board" formnovalidate>Board</button>
-			<button class="button button--small" type="submit" name="group_action" value="officers" formnovalidate>Officers</button>
+			<button class="button button--small" type="submit" name="group_action" value="board" aria-pressed="true" formnovalidate>Board</button>
+			<button class="button button--small" type="submit" name="group_action" value="officers" aria-pressed="false" formnovalidate>Officers</button>
 		}
+		<p class="people-picker-description">Choose circles to add everyone in them, then adjust individuals.</p>
 		@form.PeoplePickerTable(form.PeoplePickerTableProps{}) {
 			<thead><tr>
 				<th scope="col"><span class="visually-hidden">Select</span></th>
@@ -79,8 +90,8 @@ boolean attribute renders as an empty value, and `false` omits it.
 			</tr></thead>
 			<tbody>
 				@form.PeoplePickerRow(form.PeoplePickerRowProps{
-					ID: "space-ada", InputName: "member_ids", Value: "ada",
-					Name: "Ada Okafor", Detail: "Board organizer", Checked: true,
+					ID: "space-ada", Name: "member_ids", Value: "ada",
+					PersonName: "Ada Okafor", Detail: "Board organizer", Checked: true,
 					ShowAvatar: true, AvatarSrc: "/members/ada/avatar",
 					IdentityClass: "flex gap-05 min-w-0", TrailingLabel: "Organizer",
 					Trailing: organizerSwitch("organizer-ada", "Ada Okafor", true, false),
@@ -100,7 +111,17 @@ Use the same trailing heading text in each row's `TrailingLabel`; it becomes
 the narrow-layout label in `data-th`. A `Trailing` control without a
 `TrailingLabel` still renders, with no narrow-layout label. Leave out `TrailingLabel` and `Trailing`
 for a two-column picker. Omit the table for an empty state and provide a short
-description. Group explanations can be regular content in the group slot.
+description.
+
+The `Description` prop renders directly after the legend. The reference places a
+description that explains the groups, such as why a group is unavailable, after the
+group controls. When groups are present, write that
+`<p class="people-picker-description">` yourself after the groups slot, as the
+example does, and link a disabled group to it with `aria-describedby`.
+
+Set `Detail` on a locked row to say why it is locked, for example "Always included:
+super admin". Otherwise a screen reader announces only that the checkbox is
+unavailable.
 
 Disabled controls are omitted from browser form submission. A locked selection
 or role must be preserved and checked by the server from authoritative data;
@@ -121,14 +142,24 @@ component seams:
 - Groups: `cluster gap-025`
 - Identity label: `flex gap-05 min-w-0`
 - Actions: `cluster cluster-compact`
+- Status: `text-sm text-muted`
 - Optional name truncation: `NameClass: "block truncate"`
 - Optional detail truncation: `DetailClass: "truncate"`
+
+Truncation is only the `NameClass` and `DetailClass` parameters. When either is set,
+the row also puts the full text in a `title` for mouse users. The full name stays in
+the DOM and in the hidden "Select [full name]" label. Prefer wrapping for names, which
+is the default, and truncate `Detail` instead. Truncated text is hidden from sighted
+users who zoom or have low vision, and `title` is only a mouse hint, so never rely on
+truncation for text people must read to choose the right person.
 
 The gallery demonstrates these combinations using Live Wires v2.25.0, pinned
 to producer commit `aad7e3843898745a2f29833393b20896a204b90e`. Use a version that
 contains the People Picker component stylesheet. No CSS or production browser
 controller ships from this Go package.
 
-The maintained gallery uses local simulation code for group toggles and Clear.
-It does not persist changes. Its role and selection controls remain native
-form inputs; its group/Clear buttons stay disabled without JavaScript.
+The maintained gallery uses local simulation code for group toggles and Clear,
+including the selected-circle detail text. It does not persist changes. Its role and
+selection controls remain native form inputs; its group/Clear buttons stay disabled
+without JavaScript. The narrow-container examples are static: one box sets
+`NameClass` and `DetailClass`, and the other wraps.
