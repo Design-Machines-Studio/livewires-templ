@@ -11,7 +11,7 @@ type PeoplePickerProps struct {
 	Attrs       templ.Attributes
 }
 
-// PeoplePicker renders the fieldset and legend shared by a people picker.
+// PeoplePickerComponent renders the fieldset, legend and optional description shared by a people picker.
 templ PeoplePickerComponent(props PeoplePickerProps) {
 	<fieldset class={ lw.ClassNames("people-picker", props.Class) } { props.Attrs... }>
 		<legend>{ props.Legend }</legend>
@@ -27,38 +27,46 @@ templ PeoplePickerFieldset(legend string) {
 	@PeoplePickerComponent(PeoplePickerProps{Legend: legend}) { { children... } }
 }
 
+// PeoplePicker is the convenience wrapper that forwards its children into the fieldset.
 templ PeoplePicker(props PeoplePickerProps) {
 	@PeoplePickerComponent(props) { { children... } }
 }
 
+// PeoplePickerGroupsProps configures the optional group-control slot. Callers add role, label and layout utilities.
 type PeoplePickerGroupsProps struct {
 	Class string
 	Attrs templ.Attributes
 }
 
+// PeoplePickerGroupsComponent renders the wrapper for caller-owned group controls.
 templ PeoplePickerGroupsComponent(props PeoplePickerGroupsProps) {
 	<div class={ lw.ClassNames("people-picker-groups", props.Class) } { props.Attrs... }>{ children... }</div>
 }
 
+// PeoplePickerGroups is the convenience wrapper that forwards its children.
 templ PeoplePickerGroups(props PeoplePickerGroupsProps) {
 	@PeoplePickerGroupsComponent(props) { { children... } }
 }
 
+// PeoplePickerTableProps configures the lined table that holds the selection rows.
 type PeoplePickerTableProps struct {
 	Class string
 	Attrs templ.Attributes
 }
 
-// PeoplePickerTable renders the reference table anatomy. The table header,
+// PeoplePickerTableComponent renders the reference table anatomy. The table header,
 // body and rows remain caller-owned so application-specific fields stay native.
 templ PeoplePickerTableComponent(props PeoplePickerTableProps) {
 	<table class={ lw.ClassNames("people-picker-table", "table--lined", props.Class) } { props.Attrs... }>{ children... }</table>
 }
 
+// PeoplePickerTable is the convenience wrapper that forwards its children.
 templ PeoplePickerTable(props PeoplePickerTableProps) {
 	@PeoplePickerTableComponent(props) { { children... } }
 }
 
+// PeoplePickerRowProps describes one person's selection row. The application owns every value, including the
+// effective selected, disabled and trailing-control state.
 type PeoplePickerRowProps struct {
 	ID            string           // Stable, caller-owned unique ID shared by the input and identity label.
 	Name          string           // Full person name, retained in visible text and the accessible label.
@@ -135,33 +143,40 @@ templ PeoplePickerRowComponent(props PeoplePickerRowProps) {
 	</tr>
 }
 
+// PeoplePickerRow is the convenience wrapper for PeoplePickerRowComponent.
 templ PeoplePickerRow(props PeoplePickerRowProps) {
 	@PeoplePickerRowComponent(props)
 }
 
+// PeoplePickerStatusProps configures the persistent status region. Text is caller-owned.
 type PeoplePickerStatusProps struct {
 	Text  string
 	Class string
 	Attrs templ.Attributes
 }
 
+// PeoplePickerStatusComponent renders the one persistent, atomic status region for a picker.
 templ PeoplePickerStatusComponent(props PeoplePickerStatusProps) {
 	<p class={ lw.ClassNames("people-picker-status", props.Class) } role="status" aria-atomic="true" { props.Attrs... }>{ props.Text }</p>
 }
 
+// PeoplePickerStatus is the convenience wrapper for PeoplePickerStatusComponent.
 templ PeoplePickerStatus(props PeoplePickerStatusProps) {
 	@PeoplePickerStatusComponent(props)
 }
 
+// PeoplePickerActionsProps configures the optional action slot.
 type PeoplePickerActionsProps struct {
 	Class string
 	Attrs templ.Attributes
 }
 
+// PeoplePickerActionsComponent renders the wrapper for caller-owned actions such as Clear.
 templ PeoplePickerActionsComponent(props PeoplePickerActionsProps) {
 	<div class={ lw.ClassNames("people-picker-actions", props.Class) } { props.Attrs... }>{ children... }</div>
 }
 
+// PeoplePickerActions is the convenience wrapper that forwards its children.
 templ PeoplePickerActions(props PeoplePickerActionsProps) {
 	@PeoplePickerActionsComponent(props) { { children... } }
 }

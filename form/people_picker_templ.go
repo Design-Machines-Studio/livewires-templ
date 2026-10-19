@@ -19,7 +19,7 @@ type PeoplePickerProps struct {
 	Attrs       templ.Attributes
 }
 
-// PeoplePicker renders the fieldset and legend shared by a people picker.
+// PeoplePickerComponent renders the fieldset, legend and optional description shared by a people picker.
 func PeoplePickerComponent(props PeoplePickerProps) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -163,6 +163,7 @@ func PeoplePickerFieldset(legend string) templ.Component {
 	})
 }
 
+// PeoplePicker is the convenience wrapper that forwards its children into the fieldset.
 func PeoplePicker(props PeoplePickerProps) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -210,11 +211,13 @@ func PeoplePicker(props PeoplePickerProps) templ.Component {
 	})
 }
 
+// PeoplePickerGroupsProps configures the optional group-control slot. Callers add role, label and layout utilities.
 type PeoplePickerGroupsProps struct {
 	Class string
 	Attrs templ.Attributes
 }
 
+// PeoplePickerGroupsComponent renders the wrapper for caller-owned group controls.
 func PeoplePickerGroupsComponent(props PeoplePickerGroupsProps) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -278,6 +281,7 @@ func PeoplePickerGroupsComponent(props PeoplePickerGroupsProps) templ.Component 
 	})
 }
 
+// PeoplePickerGroups is the convenience wrapper that forwards its children.
 func PeoplePickerGroups(props PeoplePickerGroupsProps) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -325,12 +329,13 @@ func PeoplePickerGroups(props PeoplePickerGroupsProps) templ.Component {
 	})
 }
 
+// PeoplePickerTableProps configures the lined table that holds the selection rows.
 type PeoplePickerTableProps struct {
 	Class string
 	Attrs templ.Attributes
 }
 
-// PeoplePickerTable renders the reference table anatomy. The table header,
+// PeoplePickerTableComponent renders the reference table anatomy. The table header,
 // body and rows remain caller-owned so application-specific fields stay native.
 func PeoplePickerTableComponent(props PeoplePickerTableProps) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -395,6 +400,7 @@ func PeoplePickerTableComponent(props PeoplePickerTableProps) templ.Component {
 	})
 }
 
+// PeoplePickerTable is the convenience wrapper that forwards its children.
 func PeoplePickerTable(props PeoplePickerTableProps) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -442,6 +448,8 @@ func PeoplePickerTable(props PeoplePickerTableProps) templ.Component {
 	})
 }
 
+// PeoplePickerRowProps describes one person's selection row. The application owns every value, including the
+// effective selected, disabled and trailing-control state.
 type PeoplePickerRowProps struct {
 	ID            string           // Stable, caller-owned unique ID shared by the input and identity label.
 	Name          string           // Full person name, retained in visible text and the accessible label.
@@ -527,7 +535,7 @@ func PeoplePickerRowComponent(props PeoplePickerRowProps) templ.Component {
 		var templ_7745c5c3_Var23 string
 		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(props.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 93, Col: 18}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 101, Col: 18}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 		if templ_7745c5c3_Err != nil {
@@ -540,7 +548,7 @@ func PeoplePickerRowComponent(props PeoplePickerRowProps) templ.Component {
 		var templ_7745c5c3_Var24 string
 		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(props.InputName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 94, Col: 27}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 102, Col: 27}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 		if templ_7745c5c3_Err != nil {
@@ -553,7 +561,7 @@ func PeoplePickerRowComponent(props PeoplePickerRowProps) templ.Component {
 		var templ_7745c5c3_Var25 string
 		templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(props.Value)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 95, Col: 24}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 103, Col: 24}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 		if templ_7745c5c3_Err != nil {
@@ -582,7 +590,7 @@ func PeoplePickerRowComponent(props PeoplePickerRowProps) templ.Component {
 		var templ_7745c5c3_Var26 string
 		templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(peoplePickerRowLabelID(props.ID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 98, Col: 55}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 106, Col: 55}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 		if templ_7745c5c3_Err != nil {
@@ -600,7 +608,7 @@ func PeoplePickerRowComponent(props PeoplePickerRowProps) templ.Component {
 			var templ_7745c5c3_Var27 string
 			templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(peoplePickerRowDetailID(props.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 100, Col: 58}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 108, Col: 58}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 			if templ_7745c5c3_Err != nil {
@@ -622,7 +630,7 @@ func PeoplePickerRowComponent(props PeoplePickerRowProps) templ.Component {
 		var templ_7745c5c3_Var28 string
 		templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(peoplePickerRowLabelID(props.ID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 104, Col: 71}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 112, Col: 71}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 		if templ_7745c5c3_Err != nil {
@@ -635,7 +643,7 @@ func PeoplePickerRowComponent(props PeoplePickerRowProps) templ.Component {
 		var templ_7745c5c3_Var29 string
 		templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs("Select " + props.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 104, Col: 98}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 112, Col: 98}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 		if templ_7745c5c3_Err != nil {
@@ -670,7 +678,7 @@ func PeoplePickerRowComponent(props PeoplePickerRowProps) templ.Component {
 		var templ_7745c5c3_Var32 string
 		templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(props.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 108, Col: 93}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 116, Col: 93}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
 		if templ_7745c5c3_Err != nil {
@@ -693,7 +701,7 @@ func PeoplePickerRowComponent(props PeoplePickerRowProps) templ.Component {
 				var templ_7745c5c3_Var33 string
 				templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(templ.SafeURL(props.AvatarSrc))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 112, Col: 48}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 120, Col: 48}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 				if templ_7745c5c3_Err != nil {
@@ -711,7 +719,7 @@ func PeoplePickerRowComponent(props PeoplePickerRowProps) templ.Component {
 				var templ_7745c5c3_Var34 string
 				templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs(lw.SingleInitial(props.Name))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 114, Col: 79}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 122, Col: 79}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
 				if templ_7745c5c3_Err != nil {
@@ -757,7 +765,7 @@ func PeoplePickerRowComponent(props PeoplePickerRowProps) templ.Component {
 			var templ_7745c5c3_Var37 string
 			templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinStringErrs(props.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 120, Col: 50}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 128, Col: 50}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
 			if templ_7745c5c3_Err != nil {
@@ -771,7 +779,7 @@ func PeoplePickerRowComponent(props PeoplePickerRowProps) templ.Component {
 			var templ_7745c5c3_Var38 string
 			templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinStringErrs(props.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 121, Col: 25}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 129, Col: 25}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var38))
 			if templ_7745c5c3_Err != nil {
@@ -804,7 +812,7 @@ func PeoplePickerRowComponent(props PeoplePickerRowProps) templ.Component {
 			var templ_7745c5c3_Var41 string
 			templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.JoinStringErrs(peoplePickerRowDetailID(props.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 123, Col: 117}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 131, Col: 117}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var41))
 			if templ_7745c5c3_Err != nil {
@@ -817,7 +825,7 @@ func PeoplePickerRowComponent(props PeoplePickerRowProps) templ.Component {
 			var templ_7745c5c3_Var42 string
 			templ_7745c5c3_Var42, templ_7745c5c3_Err = templ.JoinStringErrs(props.Detail)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 123, Col: 134}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 131, Col: 134}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var42))
 			if templ_7745c5c3_Err != nil {
@@ -845,7 +853,7 @@ func PeoplePickerRowComponent(props PeoplePickerRowProps) templ.Component {
 				var templ_7745c5c3_Var43 string
 				templ_7745c5c3_Var43, templ_7745c5c3_Err = templ.JoinStringErrs(props.TrailingLabel)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 129, Col: 98}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 137, Col: 98}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var43))
 				if templ_7745c5c3_Err != nil {
@@ -879,6 +887,7 @@ func PeoplePickerRowComponent(props PeoplePickerRowProps) templ.Component {
 	})
 }
 
+// PeoplePickerRow is the convenience wrapper for PeoplePickerRowComponent.
 func PeoplePickerRow(props PeoplePickerRowProps) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -908,12 +917,14 @@ func PeoplePickerRow(props PeoplePickerRowProps) templ.Component {
 	})
 }
 
+// PeoplePickerStatusProps configures the persistent status region. Text is caller-owned.
 type PeoplePickerStatusProps struct {
 	Text  string
 	Class string
 	Attrs templ.Attributes
 }
 
+// PeoplePickerStatusComponent renders the one persistent, atomic status region for a picker.
 func PeoplePickerStatusComponent(props PeoplePickerStatusProps) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -968,7 +979,7 @@ func PeoplePickerStatusComponent(props PeoplePickerStatusProps) templ.Component 
 		var templ_7745c5c3_Var48 string
 		templ_7745c5c3_Var48, templ_7745c5c3_Err = templ.JoinStringErrs(props.Text)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 149, Col: 129}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `form/people_picker.templ`, Line: 160, Col: 129}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var48))
 		if templ_7745c5c3_Err != nil {
@@ -982,6 +993,7 @@ func PeoplePickerStatusComponent(props PeoplePickerStatusProps) templ.Component 
 	})
 }
 
+// PeoplePickerStatus is the convenience wrapper for PeoplePickerStatusComponent.
 func PeoplePickerStatus(props PeoplePickerStatusProps) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -1011,11 +1023,13 @@ func PeoplePickerStatus(props PeoplePickerStatusProps) templ.Component {
 	})
 }
 
+// PeoplePickerActionsProps configures the optional action slot.
 type PeoplePickerActionsProps struct {
 	Class string
 	Attrs templ.Attributes
 }
 
+// PeoplePickerActionsComponent renders the wrapper for caller-owned actions such as Clear.
 func PeoplePickerActionsComponent(props PeoplePickerActionsProps) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -1079,6 +1093,7 @@ func PeoplePickerActionsComponent(props PeoplePickerActionsProps) templ.Componen
 	})
 }
 
+// PeoplePickerActions is the convenience wrapper that forwards its children.
 func PeoplePickerActions(props PeoplePickerActionsProps) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
