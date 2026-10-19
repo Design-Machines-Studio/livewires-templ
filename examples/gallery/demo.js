@@ -78,7 +78,7 @@ async function setup() {
           const group = button.dataset.demoGroup;
           if (button.hasAttribute('data-demo-unavailable')) return;
           if (selectedGroups.has(group)) selectedGroups.delete(group); else selectedGroups.add(group);
-          if (status) status.textContent = `${group} circle ${selectedGroups.has(group) ? 'selected' : 'removed'}.`;
+          if (status) status.textContent = `${button.textContent.trim()} circle ${selectedGroups.has(group) ? 'selected' : 'removed'}.`;
           render();
         } else if (button.hasAttribute('data-demo-clear')) {
           event.preventDefault();

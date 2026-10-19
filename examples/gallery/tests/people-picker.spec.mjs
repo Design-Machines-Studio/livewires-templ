@@ -114,7 +114,7 @@ test('people picker keeps overlapping circles, direct selection, exclusions and 
   await officers.click();
   await expect(officers).toHaveAttribute('aria-pressed', 'true');
   await expect(ed).toBeChecked();
-  await expect(status).toHaveText('officers circle selected.');
+  await expect(status).toHaveText('Officers circle selected.');
   await expect(officers).toBeFocused();
   await board.click();
   await expect(board).toHaveAttribute('aria-pressed', 'false');
