@@ -1,0 +1,165 @@
+package form
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+import "github.com/Design-Machines-Studio/livewires-templ/component"
+
+// PeoplePickerProps names a group of people controls. Applications own all
+// data, selection rules, authorization, requests, and persistence.
+type PeoplePickerProps struct {
+	Legend      string
+	Description string
+	Class       string
+	Attrs       templ.Attributes
+}
+
+// PeoplePicker renders the fieldset and legend shared by a people picker.
+templ PeoplePickerComponent(props PeoplePickerProps) {
+	<fieldset class={ lw.ClassNames("people-picker", props.Class) } { props.Attrs... }>
+		<legend>{ props.Legend }</legend>
+		if props.Description != "" {
+			<p class="people-picker-description">{ props.Description }</p>
+		}
+		{ children... }
+	</fieldset>
+}
+
+templ PeoplePickerFieldset(legend string) {
+	@PeoplePickerComponent(PeoplePickerProps{Legend: legend})
+}
+
+templ PeoplePicker(props PeoplePickerProps) {
+	@PeoplePickerComponent(props) { { children... } }
+}
+
+type PeoplePickerGroupsProps struct {
+	Class string
+	Attrs templ.Attributes
+}
+
+templ PeoplePickerGroupsComponent(props PeoplePickerGroupsProps) {
+	<div class={ lw.ClassNames("people-picker-groups", props.Class) } { props.Attrs... }>{ children... }</div>
+}
+
+templ PeoplePickerGroups(props PeoplePickerGroupsProps) {
+	@PeoplePickerGroupsComponent(props) { { children... } }
+}
+
+type PeoplePickerTableProps struct {
+	Class string
+	Attrs templ.Attributes
+}
+
+// PeoplePickerTable renders the reference table anatomy. The table header,
+// body and rows remain caller-owned so application-specific fields stay native.
+templ PeoplePickerTableComponent(props PeoplePickerTableProps) {
+	<table class={ lw.ClassNames("people-picker-table", "table--lined", props.Class) } { props.Attrs... }>{ children... }</table>
+}
+
+templ PeoplePickerTable(props PeoplePickerTableProps) {
+	@PeoplePickerTableComponent(props) { { children... } }
+}
+
+type PeoplePickerRowProps struct {
+	ID             string // Stable, caller-owned unique ID shared by the input and identity label.
+	Name           string // Full person name, retained in visible text and the accessible label.
+	InputName      string
+	Value          string
+	Detail         string
+	AvatarSrc      string
+	ShowAvatar     bool
+	Checked        bool
+	Disabled       bool
+	TrailingLabel  string
+	IdentityClass  string // Caller-owned utilities, for example "flex gap-05 min-w-0".
+	NameClass      string // Caller-owned utilities, for example "block truncate".
+	DetailClass    string // Caller-owned utilities, for example "truncate".
+	InputAttrs     templ.Attributes // Developer-controlled attributes for the selection <input>.
+	Class          string
+	Attrs          templ.Attributes
+	Trailing       templ.Component // Optional organizer switch or caller-owned role field.
+}
+
+func peoplePickerRowLabelID(id string) string { return id + "-selection-label" }
+func peoplePickerRowDetailID(id string) string { return id + "-detail" }
+
+// PeoplePickerRow keeps the selection label separate from optional trailing
+// controls. Callers must provide an ID that is unique in the document.
+templ PeoplePickerRowComponent(props PeoplePickerRowProps) {
+	<tr if props.Class != "" { class={ props.Class } } { props.Attrs... }>
+		<td class="people-picker-select">
+			<label class="checkbox checkbox--icon">
+				<input
+					type="checkbox"
+					id={ props.ID }
+					name={ props.InputName }
+					value={ props.Value }
+					checked?={ props.Checked }
+					disabled?={ props.Disabled }
+					aria-labelledby={ peoplePickerRowLabelID(props.ID) }
+					if props.Detail != "" {
+						aria-describedby={ peoplePickerRowDetailID(props.ID) }
+					}
+					{ props.InputAttrs... }
+				/>
+				<span class="visually-hidden" id={ peoplePickerRowLabelID(props.ID) }>{ "Select " + props.Name }</span>
+			</label>
+		</td>
+		<td>
+			<label class={ lw.ClassNames("people-picker-person", props.IdentityClass) } for={ props.ID }>
+				if props.ShowAvatar {
+					@component.AvatarComponent(component.AvatarProps{
+						Name: props.Name, Src: props.AvatarSrc, Size: "sm",
+						Attrs: templ.Attributes{"aria-hidden": "true"},
+					})
+				}
+				<span class="people-picker-name">
+					if props.NameClass != "" {
+						<span class={ props.NameClass }>{ props.Name }</span>
+					} else {{ props.Name }}
+					if props.Detail != "" {
+						<span class={ lw.ClassNames("people-picker-detail", props.DetailClass) } id={ peoplePickerRowDetailID(props.ID) }>{ props.Detail }</span>
+					}
+				</span>
+			</label>
+		</td>
+		if props.TrailingLabel != "" {
+			<td class="people-picker-trailing" data-th={ props.TrailingLabel }>
+				if props.Trailing != nil {
+					@props.Trailing
+				}
+			</td>
+		}
+	</tr>
+}
+
+templ PeoplePickerRow(props PeoplePickerRowProps) {
+	@PeoplePickerRowComponent(props)
+}
+
+type PeoplePickerStatusProps struct {
+	Text  string
+	Class string
+	Attrs templ.Attributes
+}
+
+templ PeoplePickerStatusComponent(props PeoplePickerStatusProps) {
+	<p class={ lw.ClassNames("people-picker-status", props.Class) } role="status" aria-atomic="true" { props.Attrs... }>{ props.Text }</p>
+}
+
+templ PeoplePickerStatus(props PeoplePickerStatusProps) {
+	@PeoplePickerStatusComponent(props)
+}
+
+type PeoplePickerActionsProps struct {
+	Class string
+	Attrs templ.Attributes
+}
+
+templ PeoplePickerActionsComponent(props PeoplePickerActionsProps) {
+	<div class={ lw.ClassNames("people-picker-actions", props.Class) } { props.Attrs... }>{ children... }</div>
+}
+
+templ PeoplePickerActions(props PeoplePickerActionsProps) {
+	@PeoplePickerActionsComponent(props) { { children... } }
+}
+

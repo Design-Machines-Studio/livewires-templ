@@ -12,6 +12,87 @@ if (unrelated) {
 }
 
 async function setup() {
+  if (name === 'people-picker') {
+    for (const form of document.querySelectorAll('form[data-demo-picker]')) {
+      const rows = [...form.querySelectorAll('tr[data-demo-person]')];
+      const groups = [...form.querySelectorAll('[data-demo-group]')];
+      const direct = new Set(rows.filter(row => row.dataset.demoDirect === 'true').map(row => row.dataset.demoPerson));
+      const excluded = new Set(rows.filter(row => row.dataset.demoExcluded === 'true').map(row => row.dataset.demoPerson));
+      const locked = new Set(rows.filter(row => row.dataset.demoLocked === 'true').map(row => row.dataset.demoPerson));
+      const selectedGroups = new Set(groups.filter(button => button.getAttribute('aria-pressed') === 'true').map(button => button.dataset.demoGroup));
+      const organizerState = new Map([...form.querySelectorAll('[data-demo-organizer]')].map(input => [input.dataset.demoOrganizer, input.checked]));
+      const status = form.querySelector('[data-demo-status]');
+
+      const render = () => {
+        for (const row of rows) {
+          const id = row.dataset.demoPerson;
+          const input = row.querySelector(`input[type="checkbox"][id]`);
+          const memberships = (row.dataset.demoCircles || '').split(',').filter(Boolean);
+          const fromGroups = memberships.some(group => selectedGroups.has(group)) && !excluded.has(id);
+          const selected = locked.has(id) || direct.has(id) || fromGroups;
+          input.checked = selected;
+          for (const organizer of row.querySelectorAll('[data-demo-organizer]')) {
+            const isLocked = locked.has(id);
+            organizer.disabled = isLocked || !selected;
+            organizer.checked = isLocked ? false : selected && Boolean(organizerState.get(id));
+          }
+        }
+        for (const button of groups) button.setAttribute('aria-pressed', String(selectedGroups.has(button.dataset.demoGroup)));
+        for (const control of form.querySelectorAll('[data-demo-clear], [data-demo-group], [data-demo-truncate]')) {
+          if (!control.hasAttribute('data-demo-unavailable')) control.disabled = false;
+        }
+      };
+
+      form.addEventListener('change', event => {
+        const input = event.target;
+        if (!(input instanceof HTMLInputElement)) return;
+        if (input.matches('[data-demo-organizer]')) {
+          organizerState.set(input.dataset.demoOrganizer, input.checked);
+          return;
+        }
+        if (!input.matches('input[type="checkbox"][id]')) return;
+        const row = input.closest('tr[data-demo-person]');
+        if (!row || locked.has(row.dataset.demoPerson)) return;
+        const id = row.dataset.demoPerson;
+        if (input.checked) { direct.add(id); excluded.delete(id); }
+        else { direct.delete(id); excluded.add(id); }
+        render();
+      }, { signal: lifecycle.signal });
+
+      form.addEventListener('change', event => {
+        const input = event.target;
+        if (!(input instanceof HTMLInputElement) || !input.matches('[data-demo-truncate]')) return;
+        for (const row of rows) {
+          const name = row.querySelector('.people-picker-name > span');
+          const detail = row.querySelector('.people-picker-detail');
+          if (name) name.classList.toggle('block', input.checked), name.classList.toggle('truncate', input.checked);
+          if (detail) detail.classList.toggle('truncate', input.checked);
+        }
+      }, { signal: lifecycle.signal });
+
+      form.addEventListener('submit', event => {
+        const button = event.submitter;
+        if (!(button instanceof HTMLButtonElement)) return;
+        if (button.hasAttribute('data-demo-group')) {
+          event.preventDefault();
+          const group = button.dataset.demoGroup;
+          if (button.hasAttribute('data-demo-unavailable')) return;
+          if (selectedGroups.has(group)) selectedGroups.delete(group); else selectedGroups.add(group);
+          if (status) status.textContent = `${group} circle ${selectedGroups.has(group) ? 'selected' : 'removed'}.`;
+          render();
+        } else if (button.hasAttribute('data-demo-clear')) {
+          event.preventDefault();
+          selectedGroups.clear();
+          direct.clear();
+          excluded.clear();
+          if (status) status.textContent = 'Selections cleared. Locked people remain selected.';
+          render();
+        }
+      }, { signal: lifecycle.signal });
+
+      render();
+    }
+  }
   if (name === 'loaders') {
     const overlay = document.querySelector('[data-gallery-overlay]');
     const status = overlay.parentElement;
