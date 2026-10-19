@@ -134,8 +134,17 @@ func TestPeoplePickerMatchesReferenceAnatomyAndEscapesText(t *testing.T) {
 	if len(avatarContainers) != 1 {
 		t.Fatalf("avatar count = %d, want 1", len(avatarContainers))
 	}
-	if got, ok := peoplePickerAttr(avatarContainers[0], "aria-hidden"); !ok || got != "true" {
-		t.Fatalf("avatar should be decorative: aria-hidden=%q, %v", got, ok)
+	for _, name := range []string{"role", "aria-label", "aria-hidden"} {
+		if _, ok := peoplePickerAttr(avatarContainers[0], name); ok {
+			t.Fatalf("decorative avatar must not carry %s; the identity label names the person", name)
+		}
+	}
+	initials := findPeoplePickerNodes(root, "span", func(n *html.Node) bool { return hasPeoplePickerClass(n, "initials") })
+	if len(initials) != 1 {
+		t.Fatalf("initials count = %d, want 1", len(initials))
+	}
+	if got, ok := peoplePickerAttr(initials[0], "aria-hidden"); !ok || got != "true" {
+		t.Fatalf("initials should be hidden from assistive technology: aria-hidden=%q, %v", got, ok)
 	}
 }
 
@@ -216,4 +225,97 @@ func hasPeoplePickerClass(node *html.Node, class string) bool {
 		}
 	}
 	return false
+}
+
+func TestPeoplePickerFieldsetWrapperForwardsChildren(t *testing.T) {
+	markup := testutil.RenderToString(t, peoplePickerWithChildren(PeoplePickerFieldset("Collaborators"), peoplePickerStaticHTML(`<p data-slot="content">Caller content</p>`)))
+	root := parsePeoplePicker(t, markup)
+	fieldsets := findPeoplePickerNodes(root, "fieldset", nil)
+	if len(fieldsets) != 1 || len(findPeoplePickerNodes(fieldsets[0], "p", func(n *html.Node) bool { _, ok := peoplePickerAttr(n, "data-slot"); return ok })) != 1 {
+		t.Fatalf("wrapper dropped its children: %s", markup)
+	}
+}
+
+func TestPeoplePickerUncheckedEnabledRowOmitsStateAttributes(t *testing.T) {
+	markup := testutil.RenderToString(t, PeoplePickerRow(PeoplePickerRowProps{ID: "p-cy", InputName: "member_ids", Value: "cy", Name: "Cy Moreno"}))
+	input := findPeoplePickerNodes(parsePeoplePicker(t, "<table><tbody>"+markup+"</tbody></table>"), "input", nil)[0]
+	for _, name := range []string{"checked", "disabled"} {
+		if _, ok := peoplePickerAttr(input, name); ok {
+			t.Fatalf("%s must be omitted for an unchecked, enabled row: %s", name, markup)
+		}
+	}
+	if got, _ := peoplePickerAttr(input, "value"); got != "cy" {
+		t.Fatalf("value = %q", got)
+	}
+}
+
+func TestPeoplePickerInputAttrsCannotOverrideComponentAttributes(t *testing.T) {
+	markup := testutil.RenderToString(t, PeoplePickerRow(PeoplePickerRowProps{
+		ID: "p-ada", InputName: "member_ids", Value: "ada", Name: "Ada", Detail: "Board",
+		InputAttrs: templ.Attributes{"id": "other", "name": "other", "value": "other", "aria-labelledby": "other", "aria-describedby": "other", "data-demo": "kept"},
+	}))
+	input := findPeoplePickerNodes(parsePeoplePicker(t, "<table><tbody>"+markup+"</tbody></table>"), "input", nil)[0]
+	for name, want := range map[string]string{"id": "p-ada", "name": "member_ids", "value": "ada", "aria-labelledby": "p-ada-selection-label", "aria-describedby": "p-ada-detail", "data-demo": "kept"} {
+		if got, _ := peoplePickerAttr(input, name); got != want {
+			t.Fatalf("%s = %q, want %q (component attributes win on collision, first occurrence)", name, got, want)
+		}
+	}
+}
+
+func TestPeoplePickerTrailingControlRendersWithoutLabel(t *testing.T) {
+	markup := testutil.RenderToString(t, PeoplePickerRow(PeoplePickerRowProps{ID: "p-ada", InputName: "member_ids", Value: "ada", Name: "Ada", Trailing: peoplePickerTestTrailing()}))
+	cells := findPeoplePickerNodes(parsePeoplePicker(t, "<table><tbody>"+markup+"</tbody></table>"), "td", func(n *html.Node) bool { return hasPeoplePickerClass(n, "people-picker-trailing") })
+	if len(cells) != 1 {
+		t.Fatalf("a supplied trailing control must not be dropped: %s", markup)
+	}
+	if _, ok := peoplePickerAttr(cells[0], "data-th"); ok {
+		t.Fatal("data-th must be omitted when no trailing label is supplied")
+	}
+}
+
+func TestPeoplePickerComposesWithExistingSwitchAndCheckbox(t *testing.T) {
+	organizer := SwitchComponent(SwitchProps{Name: "organizer_ids", ID: "organizer-ada", Value: "ada", Variant: "small", InputAttrs: templ.Attributes{"aria-label": "Make Ada an organizer"}})
+	notify := Checkbox(CheckboxProps{Name: "notify_ids", Value: "bo", Label: "Notify Bo"})
+	markup := testutil.RenderToString(t, peoplePickerWithChildren(PeoplePicker(PeoplePickerProps{Legend: "Members"}), peoplePickerWithChildren(PeoplePickerTable(PeoplePickerTableProps{}), peoplePickerStaticHTML(`<tbody>`),
+		PeoplePickerRow(PeoplePickerRowProps{ID: "p-ada", InputName: "member_ids", Value: "ada", Name: "Ada", Checked: true, TrailingLabel: "Organizer", Trailing: organizer}),
+		PeoplePickerRow(PeoplePickerRowProps{ID: "p-bo", InputName: "member_ids", Value: "bo", Name: "Bo", TrailingLabel: "Notify", Trailing: notify}),
+		peoplePickerStaticHTML(`</tbody>`))))
+	root := parsePeoplePicker(t, markup)
+	seen := map[string]bool{}
+	for _, node := range findPeoplePickerNodes(root, "span", func(n *html.Node) bool { _, ok := peoplePickerAttr(n, "id"); return ok }) {
+		id, _ := peoplePickerAttr(node, "id")
+		if seen[id] {
+			t.Fatalf("duplicate id %q across row and existing component", id)
+		}
+		seen[id] = true
+	}
+	for _, input := range findPeoplePickerNodes(root, "input", nil) {
+		id, _ := peoplePickerAttr(input, "id")
+		if id != "" && seen[id] {
+			t.Fatalf("duplicate id %q across row and existing component", id)
+		}
+		seen[id] = true
+	}
+	trailing := findPeoplePickerNodes(root, "td", func(n *html.Node) bool { return hasPeoplePickerClass(n, "people-picker-trailing") })
+	if len(trailing) != 2 {
+		t.Fatalf("trailing cells = %d, want 2", len(trailing))
+	}
+	for _, cell := range trailing {
+		if len(findPeoplePickerNodes(cell, "input", nil)) != 1 {
+			t.Fatal("each trailing cell must hold exactly its own control")
+		}
+	}
+	// Nothing interactive may live inside the selection or identity labels besides the selection input.
+	for _, label := range findPeoplePickerNodes(root, "label", func(n *html.Node) bool {
+		return hasPeoplePickerClass(n, "checkbox--icon") || hasPeoplePickerClass(n, "people-picker-person")
+	}) {
+		for _, tag := range []string{"button", "a", "select", "textarea"} {
+			if len(findPeoplePickerNodes(label, tag, nil)) != 0 {
+				t.Fatalf("<%s> nested in a selection label", tag)
+			}
+		}
+		if hasPeoplePickerClass(label, "people-picker-person") && len(findPeoplePickerNodes(label, "input", nil)) != 0 {
+			t.Fatal("identity label must not contain inputs")
+		}
+	}
 }

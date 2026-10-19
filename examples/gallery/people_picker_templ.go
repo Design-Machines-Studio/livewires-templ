@@ -268,7 +268,7 @@ func peoplePickerGroupButton(value string, label string, pressed bool) templ.Com
 	})
 }
 
-func peoplePickerDisabledGroupButton(value string, label string) templ.Component {
+func peoplePickerDisabledGroupButton(value string, label string, explanationID string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -314,7 +314,7 @@ func peoplePickerDisabledGroupButton(value string, label string) templ.Component
 		})
 		templ_7745c5c3_Err = component.ButtonComponent(component.ButtonProps{
 			Type: "submit", Variant: "small", Disabled: true,
-			Attrs: templ.Attributes{"name": "group_action", "value": value, "formnovalidate": true, "aria-pressed": "false", "data-demo-group": value, "data-demo-unavailable": true},
+			Attrs: templ.Attributes{"name": "group_action", "value": value, "formnovalidate": true, "aria-pressed": "false", "aria-describedby": explanationID, "data-demo-group": value, "data-demo-unavailable": true},
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var16), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -574,7 +574,7 @@ func peoplePickerExample() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = peoplePickerDisabledGroupButton("members", "Members").Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = peoplePickerDisabledGroupButton("members", "Members", "space-members-unavailable").Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -584,7 +584,7 @@ func peoplePickerExample() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, " <p class=\"people-picker-description\">The Members circle is unavailable because it has too many people to list here.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, " <p class=\"people-picker-description\" id=\"space-members-unavailable\">The Members circle is unavailable because it has too many people to list here.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { readFile, writeFile } from 'node:fs/promises';
 
 const producer = 'aad7e3843898745a2f29833393b20896a204b90e';
-const producerReference = new URL('../../../component/testdata/livewires/people-picker-reference.html', import.meta.url);
+const producerReference = new URL('../../../form/testdata/livewires/people-picker-reference.html', import.meta.url);
 const schemes = ['light', 'dark', 'no-preference'];
 
 for (const width of [320, 375, 480, 1024]) {

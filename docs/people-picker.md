@@ -10,6 +10,7 @@ save changes.
 | Component | Purpose |
 | --- | --- |
 | `PeoplePicker` | Fieldset, legend, optional description, and content slot |
+| `PeoplePickerFieldset` | Same fieldset from just a legend string, for pickers that need no description or attributes |
 | `PeoplePickerGroups` | Optional group-control slot |
 | `PeoplePickerTable` | Lined table used for member-selection rows |
 | `PeoplePickerRow` | Selection checkbox, identity label, optional detail/avatar, and optional trailing cell |
@@ -41,7 +42,17 @@ the single `aria-labelledby` relationship to the hidden “Select [full name]”
 label. Optional detail text has a separate `aria-describedby` relationship,
 omitted when there is no detail. The complete name remains in the DOM even when
 the caller requests visual truncation. Avatars are hidden from assistive
-technology in these already-labelled identity rows.
+technology in these already-labelled identity rows: image avatars use
+`alt=""` and initials are `aria-hidden`. The row renders the reference avatar
+markup itself because `component.Avatar` adds `role="img"` and an `aria-label`
+to initials avatars, which would name the person a second time.
+
+The selection cell is not `form.Checkbox`. The reference needs the checkbox `id`
+(so the identity label in the next cell can target it), a hidden name label, and
+no wrapping `<div>`. `form.Switch`, `form.Checkbox` and other controls work in the
+`Trailing` slot, and the render tests cover that composition. `form.Switch`
+adds a wrapping `<div>` and `aria-hidden` on its track `<span>`, so the gallery
+uses the reference organizer markup instead.
 
 ## Native form composition
 
@@ -86,7 +97,8 @@ boolean attribute renders as an empty value, and `false` omits it.
 ```
 
 Use the same trailing heading text in each row's `TrailingLabel`; it becomes
-the narrow-layout label in `data-th`. Leave out `TrailingLabel` and `Trailing`
+the narrow-layout label in `data-th`. A `Trailing` control without a
+`TrailingLabel` still renders, with no narrow-layout label. Leave out `TrailingLabel` and `Trailing`
 for a two-column picker. Omit the table for an empty state and provide a short
 description. Group explanations can be regular content in the group slot.
 

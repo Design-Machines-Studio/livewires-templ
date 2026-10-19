@@ -33,10 +33,10 @@ templ peoplePickerGroupButton(value string, label string, pressed bool) {
 	}) { { label } }
 }
 
-templ peoplePickerDisabledGroupButton(value string, label string) {
+templ peoplePickerDisabledGroupButton(value string, label string, explanationID string) {
 	@component.ButtonComponent(component.ButtonProps{
 		Type: "submit", Variant: "small", Disabled: true,
-		Attrs: templ.Attributes{"name": "group_action", "value": value, "formnovalidate": true, "aria-pressed": "false", "data-demo-group": value, "data-demo-unavailable": true},
+		Attrs: templ.Attributes{"name": "group_action", "value": value, "formnovalidate": true, "aria-pressed": "false", "aria-describedby": explanationID, "data-demo-group": value, "data-demo-unavailable": true},
 	}) { { label } }
 }
 
@@ -107,9 +107,9 @@ templ peoplePickerExample() {
 						@peoplePickerGroupButton("all", "All", false)
 						@peoplePickerGroupButton("board", "Board", true)
 						@peoplePickerGroupButton("officers", "Officers", false)
-						@peoplePickerDisabledGroupButton("members", "Members")
+						@peoplePickerDisabledGroupButton("members", "Members", "space-members-unavailable")
 					}
-					<p class="people-picker-description">The Members circle is unavailable because it has too many people to list here.</p>
+					<p class="people-picker-description" id="space-members-unavailable">The Members circle is unavailable because it has too many people to list here.</p>
 					@form.PeoplePickerTable(form.PeoplePickerTableProps{}) {
 						@peoplePickerHeader("Organizer")
 						<tbody>@peoplePickerSpaceRows(true, "space")</tbody>

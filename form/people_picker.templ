@@ -1,7 +1,6 @@
 package form
 
 import lw "github.com/Design-Machines-Studio/livewires-templ"
-import "github.com/Design-Machines-Studio/livewires-templ/component"
 
 // PeoplePickerProps names a group of people controls. Applications own all
 // data, selection rules, authorization, requests, and persistence.
@@ -23,8 +22,9 @@ templ PeoplePickerComponent(props PeoplePickerProps) {
 	</fieldset>
 }
 
+// PeoplePickerFieldset is the convenience wrapper for a legend-only picker.
 templ PeoplePickerFieldset(legend string) {
-	@PeoplePickerComponent(PeoplePickerProps{Legend: legend})
+	@PeoplePickerComponent(PeoplePickerProps{Legend: legend}) { { children... } }
 }
 
 templ PeoplePicker(props PeoplePickerProps) {
@@ -60,23 +60,23 @@ templ PeoplePickerTable(props PeoplePickerTableProps) {
 }
 
 type PeoplePickerRowProps struct {
-	ID             string // Stable, caller-owned unique ID shared by the input and identity label.
-	Name           string // Full person name, retained in visible text and the accessible label.
-	InputName      string
-	Value          string
-	Detail         string
-	AvatarSrc      string
-	ShowAvatar     bool
-	Checked        bool
-	Disabled       bool
-	TrailingLabel  string
-	IdentityClass  string // Caller-owned utilities, for example "flex gap-05 min-w-0".
-	NameClass      string // Caller-owned utilities, for example "block truncate".
-	DetailClass    string // Caller-owned utilities, for example "truncate".
-	InputAttrs     templ.Attributes // Developer-controlled attributes for the selection <input>.
-	Class          string
-	Attrs          templ.Attributes
-	Trailing       templ.Component // Optional organizer switch or caller-owned role field.
+	ID            string           // Stable, caller-owned unique ID shared by the input and identity label.
+	Name          string           // Full person name, retained in visible text and the accessible label.
+	InputName     string           // Field name submitted with the selection.
+	Value         string           // Field value submitted when checked.
+	Detail        string           // Optional detail text, linked with aria-describedby only when set.
+	AvatarSrc     string           // Optional image URL; initials render when empty.
+	ShowAvatar    bool             // Render the decorative avatar. It has no accessible name because the identity label already names the person.
+	Checked       bool             // Effective selected state, calculated by the application.
+	Disabled      bool             // Disabled controls are omitted from native form submission.
+	TrailingLabel string           // Trailing column heading, repeated per row as the narrow-layout label (data-th).
+	IdentityClass string           // Caller-owned utilities, for example "flex gap-05 min-w-0".
+	NameClass     string           // Caller-owned utilities, for example "block truncate".
+	DetailClass   string           // Caller-owned utilities, for example "truncate".
+	InputAttrs    templ.Attributes // Developer-controlled attributes for the selection <input>. Never populate from untrusted input.
+	Class         string           // Additional classes on the <tr>.
+	Attrs         templ.Attributes // Developer-controlled attributes on the <tr>. Never populate from untrusted input.
+	Trailing      templ.Component  // Optional organizer switch or caller-owned role field.
 }
 
 func peoplePickerRowLabelID(id string) string { return id + "-selection-label" }
@@ -107,10 +107,13 @@ templ PeoplePickerRowComponent(props PeoplePickerRowProps) {
 		<td>
 			<label class={ lw.ClassNames("people-picker-person", props.IdentityClass) } for={ props.ID }>
 				if props.ShowAvatar {
-					@component.AvatarComponent(component.AvatarProps{
-						Name: props.Name, Src: props.AvatarSrc, Size: "sm",
-						Attrs: templ.Attributes{"aria-hidden": "true"},
-					})
+					<span class="avatar avatar--sm">
+						if props.AvatarSrc != "" {
+							<img src={ templ.SafeURL(props.AvatarSrc) } alt=""/>
+						} else {
+							<span class="initials" aria-hidden="true">{ lw.SingleInitial(props.Name) }</span>
+						}
+					</span>
 				}
 				<span class="people-picker-name">
 					if props.NameClass != "" {
@@ -122,8 +125,8 @@ templ PeoplePickerRowComponent(props PeoplePickerRowProps) {
 				</span>
 			</label>
 		</td>
-		if props.TrailingLabel != "" {
-			<td class="people-picker-trailing" data-th={ props.TrailingLabel }>
+		if props.TrailingLabel != "" || props.Trailing != nil {
+			<td class="people-picker-trailing" if props.TrailingLabel != "" { data-th={ props.TrailingLabel } }>
 				if props.Trailing != nil {
 					@props.Trailing
 				}
