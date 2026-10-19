@@ -76,10 +76,10 @@ templ cardsExample() {
 	<section class="stack" aria-labelledby="existing-cards">
 		<h2 id="existing-cards">Existing cards, unchanged</h2>
 		<div class="grid" style="--min-column-width: 16rem;" data-cards="existing">
-			@component.Card("subtle") {
+			@component.CardComponent(component.CardProps{Scheme: "subtle", Class: "rounded"}) {
 				<p>Basic card with the subtle scheme.</p>
 			}
-			@component.CardLink("#cards-link", "") {
+			@component.CardComponent(component.CardProps{Href: "#cards-link", Scheme: "subtle", Class: "rounded"}) {
 				<p>Link card. The whole card is one anchor.</p>
 			}
 			@component.CardWithMedia(component.CardProps{Scheme: "subtle", Class: "rounded"}, component.AvatarImage(avatarSource, "Placeholder portrait", "xl")) {
@@ -93,7 +93,7 @@ templ cardsExample() {
 	<section class="stack" aria-labelledby="footer-cards">
 		<h2 id="footer-cards">Any card can have a footer</h2>
 		<div class="grid" style="--min-column-width: 16rem;" data-cards="footer">
-			@component.CardFrame("subtle") {
+			@component.CardFrameComponent(component.CardProps{Scheme: "subtle", Class: "rounded"}) {
 				<div class="box">
 					<p>Bare card with a body and a footer. The footer is ruled off from the body.</p>
 				</div>

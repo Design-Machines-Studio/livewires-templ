@@ -386,7 +386,7 @@ func cardsExample() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = component.Card("subtle").Render(templ.WithChildren(ctx, templ_7745c5c3_Var15), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = component.CardComponent(component.CardProps{Scheme: "subtle", Class: "rounded"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var15), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -408,7 +408,7 @@ func cardsExample() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = component.CardLink("#cards-link", "").Render(templ.WithChildren(ctx, templ_7745c5c3_Var16), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = component.CardComponent(component.CardProps{Href: "#cards-link", Scheme: "subtle", Class: "rounded"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var16), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -500,7 +500,7 @@ func cardsExample() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = component.CardFrame("subtle").Render(templ.WithChildren(ctx, templ_7745c5c3_Var19), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = component.CardFrameComponent(component.CardProps{Scheme: "subtle", Class: "rounded"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var19), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
