@@ -222,8 +222,9 @@ func CardSummaryComponent(props CardSummaryProps) templ.Component {
 }
 
 // CardSummary renders a summary card with a linked heading and description.
-// Pass a CardFooter as a child.
-func CardSummary(title, href, description, scheme string) templ.Component {
+// headerClass carries the caller's header layout, "stack" in the producer
+// markup. Pass a CardFooter as a child.
+func CardSummary(title, href, description, scheme, headerClass string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -262,7 +263,7 @@ func CardSummary(title, href, description, scheme string) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = CardSummaryComponent(CardSummaryProps{Title: title, Href: href, Description: description, Scheme: scheme}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = CardSummaryComponent(CardSummaryProps{Title: title, Href: href, Description: description, Scheme: scheme, HeaderClass: headerClass}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -301,7 +302,7 @@ func cardSummaryTitle(props CardSummaryProps) templ.Component {
 			var templ_7745c5c3_Var13 templ.SafeURL
 			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(props.Href))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 73, Col: 33}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 74, Col: 33}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {
@@ -314,7 +315,7 @@ func cardSummaryTitle(props CardSummaryProps) templ.Component {
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(props.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 73, Col: 49}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 74, Col: 49}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
@@ -328,7 +329,7 @@ func cardSummaryTitle(props CardSummaryProps) templ.Component {
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(props.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 75, Col: 15}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 76, Col: 15}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
@@ -684,7 +685,7 @@ func cardAvatar(person CardPerson, size string) templ.Component {
 			var templ_7745c5c3_Var35 string
 			templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.JoinStringErrs(templ.SafeURL(person.Src))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 122, Col: 39}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 123, Col: 39}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var35))
 			if templ_7745c5c3_Err != nil {
@@ -702,7 +703,7 @@ func cardAvatar(person CardPerson, size string) templ.Component {
 			var templ_7745c5c3_Var36 string
 			templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinStringErrs(avatarInitials(person.Name, size))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 124, Col: 80}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 125, Col: 80}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
 			if templ_7745c5c3_Err != nil {
@@ -813,7 +814,7 @@ func CardPeopleComponent(props CardPeopleProps) templ.Component {
 				var templ_7745c5c3_Var40 string
 				templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.JoinStringErrs(props.Extra)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 160, Col: 41}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 161, Col: 41}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var40))
 				if templ_7745c5c3_Err != nil {
@@ -836,7 +837,7 @@ func CardPeopleComponent(props CardPeopleProps) templ.Component {
 				var templ_7745c5c3_Var41 string
 				templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.JoinStringErrs(props.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 163, Col: 46}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 164, Col: 46}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var41))
 				if templ_7745c5c3_Err != nil {
@@ -1030,7 +1031,7 @@ func CardCountComponent(props CardCountProps) templ.Component {
 			var templ_7745c5c3_Var48 string
 			templ_7745c5c3_Var48, templ_7745c5c3_Err = templ.JoinStringErrs(props.Value)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 201, Col: 21}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 202, Col: 21}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var48))
 			if templ_7745c5c3_Err != nil {
@@ -1048,7 +1049,7 @@ func CardCountComponent(props CardCountProps) templ.Component {
 				var templ_7745c5c3_Var49 string
 				templ_7745c5c3_Var49, templ_7745c5c3_Err = templ.JoinStringErrs(" " + props.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 203, Col: 52}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 204, Col: 52}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var49))
 				if templ_7745c5c3_Err != nil {
@@ -1261,7 +1262,7 @@ func CardDateComponent(props CardDateProps) templ.Component {
 			var templ_7745c5c3_Var57 string
 			templ_7745c5c3_Var57, templ_7745c5c3_Err = templ.JoinStringErrs(props.Prefix + " ")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 246, Col: 23}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 247, Col: 23}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var57))
 			if templ_7745c5c3_Err != nil {
@@ -1280,7 +1281,7 @@ func CardDateComponent(props CardDateProps) templ.Component {
 			var templ_7745c5c3_Var58 string
 			templ_7745c5c3_Var58, templ_7745c5c3_Err = templ.JoinStringErrs(props.HiddenLabel + " ")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 249, Col: 58}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 250, Col: 58}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var58))
 			if templ_7745c5c3_Err != nil {
@@ -1303,7 +1304,7 @@ func CardDateComponent(props CardDateProps) templ.Component {
 			var templ_7745c5c3_Var59 string
 			templ_7745c5c3_Var59, templ_7745c5c3_Err = templ.JoinStringErrs(props.Datetime)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 253, Col: 29}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 254, Col: 29}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var59))
 			if templ_7745c5c3_Err != nil {
@@ -1321,7 +1322,7 @@ func CardDateComponent(props CardDateProps) templ.Component {
 		var templ_7745c5c3_Var60 string
 		templ_7745c5c3_Var60, templ_7745c5c3_Err = templ.JoinStringErrs(props.Label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 255, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 256, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var60))
 		if templ_7745c5c3_Err != nil {
@@ -1421,7 +1422,7 @@ func CardAuthorComponent(props CardAuthorProps) templ.Component {
 			var templ_7745c5c3_Var64 string
 			templ_7745c5c3_Var64, templ_7745c5c3_Err = templ.JoinStringErrs(lw.DefaultStr(props.HiddenPrefix, "By") + " ")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 279, Col: 108}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 280, Col: 108}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var64))
 			if templ_7745c5c3_Err != nil {
@@ -1434,7 +1435,7 @@ func CardAuthorComponent(props CardAuthorProps) templ.Component {
 			var templ_7745c5c3_Var65 string
 			templ_7745c5c3_Var65, templ_7745c5c3_Err = templ.JoinStringErrs(props.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 279, Col: 129}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 280, Col: 129}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var65))
 			if templ_7745c5c3_Err != nil {
@@ -1447,7 +1448,7 @@ func CardAuthorComponent(props CardAuthorProps) templ.Component {
 			var templ_7745c5c3_Var66 string
 			templ_7745c5c3_Var66, templ_7745c5c3_Err = templ.JoinStringErrs(" ")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 280, Col: 7}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/card_summary.templ`, Line: 281, Col: 7}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var66))
 			if templ_7745c5c3_Err != nil {
