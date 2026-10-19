@@ -12,6 +12,101 @@ if (unrelated) {
 }
 
 async function setup() {
+  if (name === 'people-picker') {
+    for (const form of document.querySelectorAll('form[data-demo-picker]')) {
+      const rows = [...form.querySelectorAll('tr[data-demo-person]')];
+      const groups = [...form.querySelectorAll('[data-demo-group]')];
+      const direct = new Set(rows.filter(row => row.dataset.demoDirect === 'true').map(row => row.dataset.demoPerson));
+      const excluded = new Set(rows.filter(row => row.dataset.demoExcluded === 'true').map(row => row.dataset.demoPerson));
+      const locked = new Set(rows.filter(row => row.dataset.demoLocked === 'true').map(row => row.dataset.demoPerson));
+      const selectedGroups = new Set(groups.filter(button => button.getAttribute('aria-pressed') === 'true').map(button => button.dataset.demoGroup));
+      const organizerState = new Map([...form.querySelectorAll('[data-demo-organizer]')].map(input => [input.dataset.demoOrganizer, input.checked]));
+      const status = form.querySelector('[data-demo-status]');
+      const circleLabels = new Map(groups.map(button => [button.dataset.demoGroup, button.textContent.trim()]));
+      // Clear first so repeating an identical message is announced again.
+      const announce = text => {
+        if (!status) return;
+        status.textContent = '';
+        later(() => { status.textContent = text; }, 60);
+      };
+      const selectedCount = () => rows.filter(row => row.querySelector('input[type="checkbox"][id]').checked).length;
+      const countText = () => { const n = selectedCount(); return `${n} ${n === 1 ? 'person' : 'people'} selected.`; };
+
+      const render = () => {
+        for (const row of rows) {
+          const id = row.dataset.demoPerson;
+          const input = row.querySelector(`input[type="checkbox"][id]`);
+          const memberships = (row.dataset.demoCircles || '').split(',').filter(Boolean);
+          const fromGroups = memberships.some(group => selectedGroups.has(group)) && !excluded.has(id);
+          const selected = locked.has(id) || direct.has(id) || fromGroups;
+          input.checked = selected;
+          for (const organizer of row.querySelectorAll('[data-demo-organizer]')) {
+            const isLocked = locked.has(id);
+            organizer.disabled = isLocked || !selected;
+            organizer.checked = isLocked ? false : selected && Boolean(organizerState.get(id));
+          }
+          // Keep the detail line true to the simulated state. Locked rows keep their fixed reason.
+          const detail = row.querySelector('.people-picker-detail');
+          if (detail && !locked.has(id)) {
+            const circles = fromGroups ? memberships.filter(group => selectedGroups.has(group)).map(group => circleLabels.get(group)).filter(Boolean) : [];
+            const parts = [];
+            if (selected && organizerState.get(id)) parts.push('Organizer');
+            parts.push(...circles);
+            if (selected && circles.length === 0 && direct.has(id)) parts.push('Added directly');
+            const text = excluded.has(id) ? 'Removed' : parts.length ? parts.join(', ') : 'Not selected';
+            detail.textContent = text;
+            if (detail.hasAttribute('title')) detail.title = text;
+          }
+        }
+        for (const button of groups) button.setAttribute('aria-pressed', String(selectedGroups.has(button.dataset.demoGroup)));
+      };
+
+      form.addEventListener('change', event => {
+        const input = event.target;
+        if (!(input instanceof HTMLInputElement)) return;
+        if (input.matches('[data-demo-organizer]')) {
+          organizerState.set(input.dataset.demoOrganizer, input.checked);
+          render();
+          return;
+        }
+        if (!input.matches('input[type="checkbox"][id]')) return;
+        const row = input.closest('tr[data-demo-person]');
+        if (!row || locked.has(row.dataset.demoPerson)) return;
+        const id = row.dataset.demoPerson;
+        if (input.checked) { direct.add(id); excluded.delete(id); }
+        else { direct.delete(id); excluded.add(id); }
+        render();
+        // The name is the row's first text, never the detail line.
+        const nameNode = row.querySelector('.people-picker-name');
+        const person = (nameNode.querySelector(':scope > span:not(.people-picker-detail)') ?? nameNode.firstChild).textContent.trim();
+        announce(`${person} ${input.checked ? 'added' : 'removed'}. ${countText()}`);
+      }, { signal: lifecycle.signal });
+
+      form.addEventListener('submit', event => {
+        const button = event.submitter;
+        if (!(button instanceof HTMLButtonElement)) return;
+        if (button.hasAttribute('data-demo-group')) {
+          event.preventDefault();
+          const group = button.dataset.demoGroup;
+          if (selectedGroups.has(group)) selectedGroups.delete(group); else selectedGroups.add(group);
+          render();
+          announce(`${button.textContent.trim()} circle ${selectedGroups.has(group) ? 'selected' : 'removed'}. ${countText()}`);
+        } else if (button.hasAttribute('data-demo-clear')) {
+          event.preventDefault();
+          selectedGroups.clear();
+          direct.clear();
+          excluded.clear();
+          render();
+          announce(`Selections cleared. Locked people remain selected. ${countText()}`);
+        }
+      }, { signal: lifecycle.signal });
+
+      render();
+      for (const control of form.querySelectorAll('[data-demo-clear], [data-demo-group]')) {
+        if (!control.hasAttribute('data-demo-unavailable')) control.disabled = false;
+      }
+    }
+  }
   if (name === 'loaders') {
     const overlay = document.querySelector('[data-gallery-overlay]');
     const status = overlay.parentElement;

@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { readFile, writeFile } from 'node:fs/promises';
 
-const producer = '3042ffe56c36b8e51e4e8a98f500b1aa04a43fd3';
+const producer = 'aad7e3843898745a2f29833393b20896a204b90e';
 
 for (const width of [1440, 768, 640, 375, 320]) {
   test(`widgets ${width}px: anatomy, inherited themes and complete wrapping`, async ({ page, request }, info) => {

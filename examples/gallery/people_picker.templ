@@ -1,0 +1,209 @@
+package main
+
+import "github.com/Design-Machines-Studio/livewires-templ/component"
+import "github.com/Design-Machines-Studio/livewires-templ/form"
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+func pressedValue(pressed bool) string {
+	if pressed {
+		return "true"
+	}
+	return "false"
+}
+
+templ peoplePickerOrganizer(id string, name string, checked bool, disabled bool) {
+	<label class="switch switch--small">
+		<input type="checkbox" role="switch" name="organizer_ids" value={ id } aria-label={ "Make " + name + " an organizer" } checked?={ checked } disabled?={ disabled } data-demo-organizer={ id }>
+		<span></span>
+	</label>
+}
+
+templ peoplePickerRole(id string, name string, value string) {
+	<label class="visually-hidden" for={ "role-" + id }>{ "Role in this circle for " + name }</label>
+	<input type="text" id={ "role-" + id } name={ "roles[" + id + "]" } value={ value } placeholder="Optional role">
+}
+
+// peoplePickerGroupAttrs builds the native submit-button attributes for a circle. A non-empty explanationID
+// marks the circle unavailable and links it to its visible explanation.
+func peoplePickerGroupAttrs(value string, pressed bool, explanationID string) templ.Attributes {
+	attrs := templ.Attributes{"name": "group_action", "value": value, "formnovalidate": true, "aria-pressed": pressedValue(pressed), "data-demo-group": value}
+	if explanationID != "" {
+		attrs["aria-describedby"] = explanationID
+		attrs["data-demo-unavailable"] = true
+	}
+	return attrs
+}
+
+templ peoplePickerGroupButton(value string, label string, pressed bool, explanationID string) {
+	@component.ButtonComponent(component.ButtonProps{
+		Type: "submit", Variant: "small", Disabled: true,
+		Attrs: peoplePickerGroupAttrs(value, pressed, explanationID),
+	}) { { label } }
+}
+
+templ peoplePickerClearButton() {
+	@component.ButtonComponent(component.ButtonProps{
+		Type: "submit", Variant: "small", Disabled: true,
+		Class: "button--ghost",
+		Attrs: templ.Attributes{"name": "picker_action", "value": "clear", "formnovalidate": true, "data-demo-clear": true},
+	}) { Clear selection }
+}
+
+templ peoplePickerSpaceRows(withDetails bool, prefix string) {
+	@form.PeoplePickerRow(form.PeoplePickerRowProps{
+		ID: prefix + "-ada", Name: "member_ids", Value: "ada", PersonName: "Ada Okafor",
+		Detail: lw.If(withDetails, "Organizer, Board"), AvatarSrc: "/assets/comment-image.jpg", ShowAvatar: true,
+		Checked: true, TrailingLabel: "Organizer", Trailing: peoplePickerOrganizer("ada", "Ada Okafor", true, false),
+		IdentityClass: "flex gap-05 min-w-0",
+		Attrs: templ.Attributes{"data-demo-person": "ada", "data-demo-circles": "all,board,officers", "data-demo-direct": "true"},
+	})
+	@form.PeoplePickerRow(form.PeoplePickerRowProps{
+		ID: prefix + "-bo", Name: "member_ids", Value: "bo", PersonName: "Bo Lindqvist",
+		Detail: lw.If(withDetails, "Board"), ShowAvatar: true, Checked: true,
+		TrailingLabel: "Organizer", Trailing: peoplePickerOrganizer("bo", "Bo Lindqvist", false, false),
+		IdentityClass: "flex gap-05 min-w-0",
+		Attrs: templ.Attributes{"data-demo-person": "bo", "data-demo-circles": "all,board", "data-demo-direct": "false"},
+	})
+	@form.PeoplePickerRow(form.PeoplePickerRowProps{
+		ID: prefix + "-cy", Name: "member_ids", Value: "cy", PersonName: "Cy Moreno",
+		Detail: lw.If(withDetails, "Removed"), ShowAvatar: true, Checked: false,
+		TrailingLabel: "Organizer", Trailing: peoplePickerOrganizer("cy", "Cy Moreno", false, true),
+		IdentityClass: "flex gap-05 min-w-0",
+		Attrs: templ.Attributes{"data-demo-person": "cy", "data-demo-circles": "all,board", "data-demo-direct": "false", "data-demo-excluded": "true"},
+	})
+	@form.PeoplePickerRow(form.PeoplePickerRowProps{
+		ID: prefix + "-di", Name: "member_ids", Value: "di", PersonName: "Di Ng",
+		Detail: lw.If(withDetails, "Super admin"), ShowAvatar: true, Checked: true, Disabled: true,
+		TrailingLabel: "Organizer", Trailing: peoplePickerOrganizer("di", "Di Ng", false, true),
+		IdentityClass: "flex gap-05 min-w-0",
+		Attrs: templ.Attributes{"data-demo-person": "di", "data-demo-circles": "all", "data-demo-locked": "true", "data-demo-direct": "true"},
+	})
+	@form.PeoplePickerRow(form.PeoplePickerRowProps{
+		ID: prefix + "-ed", Name: "member_ids", Value: "ed", PersonName: "Ed Sato",
+		Detail: lw.If(withDetails, "Not selected"), ShowAvatar: true, Checked: false,
+		TrailingLabel: "Organizer", Trailing: peoplePickerOrganizer("ed", "Ed Sato", false, true),
+		IdentityClass: "flex gap-05 min-w-0",
+		Attrs: templ.Attributes{"data-demo-person": "ed", "data-demo-circles": "all,officers", "data-demo-direct": "false"},
+	})
+}
+
+templ peoplePickerHeader(trailing string) {
+	<thead><tr>
+		<th scope="col"><span class="visually-hidden">Select</span></th>
+		<th scope="col">Member</th>
+		if trailing != "" {
+			<th scope="col">{ trailing }</th>
+		}
+	</tr></thead>
+}
+
+templ peoplePickerExample() {
+	<section class="stack">
+		<h2>Space members with circles and organizers</h2>
+		<p>Board and Officers overlap, and Ada is also selected directly. Removing one circle keeps people who belong to the other circle or were selected directly. Removing someone excludes them from the selected circles. Di Ng is required and stays selected when you clear the others.</p>
+		<noscript><p>Circle and Clear actions need JavaScript and stay disabled without it. Individual checkboxes, enabled switches and role fields still work. Detail text does not update.</p></noscript>
+		<div class="box scheme-subtle">
+			<form method="get" action="/examples/people-picker" data-demo-picker="space">
+				@form.PeoplePicker(form.PeoplePickerProps{Legend: "Members"}) {
+					@form.PeoplePickerGroups(form.PeoplePickerGroupsProps{Class: "cluster gap-025", Attrs: templ.Attributes{"role": "group", "aria-label": "Circles"}}) {
+						@peoplePickerGroupButton("all", "All", false, "")
+						@peoplePickerGroupButton("board", "Board", true, "")
+						@peoplePickerGroupButton("officers", "Officers", false, "")
+						@peoplePickerGroupButton("members", "Members", false, "space-members-unavailable")
+					}
+					<p class="people-picker-description" id="space-members-unavailable">The Members circle is unavailable because it has too many people to list here.</p>
+					@form.PeoplePickerTable(form.PeoplePickerTableProps{}) {
+						@peoplePickerHeader("Organizer")
+						<tbody>@peoplePickerSpaceRows(true, "space")</tbody>
+					}
+					@form.PeoplePickerStatus(form.PeoplePickerStatusProps{Class: "text-sm text-muted", Attrs: templ.Attributes{"data-demo-status": true}})
+					@form.PeoplePickerActions(form.PeoplePickerActionsProps{Class: "cluster cluster-compact"}) {@peoplePickerClearButton()}
+				}
+			</form>
+		</div>
+	</section>
+
+	<section class="stack">
+		<h2>Members without detail text</h2>
+		<p>Keep the circle toggles and organizer switches, with just a name and avatar in each row.</p>
+		<div class="box scheme-subtle">
+			<form method="get" action="/examples/people-picker" data-demo-picker="plain-space">
+				@form.PeoplePicker(form.PeoplePickerProps{Legend: "Members"}) {
+					@form.PeoplePickerGroups(form.PeoplePickerGroupsProps{Class: "cluster gap-025", Attrs: templ.Attributes{"role": "group", "aria-label": "Circles"}}) {
+						@peoplePickerGroupButton("all", "All", false, "")
+						@peoplePickerGroupButton("board", "Board", true, "")
+						@peoplePickerGroupButton("officers", "Officers", false, "")
+						@peoplePickerGroupButton("members", "Members", false, "plain-space-members-unavailable")
+					}
+					<p class="people-picker-description" id="plain-space-members-unavailable">The Members circle is unavailable because it has too many people to list here.</p>
+					@form.PeoplePickerTable(form.PeoplePickerTableProps{}) {@peoplePickerHeader("Organizer") <tbody>@peoplePickerSpaceRows(false, "plain-space")</tbody>}
+					@form.PeoplePickerStatus(form.PeoplePickerStatusProps{Class: "text-sm text-muted", Attrs: templ.Attributes{"data-demo-status": true}})
+					@form.PeoplePickerActions(form.PeoplePickerActionsProps{Class: "cluster cluster-compact"}) {@peoplePickerClearButton()}
+				}
+			</form>
+		</div>
+	</section>
+
+	<section class="stack">
+		<h2>Collaborators, without groups or a trailing column</h2>
+		<div class="box scheme-subtle">
+			@form.PeoplePicker(form.PeoplePickerProps{Legend: "Draft collaborators", Description: "Collaborators can read, discuss and edit this draft."}) {
+				@form.PeoplePickerTable(form.PeoplePickerTableProps{}) {
+					@peoplePickerHeader("")
+					<tbody>
+						@form.PeoplePickerRow(form.PeoplePickerRowProps{ID: "draft-ada", Name: "collaborator_ids", Value: "ada", PersonName: "Ada Okafor", Checked: true, IdentityClass: "flex gap-05 min-w-0"})
+						@form.PeoplePickerRow(form.PeoplePickerRowProps{ID: "draft-bo", Name: "collaborator_ids", Value: "bo", PersonName: "Bo Lindqvist", IdentityClass: "flex gap-05 min-w-0"})
+					</tbody>
+				}
+			}
+		</div>
+	</section>
+
+	<section class="stack">
+		<h2>A role field in the trailing column</h2>
+		<div class="box scheme-subtle">
+			@form.PeoplePicker(form.PeoplePickerProps{Legend: "Circle members"}) {
+				@form.PeoplePickerTable(form.PeoplePickerTableProps{}) {
+					@peoplePickerHeader("Role in this circle")
+					<tbody>
+						@form.PeoplePickerRow(form.PeoplePickerRowProps{ID: "circle-ada", Name: "member_ids", Value: "ada", PersonName: "Ada Okafor", Checked: true, TrailingLabel: "Role in this circle", Trailing: peoplePickerRole("ada", "Ada Okafor", "Chair"), IdentityClass: "flex gap-05 min-w-0"})
+					</tbody>
+				}
+			}
+		</div>
+	</section>
+
+	<section class="stack">
+		<h2>Long values in a narrow container</h2>
+		<p>The caller chooses truncation with <code>NameClass</code> and <code>DetailClass</code>. Either way the full name stays in the page and in the checkbox label.</p>
+		<h3>Truncated</h3>
+		<div class="box scheme-subtle max-w-xs" data-demo-narrow="truncated">
+			@form.PeoplePicker(form.PeoplePickerProps{Legend: "Members"}) {
+				@form.PeoplePickerTable(form.PeoplePickerTableProps{}) {
+					@peoplePickerHeader("Organizer")
+					<tbody>
+						@form.PeoplePickerRow(form.PeoplePickerRowProps{ID: "narrow-long", Name: "member_ids", Value: "long", PersonName: "Maximiliana Featherstonehaugh-Abernathy", Detail: "Organizer, Festival submissions working group", ShowAvatar: true, Checked: true, NameClass: "block truncate", DetailClass: "truncate", TrailingLabel: "Organizer", Trailing: peoplePickerOrganizer("long", "Maximiliana Featherstonehaugh-Abernathy", true, false), IdentityClass: "flex gap-05 min-w-0"})
+					</tbody>
+				}
+			}
+		</div>
+		<h3>Wrapped</h3>
+		<div class="box scheme-subtle max-w-xs" data-demo-narrow="wrapped">
+			@form.PeoplePicker(form.PeoplePickerProps{Legend: "Members"}) {
+				@form.PeoplePickerTable(form.PeoplePickerTableProps{}) {
+					@peoplePickerHeader("Role")
+					<tbody>@form.PeoplePickerRow(form.PeoplePickerRowProps{ID: "narrow-wrap", Name: "member_ids", Value: "wrap", PersonName: "Maximiliana Featherstonehaugh-Abernathy", TrailingLabel: "Role", Trailing: peoplePickerRole("wrap", "Maximiliana Featherstonehaugh-Abernathy", "Observer"), IdentityClass: "flex gap-05 min-w-0"})</tbody>
+				}
+			}
+		</div>
+	</section>
+
+	<section class="stack">
+		<h2>No people to choose</h2>
+		<div class="box scheme-subtle">
+			@form.PeoplePicker(form.PeoplePickerProps{Legend: "Members", Description: "No members are available."})
+		</div>
+	</section>
+
+	<p>Your application owns membership data, effective selection, exclusions, roles, permissions, requests and persistence. Disabled controls are omitted from native form submission, so the server must preserve and validate locked state authoritatively.</p>
+}

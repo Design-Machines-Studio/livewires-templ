@@ -31,7 +31,7 @@ func widgetsExample() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<p>Shared presentation from Live Wires v2.24.0. Values are demonstration strings. Placement, data, permissions and saved typography belong to the consuming application.</p><section class=\"stack\" aria-labelledby=\"source-examples\"><h2 id=\"source-examples\">Source-derived examples</h2><div class=\"grid\" style=\"--min-column-width: 18rem;\"><div class=\"scheme-subtle\" style=\"inline-size: min(100%, 18rem);\" data-widget-host=\"narrow\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<p>Shared presentation from Live Wires v2.25.0. Values are demonstration strings. Placement, data, permissions and saved typography belong to the consuming application.</p><section class=\"stack\" aria-labelledby=\"source-examples\"><h2 id=\"source-examples\">Source-derived examples</h2><div class=\"grid\" style=\"--min-column-width: 18rem;\"><div class=\"scheme-subtle\" style=\"inline-size: min(100%, 18rem);\" data-widget-host=\"narrow\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
