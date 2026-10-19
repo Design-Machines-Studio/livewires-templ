@@ -76,6 +76,10 @@ async function setup() {
         if (input.checked) { direct.add(id); excluded.delete(id); }
         else { direct.delete(id); excluded.add(id); }
         render();
+        // The name is the row's first text, never the detail line.
+        const nameNode = row.querySelector('.people-picker-name');
+        const person = (nameNode.querySelector(':scope > span:not(.people-picker-detail)') ?? nameNode.firstChild).textContent.trim();
+        announce(`${person} ${input.checked ? 'added' : 'removed'}. ${countText()}`);
       }, { signal: lifecycle.signal });
 
       form.addEventListener('submit', event => {

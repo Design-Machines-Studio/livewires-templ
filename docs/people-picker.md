@@ -107,6 +107,9 @@ tell them apart.
 </form>
 ```
 
+The example has no text fields. If you add a role field, put the primary Save submit
+button first in source order, as the warning above describes.
+
 Use the same trailing heading text in each row's `TrailingLabel`; it becomes
 the narrow-layout label in `data-th`. A `Trailing` control without a
 `TrailingLabel` still renders, with no narrow-layout label. Leave out `TrailingLabel` and `Trailing`

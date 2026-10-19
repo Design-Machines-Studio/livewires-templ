@@ -167,6 +167,28 @@ test('people picker keeps overlapping circles, direct selection, exclusions and 
   await expect(page.locator('#circle-ada')).toBeChecked();
 });
 
+test('people picker announces who changed and how many people are selected', async ({ page }) => {
+  await page.setViewportSize({ width: 1024, height: 1000 });
+  await page.goto('/examples/people-picker');
+  const form = page.locator('form[data-demo-picker="space"]');
+  const status = form.locator('[role="status"]');
+  const checkedCount = () => form.locator('tbody input[type="checkbox"][id]:checked').count();
+  const countText = n => `${n} ${n === 1 ? 'person' : 'people'} selected.`;
+
+  await form.getByRole('button', { name: 'All', exact: true }).click();
+  await expect(form.getByRole('button', { name: 'All', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await form.locator('label[for="space-bo"] .people-picker-name').click();
+  await expect(form.locator('#space-bo')).not.toBeChecked();
+  const afterUncheck = await checkedCount();
+  await expect(status).toHaveText(`Bo Lindqvist removed. ${countText(afterUncheck)}`);
+
+  await form.locator('label[for="space-bo"] .people-picker-name').click();
+  await expect(form.locator('#space-bo')).toBeChecked();
+  const afterCheck = await checkedCount();
+  expect(afterCheck).toBe(afterUncheck + 1);
+  await expect(status).toHaveText(`Bo Lindqvist added. ${countText(afterCheck)}`);
+});
+
 test('people picker keeps selection and role inputs native when JavaScript is disabled', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 375, height: 900 } });
   const page = await context.newPage();

@@ -431,15 +431,17 @@ func TestPeoplePickerAvatarRequiresShowAvatar(t *testing.T) {
 	}
 }
 
-// A row derives "<id>-selection-label" and "<id>-detail". Field derives "<name>-hint" and "<name>-error".
-// Sharing one base between a row and a Field is the caller's uniqueness duty, so the base id is the only
-// id the document may repeat: no derived suffix may collide.
-func TestPeoplePickerDerivedIDsDoNotCollideWithFieldIDs(t *testing.T) {
+// A row derives "<id>-selection-label" and "<id>-detail". Field derives "<name>-error" (and "-hint"), and
+// Checkbox derives "<name>-label" and "<name>-hint". Sharing one base between a row and those controls is the
+// caller's uniqueness duty, so the base id is the only id the document may repeat: no derived suffix may
+// collide. The Field has no hint here because Checkbox and Field would then both emit "<name>-hint".
+func TestPeoplePickerDerivedIDsDoNotCollideWithFieldAndCheckboxIDs(t *testing.T) {
 	markup := testutil.RenderToString(t, templ.Join(
 		peoplePickerStaticHTML(`<table><tbody>`),
 		PeoplePickerRow(PeoplePickerRowProps{ID: "p-ada", Name: "member_ids", Value: "ada", PersonName: "Ada", Detail: "Board"}),
 		peoplePickerStaticHTML(`</tbody></table>`),
-		Field(FieldProps{Label: "Role", Name: "p-ada", Hint: "Optional", Error: "Too long"}),
+		Field(FieldProps{Label: "Role", Name: "p-ada", Error: "Too long"}),
+		Checkbox(CheckboxProps{Name: "p-ada", Label: "Notify", Hint: "Optional"}),
 	))
 	counts := map[string]int{}
 	var walk func(*html.Node)
@@ -454,12 +456,18 @@ func TestPeoplePickerDerivedIDsDoNotCollideWithFieldIDs(t *testing.T) {
 		}
 	}
 	walk(parsePeoplePicker(t, markup))
-	for _, id := range []string{"p-ada-selection-label", "p-ada-detail", "p-ada-hint", "p-ada-error"} {
+	for _, id := range []string{"p-ada-selection-label", "p-ada-detail", "p-ada-label", "p-ada-hint", "p-ada-error"} {
 		if counts[id] != 1 {
-			t.Fatalf("derived id %q appears %d times, want exactly 1", id, counts[id])
+			t.Fatalf("derived id %q appears %d times, want exactly 1: %v", id, counts[id], counts)
 		}
 	}
-	if counts["p-ada"] != 2 {
-		t.Fatalf("the shared base id should be the only repeated id, got %d uses: %v", counts["p-ada"], counts)
+	// The row input and the Field input share the caller-chosen base id, and nothing else does.
+	for id, n := range counts {
+		if n > 1 && id != "p-ada" {
+			t.Fatalf("id %q repeats %d times; only the shared base id may repeat", id, n)
+		}
+	}
+	if counts["p-ada"] < 2 {
+		t.Fatalf("the shared base id should be the only repeated id, got %v", counts)
 	}
 }

@@ -13,8 +13,9 @@ import (
 
 // The fixture is copied verbatim from Live Wires v2.25.0 (aad7e3843898745a2f29833393b20896a204b90e),
 // public/reference/components/people-picker.html. Templ ids the hidden selection label
-// "<id>-selection-label" so it cannot collide with a Field "<id>-label"; the producer uses
-// "<id>-label". Parity normalizes only that suffix.
+// "<id>-selection-label" so it cannot collide with the "<id>-label" span that form.Checkbox and
+// form.Radio emit (labelSpanID in form/ids.go); the producer uses "<id>-label". Parity normalizes only
+// that suffix.
 const peoplePickerReferenceFixture = "testdata/livewires/people-picker-reference.html"
 
 func peoplePickerReferenceFieldsets(t *testing.T) []string {

@@ -20,7 +20,7 @@ templ peoplePickerOrganizer(id string, name string, checked bool, disabled bool)
 
 templ peoplePickerRole(id string, name string, value string) {
 	<label class="visually-hidden" for={ "role-" + id }>{ "Role in this circle for " + name }</label>
-	<input type="text" id={ "role-" + id } name={ "roles[" + id + "]" } value={ value } placeholder="Optional role" data-demo-role={ id }>
+	<input type="text" id={ "role-" + id } name={ "roles[" + id + "]" } value={ value } placeholder="Optional role">
 }
 
 // peoplePickerGroupAttrs builds the native submit-button attributes for a circle. A non-empty explanationID
@@ -80,7 +80,7 @@ templ peoplePickerSpaceRows(withDetails bool, prefix string) {
 	})
 	@form.PeoplePickerRow(form.PeoplePickerRowProps{
 		ID: prefix + "-ed", Name: "member_ids", Value: "ed", PersonName: "Ed Sato",
-		ShowAvatar: true, Checked: false,
+		Detail: lw.If(withDetails, "Not selected"), ShowAvatar: true, Checked: false,
 		TrailingLabel: "Organizer", Trailing: peoplePickerOrganizer("ed", "Ed Sato", false, true),
 		IdentityClass: "flex gap-05 min-w-0",
 		Attrs: templ.Attributes{"data-demo-person": "ed", "data-demo-circles": "all,officers", "data-demo-direct": "false"},
@@ -101,10 +101,11 @@ templ peoplePickerExample() {
 	<section class="stack">
 		<h2>Space members with circles and organizers</h2>
 		<p>Board and Officers overlap, and Ada is also selected directly. Removing one circle keeps people who belong to the other circle or were selected directly. Removing someone excludes them from the selected circles. Di Ng is required and stays selected when you clear the others.</p>
+		<noscript><p>Circle and Clear actions need JavaScript and stay disabled without it. Individual checkboxes, enabled switches and role fields still work. Detail text does not update.</p></noscript>
 		<div class="box scheme-subtle">
 			<form method="get" action="/examples/people-picker" data-demo-picker="space">
 				@form.PeoplePicker(form.PeoplePickerProps{Legend: "Members"}) {
-					@form.PeoplePickerGroups(form.PeoplePickerGroupsProps{Class: "cluster gap-025", Attrs: templ.Attributes{"role": "group", "aria-label": "Circles", "data-demo-groups": true}}) {
+					@form.PeoplePickerGroups(form.PeoplePickerGroupsProps{Class: "cluster gap-025", Attrs: templ.Attributes{"role": "group", "aria-label": "Circles"}}) {
 						@peoplePickerGroupButton("all", "All", false, "")
 						@peoplePickerGroupButton("board", "Board", true, "")
 						@peoplePickerGroupButton("officers", "Officers", false, "")
@@ -128,7 +129,7 @@ templ peoplePickerExample() {
 		<div class="box scheme-subtle">
 			<form method="get" action="/examples/people-picker" data-demo-picker="plain-space">
 				@form.PeoplePicker(form.PeoplePickerProps{Legend: "Members"}) {
-					@form.PeoplePickerGroups(form.PeoplePickerGroupsProps{Class: "cluster gap-025", Attrs: templ.Attributes{"role": "group", "aria-label": "Circles", "data-demo-groups": true}}) {
+					@form.PeoplePickerGroups(form.PeoplePickerGroupsProps{Class: "cluster gap-025", Attrs: templ.Attributes{"role": "group", "aria-label": "Circles"}}) {
 						@peoplePickerGroupButton("all", "All", false, "")
 						@peoplePickerGroupButton("board", "Board", true, "")
 						@peoplePickerGroupButton("officers", "Officers", false, "")
@@ -195,7 +196,6 @@ templ peoplePickerExample() {
 				}
 			}
 		</div>
-		<noscript><p>Circle toggles and Clear selection need JavaScript in these examples. Individual checkboxes, switches and role fields still work.</p></noscript>
 	</section>
 
 	<section class="stack">
