@@ -1,0 +1,277 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// CardSummaryProps holds configuration for a summary card: one item in a grid
+// of items, with a linked heading, a short description and a footer slot.
+// Requires Live Wires v2.26.0 or later.
+//
+// Line limits are owned by CSS: headings stop after --card-heading-lines (3)
+// and descriptions after --card-description-lines (4). There is no line-limit
+// prop. To change a limit, set the custom property on the card through
+// Attrs, for example templ.Attributes{"style": "--card-description-lines: 2"}.
+//
+// Layout is the caller's choice. The component emits no stack or cluster
+// classes: pass them through HeaderClass and HeadingRowClass.
+type CardSummaryProps struct {
+	Title           string           // Heading text; stays complete in the DOM when CSS clamps it
+	HeadingLevel    string           // Heading tag: "h3" (default), "h2", "h4", etc.
+	Href            string           // Heading link target; empty renders the heading without a link
+	Description     string           // Optional short description
+	Badge           string           // Optional badge after the heading, e.g. "New" or "Updated"
+	BadgeVariant    string           // Badge color variant; "blue" by default
+	Scheme          string           // Color scheme: "subtle", "dark", "accent", etc.
+	HeaderClass     string           // Classes for div.header, e.g. "stack"
+	HeadingRowClass string           // Classes for the heading and badge row, e.g. "cluster cluster-between cluster-nowrap items-start". The row renders when Badge or this is set, so cards without a badge can share the structure of cards with one
+	Class           string           // Additional CSS classes on the card, e.g. "rounded"
+	Attrs           templ.Attributes // Catch-all: data-*, aria-*, custom properties via style
+}
+
+// CardSummaryComponent renders li.card.card--summary. Children render after the
+// header and are normally a CardFooterComponent. Render it inside a ul or ol,
+// such as <ul class="grid list-none">.
+templ CardSummaryComponent(props CardSummaryProps) {
+	<li
+		class={ lw.ClassNames("card card--summary", lw.SchemeClass(props.Scheme), props.Class) }
+		{ props.Attrs... }
+	>
+		<div class={ lw.ClassNames("header box", props.HeaderClass) }>
+			if props.Badge != "" || props.HeadingRowClass != "" {
+				@cardSummaryHeadingRow(props.HeadingRowClass) {
+					@cardSummaryHeading(lw.DefaultStr(props.HeadingLevel, "h3"), "card-heading min-w-0") {
+						@cardSummaryTitle(props)
+					}
+					if props.Badge != "" {
+						@BadgeComponent(BadgeProps{Label: props.Badge, Variant: lw.DefaultStr(props.BadgeVariant, "blue")})
+					}
+				}
+			} else {
+				@cardSummaryHeading(lw.DefaultStr(props.HeadingLevel, "h3"), "card-heading") {
+					@cardSummaryTitle(props)
+				}
+			}
+			if props.Description != "" {
+				<p class="description">{ props.Description }</p>
+			}
+		</div>
+		{ children... }
+	</li>
+}
+
+// CardSummary renders a summary card with a linked heading and description.
+// Pass a CardFooter as a child.
+templ CardSummary(title, href, description, scheme string) {
+	@CardSummaryComponent(CardSummaryProps{Title: title, Href: href, Description: description, Scheme: scheme}) {
+		{ children... }
+	}
+}
+
+// cardSummaryTitle renders the heading text, linked when Href is set. The link
+// is the only interactive element inside the heading.
+templ cardSummaryTitle(props CardSummaryProps) {
+	if props.Href != "" {
+		<a href={ templ.URL(props.Href) }>{ props.Title }</a>
+	} else {
+		{ props.Title }
+	}
+}
+
+templ cardSummaryHeadingRow(class string) {
+	if class != "" {
+		<div class={ class }>
+			{ children... }
+		</div>
+	} else {
+		<div>
+			{ children... }
+		</div>
+	}
+}
+
+// cardSummaryHeading wraps children in the heading tag for level. Unknown
+// levels render h3.
+templ cardSummaryHeading(level, class string) {
+	switch level {
+		case "h1":
+			<h1 class={ class }>{ children... }</h1>
+		case "h2":
+			<h2 class={ class }>{ children... }</h2>
+		case "h4":
+			<h4 class={ class }>{ children... }</h4>
+		case "h5":
+			<h5 class={ class }>{ children... }</h5>
+		case "h6":
+			<h6 class={ class }>{ children... }</h6>
+		default:
+			<h3 class={ class }>{ children... }</h3>
+	}
+}
+
+// CardPerson is one person shown as a decorative avatar in a card footer.
+type CardPerson struct {
+	Name string // Used for the initial when Src is empty; never announced
+	Src  string // Image URL; empty shows the initial
+}
+
+// cardAvatar renders a decorative avatar: an empty alt on images, a bare
+// initial otherwise. It carries no accessible name; callers give the person's
+// name or the people count as visually hidden text next to it.
+templ cardAvatar(person CardPerson, size string) {
+	<span class={ lw.ClassNames("avatar", lw.VariantClass("avatar", size)) }>
+		if person.Src != "" {
+			<img src={ templ.SafeURL(person.Src) } alt=""/>
+		} else {
+			<span class="initials">{ avatarInitials(person.Name, size) }</span>
+		}
+	</span>
+}
+
+// maxCardPeople is the most avatars the people cluster shows.
+const maxCardPeople = 3
+
+func cardPeopleShown(people []CardPerson) []CardPerson {
+	if len(people) > maxCardPeople {
+		return people[:maxCardPeople]
+	}
+	return people
+}
+
+// CardPeopleProps holds configuration for the footer people cluster.
+type CardPeopleProps struct {
+	People []CardPerson     // Only the first three are shown as avatars
+	Extra  string           // Visible overflow text such as "+2" or "+ All"; hidden from assistive technology
+	Label  string           // Visually hidden text that carries the count, e.g. "5 members"
+	Class  string           // Layout classes, e.g. "cluster cluster-compact items-center"
+	Attrs  templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// CardPeopleComponent renders up to three decorative avatars in an
+// aria-hidden avatar group, optional overflow text and a visually hidden label.
+templ CardPeopleComponent(props CardPeopleProps) {
+	@cardWrapper(props.Class, props.Attrs) {
+		if len(props.People) > 0 {
+			@AvatarGroupComponent(AvatarGroupProps{Attrs: templ.Attributes{"aria-hidden": "true"}}) {
+				for _, person := range cardPeopleShown(props.People) {
+					@cardAvatar(person, "sm")
+				}
+			}
+		}
+		if props.Extra != "" {
+			<span aria-hidden="true">{ props.Extra }</span>
+		}
+		if props.Label != "" {
+			<span class="visually-hidden">{ props.Label }</span>
+		}
+	}
+}
+
+// CardPeople renders the footer people cluster.
+templ CardPeople(people []CardPerson, extra, label, class string) {
+	@CardPeopleComponent(CardPeopleProps{People: people, Extra: extra, Label: label, Class: class})
+}
+
+// cardWrapper renders a div whose class attribute is omitted when empty.
+templ cardWrapper(class string, attrs templ.Attributes) {
+	if class != "" {
+		<div class={ class } { attrs... }>
+			{ children... }
+		</div>
+	} else {
+		<div { attrs... }>
+			{ children... }
+		</div>
+	}
+}
+
+// CardCountProps holds configuration for a footer count such as conversations.
+type CardCountProps struct {
+	Value string           // Visible number or text, e.g. "4"
+	Label string           // Visually hidden text after the value, e.g. "conversations, 1 unread"
+	Icon  templ.Component  // Optional decorative icon, supplied by the caller (aria-hidden, no focusable controls)
+	Class string           // Layout and type classes, e.g. "inline-flex items-center gap-025 font-bold"
+	Attrs templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// CardCountComponent renders span > [icon] + value + visually hidden label.
+templ CardCountComponent(props CardCountProps) {
+	<span class={ props.Class } { props.Attrs... }>
+		if props.Icon != nil {
+			@props.Icon
+		}
+		<span>{ props.Value }</span>
+		if props.Label != "" {
+			<span class="visually-hidden">{ " " + props.Label }</span>
+		}
+	</span>
+}
+
+// CardCount renders a footer count with a visually hidden label.
+templ CardCount(value, label, class string) {
+	@CardCountComponent(CardCountProps{Value: value, Label: label, Class: class})
+}
+
+// CardDateProps holds configuration for a footer date. Labels are strings the
+// caller supplies ("Oct 17", "Yesterday", "2 days ago"); the component formats
+// nothing.
+type CardDateProps struct {
+	Datetime    string           // Machine-readable value for <time datetime>, e.g. "2026-10-17"
+	Label       string           // Short visible label inside <time>
+	Prefix      string           // Visible words before the time, e.g. "Edited"
+	HiddenLabel string           // Visually hidden words before the time, e.g. "Last updated"
+	Icon        templ.Component  // Optional decorative icon, such as a clock, supplied by the caller
+	Class       string           // Layout classes placed before "text-xs text-muted" (the producer's order), e.g. "block"
+	Attrs       templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// CardDateComponent renders span.text-xs.text-muted > [icon] [prefix] [hidden label] time.
+templ CardDateComponent(props CardDateProps) {
+	<span class={ lw.ClassNames(props.Class, "text-xs text-muted") } { props.Attrs... }>
+		if props.Icon != nil {
+			@props.Icon
+		}
+		if props.Prefix != "" {
+			{ props.Prefix + " " }
+		}
+		if props.HiddenLabel != "" {
+			<span class="visually-hidden">{ props.HiddenLabel + " " }</span>
+		}
+		<time
+			if props.Datetime != "" {
+				datetime={ props.Datetime }
+			}
+		>{ props.Label }</time>
+	</span>
+}
+
+// CardDate renders a footer date.
+templ CardDate(datetime, label, class string) {
+	@CardDateComponent(CardDateProps{Datetime: datetime, Label: label, Class: class})
+}
+
+// CardAuthorProps holds configuration for the footer author.
+type CardAuthorProps struct {
+	Name         string           // Full name; the DOM keeps all of it when CSS truncates the line
+	Src          string           // Avatar image URL; empty shows initials
+	HiddenPrefix string           // Visually hidden words before the name; "By" by default
+	Class        string           // Classes for the text block, e.g. "min-w-0"
+	Attrs        templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
+// CardAuthorComponent renders a decorative avatar followed by div > name.
+// Children render after the name, normally a CardDate. The two elements are
+// siblings so the caller's footer or wrapper cluster lays them out.
+templ CardAuthorComponent(props CardAuthorProps) {
+	@cardAvatar(CardPerson{Name: props.Name, Src: props.Src}, "")
+	@cardWrapper(props.Class, props.Attrs) {
+		<span class="block truncate"><span class="visually-hidden">{ lw.DefaultStr(props.HiddenPrefix, "By") + " " }</span>{ props.Name }</span>
+		{ " " }
+		{ children... }
+	}
+}
+
+// CardAuthor renders the footer author. Pass a CardDate as a child.
+templ CardAuthor(name, src, class string) {
+	@CardAuthorComponent(CardAuthorProps{Name: name, Src: src, Class: class}) {
+		{ children... }
+	}
+}

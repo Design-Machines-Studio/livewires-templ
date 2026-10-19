@@ -80,6 +80,8 @@ templ page(name string, source sourceIdentity, order []string, message string, v
 							@widgetsExample()
 						case "people-picker":
 							@peoplePickerExample()
+						case "cards":
+							@cardsExample()
 					}
 					if name=="loading" || name=="toast" || name=="sortable" || name=="inline-edit" {
 						<form method="get" action={ templ.URL("/examples/" + name) } id="scenario-form" hidden?={ name=="sortable" || name=="inline-edit" }>

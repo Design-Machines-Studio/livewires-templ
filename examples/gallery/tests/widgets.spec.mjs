@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { readFile, writeFile } from 'node:fs/promises';
 
-const producer = 'aad7e3843898745a2f29833393b20896a204b90e';
+const producer = 'd4c197b29b1675bf6cada14d051b7a8e1425fe2f'; // lock revision (v2.26.0); this example's reference HTML is unchanged since aad7e38 (v2.25.0)
 
 for (const width of [1440, 768, 640, 375, 320]) {
   test(`widgets ${width}px: anatomy, inherited themes and complete wrapping`, async ({ page, request }, info) => {

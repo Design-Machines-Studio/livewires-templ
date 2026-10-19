@@ -91,6 +91,14 @@ state. Keep actions and surrounding layout outside the region. See the
 // Activity card
 @component.ActivityCard("Proposal A", "/proposals/1")
 
+// Card footer (any card) and summary card (Live Wires v2.26.0, see docs/card-summary.md)
+@component.CardFooter("cluster cluster-between items-center text-sm") {
+    <span>Footer</span>
+}
+@component.CardSummaryComponent(component.CardSummaryProps{Title: "Board room", Href: "/spaces/board", Scheme: "subtle", Class: "rounded", HeaderClass: "stack"}) {
+    @component.CardFooter("cluster cluster-between items-center text-sm") { ... }
+}
+
 // Empty state
 @component.EmptyState("No items found")
 
@@ -481,5 +489,7 @@ See the [gallery runbook](examples/gallery/README.md) for pinned assets, Playwri
 source receipts and isolated rebuild/stop commands.
 
 For rich proposal comments and Chat replies, use the additive [shared comment article API](docs/comments.md). Existing `Comment` and `CommentComponent` behavior stays compatible.
+
+The card footer region and summary cards (Live Wires v2.26.0) compose with caller-supplied layout classes, icons and short date labels. Heading and description line limits stay in CSS. See [footer and summary card composition](docs/card-summary.md).
 
 Hardware loaders support Ratchet and Torque in standalone status/progress, busy buttons, LoadingRegion and SaveStatus. Driver Line stays standalone, centered in LoaderPanel or LoaderOverlay. See [loader composition and props](docs/loaders.md).

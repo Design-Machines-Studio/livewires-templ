@@ -46,7 +46,7 @@ type assetLock struct {
 	Assets         []asset `json:"assets"`
 }
 
-var examples = []string{"relative-time", "copy", "loading", "toast", "sortable", "inline-edit", "combobox", "save-status", "page-header", "comments", "loaders", "widgets", "people-picker"}
+var examples = []string{"relative-time", "copy", "loading", "toast", "sortable", "inline-edit", "combobox", "save-status", "page-header", "comments", "loaders", "widgets", "people-picker", "cards"}
 var itemNames = map[string]string{"notes": "Field notes", "paper": "On paper", "index": "An index"}
 
 func digest(b []byte) string { s := sha256.Sum256(b); return hex.EncodeToString(s[:]) }

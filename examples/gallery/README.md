@@ -25,7 +25,7 @@ or taken over. The index is `/`; example URLs are `/examples/relative-time`,
 `/examples/copy`, `/examples/loading`, `/examples/toast`, `/examples/sortable`,
 `/examples/inline-edit`, `/examples/combobox`, `/examples/save-status` and
 `/examples/page-header`, `/examples/comments`, `/examples/loaders`,
-`/examples/widgets`, and `/examples/people-picker`.
+`/examples/widgets`, `/examples/people-picker` and `/examples/cards`.
 
 The runner uses the host-selected user installation from Claude's
 `installed_plugins.json`, checks its plugin identity/version, and invokes the
@@ -100,7 +100,7 @@ Do not prune shared Docker resources or delete another worktree's state.
 ## Locked assets
 
 `assets.lock.json` records exact Live Wires revision
-`aad7e3843898745a2f29833393b20896a204b90e` (v2.25.0), source URLs, SHA-256 hashes, sizes
+`d4c197b29b1675bf6cada14d051b7a8e1425fe2f` (v2.26.0), source URLs, SHA-256 hashes, sizes
 and license provenance. Required files are fetched from that revision into the
 instance's external development cache, never from a mutable producer checkout,
 Vite server or floating CDN. The save-status example uses the producer's exact
@@ -166,3 +166,18 @@ fallback tables. See [the API and consumer mapping](../../docs/widgets.md).
 Widgets Playwright checks use the exact producer HTML retained in
 `component/testdata/livewires/widgets-reference.html`; the comparison injects
 the same locked CSS and disables producer site scripts/includes.
+
+The `/examples/cards` example renders the actual `component.Card*` footer and summary components
+using Live Wires v2.26.0 (the lock moved from v2.25.0, whose other asset files are byte-identical;
+only `main.css` changed). It shows the existing basic, link, media and header cards unchanged,
+footers on any card including a header directly followed by a footer, summary grids for people
+and counts, author with a sentence date, author with members, a New/Updated badge and a clock
+date, the 3- and 4-line limits (with a custom-property override through `Attrs`), and the
+producer caveat that initial avatars blend into `--color-subtle`. All names, counts, dates and
+copy are placeholder data. The page passes the canonical cluster classes and Phosphor Bold
+icons itself because the component package emits no layout or icons. Its Playwright spec
+(`tests/cards.spec.mjs`) runs at 375px and 1280px in light and dark: it checks equal heights and
+aligned footers, line limits, the focus ring inside the clamp, header-rule rules, no horizontal
+scroll and computed-style parity with the retained producer reference. Set `PRODUCER_MANUAL` to a
+saved copy of the producer manual page to also capture it. See
+[`docs/card-summary.md`](../../docs/card-summary.md).
