@@ -329,7 +329,7 @@ func summaryAuthorMembersFooter(name, datetime, label, members string) templ.Com
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = component.CardCountComponent(component.CardCountProps{Value: members, Label: "members", Icon: usersThreeIcon(), Class: memberCountClass}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = component.CardCountComponent(component.CardCountProps{Value: members, HiddenLabel: "members", Icon: usersThreeIcon(), Class: memberCountClass}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -616,7 +616,7 @@ func cardsExample() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = summaryMembersFooter(threePeople, "+2", "5 members", component.CardCountProps{Value: "4", Label: "conversations, 1 unread", Icon: chatsIcon(), Class: countUnreadClass}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = summaryMembersFooter(threePeople, "+2", "5 members", component.CardCountProps{Value: "4", HiddenLabel: "conversations, 1 unread", Icon: chatsIcon(), Class: countUnreadClass}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -638,7 +638,7 @@ func cardsExample() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = summaryMembersFooter(threePeople, "+1", "4 members", component.CardCountProps{Value: "12", Label: "conversations", Icon: chatsIcon(), Class: countClass}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = summaryMembersFooter(threePeople, "+1", "4 members", component.CardCountProps{Value: "12", HiddenLabel: "conversations", Icon: chatsIcon(), Class: countClass}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -660,7 +660,7 @@ func cardsExample() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = summaryMembersFooter(threePeople, "+ All", "All members", component.CardCountProps{Value: "9", Label: "conversations", Icon: chatsIcon(), Class: countClass}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = summaryMembersFooter(threePeople, "+ All", "All members", component.CardCountProps{Value: "9", HiddenLabel: "conversations", Icon: chatsIcon(), Class: countClass}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -874,7 +874,7 @@ func cardsExample() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = summaryMembersFooter(threePeople, "+4", "7 members", component.CardCountProps{Value: "31", Label: "conversations", Icon: chatsIcon(), Class: countClass}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = summaryMembersFooter(threePeople, "+4", "7 members", component.CardCountProps{Value: "31", HiddenLabel: "conversations", Icon: chatsIcon(), Class: countClass}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -896,7 +896,7 @@ func cardsExample() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = summaryMembersFooter(threePeople, "+4", "7 members", component.CardCountProps{Value: "31", Label: "conversations", Icon: chatsIcon(), Class: countClass}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = summaryMembersFooter(threePeople, "+4", "7 members", component.CardCountProps{Value: "31", HiddenLabel: "conversations", Icon: chatsIcon(), Class: countClass}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -922,7 +922,7 @@ func cardsExample() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = summaryMembersFooter(initialPeople, "+2", "5 members", component.CardCountProps{Value: "4", Label: "conversations", Icon: chatsIcon(), Class: countClass}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = summaryMembersFooter(initialPeople, "+2", "5 members", component.CardCountProps{Value: "4", HiddenLabel: "conversations", Icon: chatsIcon(), Class: countClass}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

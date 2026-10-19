@@ -103,6 +103,11 @@ templ CardHeaderComponent(props CardHeaderProps) {
 	</div>
 }
 
+// CardHeader renders a card header region with a heading at the default level.
+templ CardHeader(title string) {
+	@CardHeaderComponent(CardHeaderProps{Title: title})
+}
+
 // CardFrameProps holds configuration for a bare card frame.
 type CardFrameProps struct {
 	Scheme string           // Color scheme: "subtle", "dark", "accent", etc.

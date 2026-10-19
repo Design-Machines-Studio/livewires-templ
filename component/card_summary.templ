@@ -129,7 +129,7 @@ func cardPeopleShown(people []CardPerson) []CardPerson {
 type CardPeopleProps struct {
 	People []CardPerson     // Only the first three are shown as avatars
 	Extra  string           // Visible overflow text such as "+2" or "+ All"; hidden from assistive technology
-	Label  string           // Visually hidden text that carries the count, e.g. "5 members"
+	HiddenLabel string       // Visually hidden text that carries the count, e.g. "5 members"
 	Class  string           // Layout classes, e.g. "cluster cluster-compact items-center"
 	Attrs  templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
@@ -148,68 +148,59 @@ templ CardPeopleComponent(props CardPeopleProps) {
 		if props.Extra != "" {
 			<span aria-hidden="true">{ props.Extra }</span>
 		}
-		if props.Label != "" {
-			<span class="visually-hidden">{ props.Label }</span>
+		if props.HiddenLabel != "" {
+			<span class="visually-hidden">{ props.HiddenLabel }</span>
 		}
 	}
 }
 
 // CardPeople renders the footer people cluster.
-templ CardPeople(people []CardPerson, extra, label, class string) {
-	@CardPeopleComponent(CardPeopleProps{People: people, Extra: extra, Label: label, Class: class})
+templ CardPeople(people []CardPerson, extra, hiddenLabel, class string) {
+	@CardPeopleComponent(CardPeopleProps{People: people, Extra: extra, HiddenLabel: hiddenLabel, Class: class})
 }
 
 // cardWrapper renders a div whose class attribute is omitted when empty.
 templ cardWrapper(class string, attrs templ.Attributes) {
-	if class != "" {
-		<div class={ class } { attrs... }>
-			{ children... }
-		</div>
-	} else {
-		<div { attrs... }>
-			{ children... }
-		</div>
-	}
+	<div
+		if class != "" {
+			class={ class }
+		}
+		{ attrs... }
+	>
+		{ children... }
+	</div>
 }
 
 // CardCountProps holds configuration for a footer count such as conversations.
 type CardCountProps struct {
-	Value string           // Visible number or text, e.g. "4"
-	Label string           // Visually hidden text after the value, e.g. "conversations, 1 unread"
-	Icon  templ.Component  // Optional decorative icon, supplied by the caller (aria-hidden, no focusable controls)
-	Class string           // Layout and type classes, e.g. "inline-flex items-center gap-025 font-bold"
-	Attrs templ.Attributes // Catch-all: data-*, aria-*, etc.
+	Value       string           // Visible number or text, e.g. "4"
+	HiddenLabel string           // Visually hidden text after the value, e.g. "conversations, 1 unread"
+	Icon        templ.Component  // Optional decorative icon, supplied by the caller (aria-hidden, no focusable controls)
+	Class       string           // Layout and type classes, e.g. "inline-flex items-center gap-025 font-bold"
+	Attrs       templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
 
 // CardCountComponent renders span > [icon] + value + visually hidden label.
 templ CardCountComponent(props CardCountProps) {
-	@cardSpan(props.Class, props.Attrs) {
+	<span
+		if props.Class != "" {
+			class={ props.Class }
+		}
+		{ props.Attrs... }
+	>
 		if props.Icon != nil {
 			@props.Icon
 		}
 		<span>{ props.Value }</span>
-		if props.Label != "" {
-			<span class="visually-hidden">{ " " + props.Label }</span>
+		if props.HiddenLabel != "" {
+			<span class="visually-hidden">{ " " + props.HiddenLabel }</span>
 		}
-	}
-}
-
-// cardSpan renders a span whose class attribute is omitted when empty.
-templ cardSpan(class string, attrs templ.Attributes) {
-	if class != "" {
-		<span class={ class } { attrs... }>
-			{ children... }
-		</span>
-	} else {
-		<span { attrs... }>
-			{ children... }
-		</span>
-	}
+	</span>
 }
 
 // CardCount renders a footer count with a visually hidden label.
-templ CardCount(value, label, class string) {
-	@CardCountComponent(CardCountProps{Value: value, Label: label, Class: class})
+templ CardCount(value, hiddenLabel, class string) {
+	@CardCountComponent(CardCountProps{Value: value, HiddenLabel: hiddenLabel, Class: class})
 }
 
 // CardDateProps holds configuration for a footer date. Labels are strings the
@@ -254,7 +245,7 @@ templ CardDate(datetime, label, class string) {
 type CardAuthorProps struct {
 	Name         string           // Full name; the DOM keeps all of it when CSS truncates the line
 	Src          string           // Avatar image URL; empty shows initials
-	HiddenPrefix string           // Visually hidden words before the name; "By" by default
+	HiddenLabel string           // Visually hidden words before the name; "By" by default
 	Class        string           // Classes for the text block, e.g. "min-w-0"
 	Attrs        templ.Attributes // Catch-all: data-*, aria-*, etc.
 }
@@ -265,7 +256,7 @@ type CardAuthorProps struct {
 templ CardAuthorComponent(props CardAuthorProps) {
 	@cardAvatar(CardPerson{Name: props.Name, Src: props.Src}, "")
 	@cardWrapper(props.Class, props.Attrs) {
-		<span class="block truncate"><span class="visually-hidden">{ lw.DefaultStr(props.HiddenPrefix, "By") + " " }</span>{ props.Name }</span>
+		<span class="block truncate"><span class="visually-hidden">{ lw.DefaultStr(props.HiddenLabel, "By") + " " }</span>{ props.Name }</span>
 		{ children... }
 	}
 }

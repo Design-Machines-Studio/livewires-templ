@@ -23,12 +23,12 @@ follows the header.
 | --- | --- | --- |
 | `CardFooterComponent` / `CardFooter(class)` | `footer.footer.box` with children | `Class`, `Attrs` |
 | `CardFrameComponent` / `CardFrame(scheme)` | bare `div.card` with children (no `box`) | `CardFrameProps`: `Scheme`, `Class`, `Attrs` |
-| `CardHeaderComponent` | `div.header.box` with a heading | `Title`, `HeadingLevel`, `Class`, `Attrs` |
+| `CardHeaderComponent` / `CardHeader(title)` | `div.header.box` with a heading | `Title`, `HeadingLevel`, `Class`, `Attrs` |
 | `CardSummaryComponent` / `CardSummary(title, href, description, scheme, class, headerClass)` | `li.card.card--summary`: header, then children | see below |
-| `CardPeopleComponent` / `CardPeople(people, extra, label, class)` | up to three decorative avatars, `+N`, hidden label | `People`, `Extra`, `Label`, `Class`, `Attrs` |
-| `CardCountComponent` / `CardCount(value, label, class)` | icon, value, hidden label | `Value`, `Label`, `Icon`, `Class`, `Attrs` |
+| `CardPeopleComponent` / `CardPeople(people, extra, hiddenLabel, class)` | up to three decorative avatars, `+N`, hidden label | `People`, `Extra`, `HiddenLabel`, `Class`, `Attrs` |
+| `CardCountComponent` / `CardCount(value, hiddenLabel, class)` | icon, value, hidden label | `Value`, `HiddenLabel`, `Icon`, `Class`, `Attrs` |
 | `CardDateComponent` / `CardDate(datetime, label, class)` | `<time datetime>` with optional prefix, hidden label and icon | `Datetime`, `Label`, `Prefix`, `HiddenLabel`, `Icon`, `Class`, `Attrs` |
-| `CardAuthorComponent` / `CardAuthor(name, src, class)` | decorative avatar, then name block with children | `Name`, `Src`, `HiddenPrefix`, `Class`, `Attrs` |
+| `CardAuthorComponent` / `CardAuthor(name, src, class)` | decorative avatar, then name block with children | `Name`, `Src`, `HiddenLabel`, `Class`, `Attrs` |
 
 `CardSummaryProps`: `Title`, `HeadingLevel` (default `h3`), `Href`,
 `Description`, `Badge`, `BadgeVariant` (default `blue`), `Scheme`, `HeaderClass`,
@@ -64,7 +64,7 @@ rule. `CardWithHeader` always renders a body, so it never loses the rule.
         @component.CardFooter("cluster cluster-between items-center text-sm") {
             @component.CardPeople(people, "+2", "5 members", "cluster cluster-compact items-center")
             @component.CardCountComponent(component.CardCountProps{
-                Value: "4", Label: "conversations, 1 unread",
+                Value: "4", HiddenLabel: "conversations, 1 unread",
                 Icon: chatsIcon(), Class: "inline-flex items-center gap-025 font-bold",
             })
         }
@@ -124,11 +124,13 @@ property on the card through `Attrs`:
 
 ## Footer parts
 
+Visually hidden text is always `HiddenLabel`. `Label` is only ever visible text.
+
 - **People.** `CardPeople` shows the first three `CardPerson{Name, Src}` as
   `avatar--sm` in an `aria-hidden` avatar group. Images use an empty `alt`.
   Without `Src` the avatar shows an `aria-hidden` initial and carries no accessible name.
-  `Extra` (`+2`, `+ All`) is `aria-hidden`. `Label` ("5 members") is visually
-  hidden and carries the count. The caller supplies both strings.
+  `Extra` (`+2`, `+ All`) is `aria-hidden`. `HiddenLabel` ("5 members") is
+  visually hidden and carries the count. The caller supplies both strings.
 - **Count.** `CardCount` renders the value and a visually hidden label with a
   leading space, such as ` conversations, 1 unread`.
 - **Date.** `CardDate` renders `<time datetime>` with a caller-supplied short
@@ -136,7 +138,7 @@ property on the card through `Attrs`:
   `Prefix: "Edited"` gives the sentence form. `HiddenLabel: "Last updated"` with
   an `Icon` gives the clock form.
 - **Author.** `CardAuthorComponent` renders a decorative avatar and a text block
-  with a visually hidden `By` (`HiddenPrefix` changes it). The name sits in
+  with a visually hidden `By` (`HiddenLabel` changes it). The name sits in
   `block truncate`, so long names get an ellipsis while the DOM keeps the full
   name. Pass a `CardDate` as the child. The avatar and text are siblings, so a
   footer cluster lays them out directly, or wrap them in a caller cluster.

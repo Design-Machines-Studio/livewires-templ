@@ -67,7 +67,7 @@ templ summaryAuthorMembersFooter(name, datetime, label, members string) {
 				@component.CardDateComponent(component.CardDateProps{Datetime: datetime, Label: label, HiddenLabel: "Last updated", Icon: clockIcon(), Class: clockDateClass})
 			}
 		</div>
-		@component.CardCountComponent(component.CardCountProps{Value: members, Label: "members", Icon: usersThreeIcon(), Class: memberCountClass})
+		@component.CardCountComponent(component.CardCountProps{Value: members, HiddenLabel: "members", Icon: usersThreeIcon(), Class: memberCountClass})
 	}
 }
 
@@ -125,13 +125,13 @@ templ cardsExample() {
 		<p>Equal-height rows with aligned footers. The third card has no description.</p>
 		<ul class="grid list-none" data-cards="members">
 			@component.CardSummaryComponent(component.CardSummaryProps{Title: "Board room", Href: "#board-room", Description: "Board and officer preparation between meetings. Decisions still go through proposals.", Scheme: "subtle", Class: "rounded", HeaderClass: "stack"}) {
-				@summaryMembersFooter(threePeople, "+2", "5 members", component.CardCountProps{Value: "4", Label: "conversations, 1 unread", Icon: chatsIcon(), Class: countUnreadClass})
+				@summaryMembersFooter(threePeople, "+2", "5 members", component.CardCountProps{Value: "4", HiddenLabel: "conversations, 1 unread", Icon: chatsIcon(), Class: countUnreadClass})
 			}
 			@component.CardSummaryComponent(component.CardSummaryProps{Title: longHeading, Href: "#festival-submissions", Description: longDescription, Scheme: "subtle", Class: "rounded", HeaderClass: "stack"}) {
-				@summaryMembersFooter(threePeople, "+1", "4 members", component.CardCountProps{Value: "12", Label: "conversations", Icon: chatsIcon(), Class: countClass})
+				@summaryMembersFooter(threePeople, "+1", "4 members", component.CardCountProps{Value: "12", HiddenLabel: "conversations", Icon: chatsIcon(), Class: countClass})
 			}
 			@component.CardSummaryComponent(component.CardSummaryProps{Title: "Studio commons", Href: "#studio-commons", Scheme: "subtle", Class: "rounded", HeaderClass: "stack"}) {
-				@summaryMembersFooter(threePeople, "+ All", "All members", component.CardCountProps{Value: "9", Label: "conversations", Icon: chatsIcon(), Class: countClass})
+				@summaryMembersFooter(threePeople, "+ All", "All members", component.CardCountProps{Value: "9", HiddenLabel: "conversations", Icon: chatsIcon(), Class: countClass})
 			}
 			@component.CardSummaryComponent(component.CardSummaryProps{Title: patronageHeading, Href: "#patronage", Description: patronageDescription, Scheme: "subtle", Class: "rounded", HeaderClass: "stack"}) {
 				@component.CardFooter(footerBetween) {
@@ -176,10 +176,10 @@ templ cardsExample() {
 		<p>Headings stop after 3 lines and descriptions after 4, set by Live Wires through <code>--card-heading-lines</code> and <code>--card-description-lines</code>. The component has no line-limit prop. The second card sets the properties through <code>Attrs</code> style to stop after 2 lines.</p>
 		<ul class="grid list-none" data-cards="limits">
 			@component.CardSummaryComponent(component.CardSummaryProps{Title: longHeading, Href: "#limits-default", Description: longDescription, Scheme: "subtle", Class: "rounded", HeaderClass: "stack"}) {
-				@summaryMembersFooter(threePeople, "+4", "7 members", component.CardCountProps{Value: "31", Label: "conversations", Icon: chatsIcon(), Class: countClass})
+				@summaryMembersFooter(threePeople, "+4", "7 members", component.CardCountProps{Value: "31", HiddenLabel: "conversations", Icon: chatsIcon(), Class: countClass})
 			}
 			@component.CardSummaryComponent(component.CardSummaryProps{Title: longHeading, Href: "#limits-custom", Description: longDescription, Scheme: "subtle", Class: "rounded", HeaderClass: "stack", Attrs: templ.Attributes{"style": "--card-heading-lines: 2; --card-description-lines: 2;"}}) {
-				@summaryMembersFooter(threePeople, "+4", "7 members", component.CardCountProps{Value: "31", Label: "conversations", Icon: chatsIcon(), Class: countClass})
+				@summaryMembersFooter(threePeople, "+4", "7 members", component.CardCountProps{Value: "31", HiddenLabel: "conversations", Icon: chatsIcon(), Class: countClass})
 			}
 		</ul>
 	</section>
@@ -188,7 +188,7 @@ templ cardsExample() {
 		<p>Producer caveat: initial avatars blend into <code>--color-subtle</code> backgrounds and can disappear. Use image avatars on <code>scheme-subtle</code> summary cards, as the other examples do. This card shows the caveat. The visually hidden count still names the people.</p>
 		<ul class="grid list-none" data-cards="initials">
 			@component.CardSummaryComponent(component.CardSummaryProps{Title: "Initials on subtle", Href: "#initials", Description: "Placeholder card that uses initial avatars.", Scheme: "subtle", Class: "rounded", HeaderClass: "stack"}) {
-				@summaryMembersFooter(initialPeople, "+2", "5 members", component.CardCountProps{Value: "4", Label: "conversations", Icon: chatsIcon(), Class: countClass})
+				@summaryMembersFooter(initialPeople, "+2", "5 members", component.CardCountProps{Value: "4", HiddenLabel: "conversations", Icon: chatsIcon(), Class: countClass})
 			}
 		</ul>
 	</section>
