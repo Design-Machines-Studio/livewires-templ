@@ -461,10 +461,16 @@ func CardHeaderComponent(props CardHeaderProps) templ.Component {
 	})
 }
 
+// CardFrameProps holds configuration for a bare card frame.
+type CardFrameProps struct {
+	Scheme string           // Color scheme: "subtle", "dark", "accent", etc.
+	Class  string           // Additional CSS classes from consumer
+	Attrs  templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
 // CardFrameComponent renders a bare .card without the box padding, for cards
 // built from separate regions: CardHeaderComponent, a body, CardFooter.
-// Title and HeadingLevel are unused here.
-func CardFrameComponent(props CardProps) templ.Component {
+func CardFrameComponent(props CardFrameProps) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -567,7 +573,7 @@ func CardFrame(scheme string) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = CardFrameComponent(CardProps{Scheme: scheme}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var24), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = CardFrameComponent(CardFrameProps{Scheme: scheme}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var24), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

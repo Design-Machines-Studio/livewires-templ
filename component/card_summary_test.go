@@ -163,7 +163,7 @@ func TestCardFooterWrapper(t *testing.T) {
 }
 
 func TestCardFooterAfterHeaderStaysSiblings(t *testing.T) {
-	out := render(t, withChildren(CardFrameComponent(CardProps{Scheme: "subtle", Class: "rounded"}),
+	out := render(t, withChildren(CardFrameComponent(CardFrameProps{Scheme: "subtle", Class: "rounded"}),
 		CardHeaderComponent(CardHeaderProps{Title: "Panel"}),
 		CardFooterComponent(CardFooterProps{Class: "text-sm"}),
 	))

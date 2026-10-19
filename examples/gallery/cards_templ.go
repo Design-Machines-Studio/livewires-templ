@@ -500,7 +500,7 @@ func cardsExample() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = component.CardFrameComponent(component.CardProps{Scheme: "subtle", Class: "rounded"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var19), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = component.CardFrameComponent(component.CardFrameProps{Scheme: "subtle", Class: "rounded"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var19), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -548,7 +548,7 @@ func cardsExample() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = component.CardFrameComponent(component.CardProps{Scheme: "subtle", Class: "rounded", Attrs: templ.Attributes{"data-case": "header-body-footer"}}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var21), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = component.CardFrameComponent(component.CardFrameProps{Scheme: "subtle", Class: "rounded", Attrs: templ.Attributes{"data-case": "header-body-footer"}}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var21), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -596,7 +596,7 @@ func cardsExample() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = component.CardFrameComponent(component.CardProps{Scheme: "subtle", Class: "rounded", Attrs: templ.Attributes{"data-case": "header-footer"}}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var23), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = component.CardFrameComponent(component.CardFrameProps{Scheme: "subtle", Class: "rounded", Attrs: templ.Attributes{"data-case": "header-footer"}}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var23), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

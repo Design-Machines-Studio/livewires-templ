@@ -93,7 +93,7 @@ templ cardsExample() {
 	<section class="stack" aria-labelledby="footer-cards">
 		<h2 id="footer-cards">Any card can have a footer</h2>
 		<div class="grid" style="--min-column-width: 16rem;" data-cards="footer">
-			@component.CardFrameComponent(component.CardProps{Scheme: "subtle", Class: "rounded"}) {
+			@component.CardFrameComponent(component.CardFrameProps{Scheme: "subtle", Class: "rounded"}) {
 				<div class="box">
 					<p>Bare card with a body and a footer. The footer is ruled off from the body.</p>
 				</div>
@@ -101,7 +101,7 @@ templ cardsExample() {
 					<span>Footer text</span>
 				}
 			}
-			@component.CardFrameComponent(component.CardProps{Scheme: "subtle", Class: "rounded", Attrs: templ.Attributes{"data-case": "header-body-footer"}}) {
+			@component.CardFrameComponent(component.CardFrameProps{Scheme: "subtle", Class: "rounded", Attrs: templ.Attributes{"data-case": "header-body-footer"}}) {
 				@component.CardHeaderComponent(component.CardHeaderProps{Title: "Header, body and footer"})
 				<div class="box">
 					<p>The header keeps its rule because a body follows it.</p>
@@ -111,7 +111,7 @@ templ cardsExample() {
 					<span class="text-xs text-muted">Placeholder</span>
 				}
 			}
-			@component.CardFrameComponent(component.CardProps{Scheme: "subtle", Class: "rounded", Attrs: templ.Attributes{"data-case": "header-footer"}}) {
+			@component.CardFrameComponent(component.CardFrameProps{Scheme: "subtle", Class: "rounded", Attrs: templ.Attributes{"data-case": "header-footer"}}) {
 				@component.CardHeaderComponent(component.CardHeaderProps{Title: "Header directly followed by footer"})
 				@component.CardFooter(footerBetween) {
 					<span>Footer</span>

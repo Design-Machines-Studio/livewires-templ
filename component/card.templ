@@ -103,10 +103,16 @@ templ CardHeaderComponent(props CardHeaderProps) {
 	</div>
 }
 
+// CardFrameProps holds configuration for a bare card frame.
+type CardFrameProps struct {
+	Scheme string           // Color scheme: "subtle", "dark", "accent", etc.
+	Class  string           // Additional CSS classes from consumer
+	Attrs  templ.Attributes // Catch-all: data-*, aria-*, etc.
+}
+
 // CardFrameComponent renders a bare .card without the box padding, for cards
 // built from separate regions: CardHeaderComponent, a body, CardFooter.
-// Title and HeadingLevel are unused here.
-templ CardFrameComponent(props CardProps) {
+templ CardFrameComponent(props CardFrameProps) {
 	<div
 		class={ lw.ClassNames("card", lw.SchemeClass(props.Scheme), props.Class) }
 		{ props.Attrs... }
@@ -117,7 +123,7 @@ templ CardFrameComponent(props CardProps) {
 
 // CardFrame renders a bare .card with children.
 templ CardFrame(scheme string) {
-	@CardFrameComponent(CardProps{Scheme: scheme}) {
+	@CardFrameComponent(CardFrameProps{Scheme: scheme}) {
 		{ children... }
 	}
 }

@@ -22,7 +22,7 @@ follows the header.
 | Component | Emits | Props |
 | --- | --- | --- |
 | `CardFooterComponent` / `CardFooter(class)` | `footer.footer.box` with children | `Class`, `Attrs` |
-| `CardFrameComponent` / `CardFrame(scheme)` | bare `div.card` with children (no `box`) | `CardProps`: `Scheme`, `Class`, `Attrs` |
+| `CardFrameComponent` / `CardFrame(scheme)` | bare `div.card` with children (no `box`) | `CardFrameProps`: `Scheme`, `Class`, `Attrs` |
 | `CardHeaderComponent` | `div.header.box` with a heading | `Title`, `HeadingLevel`, `Class`, `Attrs` |
 | `CardSummaryComponent` / `CardSummary(title, href, description, scheme, class, headerClass)` | `li.card.card--summary`: header, then children | see below |
 | `CardPeopleComponent` / `CardPeople(people, extra, label, class)` | up to three decorative avatars, `+N`, hidden label | `People`, `Extra`, `Label`, `Class`, `Attrs` |
@@ -41,7 +41,7 @@ before it. When it follows a header directly, its rule replaces the header's.
 Build that card with `CardFrame` and `CardHeaderComponent`:
 
 ```templ
-@component.CardFrameComponent(component.CardProps{Scheme: "subtle", Class: "rounded"}) {
+@component.CardFrameComponent(component.CardFrameProps{Scheme: "subtle", Class: "rounded"}) {
     @component.CardHeaderComponent(component.CardHeaderProps{Title: "Header directly followed by footer"})
     @component.CardFooter("cluster cluster-between items-center text-sm") {
         <span>Footer</span>

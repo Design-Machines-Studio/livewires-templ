@@ -37,7 +37,7 @@ templ CardSummaryComponent(props CardSummaryProps) {
 	>
 		<div class={ lw.ClassNames("header box", props.HeaderClass) }>
 			if props.Badge != "" || props.HeadingRowClass != "" {
-				@cardSummaryHeadingRow(props.HeadingRowClass) {
+				@cardWrapper(props.HeadingRowClass, nil) {
 					@cardSummaryHeading(lw.DefaultStr(props.HeadingLevel, "h3"), "card-heading min-w-0") {
 						@cardSummaryTitle(props)
 					}
@@ -74,18 +74,6 @@ templ cardSummaryTitle(props CardSummaryProps) {
 		<a href={ templ.URL(props.Href) }>{ props.Title }</a>
 	} else {
 		{ props.Title }
-	}
-}
-
-templ cardSummaryHeadingRow(class string) {
-	if class != "" {
-		<div class={ class }>
-			{ children... }
-		</div>
-	} else {
-		<div>
-			{ children... }
-		</div>
 	}
 }
 
@@ -244,7 +232,7 @@ templ CardDateComponent(props CardDateProps) {
 			@props.Icon
 		}
 		if props.Prefix != "" {
-			{ props.Prefix + " " }
+			{ props.Prefix }
 		}
 		if props.HiddenLabel != "" {
 			<span class="visually-hidden">{ props.HiddenLabel + " " }</span>
@@ -278,7 +266,6 @@ templ CardAuthorComponent(props CardAuthorProps) {
 	@cardAvatar(CardPerson{Name: props.Name, Src: props.Src}, "")
 	@cardWrapper(props.Class, props.Attrs) {
 		<span class="block truncate"><span class="visually-hidden">{ lw.DefaultStr(props.HiddenPrefix, "By") + " " }</span>{ props.Name }</span>
-		{ " " }
 		{ children... }
 	}
 }
