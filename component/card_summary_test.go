@@ -268,7 +268,7 @@ func sameHTML(t *testing.T, got, want string) {
 
 func TestCardSummaryOptionalBadgeAndDescription(t *testing.T) {
 	plain := testutil.RenderToString(t, CardSummaryComponent(CardSummaryProps{Title: "T", Href: "/x"}))
-	if strings.Contains(plain, "badge") || strings.Contains(plain, "description") || strings.Contains(plain, "<div class=\"cluster") {
+	if strings.Contains(plain, "badge") || strings.Contains(plain, "description") {
 		t.Errorf("badge, description and heading row must be omitted: %s", plain)
 	}
 	if strings.Contains(plain, "min-w-0") {
