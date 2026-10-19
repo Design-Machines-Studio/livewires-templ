@@ -43,9 +43,9 @@ templ clockIcon() {
 }
 
 // summaryMembersFooter is the people-and-count footer.
-templ summaryMembersFooter(people []component.CardPerson, extra, label string, count component.CardCountProps) {
+templ summaryMembersFooter(people []component.CardPerson, extra, hiddenLabel string, count component.CardCountProps) {
 	@component.CardFooter(footerBetween) {
-		@component.CardPeople(people, extra, label, peopleCluster)
+		@component.CardPeople(people, extra, hiddenLabel, peopleCluster)
 		@component.CardCountComponent(count)
 	}
 }

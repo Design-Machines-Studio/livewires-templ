@@ -44,9 +44,9 @@ func people(n int) []CardPerson {
 	return out
 }
 
-func membersFooter(extra, label string, n int, count templ.Component) templ.Component {
+func membersFooter(extra, hiddenLabel string, n int, count templ.Component) templ.Component {
 	return summaryFooter("cluster cluster-between items-center text-sm",
-		CardPeopleComponent(CardPeopleProps{People: people(n), Extra: extra, HiddenLabel: label, Class: "cluster cluster-compact items-center"}),
+		CardPeopleComponent(CardPeopleProps{People: people(n), Extra: extra, HiddenLabel: hiddenLabel, Class: "cluster cluster-compact items-center"}),
 		count,
 	)
 }
@@ -293,7 +293,7 @@ func TestCardSummaryOptionalFooter(t *testing.T) {
 
 func TestCardSummaryBakesNoLayoutPrimitives(t *testing.T) {
 	out := testutil.RenderToString(t, CardSummaryComponent(CardSummaryProps{Title: "T", Href: "/x", Description: "d", Badge: "New"}))
-	for _, banned := range []string{"stack", "cluster", `box stack`, "rounded"} {
+	for _, banned := range []string{"stack", "cluster", "rounded"} {
 		if strings.Contains(out, banned) {
 			t.Errorf("summary card must not bake %q: %s", banned, out)
 		}
@@ -320,8 +320,8 @@ func TestCardPeopleDecorativeAvatars(t *testing.T) {
 	if n := strings.Count(out, `class="avatar avatar--sm"`); n != 3 {
 		t.Errorf("expected at most 3 avatars, got %d: %s", n, out)
 	}
-	if strings.Contains(out, "role=") || strings.Contains(out, "aria-label") || strings.Contains(out, "Di Ox") {
-		t.Errorf("avatars must have no accessible name or fourth avatar: %s", out)
+	if strings.Contains(out, "role=") || strings.Contains(out, "aria-label") {
+		t.Errorf("avatars must have no accessible name: %s", out)
 	}
 	if !strings.Contains(out, `<img src="/a.jpg" alt="">`) {
 		t.Errorf("image avatar must use empty alt: %s", out)
@@ -401,9 +401,6 @@ func TestCardWithHeaderOutputUnchanged(t *testing.T) {
 	want := `<div class="card scheme-subtle rounded" data-k="1"><div class="header box"><h3>Panel</h3></div><div class="box"><p>body</p></div></div>`
 	if out != want {
 		t.Errorf("CardWithHeader output changed:\n got %s\nwant %s", out, want)
-	}
-	if strings.Contains(out, "footer") {
-		t.Errorf("no footer expected: %s", out)
 	}
 }
 
