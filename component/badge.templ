@@ -16,7 +16,7 @@ templ BadgeComponent(props BadgeProps) {
 	<span
 		class={ lw.ClassNames("badge", lw.VariantClass("badge", props.Variant), lw.VariantClass("badge", props.Size), props.Class) }
 		{ props.Attrs... }
-	>{ lw.Title(props.Label) }</span>
+	>{ props.Label }</span>
 }
 
 // Badge renders a badge with a label and variant (convenience wrapper).
