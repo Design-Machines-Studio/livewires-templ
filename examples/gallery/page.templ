@@ -24,11 +24,14 @@ templ page(name string, source sourceIdentity, order []string, message string, v
 			if name=="inline-edit" {
 				<link rel="stylesheet" href="/assets/inline-edit.css"/>
 			}
-			if name=="combobox" {
+			if name=="combobox" || name=="mention-suggestions" {
 				<link rel="stylesheet" href="/assets/combobox.css"/>
 			}
 			if name=="save-status" {
 				<link rel="stylesheet" href="/assets/save-status.css"/>
+			}
+			if name=="mention-suggestions" {
+				<script type="module" src="/mention-demo.js"></script>
 			}
 			if name!="" {
 				<script type="module" src="/demo.js"></script>
@@ -82,6 +85,8 @@ templ page(name string, source sourceIdentity, order []string, message string, v
 							@peoplePickerExample()
 						case "cards":
 							@cardsExample()
+						case "mention-suggestions":
+							@mentionSuggestionsExample()
 					}
 					if name=="loading" || name=="toast" || name=="sortable" || name=="inline-edit" {
 						<form method="get" action={ templ.URL("/examples/" + name) } id="scenario-form" hidden?={ name=="sortable" || name=="inline-edit" }>

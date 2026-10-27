@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { readFile, writeFile } from 'node:fs/promises';
 
-const producer = 'd4c197b29b1675bf6cada14d051b7a8e1425fe2f'; // lock revision (v2.26.0); this example's reference HTML is unchanged since aad7e38 (v2.25.0)
+const producer = '1c52666402c0ec2de4ed64736ea679a8a8573838'; // lock revision (v2.27.0); this example's reference HTML is unchanged since aad7e38 (v2.25.0)
 const producerReference = new URL('../../../form/testdata/livewires/people-picker-reference.html', import.meta.url);
 const schemes = ['light', 'dark', 'no-preference'];
 

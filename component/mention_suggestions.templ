@@ -1,0 +1,134 @@
+package component
+
+import lw "github.com/Design-Machines-Studio/livewires-templ"
+
+// MentionSuggestionsProps configures a render-only suggestion surface.
+// Requires Live Wires v2.27.0 main.css and the optional combobox.css.
+type MentionSuggestionsProps struct {
+	ID     string           // Required stable listbox id, referenced by the consumer's editor
+	Label  string           // Required accessible name for the listbox
+	State  string           // closed (default), loading, ready, empty, error
+	Busy   bool             // Retain caller-supplied stale rows during loading; none should be active
+	Status string           // Caller-owned localized status; empty when closed
+	Dir    string           // Editor direction: ltr (default), rtl or auto
+	Class  string           // Additional classes on the root
+	Attrs  templ.Attributes // Developer-controlled root attributes; component wins on collision
+}
+
+func mentionState(state string) string {
+	switch state {
+	case "loading", "ready", "empty", "error":
+		return state
+	default:
+		return "closed"
+	}
+}
+
+// MentionOptionID builds the producer's <listbox-id>-<person-id> scheme.
+// Use the same nonempty, whitespace-free listbox id and canonical person id
+// on every render. Person ids must be unique within a list; names are not ids.
+// This deliberately preserves caller ids rather than lossy slugifying names.
+func MentionOptionID(listboxID, personID string) string {
+	return listboxID + "-" + personID
+}
+
+// MentionSuggestionsComponent renders the root, listbox and one status region.
+// Children are rows. They render only when ready or retaining stale loading rows.
+// Keep the root/status mounted for the editor's lifetime when updating fragments.
+// The consumer owns results, active row, status text, focus, keys and positioning.
+templ MentionSuggestionsComponent(props MentionSuggestionsProps) {
+	<div
+		class={ lw.ClassNames("rounded scheme-default", props.Class) }
+		data-mention-suggestions
+		data-state={ mentionState(props.State) }
+		dir={ lw.DefaultStr(props.Dir, "ltr") }
+		{ props.Attrs... }
+	>
+		<ul
+			role="listbox"
+			id={ props.ID }
+			aria-label={ props.Label }
+			if props.Busy {
+				aria-busy="true"
+			}
+			hidden?={ mentionState(props.State) != "ready" && !(props.State == "loading" && props.Busy) }
+		>
+			if mentionState(props.State) == "ready" || (props.State == "loading" && props.Busy) {
+				{ children... }
+			}
+		</ul>
+		<p role="status" aria-atomic="true">{ props.Status }</p>
+	</div>
+}
+
+// MentionSuggestions is the convenience wrapper; children supply options.
+templ MentionSuggestions(id, label, state, status string) {
+	@MentionSuggestionsComponent(MentionSuggestionsProps{ID: id, Label: label, State: state, Status: status}) {
+		{ children... }
+	}
+}
+
+// MentionOptionProps configures one person supplied by the consumer.
+type MentionOptionProps struct {
+	ID       string           // Required stable unique option id; use MentionOptionID
+	Name     string           // Full name, preserved in the DOM when truncated
+	Detail   string           // Optional real identifier; never generated from Name
+	Avatar   *AvatarProps     // Optional Name/Src data only; other AvatarProps fields are not used
+	Active   bool             // Caller supplies at most one active, enabled row
+	Disabled bool             // Shown but not selectable; consumer skips it with arrows
+	Truncate bool             // Opt-in name/detail truncation; full text remains in DOM
+	Class    string           // Additional row classes; no layout classes are baked in
+	Attrs    templ.Attributes // Developer-controlled li attributes, after component attributes
+}
+
+// MentionOptionComponent renders an unfocusable listbox option. Avatar is
+// decorative: the existing AvatarComponent's role/alt output differs from this
+// producer contract, so only its Name/Src data and initials helper are reused.
+templ MentionOptionComponent(props MentionOptionProps) {
+	<li
+		if props.Active || props.Class != "" {
+			class={ lw.ClassNames(lw.If(props.Active, "rounded-sm scheme-subtle"), props.Class) }
+		}
+		role="option"
+		id={ props.ID }
+		aria-selected={ boolStr(props.Active) }
+		if props.Active {
+			data-active
+		}
+		if props.Disabled {
+			aria-disabled="true"
+		}
+		{ props.Attrs... }
+	>
+		if props.Avatar != nil {
+			<span class="avatar" aria-hidden="true">
+				if props.Avatar.Src != "" {
+					<img src={ templ.SafeURL(props.Avatar.Src) } alt=""/>
+				} else {
+					<span class="initials">{ avatarInitials(lw.DefaultStr(props.Avatar.Name, props.Name), "") }</span>
+				}
+			</span>
+		}
+		<span>
+			<span
+				data-mention-name
+				if props.Truncate {
+					class="truncate"
+				}
+			>{ props.Name }</span>
+			if props.Detail != "" {
+				<span
+					data-mention-detail
+					if props.Truncate {
+						class="truncate"
+					}
+				>{ props.Detail }</span>
+			}
+		</span>
+	</li>
+}
+
+// MentionOption renders a person without an avatar or additional attributes.
+templ MentionOption(id, name, detail string, active bool) {
+	@MentionOptionComponent(MentionOptionProps{ID: id, Name: name, Detail: detail, Active: active})
+}

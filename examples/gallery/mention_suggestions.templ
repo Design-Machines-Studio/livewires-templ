@@ -1,0 +1,77 @@
+package main
+
+import "fmt"
+
+import "github.com/Design-Machines-Studio/livewires-templ/component"
+
+templ mentionFragment(id, dir, state, query string, busy bool) {
+	@component.MentionSuggestionsComponent(component.MentionSuggestionsProps{ID: id, Label: "People", State: state, Busy: busy, Status: mentionStatus(state, len(mentionMatches(query))), Dir: dir}) {
+		for i, person := range mentionMatches(query) {
+			@component.MentionOptionComponent(component.MentionOptionProps{ID: component.MentionOptionID(id, person.ID), Name: person.Name, Detail: person.Detail, Avatar: person.Avatar, Active: state == "ready" && i == 0, Disabled: person.Disabled, Attrs: templ.Attributes{"data-person-id": person.ID}})
+		}
+	}
+}
+
+templ mentionStatic(id, state string, busy bool) {
+	@component.MentionSuggestionsComponent(component.MentionSuggestionsProps{ID: id, Label: "People", State: state, Busy: busy, Status: mentionStatus(state, 5), Attrs: templ.Attributes{"id": id + "-root", "style": "position: static; --mention-suggestions-max-block: none"}}) {
+		for i, person := range mentionPeople[:5] {
+			@component.MentionOptionComponent(component.MentionOptionProps{ID: component.MentionOptionID(id, person.ID), Name: person.Name, Detail: person.Detail, Avatar: person.Avatar, Active: state == "ready" && i == 0, Disabled: person.Disabled})
+		}
+	}
+}
+
+templ mentionEditor(id, dir string) {
+	<section class="stack" dir={ dir }>
+		<h2>{ "Live demonstration · " + dir }</h2>
+		<p>Type @, @sam for duplicate names, @ma for a long name, or @zz for no results. Arrows move; Enter or Tab selects; Escape dismisses. These are fictional people. No directory exists and nothing is saved.</p>
+		<form class="stack" data-mention-form>
+			<label for={ id + "-scenario" }>Simulated reply</label>
+			<select id={ id + "-scenario" } name="mention-scenario">
+				<option value="quick">Quick replies</option>
+				<option value="slow">Slow replies and stale rows</option>
+				<option value="error">Failed replies</option>
+			</select>
+			<p id={ id + "-label" }>Message</p>
+			<div
+				id={ id + "-editor" }
+				class="box border rounded"
+				style="min-block-size: 5em; overflow-wrap: anywhere"
+				contenteditable="true"
+				role="textbox"
+				aria-multiline="true"
+				aria-labelledby={ id + "-label" }
+				aria-autocomplete="list"
+				aria-haspopup="listbox"
+				aria-controls={ id + "-list" }
+				data-mention-demo={ id + "-popup" }
+			></div>
+			<button type="submit" class="button">Simulate send</button>
+			<p data-mention-log>Nothing saved.</p>
+		</form>
+		@component.MentionSuggestionsComponent(component.MentionSuggestionsProps{ID: id + "-list", Label: "People", State: "closed", Dir: dir, Attrs: templ.Attributes{"id": id + "-popup"}})
+	</section>
+}
+
+templ mentionSuggestionsExample() {
+	@mentionEditor("mention", "ltr")
+	<div class="w-full" style="max-inline-size: 20rem" data-mention-narrow>
+		@mentionEditor("mention-rtl", "rtl")
+	</div>
+	<section class="stack" data-mention-static>
+		<h2>Static states</h2>
+		for _, state := range []string{"closed", "loading", "ready", "empty", "error"} {
+			<section class="stack">
+				<h3>{ state }</h3>
+				@mentionStatic("static-" + state, state, false)
+			</section>
+		}
+		<h3>Loading with stale rows</h3>
+		@mentionStatic("static-stale", "loading", true)
+		<h3>Long names: wrap and truncate</h3>
+		@component.MentionSuggestionsComponent(component.MentionSuggestionsProps{ID: "static-long", Label: "Long names", State: "ready", Status: "2 people found", Attrs: templ.Attributes{"style": "position: static; --mention-suggestions-max-block: none"}}) {
+			for _, truncate := range []bool{false, true} {
+				@component.MentionOptionComponent(component.MentionOptionProps{ID: component.MentionOptionID("static-long", fmt.Sprint(truncate)), Name: mentionPeople[5].Name, Detail: mentionPeople[5].Detail, Avatar: mentionPeople[5].Avatar, Active: !truncate, Truncate: truncate})
+			}
+		}
+	</section>
+}
