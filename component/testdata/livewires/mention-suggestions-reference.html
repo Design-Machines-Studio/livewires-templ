@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="module" src="/dist/main.js"></script>
+  <noscript><link rel="stylesheet" href="/dist/main.css"></noscript>
+  <html-include src="/_includes/head.html"></html-include>
+  <link rel="stylesheet" href="/dist/combobox.css">
+  <!-- In development, importing the entry injects combobox.css, which holds this variant. -->
+  <script type="module" src="/dist/combobox.js"></script>
+  <title>Mention suggestions &ndash; Components Reference &ndash; Live Wires</title>
+</head>
+<body class="scheme-default">
+  <html-include src="/_includes/header.html"></html-include>
+  <main id="main">
+    <article class="section prose">
+      <h1>Mention suggestions</h1>
+      <p>Static markup for each state. These examples use <code>style="position: static; --mention-suggestions-max-block: none"</code> so they sit in the page. In an application the root is fixed near the caret. There is no script on this page. See the <a href="/manual/components/mention-suggestions.html">mention suggestions manual</a> for a working editor.</p>
+
+      <h2>Ready</h2>
+      <p>Results with an active option, duplicate names told apart by their supplied detail, an unavailable person and a person without an avatar. The count is in the status region, out of sight.</p>
+      <div class="rounded scheme-default" data-mention-suggestions id="r-ready" data-state="ready" style="position: static; --mention-suggestions-max-block: none">
+        <ul role="listbox" id="r-ready-list" aria-label="People">
+          <li class="rounded-sm scheme-subtle" role="option" id="r-ready-ada" aria-selected="true" data-active><span class="avatar" aria-hidden="true"><span class="initials">AO</span></span><span><span data-mention-name>Ada Okafor</span><span data-mention-detail>Finance circle</span></span></li>
+          <li role="option" id="r-ready-bo" aria-selected="false"><span class="avatar" aria-hidden="true"><span class="initials">BL</span></span><span><span data-mention-name>Bo Lindqvist</span><span data-mention-detail>Kitchen</span></span></li>
+          <li role="option" id="r-ready-sam-k" aria-selected="false"><span class="avatar" aria-hidden="true"><span class="initials">SR</span></span><span><span data-mention-name>Sam Rivera</span><span data-mention-detail>Kitchen</span></span></li>
+          <li role="option" id="r-ready-sam-f" aria-selected="false" aria-disabled="true"><span class="avatar" aria-hidden="true"><span class="initials">SR</span></span><span><span data-mention-name>Sam Rivera</span><span data-mention-detail>Finance circle</span></span></li>
+          <li role="option" id="r-ready-di" aria-selected="false"><span><span data-mention-name>Di Ng</span></span></li>
+        </ul>
+        <p role="status" aria-atomic="true">5 people found</p>
+      </div>
+
+      <h2>Loading</h2>
+      <p>The first search for a new @. The status message is visible.</p>
+      <div class="rounded scheme-default" data-mention-suggestions id="r-loading" data-state="loading" style="position: static; --mention-suggestions-max-block: none">
+        <ul role="listbox" id="r-loading-list" aria-label="People" hidden></ul>
+        <p role="status" aria-atomic="true">Searching people…</p>
+      </div>
+
+      <h2>Stale rows while loading</h2>
+      <p>Earlier rows stay visible but dimmed while a new search loads. None is active, and Enter closes the list.</p>
+      <div class="rounded scheme-default" data-mention-suggestions id="r-stale" data-state="loading" style="position: static; --mention-suggestions-max-block: none">
+        <ul role="listbox" id="r-stale-list" aria-label="People" aria-busy="true">
+          <li role="option" id="r-stale-ada" aria-selected="false"><span class="avatar" aria-hidden="true"><span class="initials">AO</span></span><span><span data-mention-name>Ada Okafor</span><span data-mention-detail>Finance circle</span></span></li>
+          <li role="option" id="r-stale-bo" aria-selected="false"><span class="avatar" aria-hidden="true"><span class="initials">BL</span></span><span><span data-mention-name>Bo Lindqvist</span><span data-mention-detail>Kitchen</span></span></li>
+        </ul>
+        <p role="status" aria-atomic="true">Searching people…</p>
+      </div>
+
+      <h2>Empty</h2>
+      <p>No person matches.</p>
+      <div class="rounded scheme-default" data-mention-suggestions id="r-empty" data-state="empty" style="position: static; --mention-suggestions-max-block: none">
+        <ul role="listbox" id="r-empty-list" aria-label="People" hidden></ul>
+        <p role="status" aria-atomic="true">No matching people</p>
+      </div>
+
+      <h2>Error</h2>
+      <p>The search failed. Typing again retries.</p>
+      <div class="rounded scheme-default" data-mention-suggestions id="r-error" data-state="error" style="position: static; --mention-suggestions-max-block: none">
+        <ul role="listbox" id="r-error-list" aria-label="People" hidden></ul>
+        <p role="status" aria-atomic="true">People could not be loaded. Keep typing to try again.</p>
+      </div>
+
+      <h2>Long names, wrapped</h2>
+      <p>The default. Names break at spaces and hyphens, then inside long words.</p>
+      <div class="rounded scheme-default" data-mention-suggestions id="r-long" data-state="ready" style="position: static; --mention-suggestions-max-block: none">
+        <ul role="listbox" id="r-long-list" aria-label="People">
+          <li class="rounded-sm scheme-subtle" role="option" id="r-long-wrap" aria-selected="true" data-active><span class="avatar" aria-hidden="true"><span class="initials">MO</span></span><span><span data-mention-name>Maria-Fernanda Oyelaran-Castellanos de la Vega</span><span data-mention-detail>Festival submissions working group</span></span></li>
+          <li role="option" id="r-long-word" aria-selected="false"><span class="avatar" aria-hidden="true"><span class="initials">W</span></span><span><span data-mention-name>Wolfeschlegelsteinhausenbergerdorff</span><span data-mention-detail>Archive</span></span></li>
+        </ul>
+        <p role="status" aria-atomic="true">2 people found</p>
+      </div>
+
+      <h2>Long names, truncated</h2>
+      <p>Add truncate to the name and detail. The full text stays in the page.</p>
+      <div class="rounded scheme-default" data-mention-suggestions id="r-trunc" data-state="ready" style="position: static; --mention-suggestions-max-block: none">
+        <ul role="listbox" id="r-trunc-list" aria-label="People">
+          <li class="rounded-sm scheme-subtle" role="option" id="r-trunc-wrap" aria-selected="true" data-active><span class="avatar" aria-hidden="true"><span class="initials">MO</span></span><span><span data-mention-name class="truncate">Maria-Fernanda Oyelaran-Castellanos de la Vega</span><span data-mention-detail class="truncate">Festival submissions working group</span></span></li>
+          <li role="option" id="r-trunc-word" aria-selected="false"><span class="avatar" aria-hidden="true"><span class="initials">W</span></span><span><span data-mention-name class="truncate">Wolfeschlegelsteinhausenbergerdorff</span><span data-mention-detail class="truncate">Archive</span></span></li>
+        </ul>
+        <p role="status" aria-atomic="true">2 people found</p>
+      </div>
+
+      <h2>Closed</h2>
+      <p>Mounted but closed. The root is clipped out of sight, the listbox is hidden and the status is empty. Nothing is visible below this sentence.</p>
+      <div class="rounded scheme-default" data-mention-suggestions id="r-closed" data-state="closed" style="position: static; --mention-suggestions-max-block: none">
+        <ul role="listbox" id="r-closed-list" aria-label="People" hidden></ul>
+        <p role="status" aria-atomic="true"></p>
+      </div>
+    </article>
+  </main>
+  <html-include src="/_includes/footer.html"></html-include>
+</body>
+</html>

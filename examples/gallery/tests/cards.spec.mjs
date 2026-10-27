@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { readFile, writeFile } from 'node:fs/promises';
 
-const producer = 'd4c197b29b1675bf6cada14d051b7a8e1425fe2f';
+const producer = '1c52666402c0ec2de4ed64736ea679a8a8573838';
 const referenceFixture = new URL('../../../component/testdata/livewires/card-summary-reference.html', import.meta.url);
 
 const measureLines = node => {

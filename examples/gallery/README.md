@@ -25,7 +25,7 @@ or taken over. The index is `/`; example URLs are `/examples/relative-time`,
 `/examples/copy`, `/examples/loading`, `/examples/toast`, `/examples/sortable`,
 `/examples/inline-edit`, `/examples/combobox`, `/examples/save-status` and
 `/examples/page-header`, `/examples/comments`, `/examples/loaders`,
-`/examples/widgets`, `/examples/people-picker` and `/examples/cards`.
+`/examples/widgets`, `/examples/people-picker`, `/examples/cards` and `/examples/mention-suggestions`.
 
 The runner uses the host-selected user installation from Claude's
 `installed_plugins.json`, checks its plugin identity/version, and invokes the
@@ -100,7 +100,7 @@ Do not prune shared Docker resources or delete another worktree's state.
 ## Locked assets
 
 `assets.lock.json` records exact Live Wires revision
-`d4c197b29b1675bf6cada14d051b7a8e1425fe2f` (v2.26.0), source URLs, SHA-256 hashes, sizes
+`1c52666402c0ec2de4ed64736ea679a8a8573838` (v2.27.0), source URLs, SHA-256 hashes, sizes
 and license provenance. Required files are fetched from that revision into the
 instance's external development cache, never from a mutable producer checkout,
 Vite server or floating CDN. The save-status example uses the producer's exact
@@ -181,3 +181,11 @@ aligned footers, line limits, the focus ring inside the clamp, header-rule rules
 scroll and computed-style parity with the retained producer reference. Set `PRODUCER_MANUAL` to a
 saved copy of the producer manual page to also capture it. See
 [`docs/card-summary.md`](../../docs/card-summary.md).
+
+
+The `/examples/mention-suggestions` route uses Live Wires v2.27.0, including
+its optional `combobox.css`. It renders static states and independent LTR/RTL
+editors with fictional fixture data. `mention-demo.js` adapts the producer's
+page-only demonstration; state/row fragments come from `/demo/mentions` using
+the public Templ components. Nothing is saved and no directory exists. No
+controller is imported by the library. See [the API and editor contract](../../docs/mention-suggestions.md).

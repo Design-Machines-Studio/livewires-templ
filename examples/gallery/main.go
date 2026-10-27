@@ -19,7 +19,7 @@ import (
 	"github.com/a-h/templ"
 )
 
-//go:embed assets.lock.json demo.js
+//go:embed assets.lock.json demo.js mention-demo.js
 var authored embed.FS
 
 // Compiled by run.py from the immutable build snapshot, never runtime labels.
@@ -46,7 +46,7 @@ type assetLock struct {
 	Assets         []asset `json:"assets"`
 }
 
-var examples = []string{"relative-time", "copy", "loading", "toast", "sortable", "inline-edit", "combobox", "save-status", "page-header", "comments", "loaders", "widgets", "people-picker", "cards"}
+var examples = []string{"relative-time", "copy", "loading", "toast", "sortable", "inline-edit", "combobox", "save-status", "page-header", "comments", "loaders", "widgets", "people-picker", "cards", "mention-suggestions"}
 var itemNames = map[string]string{"notes": "Field notes", "paper": "On paper", "index": "An index"}
 
 func digest(b []byte) string { s := sha256.Sum256(b); return hex.EncodeToString(s[:]) }
@@ -121,6 +121,7 @@ func outcome(scenario string) string {
 
 func routes(source sourceIdentity, files map[string][]byte, lock assetLock) http.Handler {
 	m := http.NewServeMux()
+	m.HandleFunc("GET /demo/mentions", mentionReply)
 	m.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]any{"source": source, "assets": lock.Assets})
@@ -136,6 +137,11 @@ func routes(source sourceIdentity, files map[string][]byte, lock assetLock) http
 			w.Write(data)
 		})
 	}
+	m.HandleFunc("GET /mention-demo.js", func(w http.ResponseWriter, r *http.Request) {
+		b, _ := authored.ReadFile("mention-demo.js")
+		w.Header().Set("Content-Type", "text/javascript")
+		w.Write(b)
+	})
 	m.HandleFunc("GET /demo.js", func(w http.ResponseWriter, r *http.Request) {
 		b, _ := authored.ReadFile("demo.js")
 		w.Header().Set("Content-Type", "text/javascript")

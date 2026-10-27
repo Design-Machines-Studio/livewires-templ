@@ -493,3 +493,5 @@ For rich proposal comments and Chat replies, use the additive [shared comment ar
 The card footer region and summary cards (Live Wires v2.26.0) compose with caller-supplied layout classes, icons and short date labels. Heading and description line limits stay in CSS. See [footer and summary card composition](docs/card-summary.md).
 
 Hardware loaders support Ratchet and Torque in standalone status/progress, busy buttons, LoadingRegion and SaveStatus. Driver Line stays standalone, centered in LoaderPanel or LoaderOverlay. See [loader composition and props](docs/loaders.md).
+
+Inline editor suggestion surfaces: see [Mention suggestions](docs/mention-suggestions.md) for the render API and the consumer-owned editor contract (Live Wires v2.27.0).

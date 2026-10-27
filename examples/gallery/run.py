@@ -289,11 +289,14 @@ def main():
             (run / "cache" / name).mkdir(exist_ok=True)
         receipt = base64.urlsafe_b64encode(json.dumps(identity, separators=(",", ":")).encode()).decode().rstrip("=")
         compose_env(receipt)
+        # Build first: Kernel admits one-offs only without dependency startup
+        # or an implicit build mixed into the managed run command.
+        command(compose + ["build", "builder"])
         if args.action == "verify":
             command([sys.executable, "-B", "-m", "unittest", "discover", "-s", "examples/gallery", "-p", "test_run.py"])
-            create(compose + ["run", "--rm", "--build", "builder", "sh", "-c", "templ generate && go test ./... && go vet ./..."])
+            create(compose + ["run", "--rm", "--no-deps", "builder", "sh", "-c", "templ generate && go test ./... && go vet ./..."])
         else:
-            create(compose + ["run", "--rm", "--build", "builder"])
+            create(compose + ["run", "--rm", "--no-deps", "builder"])
         changed = generated_changes(snapshot, hashes)
         if changed:
             fail("Generated files are stale. Run make generate in Docker and commit them: " + ", ".join(changed))
