@@ -1,6 +1,9 @@
 package component
 
 import lw "github.com/Design-Machines-Studio/livewires-templ"
+import "strconv"
+import "strings"
+import "unicode/utf8"
 
 // WidgetMetricProps accepts complete caller-formatted text. Status takes
 // precedence over Value; an empty Value is also rendered without numeric styling.
@@ -10,7 +13,7 @@ type WidgetMetricProps struct {
 	Value      string
 	Status     string
 	Detail     string
-	Variant    string // short, long, or empty (default); selected after formatting
+	Variant    string // empty/auto adapts to formatted length and available width; short/long stay explicit
 	ValueClass string
 	// ValueAttrs applies only to numeric dd values. Developer-controlled style
 	// can set --widget-metric-size, --widget-metric-weight, --widget-metric-width.
@@ -44,7 +47,18 @@ func widgetMetricVariant(variant string) string {
 	if variant == "short" || variant == "long" {
 		return "widget-metric-value--" + variant
 	}
-	return ""
+	return "widget-metric-value--auto"
+}
+
+// The upper length band is presentation metadata, never numeric parsing.
+// Count Unicode code points rather than UTF-8 bytes; unusual/wide fonts and
+// combining sequences may still wrap. Keep every formatted character intact.
+func widgetMetricLength(value string) string {
+ length := utf8.RuneCountInString(strings.TrimSpace(value))
+ for _, band := range []int{4, 8, 12, 20, 32} {
+  if length <= band { return strconv.Itoa(band) }
+ }
+ return "64"
 }
 
 templ widgetMetricDefinitions(props WidgetMetricProps) {
@@ -52,7 +66,11 @@ templ widgetMetricDefinitions(props WidgetMetricProps) {
 	if props.Status != "" || props.Value == "" {
 		<dd class="widget-metric-status">{ props.Status }</dd>
 	} else {
-		<dd class={ lw.ClassNames("widget-metric-value", widgetMetricVariant(props.Variant), "font-metric tnum", props.ValueClass) } { props.ValueAttrs... }>{ props.Value }</dd>
+		<dd class={ lw.ClassNames("widget-metric-value", widgetMetricVariant(props.Variant), "font-metric tnum", props.ValueClass) }
+            if props.Variant != "short" && props.Variant != "long" {
+                data-widget-metric-length={ widgetMetricLength(props.Value) }
+            }
+            { props.ValueAttrs... }>{ props.Value }</dd>
 	}
 	if props.Detail != "" {
 		<dd class="widget-metric-detail">{ props.Detail }</dd>

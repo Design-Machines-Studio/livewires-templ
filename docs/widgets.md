@@ -85,11 +85,10 @@ numeric value. `Status` takes precedence over Value and uses
 status presentation; supply explicit Status text for missing observations.
 No missing value becomes a fabricated zero.
 
-Numeric values emit `.widget-metric-value.font-metric.tnum`. `Variant` accepts
-`short` (text-4xl), `long` (text-lg), or empty (text-2xl); an unknown variant
-uses the default. The producer supplies each variant's line-height and tracking.
-Choose a variant after formatting. There is no digit counting, truncation,
-scaling or automatic fit loop.
+Numeric values emit `.widget-metric-value.font-metric.tnum`. Empty/auto and
+unknown variants select the automatic sizing contract below. Explicit `short`
+(text-4xl) and `long` (text-lg) variants retain their existing behavior. The
+component counts formatted Unicode code points only; it does no numeric parsing.
 
 `ValueAttrs` and `ValueClass` affect only the numeric dd. Status and Detail do
 not receive them. Set developer-owned CSS hooks there:
@@ -163,3 +162,34 @@ This work does not migrate consumers. Adoption remains Baseplate #1159 through
 release. Baseplate #1160 owns global font configuration; #1161 owns persisted
 per-widget typography, validation, reset and draft/Save behavior. Gallery reloads
 prove neither persisted theme configuration nor consumer adoption.
+
+## Automatic metric sizing (unreleased)
+
+Use `widget-metric-value--auto` with `data-widget-metric-length` set to the
+upper formatted-length band: 4, 8, 12, 20, 32 or 64. The Templ component emits
+both for its default/auto variant. Count Unicode code points in the complete
+formatted value, including separators, currency, signs and units; do not parse
+or reformat the number. Values longer than 32 use band 64 and may wrap.
+
+The metric definition list/group establishes its own inline-size container,
+so grouped metrics use each cell's available width rather than the entire card.
+CSS estimates room at 0.7em per character in the band, caps the default at
+`--text-3xl`, and keeps a 1rem floor. The same value grows in a wider cell;
+longer strings receive a smaller size in the same cell. Browsers without
+container units use text-3xl and ordinary wrapping.
+
+This is a conservative layout estimate, not glyph measurement. Wide fonts,
+full-width digits, combining sequences and large values can wrap. Every
+character stays in the DOM: no precision loss, ellipsis, transform scaling,
+JavaScript, storage, font downloads or measurement loop. Zoom and font changes
+use normal CSS layout. Labels, descriptions and unavailable states stay
+unchanged. An explicit widget size, generic metric size or size utility wins;
+weight and font-width overrides retain their existing behavior. Explicit
+short/long variants remain supported as deliberate fixed art direction.
+
+This contract requires the paired Live Wires CSS and Templ changes to be
+published and adopted together. Existing Baseplate/Atlas releases are unchanged.
+After adoption, consumers should remove their default text-size utility so the
+shared automatic rule can apply; explicit personal size choices still win.
+
+Paired CSS implementation: [Live Wires PR #41](https://github.com/Design-Machines-Studio/livewires/pull/41).
