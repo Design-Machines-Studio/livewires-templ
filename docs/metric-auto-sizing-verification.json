@@ -1,0 +1,9 @@
+{
+  "scope": "Standalone shared CSS and semantic metric fixture; not composed host acceptance",
+  "checks": [
+    {
+      "type": "text",
+      "text": "{\"width\":728,\"contentHeight\":1654,\"capturedHeight\":1654,\"consoleMessages\":[{\"level\":\"log\",\"text\":\"{\\\"checks\\\":{\\\"narrowShortShrinks\\\":true,\\\"longShrinks\\\":true,\\\"sameLongGrows\\\":true,\\\"readableFloor\\\":true,\\\"completeValue\\\":true,\\\"noOverflow\\\":true,\\\"savedOverride\\\":true},\\\"rootSize\\\":14,\\\"cases\\\":12,\\\"minSize\\\":14,\\\"maxSize\\\":42}\"},{\"level\":\"log\",\"text\":\"{\\\"valuePatch\\\":true,\\\"enlargedFloor\\\":true,\\\"overrideAfterEnlargement\\\":true,\\\"fontFallbacks\\\":[true,true]}\"}],\"screenshot\":{\"mimeType\":\"image/png\",\"width\":728,\"height\":1654}}"
+    }
+  ]
+}

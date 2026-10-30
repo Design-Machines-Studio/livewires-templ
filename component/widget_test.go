@@ -244,3 +244,29 @@ func TestWidgetLegacyCompatibility(t *testing.T) {
 		t.Fatal(stat)
 	}
 }
+
+func TestWidgetMetricAutomaticLengthPreservesFormattedValues(t *testing.T) {
+	for _, tc := range []struct{ value, band string }{
+		{"0", "4"}, {"−4.2", "4"}, {"1,234", "8"}, {"€ 1.234,56", "12"},
+		{"−Rp 1.234.567.890,50", "20"}, {"１２３４", "4"}, {strings.Repeat("9", 100), "64"},
+	} {
+		out := testutil.RenderToString(t, WidgetMetric("Count", tc.value))
+		n := widgetElement(t, out, "widget-metric-value")
+		if got, _ := testutil.AttrVal(n, "data-widget-metric-length"); got != tc.band {
+			t.Fatalf("%q: length band %q, want %q", tc.value, got, tc.band)
+		}
+		if testutil.NodeText(n) != tc.value {
+			t.Fatal("formatted value changed", out)
+		}
+	}
+	for _, variant := range []string{"short", "long"} {
+		out := testutil.RenderToString(t, WidgetMetricComponent(WidgetMetricProps{Label: "Count", Value: "12345", Variant: variant}))
+		if strings.Contains(out, "data-widget-metric-length") || strings.Contains(out, "widget-metric-value--auto") {
+			t.Fatal("explicit size became automatic", out)
+		}
+	}
+	out := testutil.RenderToString(t, WidgetMetricComponent(WidgetMetricProps{Label: "Count", Value: "0", Status: "Unavailable"}))
+	if strings.Contains(out, "data-widget-metric-length") || strings.Contains(out, "font-metric") {
+		t.Fatal("status received numeric sizing", out)
+	}
+}

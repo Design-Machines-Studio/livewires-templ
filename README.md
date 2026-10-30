@@ -495,3 +495,5 @@ The card footer region and summary cards (Live Wires v2.26.0) compose with calle
 Hardware loaders support Ratchet and Torque in standalone status/progress, busy buttons, LoadingRegion and SaveStatus. Driver Line stays standalone, centered in LoaderPanel or LoaderOverlay. See [loader composition and props](docs/loaders.md).
 
 Inline editor suggestion surfaces: see [Mention suggestions](docs/mention-suggestions.md) for the render API and the consumer-owned editor contract (Live Wires v2.27.0).
+
+Automatic metric sizing is prepared but unreleased: the shared default adapts to its cell width and formatted-value length, with explicit size overrides preserved. See [the widget contract](docs/widgets.md).
