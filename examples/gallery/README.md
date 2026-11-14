@@ -25,7 +25,7 @@ or taken over. The index is `/`; example URLs are `/examples/relative-time`,
 `/examples/copy`, `/examples/loading`, `/examples/toast`, `/examples/sortable`,
 `/examples/inline-edit`, `/examples/combobox`, `/examples/save-status` and
 `/examples/page-header`, `/examples/comments`, `/examples/loaders`,
-`/examples/widgets`, `/examples/people-picker`, `/examples/cards` and `/examples/mention-suggestions`.
+`/examples/widgets`, `/examples/people-picker`, `/examples/cards`, `/examples/mention-suggestions` and `/examples/icon-picker`.
 
 The runner uses the host-selected user installation from Claude's
 `installed_plugins.json`, checks its plugin identity/version, and invokes the
@@ -100,7 +100,7 @@ Do not prune shared Docker resources or delete another worktree's state.
 ## Locked assets
 
 `assets.lock.json` records exact Live Wires revision
-`1c52666402c0ec2de4ed64736ea679a8a8573838` (v2.27.0), source URLs, SHA-256 hashes, sizes
+`d407d3edf652d6f4f754987a0ad9f48aaeb1faa4` (v2.29.0), source URLs, SHA-256 hashes, sizes
 and license provenance. Required files are fetched from that revision into the
 instance's external development cache, never from a mutable producer checkout,
 Vite server or floating CDN. The save-status example uses the producer's exact
@@ -189,3 +189,21 @@ editors with fictional fixture data. `mention-demo.js` adapts the producer's
 page-only demonstration; state/row fragments come from `/demo/mentions` using
 the public Templ components. Nothing is saved and no directory exists. No
 controller is imported by the library. See [the API and editor contract](../../docs/mention-suggestions.md).
+
+The `/examples/icon-picker` route uses Live Wires v2.29.0: `main.css`, the
+optional `icon-picker.js` enhancer, and the Phosphor Bold sprite, catalog and
+license served under `/icons/` (MIT, Phosphor Icons). It shows bordered and
+ghost pickers, with and without a value, in enhanced and unenhanced sections,
+plus inherited, light and dark schemes in 16rem columns. Each form submits by
+GET. The handler echoes valid names and rejects names outside each picker's
+rendered subset. Nothing is stored. `icon_picker_subset.go` is a static
+48-icon subset generated from the pinned catalog. `tests/icon-picker.spec.mjs`
+also runs under `--browser=firefox` and `--browser=webkit`. Forced colors are
+emulated in Chromium only. See [the API and hosting contract](../../docs/icon-picker.md).
+
+Moving the lock from v2.27.0 to v2.29.0 changed only `main.css` and
+`sortable-list.css`; the other pinned files are byte-identical. The shared
+focus ring changed from a 2px accent outline to a 1px muted ring, so every
+route's focused rendering differs. At rest only `/examples/widgets` changed,
+because metric cells now set `container-type: inline-size`. The cards spec now
+expects the clamped-link ring offset to be the negative ring width.

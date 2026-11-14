@@ -496,4 +496,6 @@ Hardware loaders support Ratchet and Torque in standalone status/progress, busy 
 
 Inline editor suggestion surfaces: see [Mention suggestions](docs/mention-suggestions.md) for the render API and the consumer-owned editor contract (Live Wires v2.27.0).
 
+Icon picker: `form.IconPicker` renders the Live Wires v2.29.0 icon picker from a caller-supplied icon subset. The server validates submissions against that subset; the optional Live Wires enhancer adds search, Recent and keyboard movement. See [the icon picker API and hosting contract](docs/icon-picker.md), including the global focus-ring changes v2.29.0 brings.
+
 Automatic metric sizing is prepared but unreleased: the shared default adapts to its cell width and formatted-value length, with explicit size overrides preserved. See [the widget contract](docs/widgets.md).

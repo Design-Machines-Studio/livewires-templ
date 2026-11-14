@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="module" src="/dist/main.js"></script>
+  <noscript><link rel="stylesheet" href="/dist/main.css"></noscript>
+  <script type="module" src="/manual/_components/icon-picker-fixture.js"></script>
+  <html-include src="/_includes/head.html"></html-include>
+  <title>Icon picker &ndash; Components Reference &ndash; Live Wires</title>
+</head>
+<body class="scheme-default">
+  <html-include src="/_includes/header.html"></html-include>
+  <main id="main">
+    <article class="section prose">
+      <h1>Icon picker</h1>
+      <p>Choose one icon from a configured subset. Changes stay in this page. See the <a href="/manual/components/icon-picker.html">icon picker manual</a> for the full set and the submission contract.</p>
+
+      <h2>Bordered tiles</h2>
+      <form class="stack" action="" method="get" data-demo-form>
+<div class="icon-picker" data-icon-picker id="ref-picker">
+  <button type="button" class="button button--subtle button--icon icon-picker-trigger" popovertarget="ref-panel" aria-label="Choose circle icon" data-label-choose="Choose circle icon" data-label-change="Change circle icon">
+    <span class="icon-picker-current" hidden></span>
+    <span class="icon-picker-placeholder"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#selection-plus"/></svg></span>
+  </button>
+  <div class="icon-picker-panel" id="ref-panel" popover>
+    <fieldset class="icon-picker-fieldset" aria-labelledby="ref-heading">
+      <div class="icon-picker-header">
+        <h3 class="icon-picker-heading" id="ref-heading">Circle icon</h3>
+        <label class="icon-picker-remove button button--ghost button--small"><input type="radio" name="ref_icon" value="" class="visually-hidden" checked>Remove</label>
+      </div>
+      <div class="icon-picker-search" hidden><label class="visually-hidden" for="ref-search">Filter icons</label><input type="search" class="input--small" id="ref-search" placeholder="Filter icons…" autocomplete="off"></div>
+      <div class="icon-picker-body">
+        <section class="icon-picker-section icon-picker-recent" hidden><h4 class="icon-picker-section-heading">Recent</h4><div class="icon-picker-grid"></div></section>
+        <section class="icon-picker-section" aria-labelledby="ref-all"><h4 class="icon-picker-section-heading" id="ref-all">Circle icons</h4>
+          <div class="icon-picker-grid">
+            <label class="icon-picker-tile" title="Users three" data-tags="user group team community people profiles accounts contacts"><input type="radio" name="ref_icon" value="users-three" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#users-three"/></svg><span class="visually-hidden">Users three</span></label>
+            <label class="icon-picker-tile" title="Gavel" data-tags="judge justice legal law court hammer government"><input type="radio" name="ref_icon" value="gavel" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#gavel"/></svg><span class="visually-hidden">Gavel</span></label>
+            <label class="icon-picker-tile" title="Scales" data-tags="measure balance law justice government"><input type="radio" name="ref_icon" value="scales" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#scales"/></svg><span class="visually-hidden">Scales</span></label>
+            <label class="icon-picker-tile" title="Handshake" data-tags="emoji deal agreement"><input type="radio" name="ref_icon" value="handshake" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#handshake"/></svg><span class="visually-hidden">Handshake</span></label>
+            <label class="icon-picker-tile" title="Calendar check" data-tags="dates times events schedule todo checklist"><input type="radio" name="ref_icon" value="calendar-check" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#calendar-check"/></svg><span class="visually-hidden">Calendar check</span></label>
+            <label class="icon-picker-tile" title="Megaphone" data-tags="bullhorn announcements loudspeaker broadcast"><input type="radio" name="ref_icon" value="megaphone" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#megaphone"/></svg><span class="visually-hidden">Megaphone</span></label>
+            <label class="icon-picker-tile" title="Chat circle text" data-tags="send sent messages messaging sms texting comment round bubble"><input type="radio" name="ref_icon" value="chat-circle-text" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#chat-circle-text"/></svg><span class="visually-hidden">Chat circle text</span></label>
+            <label class="icon-picker-tile" title="File text" data-tags="documents files save write"><input type="radio" name="ref_icon" value="file-text" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#file-text"/></svg><span class="visually-hidden">File text</span></label>
+            <label class="icon-picker-tile" title="Coins" data-tags="cents change money currency payment paying purchase price sell"><input type="radio" name="ref_icon" value="coins" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#coins"/></svg><span class="visually-hidden">Coins</span></label>
+            <label class="icon-picker-tile" title="Piggy bank" data-tags="savings deposit money coins"><input type="radio" name="ref_icon" value="piggy-bank" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#piggy-bank"/></svg><span class="visually-hidden">Piggy bank</span></label>
+            <label class="icon-picker-tile" title="Shield check" data-tags="badge security defense authentication authenticated guarded locked encrypted encryption"><input type="radio" name="ref_icon" value="shield-check" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#shield-check"/></svg><span class="visually-hidden">Shield check</span></label>
+            <label class="icon-picker-tile" title="Flag" data-tags="country countries finished completed flags"><input type="radio" name="ref_icon" value="flag" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#flag"/></svg><span class="visually-hidden">Flag</span></label>
+            <label class="icon-picker-tile" title="House line" data-tags="homes buildings places locations"><input type="radio" name="ref_icon" value="house-line" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#house-line"/></svg><span class="visually-hidden">House line</span></label>
+            <label class="icon-picker-tile" title="Leaf" data-tags="plants trees branches leaves nodes green environmental"><input type="radio" name="ref_icon" value="leaf" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#leaf"/></svg><span class="visually-hidden">Leaf</span></label>
+            <label class="icon-picker-tile" title="Lightbulb" data-tags="flashlight bulbs lighting led energy idea"><input type="radio" name="ref_icon" value="lightbulb" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#lightbulb"/></svg><span class="visually-hidden">Lightbulb</span></label>
+            <label class="icon-picker-tile" title="Star" data-tags="rate ratings favorites favorited"><input type="radio" name="ref_icon" value="star" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#star"/></svg><span class="visually-hidden">Star</span></label>
+          </div>
+        </section>
+      </div>
+      <p class="icon-picker-status" role="status" aria-atomic="true" hidden></p>
+    </fieldset>
+  </div>
+</div>
+        <div class="cluster"><button class="button" type="submit">Submit icon</button></div>
+        <p class="hint" role="status" aria-atomic="true" data-demo-output></p>
+      </form>
+
+      <h2>Ghost tiles</h2>
+      <form class="stack" action="" method="get" data-demo-form>
+<div class="icon-picker icon-picker--ghost" data-icon-picker id="ghost-picker">
+  <button type="button" class="button button--ghost button--icon icon-picker-trigger" popovertarget="ghost-panel" aria-label="Choose circle icon" data-label-choose="Choose circle icon" data-label-change="Change circle icon">
+    <span class="icon-picker-current" hidden></span>
+    <span class="icon-picker-placeholder"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#selection-plus"/></svg></span>
+  </button>
+  <div class="icon-picker-panel" id="ghost-panel" popover>
+    <fieldset class="icon-picker-fieldset" aria-labelledby="ghost-heading">
+      <div class="icon-picker-header">
+        <h3 class="icon-picker-heading" id="ghost-heading">Circle icon</h3>
+        <label class="icon-picker-remove button button--ghost button--small"><input type="radio" name="ghost_icon" value="" class="visually-hidden" checked>Remove</label>
+      </div>
+      <div class="icon-picker-search" hidden><label class="visually-hidden" for="ghost-search">Filter icons</label><input type="search" class="input--small" id="ghost-search" placeholder="Filter icons…" autocomplete="off"></div>
+      <div class="icon-picker-body">
+        <section class="icon-picker-section icon-picker-recent" hidden><h4 class="icon-picker-section-heading">Recent</h4><div class="icon-picker-grid"></div></section>
+        <section class="icon-picker-section" aria-labelledby="ghost-all"><h4 class="icon-picker-section-heading" id="ghost-all">Circle icons</h4>
+          <div class="icon-picker-grid">
+            <label class="icon-picker-tile" title="Users three" data-tags="user group team community people profiles accounts contacts"><input type="radio" name="ghost_icon" value="users-three" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#users-three"/></svg><span class="visually-hidden">Users three</span></label>
+            <label class="icon-picker-tile" title="Gavel" data-tags="judge justice legal law court hammer government"><input type="radio" name="ghost_icon" value="gavel" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#gavel"/></svg><span class="visually-hidden">Gavel</span></label>
+            <label class="icon-picker-tile" title="Scales" data-tags="measure balance law justice government"><input type="radio" name="ghost_icon" value="scales" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#scales"/></svg><span class="visually-hidden">Scales</span></label>
+            <label class="icon-picker-tile" title="Handshake" data-tags="emoji deal agreement"><input type="radio" name="ghost_icon" value="handshake" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#handshake"/></svg><span class="visually-hidden">Handshake</span></label>
+            <label class="icon-picker-tile" title="Calendar check" data-tags="dates times events schedule todo checklist"><input type="radio" name="ghost_icon" value="calendar-check" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#calendar-check"/></svg><span class="visually-hidden">Calendar check</span></label>
+            <label class="icon-picker-tile" title="Megaphone" data-tags="bullhorn announcements loudspeaker broadcast"><input type="radio" name="ghost_icon" value="megaphone" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#megaphone"/></svg><span class="visually-hidden">Megaphone</span></label>
+            <label class="icon-picker-tile" title="Chat circle text" data-tags="send sent messages messaging sms texting comment round bubble"><input type="radio" name="ghost_icon" value="chat-circle-text" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#chat-circle-text"/></svg><span class="visually-hidden">Chat circle text</span></label>
+            <label class="icon-picker-tile" title="File text" data-tags="documents files save write"><input type="radio" name="ghost_icon" value="file-text" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#file-text"/></svg><span class="visually-hidden">File text</span></label>
+            <label class="icon-picker-tile" title="Coins" data-tags="cents change money currency payment paying purchase price sell"><input type="radio" name="ghost_icon" value="coins" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#coins"/></svg><span class="visually-hidden">Coins</span></label>
+            <label class="icon-picker-tile" title="Piggy bank" data-tags="savings deposit money coins"><input type="radio" name="ghost_icon" value="piggy-bank" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#piggy-bank"/></svg><span class="visually-hidden">Piggy bank</span></label>
+            <label class="icon-picker-tile" title="Shield check" data-tags="badge security defense authentication authenticated guarded locked encrypted encryption"><input type="radio" name="ghost_icon" value="shield-check" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#shield-check"/></svg><span class="visually-hidden">Shield check</span></label>
+            <label class="icon-picker-tile" title="Flag" data-tags="country countries finished completed flags"><input type="radio" name="ghost_icon" value="flag" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#flag"/></svg><span class="visually-hidden">Flag</span></label>
+            <label class="icon-picker-tile" title="House line" data-tags="homes buildings places locations"><input type="radio" name="ghost_icon" value="house-line" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#house-line"/></svg><span class="visually-hidden">House line</span></label>
+            <label class="icon-picker-tile" title="Leaf" data-tags="plants trees branches leaves nodes green environmental"><input type="radio" name="ghost_icon" value="leaf" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#leaf"/></svg><span class="visually-hidden">Leaf</span></label>
+            <label class="icon-picker-tile" title="Lightbulb" data-tags="flashlight bulbs lighting led energy idea"><input type="radio" name="ghost_icon" value="lightbulb" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#lightbulb"/></svg><span class="visually-hidden">Lightbulb</span></label>
+            <label class="icon-picker-tile" title="Star" data-tags="rate ratings favorites favorited"><input type="radio" name="ghost_icon" value="star" class="visually-hidden"><svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href="/icons/phosphor-bold.svg#star"/></svg><span class="visually-hidden">Star</span></label>
+          </div>
+        </section>
+      </div>
+      <p class="icon-picker-status" role="status" aria-atomic="true" hidden></p>
+    </fieldset>
+  </div>
+</div>
+        <div class="cluster"><button class="button" type="submit">Submit icon</button></div>
+        <p class="hint" role="status" aria-atomic="true" data-demo-output></p>
+      </form>
+    </article>
+  </main>
+  <html-include src="/_includes/footer.html"></html-include>
+</body>
+</html>

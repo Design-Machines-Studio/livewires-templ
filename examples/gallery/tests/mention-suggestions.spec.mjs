@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { writeFile } from 'node:fs/promises';
 
-const revision = '1c52666402c0ec2de4ed64736ea679a8a8573838';
+const revision = 'd407d3edf652d6f4f754987a0ad9f48aaeb1faa4';
 const route = '/examples/mention-suggestions';
 const editorOf = (page, id = 'mention') => page.locator(`#${id}-editor`);
 const popupOf = (page, id = 'mention') => page.locator(`#${id}-popup`);
