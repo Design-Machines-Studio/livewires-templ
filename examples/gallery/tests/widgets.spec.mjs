@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { readFile, writeFile } from 'node:fs/promises';
 
-const producer = '1c52666402c0ec2de4ed64736ea679a8a8573838'; // lock revision (v2.27.0); this example's reference HTML is unchanged since aad7e38 (v2.25.0)
+const producer = 'd407d3edf652d6f4f754987a0ad9f48aaeb1faa4'; // lock revision (v2.29.0); the retained reference HTML is from aad7e38 (v2.25.0). v2.29.0 added metric auto-sizing cases to the producer page, which this fixture does not cover.
 
 for (const width of [1440, 768, 640, 375, 320]) {
   test(`widgets ${width}px: anatomy, inherited themes and complete wrapping`, async ({ page, request }, info) => {

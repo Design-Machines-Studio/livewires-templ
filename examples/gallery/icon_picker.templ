@@ -1,0 +1,74 @@
+package main
+
+import "strings"
+import "github.com/Design-Machines-Studio/livewires-templ/form"
+
+// iconPickerExample is gallery-owned composition: forms, captions, layout
+// classes and the submit buttons belong to the page, not the component.
+templ iconPickerExample(demo iconPickerDemo) {
+	<p>Icons are Phosphor Bold from the pinned Live Wires sprite. Choose an icon, then save. The server echoes the chosen name and rejects names outside each picker’s rendered list. Nothing is stored.</p>
+	if len(demo.Rejected) > 0 {
+		<div class="error" role="alert" id="icon-picker-error">
+			for _, message := range demo.Rejected {
+				<p>{ message }</p>
+			}
+		</div>
+	}
+	<p role="status" aria-atomic="true" id="icon-picker-result">
+		if len(demo.Saved) > 0 {
+			{ "Saved " + strings.Join(demo.Saved, " ") }
+		}
+	</p>
+	<section class="stack" aria-labelledby="icon-enhanced-heading" data-gallery-enhanced>
+		<h2 id="icon-enhanced-heading">With the optional enhancer</h2>
+		<p>The page loads Live Wires <code>/dist/icon-picker.js</code>. It adds search by name and tag, Recent, arrow keys and anchored positioning. The trigger updates when you choose.</p>
+		<form class="stack" method="get" action="/examples/icon-picker" id="icon-enhanced-form">
+			<div class="stack-compact">
+				<p>Space icon: bordered, current value, 48 icons in four categories.</p>
+				@form.IconPickerComponent(form.IconPickerProps{ID: "space", Name: "space_icon", Label: "Space icon", Value: demo.value("space_icon"), Sections: iconPickerCategorySections})
+			</div>
+			<div class="stack-compact">
+				<p>Circle icon: ghost, no value, the reference’s 16 icons.</p>
+				@form.IconPickerComponent(form.IconPickerProps{ID: "circle", Name: "circle_icon", Label: "Circle icon", Value: demo.value("circle_icon"), Ghost: true, Sections: iconPickerReferenceSections})
+			</div>
+			<div class="cluster"><button class="button" type="submit">Save icons</button></div>
+		</form>
+	</section>
+	<section class="stack" aria-labelledby="icon-native-heading" data-gallery-native>
+		<h2 id="icon-native-heading">Without JavaScript</h2>
+		<p>These pickers are not enhanced. The native popover opens centred, search and Recent stay hidden, and the trigger changes only after you save.</p>
+		<form class="stack" method="get" action="/examples/icon-picker" id="icon-native-form">
+			<div class="stack-compact">
+				<p>Circle icon: bordered, no value.</p>
+				@form.IconPickerComponent(form.IconPickerProps{ID: "native-circle", Name: "native_circle_icon", Label: "Circle icon", Value: demo.value("native_circle_icon"), Sections: iconPickerReferenceSections})
+			</div>
+			<div class="stack-compact">
+				<p>Space icon: ghost, current value, four categories.</p>
+				@form.IconPickerComponent(form.IconPickerProps{ID: "native-space", Name: "native_space_icon", Label: "Space icon", Value: demo.value("native_space_icon"), Ghost: true, Sections: iconPickerCategorySections})
+			</div>
+			<div class="cluster"><button class="button" type="submit">Save icons</button></div>
+		</form>
+	</section>
+	<section class="stack" aria-labelledby="icon-scheme-heading" data-gallery-enhanced>
+		<h2 id="icon-scheme-heading">Schemes in a narrow container</h2>
+		<p>Each picker sits in a 16rem column. Inherited follows the page scheme.</p>
+		<form class="stack" method="get" action="/examples/icon-picker" id="icon-scheme-form">
+			<div class="cluster">
+				<div class="box stack-compact" style="inline-size: 16rem" data-gallery-scheme="inherited">
+					<p>Inherited</p>
+					@form.IconPickerComponent(form.IconPickerProps{ID: "scheme-inherited", Name: "scheme_inherited_icon", Label: "Inherited icon", Value: demo.value("scheme_inherited_icon"), Sections: iconPickerReferenceSections})
+				</div>
+				<div class="box stack-compact light-mode" style="inline-size: 16rem" data-gallery-scheme="light">
+					<p>Light</p>
+					@form.IconPickerComponent(form.IconPickerProps{ID: "scheme-light", Name: "scheme_light_icon", Label: "Light icon", Value: demo.value("scheme_light_icon"), Ghost: true, Sections: iconPickerReferenceSections})
+				</div>
+				<div class="box stack-compact scheme-dark" style="inline-size: 16rem" data-gallery-scheme="dark">
+					<p>Dark</p>
+					@form.IconPickerComponent(form.IconPickerProps{ID: "scheme-dark", Name: "scheme_dark_icon", Label: "Dark icon", Value: demo.value("scheme_dark_icon"), Sections: iconPickerReferenceSections})
+				</div>
+			</div>
+			<div class="cluster"><button class="button" type="submit">Save scheme icons</button></div>
+		</form>
+	</section>
+	<p class="text-sm">Phosphor Icons are MIT licensed. See the <a href="/icons/LICENSE">Phosphor license</a>.</p>
+}

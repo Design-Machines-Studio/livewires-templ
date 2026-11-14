@@ -83,3 +83,39 @@ func TestComboboxTimezoneSamplesAreValidLocations(t *testing.T) {
 		}
 	}
 }
+
+func TestIconPickerSubmissionsValidateAgainstRenderedSubset(t *testing.T) {
+	app := routes(sourceIdentity{}, map[string][]byte{"/icons/phosphor-bold.svg": []byte("<svg/>")}, assetLock{})
+	get := func(path string) string {
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, httptest.NewRequest("GET", path, nil))
+		if w.Code != 200 {
+			t.Fatalf("%s: %d", path, w.Code)
+		}
+		return w.Body.String()
+	}
+	if body := get("/examples/icon-picker"); !strings.Contains(body, `id="space-picker"`) || strings.Contains(body, "icon-picker-error") {
+		t.Fatal("initial page must render pickers without an error")
+	}
+	saved := get("/examples/icon-picker?space_icon=coins&circle_icon=")
+	if !strings.Contains(saved, "Saved Space icon (enhanced) (space_icon): coins. Circle icon (enhanced) (circle_icon): no icon.") || !strings.Contains(saved, `value="coins" class="visually-hidden" checked`) {
+		t.Fatal("valid submission must echo and become the current value")
+	}
+	rejected := get("/examples/icon-picker?space_icon=rocket&native_circle_icon=jeep")
+	for _, want := range []string{"icon-picker-error", "Space icon (enhanced) (space_icon): &#34;rocket&#34; is not one of", "Circle icon (without JavaScript) (native_circle_icon): &#34;jeep&#34; is not one of"} {
+		if !strings.Contains(rejected, want) {
+			t.Fatalf("rejection missing %q", want)
+		}
+	}
+	if !strings.Contains(rejected, `value="users-three" class="visually-hidden" checked`) {
+		t.Fatal("rejected value must keep the initial value")
+	}
+	if demo := iconPickerSubmission(map[string][]string{"circle_icon": {"jeep"}}); len(demo.Rejected) != 1 || demo.Values["circle_icon"] != "" {
+		t.Fatal("a name from another picker's subset must be rejected")
+	}
+	w := httptest.NewRecorder()
+	app.ServeHTTP(w, httptest.NewRequest("GET", "/icons/phosphor-bold.svg", nil))
+	if w.Header().Get("Content-Type") != "image/svg+xml" {
+		t.Fatalf("sprite content type = %q", w.Header().Get("Content-Type"))
+	}
+}

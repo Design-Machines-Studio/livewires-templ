@@ -173,6 +173,14 @@ async function setup() {
       outcome.textContent = 'Simulated external update applied. Drafts are kept.';
     }, { signal: lifecycle.signal });
   }
+  if (name === 'icon-picker') {
+    // Only sections marked enhanced load the optional producer enhancer. The
+    // native section stays unenhanced so both modes can be compared.
+    const { createIconPicker } = await import('/assets/icon-picker.js');
+    for (const root of document.querySelectorAll('[data-gallery-enhanced] [data-icon-picker]')) {
+      controllers.push(createIconPicker({ root, recentKey: 'lw-gallery-icon-picker-recent' }));
+    }
+  }
   if (name === 'combobox') {
     const { createCombobox } = await import('/assets/combobox.js');
     const responseMode = document.querySelector('#remote-scenario');

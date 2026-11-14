@@ -1,0 +1,95 @@
+package form
+
+// IconPickerComponent renders the Live Wires icon picker anatomy from
+// caller-supplied sections. It opens through the native popover without
+// JavaScript; the radios submit with the surrounding form. It emits no layout
+// classes, CSS or script. The optional Live Wires enhancer owns aria-expanded,
+// search, Recent, keyboard movement and positioning.
+templ IconPickerComponent(props IconPickerProps) {
+	<div class={ iconPickerClass(props) } data-icon-picker id={ iconPickerRootID(props) } { props.Attrs... }>
+		<button
+			type="button"
+			class={ iconPickerTriggerClass(props) }
+			popovertarget={ iconPickerPanelID(props) }
+			aria-label={ iconPickerTriggerLabel(props) }
+			data-label-choose={ iconPickerChooseLabel(props) }
+			data-label-change={ iconPickerChangeLabel(props) }
+		>
+			<span class="icon-picker-current" hidden?={ props.Value == "" }>
+				if props.Value != "" {
+					@iconPickerSVG(iconPickerHref(props, props.Value))
+				}
+			</span>
+			<span class="icon-picker-placeholder" hidden?={ props.Value != "" }>
+				@iconPickerSVG(iconPickerPlaceholderHref(props))
+			</span>
+		</button>
+		<div class="icon-picker-panel" id={ iconPickerPanelID(props) } popover>
+			<fieldset class="icon-picker-fieldset" aria-labelledby={ iconPickerHeadingID(props) }>
+				<div class="icon-picker-header">
+					@iconPickerHeadingTag(iconPickerPanelLevel(props), templ.Attributes{"class": "icon-picker-heading", "id": iconPickerHeadingID(props)}, iconPickerHeading(props))
+					<label class="icon-picker-remove button button--ghost button--small">
+						<input type="radio" name={ props.Name } value="" class="visually-hidden" checked?={ props.Value == "" } { props.InputAttrs... }/>Remove
+					</label>
+				</div>
+				<div class="icon-picker-search" hidden>
+					<label class="visually-hidden" for={ iconPickerSearchID(props) }>Filter icons</label>
+					<input type="search" class="input--small" id={ iconPickerSearchID(props) } placeholder="Filter icons…" autocomplete="off"/>
+				</div>
+				<div class="icon-picker-body">
+					<section class="icon-picker-section icon-picker-recent" hidden>
+						@iconPickerHeadingTag(iconPickerSectionLevel(props), templ.Attributes{"class": "icon-picker-section-heading"}, "Recent")
+						<div class="icon-picker-grid"></div>
+					</section>
+					for s, section := range props.Sections {
+						<section class="icon-picker-section" aria-labelledby={ iconPickerSectionID(props, s, section) }>
+							@iconPickerHeadingTag(iconPickerSectionLevel(props), templ.Attributes{"class": "icon-picker-section-heading", "id": iconPickerSectionID(props, s, section)}, section.Heading)
+							<div class="icon-picker-grid">
+								for i, icon := range section.Icons {
+									<label class="icon-picker-tile" { iconPickerTileAttrs(icon)... }>
+										<input type="radio" name={ props.Name } value={ icon.Name } class="visually-hidden" checked?={ iconPickerTileChecked(props, s, i) } { props.InputAttrs... }/>
+										@iconPickerSVG(iconPickerHref(props, icon.Name))
+										<span class="visually-hidden">{ iconPickerIconLabel(icon) }</span>
+									</label>
+								}
+							</div>
+						</section>
+					}
+				</div>
+				<p class="icon-picker-status" role="status" aria-atomic="true" hidden></p>
+			</fieldset>
+		</div>
+	</div>
+}
+
+// IconPicker renders a bordered icon picker (convenience wrapper).
+templ IconPicker(name, label, value string, sections []IconPickerSection) {
+	@IconPickerComponent(IconPickerProps{Name: name, Label: label, Value: value, Sections: sections})
+}
+
+// IconPickerGhost renders a borderless icon picker with a ghost trigger.
+templ IconPickerGhost(name, label, value string, sections []IconPickerSection) {
+	@IconPickerComponent(IconPickerProps{Name: name, Label: label, Value: value, Sections: sections, Ghost: true})
+}
+
+templ iconPickerSVG(href string) {
+	<svg class="icon" aria-hidden="true" focusable="false" fill="currentColor"><use href={ href }></use></svg>
+}
+
+// iconPickerHeadingTag renders h1–h6; the level is already clamped.
+templ iconPickerHeadingTag(level int, attrs templ.Attributes, text string) {
+	switch level {
+		case 1:
+			<h1 { attrs... }>{ text }</h1>
+		case 2:
+			<h2 { attrs... }>{ text }</h2>
+		case 4:
+			<h4 { attrs... }>{ text }</h4>
+		case 5:
+			<h5 { attrs... }>{ text }</h5>
+		case 6:
+			<h6 { attrs... }>{ text }</h6>
+		default:
+			<h3 { attrs... }>{ text }</h3>
+	}
+}

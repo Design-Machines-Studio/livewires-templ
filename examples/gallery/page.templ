@@ -5,7 +5,7 @@ import "github.com/Design-Machines-Studio/livewires-templ/component"
 import utility "github.com/Design-Machines-Studio/livewires-templ/examples/utility-feedback"
 import "github.com/Design-Machines-Studio/livewires-templ/form"
 
-templ page(name string, source sourceIdentity, order []string, message string, variant string) {
+templ page(name string, source sourceIdentity, order []string, message string, variant string, icons iconPickerDemo) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -87,6 +87,8 @@ templ page(name string, source sourceIdentity, order []string, message string, v
 							@cardsExample()
 						case "mention-suggestions":
 							@mentionSuggestionsExample()
+						case "icon-picker":
+							@iconPickerExample(icons)
 					}
 					if name=="loading" || name=="toast" || name=="sortable" || name=="inline-edit" {
 						<form method="get" action={ templ.URL("/examples/" + name) } id="scenario-form" hidden?={ name=="sortable" || name=="inline-edit" }>

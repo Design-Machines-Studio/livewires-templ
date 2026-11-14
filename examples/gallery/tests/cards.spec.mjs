@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { readFile, writeFile } from 'node:fs/promises';
 
-const producer = '1c52666402c0ec2de4ed64736ea679a8a8573838';
+const producer = 'd407d3edf652d6f4f754987a0ad9f48aaeb1faa4';
 const referenceFixture = new URL('../../../component/testdata/livewires/card-summary-reference.html', import.meta.url);
 
 const measureLines = node => {
@@ -105,7 +105,8 @@ for (const width of [375, 1280]) {
       expect(focus.matchesFocusVisible).toBe(true);
       expect(focus.outlineStyle).not.toBe('none');
       expect(parseFloat(focus.outlineWidth)).toBeGreaterThan(0);
-      expect(focus.outlineOffset).toBe('-2px');
+      // Live Wires v2.29.0 draws the clamped link's ring inside the text at the negative focus-ring width (was a fixed -2px in v2.27.0).
+      expect(parseFloat(focus.outlineOffset)).toBe(-parseFloat(focus.outlineWidth));
       expect(focus.inside).toBe(focus.visibleRects);
       const ringShot = info.outputPath(`cards-focus-${width}-${colorScheme}.png`);
       await limits.nth(0).locator('.header').screenshot({ path: ringShot });

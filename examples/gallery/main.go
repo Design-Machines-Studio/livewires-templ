@@ -46,7 +46,7 @@ type assetLock struct {
 	Assets         []asset `json:"assets"`
 }
 
-var examples = []string{"relative-time", "copy", "loading", "toast", "sortable", "inline-edit", "combobox", "save-status", "page-header", "comments", "loaders", "widgets", "people-picker", "cards", "mention-suggestions"}
+var examples = []string{"relative-time", "copy", "loading", "toast", "sortable", "inline-edit", "combobox", "save-status", "page-header", "comments", "loaders", "widgets", "people-picker", "cards", "mention-suggestions", "icon-picker"}
 var itemNames = map[string]string{"notes": "Field notes", "paper": "On paper", "index": "An index"}
 
 func digest(b []byte) string { s := sha256.Sum256(b); return hex.EncodeToString(s[:]) }
@@ -132,6 +132,12 @@ func routes(source sourceIdentity, files map[string][]byte, lock assetLock) http
 				w.Header().Set("Content-Type", "text/javascript")
 			} else if strings.HasSuffix(path, ".css") {
 				w.Header().Set("Content-Type", "text/css")
+			} else if strings.HasSuffix(path, ".svg") {
+				w.Header().Set("Content-Type", "image/svg+xml")
+			} else if strings.HasSuffix(path, ".json") {
+				w.Header().Set("Content-Type", "application/json")
+			} else if strings.HasSuffix(path, "/LICENSE") {
+				w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 			}
 			w.Header().Set("Cache-Control", "no-cache")
 			w.Write(data)
@@ -189,10 +195,14 @@ func routes(source sourceIdentity, files map[string][]byte, lock assetLock) http
 			order = moveOrder(order, r.URL.Query().Get("itemId"), r.URL.Query().Get("before"))
 			message = "Native demo move. Order is carried in this URL; reload the base URL to reset."
 		}
-		templ.Handler(page(name, source, order, message, variant)).ServeHTTP(w, r)
+		icons := iconPickerDemo{}
+		if name == "icon-picker" {
+			icons = iconPickerSubmission(r.URL.Query())
+		}
+		templ.Handler(page(name, source, order, message, variant, icons)).ServeHTTP(w, r)
 	})
 	m.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
-		templ.Handler(page("", source, nil, "", "info")).ServeHTTP(w, r)
+		templ.Handler(page("", source, nil, "", "info", iconPickerDemo{})).ServeHTTP(w, r)
 	})
 	return m
 }
