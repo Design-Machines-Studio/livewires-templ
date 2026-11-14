@@ -109,8 +109,9 @@ re-renders.
 
 ### Known v2.29.0 limitation
 
-Without JavaScript, an arrow key that moves from the first tile onto Remove
-checks Remove, which clears the value. Live Wires then hides the checked Remove
+Without JavaScript, an arrow key that moves onto Remove checks it, which
+clears the value. That happens with Left or Up from the first tile, and with
+Right or Down wrapping from the last tile. Live Wires then hides the checked Remove
 label (`icon-picker.css`), so keyboard focus is lost. With the enhancer, arrow
 keys stay within the grid. The fix belongs in the Live Wires CSS.
 
