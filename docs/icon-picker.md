@@ -29,18 +29,18 @@ form.IconPickerGhost(name, label, value, sections) // borderless tiles, ghost tr
 
 | `IconPickerProps` | Meaning |
 | --- | --- |
-| `ID` | Id prefix. Renders `<ID>-picker` (root), `-panel`, `-heading`, `-search` and `<ID>-<section ID>`. Defaults to `Name`. Sanitized for id use. Use a distinct ID for each picker on a page. |
+| `ID` | Id prefix. Renders `<ID>-picker` (root), `-panel`, `-heading`, `-search` and `<ID>-<section ID>`. Defaults to `Name`. Sanitized for id use. Use a distinct ID for each picker on a page. Section IDs must be unique and must not be `picker`, `panel`, `heading` or `search`. |
 | `Name` | Submitted field name shared by every radio, including Remove. Required. |
 | `Value` | Current icon name. Empty checks Remove and shows the placeholder. |
 | `Label` | Panel heading, such as `Circle icon`. Defaults to `Icon`. |
-| `ChooseLabel`, `ChangeLabel` | Trigger names. Default to `Choose <label>` and `Change <label>`, lowercasing the first letter unless the label starts with an acronym. With a value the trigger reads `Change circle icon, Gavel`, as the enhancer does. |
+| `ChooseLabel`, `ChangeLabel` | Trigger names. Default to `Choose <label>` and `Change <label>`, lowercasing the first letter unless the label starts with an acronym. With a value in `Sections` the trigger reads `Change circle icon, Gavel`, as the enhancer does. |
 | `SpriteHref` | Sprite URL without a fragment. Defaults to `/icons/phosphor-bold.svg`. |
 | `PlaceholderIcon` | Sprite name shown with no value. Defaults to `selection-plus`. |
 | `Ghost` | Adds `.icon-picker--ghost` and swaps the trigger's `.button--subtle` for `.button--ghost`. |
-| `HeadingLevel` | Panel heading level, 1–6, default 3. Section headings use the next level, capped at 6. |
+| `HeadingLevel` | Panel heading level, 1–6, default 3. Section headings use the next level, capped at 6, so `6` renders both levels as `h6`. Prefer 1–5. |
 | `Sections` | The rendered subset. |
 | `Class`, `Attrs` | Extra classes and developer-controlled attributes on the root. |
-| `InputAttrs` | Developer-controlled attributes on every radio, including Remove, rendered after the component's own. On a name collision the component's attribute wins. Do not repeat `type`, `name`, `value`, `class` or `checked`. |
+| `InputAttrs` | Developer-controlled attributes repeated on every radio, including Remove, and on the enhancer's Recent copies. Rendered after the component's own; on a name collision the component's attribute wins. Do not repeat `type`, `name`, `value`, `class` or `checked`, and never pass `id` or other single-element attributes. |
 
 `IconPickerSection` has `ID` (id suffix, default `section-<n>`), `Heading` and
 `Icons`. `IconPickerIcon` has `Name`, `Label` and `Tags`:
@@ -63,10 +63,11 @@ Render only the icons the field allows, and validate the submission against
 the **same list**. The radios are ordinary form controls: anyone can submit any
 string. An empty value means "no icon".
 
-- A `Value` that is not in `Sections` still shows on the trigger, but no radio
-  is checked. Submitting the form unchanged then omits the field entirely.
-  Treat a missing field as "unchanged", not as "cleared", or render the
-  current value in the subset.
+- Include the current value in `Sections`. A `Value` outside them checks no
+  radio, so submitting the form unchanged omits the field entirely; treat a
+  missing field as "unchanged", not "cleared". Without JavaScript the trigger
+  still shows that icon. With the enhancer it shows the placeholder and the
+  Choose label, because the enhancer reads the trigger from the checked radio.
 - If a name appears in two sections, only the first copy is checked.
 - `Name`, `Value`, section data and icon names are developer-controlled. Never
   build them, or `Attrs`/`InputAttrs`, from request input.
@@ -105,6 +106,13 @@ The trigger's `popovertarget` opens the native popover, centred. The radios
 submit with the form. Search, Recent and the count stay hidden. The trigger
 shows the saved value and changes only after the form is saved and the page
 re-renders.
+
+### Known v2.29.0 limitation
+
+Without JavaScript, an arrow key that moves from the first tile onto Remove
+checks Remove, which clears the value. Live Wires then hides the checked Remove
+label (`icon-picker.css`), so keyboard focus is lost. With the enhancer, arrow
+keys stay within the grid. The fix belongs in the Live Wires CSS.
 
 ## Heading levels
 

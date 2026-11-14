@@ -98,11 +98,11 @@ func TestIconPickerSubmissionsValidateAgainstRenderedSubset(t *testing.T) {
 		t.Fatal("initial page must render pickers without an error")
 	}
 	saved := get("/examples/icon-picker?space_icon=coins&circle_icon=")
-	if !strings.Contains(saved, "Saved space_icon: coins. circle_icon: no icon.") || !strings.Contains(saved, `value="coins" class="visually-hidden" checked`) {
+	if !strings.Contains(saved, "Saved Space icon (enhanced) (space_icon): coins. Circle icon (enhanced) (circle_icon): no icon.") || !strings.Contains(saved, `value="coins" class="visually-hidden" checked`) {
 		t.Fatal("valid submission must echo and become the current value")
 	}
 	rejected := get("/examples/icon-picker?space_icon=rocket&native_circle_icon=jeep")
-	for _, want := range []string{"icon-picker-error", "space_icon: &#34;rocket&#34; is not one of", "native_circle_icon: &#34;jeep&#34; is not one of"} {
+	for _, want := range []string{"icon-picker-error", "Space icon (enhanced) (space_icon): &#34;rocket&#34; is not one of", "Circle icon (without JavaScript) (native_circle_icon): &#34;jeep&#34; is not one of"} {
 		if !strings.Contains(rejected, want) {
 			t.Fatalf("rejection missing %q", want)
 		}

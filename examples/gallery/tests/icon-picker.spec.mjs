@@ -140,7 +140,7 @@ test('icon-picker enhanced: Escape and outside click close without change; choos
   await expect(p.trigger).toHaveAttribute('aria-label', 'Change space icon, Gavel');
   await page.locator('#icon-enhanced-form button[type=submit]').click();
   await expect(page).toHaveURL(/space_icon=gavel/);
-  await expect(page.locator('#icon-picker-result')).toContainText('space_icon: gavel.');
+  await expect(page.locator('#icon-picker-result')).toContainText('Space icon (enhanced) (space_icon): gavel.');
   await expect(picker(page, 'space').tile('gavel')).toBeChecked();
 });
 
@@ -181,12 +181,12 @@ test('icon-picker without JavaScript: popover opens, radios submit, trigger wait
   await expect.poll(() => isOpen(p.panel)).toBe(false);
   await page.locator('#icon-native-form button[type=submit]').click();
   await expect(page).toHaveURL(/native_circle_icon=gavel/);
-  await expect(page.locator('#icon-picker-result')).toContainText('native_circle_icon: gavel.');
+  await expect(page.locator('#icon-picker-result')).toContainText('Circle icon (without JavaScript) (native_circle_icon): gavel.');
   await expect(picker(page, 'native-circle').trigger).toHaveAttribute('aria-label', 'Change circle icon, Gavel');
 
   await page.goto(route + '?native_circle_icon=jeep&space_icon=rocket');
-  await expect(page.locator('#icon-picker-error')).toContainText('native_circle_icon: "jeep" is not one of this picker’s icons. Nothing was saved.');
-  await expect(page.locator('#icon-picker-error')).toContainText('space_icon: "rocket"');
+  await expect(page.locator('#icon-picker-error')).toContainText('Circle icon (without JavaScript) (native_circle_icon): "jeep" is not one of this picker’s icons. Nothing was saved.');
+  await expect(page.locator('#icon-picker-error')).toContainText('Space icon (enhanced) (space_icon): "rocket"');
   await expect(picker(page, 'native-circle').trigger).toHaveAttribute('aria-label', 'Choose circle icon');
   await page.screenshot({ path: info.outputPath('native-rejected-1280.png'), fullPage: true });
   await context.close();
@@ -267,4 +267,6 @@ test('icon-picker forced colors: focus ring visible; checked state recorded for 
   await page.screenshot({ path: info.outputPath('forced-colors-checked-unfocused.png') });
   await writeFile(info.outputPath('forced-colors.json'), JSON.stringify({ focus, checked, unchecked, computedStylesDiffer: JSON.stringify(checked) !== JSON.stringify(unchecked), visualReview: 'Producer gap (Live Wires v2.29.0 icon-picker.css): with focus elsewhere the checked tile is visually identical to unchecked tiles. Its Canvas background matches the panel, and border and color are the same. See forced-colors-checked-unfocused.png.', note: 'Emulated forced-colors in Chromium; not a Windows High Contrast run.' }, null, 2));
   expect(focus.value).toBe('users-three');
+  expect(focus.outline).not.toBe('none');
+  expect(parseFloat(focus.outlineWidth)).toBeGreaterThan(0);
 });

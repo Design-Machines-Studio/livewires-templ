@@ -11,6 +11,7 @@ import (
 // against exactly the sections it renders, as an application must.
 type iconPickerField struct {
 	Name     string
+	Label    string // Human name used in saved and rejected messages.
 	Initial  string
 	Sections []form.IconPickerSection
 }
@@ -18,13 +19,13 @@ type iconPickerField struct {
 var iconPickerReferenceSections = []form.IconPickerSection{{ID: "all", Heading: "Circle icons", Icons: iconPickerReferenceIcons}}
 
 var iconPickerFields = []iconPickerField{
-	{Name: "space_icon", Initial: "users-three", Sections: iconPickerCategorySections},
-	{Name: "circle_icon", Sections: iconPickerReferenceSections},
-	{Name: "native_circle_icon", Sections: iconPickerReferenceSections},
-	{Name: "native_space_icon", Initial: "house-line", Sections: iconPickerCategorySections},
-	{Name: "scheme_inherited_icon", Initial: "leaf", Sections: iconPickerReferenceSections},
-	{Name: "scheme_light_icon", Sections: iconPickerReferenceSections},
-	{Name: "scheme_dark_icon", Initial: "star", Sections: iconPickerReferenceSections},
+	{Name: "space_icon", Label: "Space icon (enhanced)", Initial: "users-three", Sections: iconPickerCategorySections},
+	{Name: "circle_icon", Label: "Circle icon (enhanced)", Sections: iconPickerReferenceSections},
+	{Name: "native_circle_icon", Label: "Circle icon (without JavaScript)", Sections: iconPickerReferenceSections},
+	{Name: "native_space_icon", Label: "Space icon (without JavaScript)", Initial: "house-line", Sections: iconPickerCategorySections},
+	{Name: "scheme_inherited_icon", Label: "Inherited scheme icon", Initial: "leaf", Sections: iconPickerReferenceSections},
+	{Name: "scheme_light_icon", Label: "Light scheme icon", Sections: iconPickerReferenceSections},
+	{Name: "scheme_dark_icon", Label: "Dark scheme icon", Initial: "star", Sections: iconPickerReferenceSections},
 }
 
 // iconPickerDemo is the rendered state after an optional GET submission.
@@ -58,12 +59,12 @@ func iconPickerSubmission(query url.Values) iconPickerDemo {
 		switch {
 		case submitted == "":
 			demo.Values[field.Name] = ""
-			demo.Saved = append(demo.Saved, fmt.Sprintf("%s: no icon.", field.Name))
+			demo.Saved = append(demo.Saved, fmt.Sprintf("%s (%s): no icon.", field.Label, field.Name))
 		case iconPickerAllows(field.Sections, submitted):
 			demo.Values[field.Name] = submitted
-			demo.Saved = append(demo.Saved, fmt.Sprintf("%s: %s.", field.Name, submitted))
+			demo.Saved = append(demo.Saved, fmt.Sprintf("%s (%s): %s.", field.Label, field.Name, submitted))
 		default:
-			demo.Rejected = append(demo.Rejected, fmt.Sprintf("%s: %q is not one of this picker’s icons. Nothing was saved.", field.Name, submitted))
+			demo.Rejected = append(demo.Rejected, fmt.Sprintf("%s (%s): %q is not one of this picker’s icons. Nothing was saved.", field.Label, field.Name, submitted))
 		}
 	}
 	return demo

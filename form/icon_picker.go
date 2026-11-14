@@ -28,7 +28,7 @@ type IconPickerIcon struct {
 
 // IconPickerSection is one headed group of tiles, such as a Phosphor category.
 type IconPickerSection struct {
-	ID      string           // Id suffix for the section heading, rendered as "<picker id>-<ID>". Defaults to "section-<n>" (1-based).
+	ID      string           // Id suffix for the section heading, rendered as "<picker id>-<ID>". Defaults to "section-<n>" (1-based). Must be unique within the picker and must not be "picker", "panel", "heading" or "search", which the picker reserves.
 	Heading string           // Visible section heading; it labels the section.
 	Icons   []IconPickerIcon // Tiles in display order.
 }
@@ -51,11 +51,11 @@ type IconPickerProps struct {
 	SpriteHref      string              // Sprite URL without a fragment. Defaults to "/icons/phosphor-bold.svg".
 	PlaceholderIcon string              // Sprite name shown when there is no value. Defaults to "selection-plus".
 	Ghost           bool                // Borderless tiles (.icon-picker--ghost) and a ghost trigger (.button--ghost instead of .button--subtle).
-	HeadingLevel    int                 // Panel heading level, 1–6. Defaults to 3. Section headings use the next level, capped at 6.
+	HeadingLevel    int                 // Panel heading level, 1–6. Defaults to 3. Section headings use the next level, capped at 6, so 6 renders both as h6.
 	Sections        []IconPickerSection // The rendered subset. The server validates submissions against this same list.
 	Class           string              // Additional classes on the root.
 	Attrs           templ.Attributes    // Developer-controlled attributes on the root. Never populate from untrusted input.
-	InputAttrs      templ.Attributes    // Developer-controlled attributes on every radio, including Remove. Rendered after component-generated attributes; on a name collision the component's attribute wins (HTML first-occurrence). Never populate from untrusted input.
+	InputAttrs      templ.Attributes    // Developer-controlled attributes repeated on every radio, including Remove; never pass id or other single-element attributes. Rendered after component-generated attributes; on a name collision the component's attribute wins (HTML first-occurrence). Never populate from untrusted input.
 }
 
 // iconPickerBaseID is the sanitized id prefix shared by every id the picker emits.
