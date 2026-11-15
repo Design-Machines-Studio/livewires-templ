@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { writeFile } from 'node:fs/promises';
 
-// Live Wires v2.29.0, the lock revision that supplies icon-picker.js and the Phosphor sprite.
-const producer = 'd407d3edf652d6f4f754987a0ad9f48aaeb1faa4';
+// Live Wires v2.29.1, the lock revision that supplies icon-picker.js and the Phosphor sprite.
+const producer = '9117f460c01cadd0e7fa803df19b137628508c7f';
 const route = '/examples/icon-picker';
 
 const watchErrors = page => {
@@ -242,7 +242,7 @@ test('icon-picker 200% zoom: CSS zoom and a 2x-density half-width viewport reflo
   await context.close();
 });
 
-test('icon-picker forced colors: focus ring visible; checked state recorded for producer review', async ({ page, browserName }, info) => {
+test('icon-picker forced colors: focus ring visible and checked tile distinct', async ({ page, browserName }, info) => {
   test.skip(browserName !== 'chromium', 'forced-colors emulation is Chromium-only in Playwright');
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.emulateMedia({ forcedColors: 'active' });
@@ -265,8 +265,71 @@ test('icon-picker forced colors: focus ring visible; checked state recorded for 
   const checked = await tileStyle('users-three');
   const unchecked = await tileStyle('baby');
   await page.screenshot({ path: info.outputPath('forced-colors-checked-unfocused.png') });
-  await writeFile(info.outputPath('forced-colors.json'), JSON.stringify({ focus, checked, unchecked, computedStylesDiffer: JSON.stringify(checked) !== JSON.stringify(unchecked), visualReview: 'Producer gap (Live Wires v2.29.0 icon-picker.css): with focus elsewhere the checked tile is visually identical to unchecked tiles. Its Canvas background matches the panel, and border and color are the same. See forced-colors-checked-unfocused.png.', note: 'Emulated forced-colors in Chromium; not a Windows High Contrast run.' }, null, 2));
+  await writeFile(info.outputPath('forced-colors.json'), JSON.stringify({ focus, checked, unchecked, note: 'Emulated forced-colors in Chromium; not a Windows High Contrast run.' }, null, 2));
   expect(focus.value).toBe('users-three');
   expect(focus.outline).not.toBe('none');
   expect(parseFloat(focus.outlineWidth)).toBeGreaterThan(0);
+  // Live Wires v2.29.1 (livewires#45): the checked tile gets a thicker CanvasText border.
+  expect(parseFloat(checked.borderWidth)).toBeGreaterThan(parseFloat(unchecked.borderWidth));
+});
+
+test('icon-picker enhanced: Remove keys, no dialog popup, Recent shortcuts (Live Wires v2.29.1)', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  const errors = watchErrors(page);
+  await ready(page);
+  const p = picker(page, 'space');
+  // livewires#46: the trigger no longer claims a dialog.
+  await expect(p.trigger).not.toHaveAttribute('aria-haspopup', /.*/);
+
+  // livewires#44: arrow keys on Remove move focus without choosing.
+  await p.trigger.click();
+  await expect(p.search).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await expect(page.locator('#space-panel .icon-picker-remove input')).toBeFocused();
+  await page.keyboard.press('ArrowRight');
+  await expect.poll(() => isOpen(p.panel)).toBe(true);
+  await expect(p.search).toBeFocused();
+  await expect(p.tile('users-three')).toBeChecked();
+
+  // livewires#47: Recent entries are buttons, not extra radios.
+  for (const name of ['coins', 'gavel']) {
+    await p.search.fill(name);
+    await p.tile(name).locator('..').click();
+    await expect.poll(() => isOpen(p.panel)).toBe(false);
+    await p.trigger.click();
+  }
+  const recent = page.locator('#space-panel .icon-picker-recent');
+  await expect(recent).toBeVisible();
+  const shortcut = recent.locator('button[data-icon-picker-recent][value="coins"]');
+  await expect(shortcut).toHaveAttribute('type', 'button');
+  await expect(recent.locator('input')).toHaveCount(0);
+  await expect(page.locator('#space-panel input[type=radio][value="coins"]')).toHaveCount(1);
+  await shortcut.click();
+  await expect.poll(() => isOpen(p.panel)).toBe(false);
+  await expect(p.tile('coins')).toBeChecked();
+  await expect(p.trigger).toHaveAttribute('aria-label', 'Change space icon, Coins');
+  expect(errors).toEqual([]);
+});
+
+test('icon-picker without JavaScript: arrowing onto Remove keeps it visible and focused (Live Wires v2.29.1)', async ({ browser, browserName }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 1280, height: 900 } });
+  const page = await context.newPage();
+  await page.goto(route);
+  const p = picker(page, 'native-space');
+  await p.trigger.click();
+  await expect.poll(() => isOpen(p.panel)).toBe(true);
+  const remove = page.locator('#native-space-panel .icon-picker-remove input');
+  await expect(remove.locator('..')).toBeVisible();
+  const first = page.locator('#native-space-panel .icon-picker-tile input').first();
+  await first.focus();
+  await page.keyboard.press('ArrowLeft');
+  const state = await remove.evaluate(r => ({ checked: r.checked, focused: document.activeElement === r, rects: r.closest('label').getClientRects().length }));
+  // livewires#43: if native radio navigation checks Remove, it stays visible and keeps focus.
+  if (state.checked) {
+    expect(state.focused).toBe(true);
+    expect(state.rects).toBeGreaterThan(0);
+  } else {
+    test.info().annotations.push({ type: 'note', description: `${browserName}: ArrowLeft from the first tile did not check Remove` });
+  }
+  await context.close();
 });

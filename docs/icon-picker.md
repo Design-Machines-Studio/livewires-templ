@@ -6,11 +6,13 @@ renders markup only. It ships no CSS, no JavaScript, no icon catalog and no
 Phosphor dependency. Your application chooses the icons, hosts the sprite,
 optionally loads the Live Wires enhancer, and validates what the form submits.
 
-Requires **Live Wires v2.29.0** (`d407d3edf652d6f4f754987a0ad9f48aaeb1faa4`).
-The markup matches that release's
-[reference page](https://github.com/Design-Machines-Studio/livewires/blob/d407d3edf652d6f4f754987a0ad9f48aaeb1faa4/public/reference/components/icon-picker.html)
-and follows its
-[spec](https://github.com/Design-Machines-Studio/livewires/blob/d407d3edf652d6f4f754987a0ad9f48aaeb1faa4/docs/superpowers/specs/icon-picker.md).
+Requires **Live Wires v2.29.0** or later. Use **v2.29.1**
+(`9117f460c01cadd0e7fa803df19b137628508c7f`), which fixes keyboard,
+forced-colors and screen-reader bugs in the picker's CSS and enhancer. The
+markup matches the
+[reference page](https://github.com/Design-Machines-Studio/livewires/blob/9117f460c01cadd0e7fa803df19b137628508c7f/public/reference/components/icon-picker.html),
+unchanged since v2.29.0, and follows the v2.29.1
+[spec](https://github.com/Design-Machines-Studio/livewires/blob/9117f460c01cadd0e7fa803df19b137628508c7f/docs/superpowers/specs/icon-picker.md).
 
 ## API
 
@@ -40,7 +42,7 @@ form.IconPickerGhost(name, label, value, sections) // borderless tiles, ghost tr
 | `HeadingLevel` | Panel heading level, 1–6, default 3. Section headings use the next level, capped at 6, so `6` renders both levels as `h6`. Prefer 1–5. |
 | `Sections` | The rendered subset. |
 | `Class`, `Attrs` | Extra classes and developer-controlled attributes on the root. |
-| `InputAttrs` | Developer-controlled attributes repeated on every radio, including Remove, and on the enhancer's Recent copies. Rendered after the component's own; on a name collision the component's attribute wins. Do not repeat `type`, `name`, `value`, `class` or `checked`, and never pass `id` or other single-element attributes. |
+| `InputAttrs` | Developer-controlled attributes repeated on every radio, including Remove. Rendered after the component's own; on a name collision the component's attribute wins. Do not repeat `type`, `name`, `value`, `class` or `checked`, and never pass `id` or other single-element attributes. |
 
 `IconPickerSection` has `ID` (id suffix, default `section-<n>`), `Heading` and
 `Icons`. `IconPickerIcon` has `Name`, `Label` and `Tags`:
@@ -87,14 +89,16 @@ with the sprite.
 Load Live Wires `/dist/icon-picker.js` and call `createIconPicker({ root })` for
 each `[data-icon-picker]` root. It adds:
 
-- `aria-haspopup` and `aria-expanded` on the trigger, and positioning next to it;
+- `aria-expanded` on the trigger, and positioning next to it;
   below a 30em viewport the panel becomes a full-width bottom sheet.
 - Focus on search when the panel opens, with the checked icon scrolled into
   view. Tab then lands on the checked icon. Tab and Shift+Tab cycle Remove,
   search and the grid.
-- Arrow keys, Home and End across the visible grid.
+- Arrow keys, Home and End across the visible grid. On Remove they move focus
+  to search without changing the value.
 - Search by name and tag, a visible count, and `No icons match "…"`.
-- Recent, stored in `localStorage` (`recent: false` turns it off).
+- Recent, stored in `localStorage` (`recent: false` turns it off). Recent
+  entries are buttons that choose the original radio, so they add no form values.
 - Choosing an icon or Remove updates the trigger, closes the panel and returns
   focus to the trigger. Escape and outside clicks close without a change.
 
@@ -107,13 +111,13 @@ submit with the form. Search, Recent and the count stay hidden. The trigger
 shows the saved value and changes only after the form is saved and the page
 re-renders.
 
-### Known v2.29.0 limitation
+### Fixed in v2.29.1
 
-Without JavaScript, an arrow key that moves onto Remove checks it, which
-clears the value. That happens with Left or Up from the first tile, and with
-Right or Down wrapping from the last tile. Live Wires then hides the checked Remove
-label (`icon-picker.css`), so keyboard focus is lost. With the enhancer, arrow
-keys stay within the grid. The fix belongs in the Live Wires CSS.
+On v2.29.0, an arrow key that moves onto Remove without JavaScript checks it,
+clears the value, and then hides the focused Remove label, so keyboard focus is
+lost
+([livewires#43](https://github.com/Design-Machines-Studio/livewires/issues/43)).
+v2.29.1 keeps Remove visible until the enhancer runs.
 
 ## Heading levels
 
