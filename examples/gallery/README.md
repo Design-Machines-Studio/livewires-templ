@@ -190,7 +190,7 @@ page-only demonstration; state/row fragments come from `/demo/mentions` using
 the public Templ components. Nothing is saved and no directory exists. No
 controller is imported by the library. See [the API and editor contract](../../docs/mention-suggestions.md).
 
-The `/examples/icon-picker` route uses Live Wires v2.29.0: `main.css`, the
+The `/examples/icon-picker` route uses Live Wires v2.29.1: `main.css`, the
 optional `icon-picker.js` enhancer, and the Phosphor Bold sprite, catalog and
 license served under `/icons/` (MIT, Phosphor Icons). It shows bordered and
 ghost pickers, with and without a value, in enhanced and unenhanced sections,

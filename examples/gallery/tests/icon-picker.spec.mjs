@@ -311,7 +311,7 @@ test('icon-picker enhanced: Remove keys, no dialog popup, Recent shortcuts (Live
   expect(errors).toEqual([]);
 });
 
-test('icon-picker without JavaScript: arrowing onto Remove keeps it visible and focused (Live Wires v2.29.1)', async ({ browser, browserName }) => {
+test('icon-picker without JavaScript: arrowing onto Remove keeps it visible and focused (Live Wires v2.29.1)', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 1280, height: 900 } });
   const page = await context.newPage();
   await page.goto(route);
@@ -324,12 +324,7 @@ test('icon-picker without JavaScript: arrowing onto Remove keeps it visible and 
   await first.focus();
   await page.keyboard.press('ArrowLeft');
   const state = await remove.evaluate(r => ({ checked: r.checked, focused: document.activeElement === r, rects: r.closest('label').getClientRects().length }));
-  // livewires#43: if native radio navigation checks Remove, it stays visible and keeps focus.
-  if (state.checked) {
-    expect(state.focused).toBe(true);
-    expect(state.rects).toBeGreaterThan(0);
-  } else {
-    test.info().annotations.push({ type: 'note', description: `${browserName}: ArrowLeft from the first tile did not check Remove` });
-  }
+  // livewires#43: native radio navigation checks Remove, which stays visible and keeps focus.
+  expect(state).toEqual({ checked: true, focused: true, rects: 1 });
   await context.close();
 });
