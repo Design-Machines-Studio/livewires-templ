@@ -100,7 +100,7 @@ Do not prune shared Docker resources or delete another worktree's state.
 ## Locked assets
 
 `assets.lock.json` records exact Live Wires revision
-`d407d3edf652d6f4f754987a0ad9f48aaeb1faa4` (v2.29.0), source URLs, SHA-256 hashes, sizes
+`9117f460c01cadd0e7fa803df19b137628508c7f` (v2.29.1), source URLs, SHA-256 hashes, sizes
 and license provenance. Required files are fetched from that revision into the
 instance's external development cache, never from a mutable producer checkout,
 Vite server or floating CDN. The save-status example uses the producer's exact
@@ -190,7 +190,7 @@ page-only demonstration; state/row fragments come from `/demo/mentions` using
 the public Templ components. Nothing is saved and no directory exists. No
 controller is imported by the library. See [the API and editor contract](../../docs/mention-suggestions.md).
 
-The `/examples/icon-picker` route uses Live Wires v2.29.0: `main.css`, the
+The `/examples/icon-picker` route uses Live Wires v2.29.1: `main.css`, the
 optional `icon-picker.js` enhancer, and the Phosphor Bold sprite, catalog and
 license served under `/icons/` (MIT, Phosphor Icons). It shows bordered and
 ghost pickers, with and without a value, in enhanced and unenhanced sections,
@@ -207,3 +207,8 @@ focus ring changed from a 2px accent outline to a 1px muted ring, so every
 route's focused rendering differs. At rest only `/examples/widgets` changed,
 because metric cells now set `container-type: inline-size`. The cards spec now
 expects the clamped-link ring offset to be the negative ring width.
+
+Moving the lock from v2.29.0 to v2.29.1 changed only `main.css` and
+`icon-picker.js`, which fix livewires#43–#47. The icon-picker spec asserts each
+fix: Remove keys, no `aria-haspopup`, Recent buttons, the no-JS Remove focus,
+and the forced-colors checked border.
