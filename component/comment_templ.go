@@ -165,6 +165,15 @@ func Comment(author string, body string, date string, badge string) templ.Compon
 	})
 }
 
+// Default presentation of CommentArticleComponent. An empty Class, BodyClass or
+// TimestampClass uses its default; a nonempty value replaces it. Extend a
+// default by composing it, e.g. CommentArticleClass + " my-hook".
+const (
+	CommentArticleClass          = "box scheme-subtle rounded text-sm text-fg"
+	CommentArticleBodyClass      = "text-base mt-075"
+	CommentArticleTimestampClass = "text-muted text-xs"
+)
+
 // CommentArticleProps configures the opt-in Live Wires shared comment contract.
 // CommentProps and CommentComponent retain their legacy output and date policy.
 type CommentArticleProps struct {
@@ -180,14 +189,16 @@ type CommentArticleProps struct {
 	Content        templ.Component // Rich body. When non-nil, takes precedence over children.
 	Edited         templ.Component // Optional inline metadata, including any caller-owned semantic time.
 	Footer         templ.Component // Optional footer, including caller-owned .comment-actions links/buttons.
-	BodyClass      string          // Caller presentation, e.g. "text-base mt-075".
-	TimestampClass string          // Applied to the time, or its permalink when linked.
+	BodyClass      string          // Replaces CommentArticleBodyClass when nonempty.
+	TimestampClass string          // Applied to the time, or its permalink when linked. Replaces CommentArticleTimestampClass when nonempty.
 	EditedClass    string
-	Class          string
+	Class          string           // Replaces CommentArticleClass when nonempty.
 	Attrs          templ.Attributes // Developer-controlled only; never use untrusted attribute names.
 }
 
-// CommentArticleComponent renders a shared comment without layout utilities.
+// CommentArticleComponent renders a shared comment. Without caller classes it
+// uses the default presentation above: a subtle rounded box, small text, a
+// base-size body and a small muted timestamp.
 // Caller slots must supply valid markup: Author/Edited are inline, Avatar is
 // decorative, and action controls belong in Footer, outside profile/time links.
 // It never parses HTML, formats dates, infers routes or announces arrivals.
@@ -212,7 +223,7 @@ func CommentArticleComponent(props CommentArticleProps) templ.Component {
 			templ_7745c5c3_Var8 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var9 = []any{lw.ClassNames("comment comment--layout", props.Class)}
+		var templ_7745c5c3_Var9 = []any{lw.ClassNames("comment comment--layout", lw.DefaultStr(props.Class, CommentArticleClass))}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var9...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -242,7 +253,7 @@ func CommentArticleComponent(props CommentArticleProps) templ.Component {
 			var templ_7745c5c3_Var11 string
 			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(props.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/comment.templ`, Line: 73, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/comment.templ`, Line: 84, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {
@@ -270,7 +281,7 @@ func CommentArticleComponent(props CommentArticleProps) templ.Component {
 				var templ_7745c5c3_Var12 templ.SafeURL
 				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(props.AvatarHref))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/comment.templ`, Line: 79, Col: 64}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/comment.templ`, Line: 90, Col: 64}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
@@ -283,7 +294,7 @@ func CommentArticleComponent(props CommentArticleProps) templ.Component {
 				var templ_7745c5c3_Var13 string
 				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(props.AvatarLabel)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/comment.templ`, Line: 79, Col: 97}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/comment.templ`, Line: 90, Col: 97}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
@@ -336,7 +347,7 @@ func CommentArticleComponent(props CommentArticleProps) templ.Component {
 		}
 		if props.Timestamp != "" {
 			if props.Permalink != "" {
-				var templ_7745c5c3_Var14 = []any{lw.ClassNames("comment-permalink", props.TimestampClass)}
+				var templ_7745c5c3_Var14 = []any{lw.ClassNames("comment-permalink", lw.DefaultStr(props.TimestampClass, CommentArticleTimestampClass))}
 				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var14...)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -361,7 +372,7 @@ func CommentArticleComponent(props CommentArticleProps) templ.Component {
 				var templ_7745c5c3_Var16 templ.SafeURL
 				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(props.Permalink))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/comment.templ`, Line: 97, Col: 40}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/comment.templ`, Line: 108, Col: 40}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 				if templ_7745c5c3_Err != nil {
@@ -379,7 +390,7 @@ func CommentArticleComponent(props CommentArticleProps) templ.Component {
 					var templ_7745c5c3_Var17 string
 					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(props.PermalinkLabel)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/comment.templ`, Line: 99, Col: 41}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/comment.templ`, Line: 110, Col: 41}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 					if templ_7745c5c3_Err != nil {
@@ -397,7 +408,7 @@ func CommentArticleComponent(props CommentArticleProps) templ.Component {
 				var templ_7745c5c3_Var18 string
 				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(props.DateTime)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/comment.templ`, Line: 102, Col: 64}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/comment.templ`, Line: 113, Col: 64}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 				if templ_7745c5c3_Err != nil {
@@ -410,7 +421,7 @@ func CommentArticleComponent(props CommentArticleProps) templ.Component {
 				var templ_7745c5c3_Var19 string
 				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(props.Timestamp)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/comment.templ`, Line: 102, Col: 84}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/comment.templ`, Line: 113, Col: 84}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 				if templ_7745c5c3_Err != nil {
@@ -421,7 +432,7 @@ func CommentArticleComponent(props CommentArticleProps) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				var templ_7745c5c3_Var20 = []any{lw.ClassNames("comment-timestamp", props.TimestampClass)}
+				var templ_7745c5c3_Var20 = []any{lw.ClassNames("comment-timestamp", lw.DefaultStr(props.TimestampClass, CommentArticleTimestampClass))}
 				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var20...)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -446,7 +457,7 @@ func CommentArticleComponent(props CommentArticleProps) templ.Component {
 				var templ_7745c5c3_Var22 string
 				templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(props.DateTime)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/comment.templ`, Line: 105, Col: 104}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/comment.templ`, Line: 116, Col: 149}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 				if templ_7745c5c3_Err != nil {
@@ -459,7 +470,7 @@ func CommentArticleComponent(props CommentArticleProps) templ.Component {
 				var templ_7745c5c3_Var23 string
 				templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(props.Timestamp)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/comment.templ`, Line: 105, Col: 124}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/comment.templ`, Line: 116, Col: 169}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 				if templ_7745c5c3_Err != nil {
@@ -475,7 +486,7 @@ func CommentArticleComponent(props CommentArticleProps) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var24 = []any{lw.ClassNames("comment-body prose", props.BodyClass)}
+		var templ_7745c5c3_Var24 = []any{lw.ClassNames("comment-body prose", lw.DefaultStr(props.BodyClass, CommentArticleBodyClass))}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var24...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -608,7 +619,7 @@ func CommentArticle(author string, body string, dateTime string, timestamp strin
 			var templ_7745c5c3_Var30 string
 			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(body)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/comment.templ`, Line: 132, Col: 11}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/comment.templ`, Line: 143, Col: 11}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 			if templ_7745c5c3_Err != nil {
@@ -656,7 +667,7 @@ func commentArticleAuthor(author string) templ.Component {
 		var templ_7745c5c3_Var32 string
 		templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(author)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/comment.templ`, Line: 137, Col: 30}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `component/comment.templ`, Line: 148, Col: 30}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
 		if templ_7745c5c3_Err != nil {

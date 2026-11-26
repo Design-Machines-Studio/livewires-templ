@@ -40,6 +40,15 @@ templ Comment(author string, body string, date string, badge string) {
 	@CommentComponent(CommentProps{Author: author, Body: body, Date: date, Badge: badge})
 }
 
+// Default presentation of CommentArticleComponent. An empty Class, BodyClass or
+// TimestampClass uses its default; a nonempty value replaces it. Extend a
+// default by composing it, e.g. CommentArticleClass + " my-hook".
+const (
+	CommentArticleClass          = "box scheme-subtle rounded text-sm text-fg"
+	CommentArticleBodyClass      = "text-base mt-075"
+	CommentArticleTimestampClass = "text-muted text-xs"
+)
+
 // CommentArticleProps configures the opt-in Live Wires shared comment contract.
 // CommentProps and CommentComponent retain their legacy output and date policy.
 type CommentArticleProps struct {
@@ -55,20 +64,22 @@ type CommentArticleProps struct {
 	Content        templ.Component // Rich body. When non-nil, takes precedence over children.
 	Edited         templ.Component // Optional inline metadata, including any caller-owned semantic time.
 	Footer         templ.Component // Optional footer, including caller-owned .comment-actions links/buttons.
-	BodyClass      string          // Caller presentation, e.g. "text-base mt-075".
-	TimestampClass string          // Applied to the time, or its permalink when linked.
+	BodyClass      string          // Replaces CommentArticleBodyClass when nonempty.
+	TimestampClass string          // Applied to the time, or its permalink when linked. Replaces CommentArticleTimestampClass when nonempty.
 	EditedClass    string
-	Class          string
+	Class          string          // Replaces CommentArticleClass when nonempty.
 	Attrs          templ.Attributes // Developer-controlled only; never use untrusted attribute names.
 }
 
-// CommentArticleComponent renders a shared comment without layout utilities.
+// CommentArticleComponent renders a shared comment. Without caller classes it
+// uses the default presentation above: a subtle rounded box, small text, a
+// base-size body and a small muted timestamp.
 // Caller slots must supply valid markup: Author/Edited are inline, Avatar is
 // decorative, and action controls belong in Footer, outside profile/time links.
 // It never parses HTML, formats dates, infers routes or announces arrivals.
 templ CommentArticleComponent(props CommentArticleProps) {
 	<article
-		class={ lw.ClassNames("comment comment--layout", props.Class) }
+		class={ lw.ClassNames("comment comment--layout", lw.DefaultStr(props.Class, CommentArticleClass)) }
 		if props.ID != "" {
 			id={ props.ID }
 		}
@@ -93,7 +104,7 @@ templ CommentArticleComponent(props CommentArticleProps) {
 				if props.Timestamp != "" {
 					if props.Permalink != "" {
 						<a
-							class={ lw.ClassNames("comment-permalink", props.TimestampClass) }
+							class={ lw.ClassNames("comment-permalink", lw.DefaultStr(props.TimestampClass, CommentArticleTimestampClass)) }
 							href={ templ.URL(props.Permalink) }
 							if props.PermalinkLabel != "" {
 								aria-label={ props.PermalinkLabel }
@@ -102,11 +113,11 @@ templ CommentArticleComponent(props CommentArticleProps) {
 							<time class="comment-timestamp" datetime={ props.DateTime }>{ props.Timestamp }</time>
 						</a>
 					} else {
-						<time class={ lw.ClassNames("comment-timestamp", props.TimestampClass) } datetime={ props.DateTime }>{ props.Timestamp }</time>
+						<time class={ lw.ClassNames("comment-timestamp", lw.DefaultStr(props.TimestampClass, CommentArticleTimestampClass)) } datetime={ props.DateTime }>{ props.Timestamp }</time>
 					}
 				}
 			</header>
-			<div class={ lw.ClassNames("comment-body prose", props.BodyClass) }>
+			<div class={ lw.ClassNames("comment-body prose", lw.DefaultStr(props.BodyClass, CommentArticleBodyClass)) }>
 				if props.Content != nil {
 					@props.Content
 				} else {

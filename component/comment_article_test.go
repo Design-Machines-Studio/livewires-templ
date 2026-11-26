@@ -180,3 +180,37 @@ func TestCommentArticleOptionalContentAndChildren(t *testing.T) {
 		}
 	}
 }
+
+func TestCommentArticleDefaultPresentation(t *testing.T) {
+	output := testutil.RenderToString(t, CommentArticleComponent(CommentArticleProps{
+		Author: commentFixture(`<span class="author">Sam</span>`), DateTime: "2026-11-24", Timestamp: "Today", Permalink: "#post-1",
+	}))
+	article := commentByClass(t, output, "comment--layout")
+	if got, _ := testutil.AttrVal(article, "class"); got != "comment comment--layout "+CommentArticleClass {
+		t.Fatalf("default article class = %q", got)
+	}
+	if got, _ := testutil.AttrVal(commentByClass(t, output, "comment-body"), "class"); got != "comment-body prose "+CommentArticleBodyClass {
+		t.Fatalf("default body class = %q", got)
+	}
+	if got, _ := testutil.AttrVal(commentByClass(t, output, "comment-permalink"), "class"); got != "comment-permalink "+CommentArticleTimestampClass {
+		t.Fatalf("default permalink class = %q", got)
+	}
+	unlinked := testutil.RenderToString(t, CommentArticle("Sam", "Hi", "2026-11-24", "Today"))
+	if got, _ := testutil.AttrVal(commentByClass(t, unlinked, "comment-timestamp"), "class"); got != "comment-timestamp "+CommentArticleTimestampClass {
+		t.Fatalf("default timestamp class = %q", got)
+	}
+
+	// A caller's classes replace each default rather than adding to it.
+	custom := testutil.RenderToString(t, CommentArticleComponent(CommentArticleProps{
+		Class: "box text-sm", BodyClass: "mt-05", TimestampClass: "text-xs", DateTime: "2026-11-24", Timestamp: "Today",
+	}))
+	if got, _ := testutil.AttrVal(commentByClass(t, custom, "comment--layout"), "class"); got != "comment comment--layout box text-sm" {
+		t.Fatalf("caller article class = %q", got)
+	}
+	if got, _ := testutil.AttrVal(commentByClass(t, custom, "comment-body"), "class"); got != "comment-body prose mt-05" {
+		t.Fatalf("caller body class = %q", got)
+	}
+	if got, _ := testutil.AttrVal(commentByClass(t, custom, "comment-timestamp"), "class"); got != "comment-timestamp text-xs" {
+		t.Fatalf("caller timestamp class = %q", got)
+	}
+}
